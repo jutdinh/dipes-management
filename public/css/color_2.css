@@ -6,7 +6,12 @@
     background: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
+.footer-custom p {
+    color: rgb(3, 3, 3);
+}
+.language-custom{
+    color: rgb(3, 3, 3);
+}
 .sidebar_user_info {
     background: #fff;
 }

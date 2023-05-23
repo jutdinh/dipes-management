@@ -1,0 +1,31 @@
+.sidebar_user_info_custom {
+    padding: 5px 15px;
+    padding-top: 6px;
+    background: #214162;
+}
+
+.table-hover-custom tbody tr:hover,
+.table-hover-custom tbody tr:focus {
+    background-color: #ddd !important;
+    color: #fff;
+}
+.footer-custom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+.footer-custom p {
+    color: white;
+    font-size: 14px;
+}
+.language-custom{
+color: white;
+}
+
+
+
+.blue_color_custom {
+    color: #34a83e !important;
+}

@@ -80,7 +80,7 @@
 html,
 body {    
     font-size: 14px;
-    font-family: "UTM Avo", sans-serif;
+    font-family: "UTM Avo", sans-serif !important;
     line-height: normal;
     font-weight: 300;
     overflow-x: hidden !important;

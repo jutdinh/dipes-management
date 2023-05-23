@@ -1,14 +1,85 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from "react-redux"
+import Swal from 'sweetalert2';
 
 export default () => {
+    const [auth, setAuth] = useState({})
+    const { lang, proxy } = useSelector(state => state);
+    const [rememberMe, setRememberMe] = useState(false);
 
-    const { lang } = useSelector( state => state );
+    const enterTriggered = (e) => {
+        if (e.keyCode === 13) {
+            submit()
+        }
+    }
+    useEffect(() => {
+        const storedAccountString = localStorage.getItem("username");
+        const storedPwdString = localStorage.getItem("password");
+        const storedRememberMe = localStorage.getItem("remember_me") === "true";
 
+        if (storedRememberMe && storedAccountString && storedPwdString) {
+            setAuth({
+                username: storedAccountString,
+                password: storedPwdString,
+            });
+            setRememberMe(storedRememberMe);
+        }
+
+    }, []);
     const submit = (e) => {
         e.preventDefault()
-    }
+        fetch(`${proxy}/auth/login`, {
+            method: "post",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({ account: auth })
+        }).then(res => res.json()).then((resp) => {
+            const { success, content, data } = resp;
+            console.log(resp)
 
-    return(
+            if (success) {
+                if (rememberMe) {
+                    localStorage.setItem("username", auth.username);
+                    localStorage.setItem("password", auth.password);
+                    localStorage.setItem("remember_me", rememberMe);
+                } else {
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("password");
+                    localStorage.removeItem("remember_me");
+                }
+                // localStorage.setItem('role', data.data.role)
+                // localStorage.setItem('username', data.data.username)
+                localStorage.setItem('_token', data.token)
+                // localStorage.setItem('fullname', data.data.fullname)
+                const stringifiedUser = JSON.stringify(data.data)
+                localStorage.setItem('user', stringifiedUser);
+                Swal.fire({
+                    title: "Đăng nhập thành công!",
+                    text: content,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                }).then(function () {
+
+                     window.location = "/projects";
+                });
+
+
+            } else {
+                Swal.fire({
+                    title: "Đăng nhập thất bại!",
+                    text: content,
+                    icon: "error",
+                    showConfirmButton: false,
+                    timer: 1300,
+                }).then(function () {
+                    // window.location.reload();
+                });
+            }
+        })
+    }
+    return (
         <div classNameName="inner_page login">
             <div className="full_container">
                 <div className="container">
@@ -22,24 +93,33 @@ export default () => {
                             <div className="login_form">
                                 <form>
                                     <fieldset>
-                                    <div className="field">
-                                        <label className="label_field">{ lang["account"] }</label>
-                                        <input type="email" name="email" placeholder={ lang["account"] } />
-                                    </div>
-                                    <div className="field">
-                                        <label className="label_field">{ lang["password"] }</label>
-                                        <input type="password" name="password" placeholder={ lang["password"] } />
-                                    </div>
-                                    <div className="field">
-                                        <label className="label_field hidden">hidden label</label>
-                                        <label className="form-check-label">
-                                            <input type="checkbox" className="form-check-input"/>{ lang["remember me"] }</label>
-                                        <a className="forgot" href="">{ lang["forgot password"] }</a>
-                                    </div>
-                                    <div className="field margin_0">
-                                        <label className="label_field hidden">hidden label</label>
-                                        <button onClick={ submit } className="main_bt">{ lang["signin"] }</button>
-                                    </div>
+                                        <div className="field">
+                                            <label className="label_field">{lang["account"]}</label>
+                                            <input type="text" onKeyUp={enterTriggered}
+                                                onChange={
+                                                    (e) => { setAuth({ ...auth, username: e.target.value }) }
+                                                } value={auth.username || ""}placeholder={lang["account"]} />
+                                        </div>
+                                        <div className="field">
+                                            <label className="label_field">{lang["password"]}</label>
+                                            <input type="password" onKeyUp={enterTriggered} onChange={(e) => { setAuth({ ...auth, password: e.target.value }) }} value={auth.password || ""}placeholder={lang["password"]} />
+                                        </div>
+                                        <div className="field">
+                                            <label className="label_field hidden">hidden label</label>
+                                            <label className="form-check-label">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={rememberMe} // Liên kết trạng thái rememberMe với thuộc tính checked
+                                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                                    className="form-check-input"
+                                                />
+                                                {lang["remember me"]}</label>
+                                            <a className="forgot" href="">{lang["forgot password"]}</a>
+                                        </div>
+                                        <div className="field margin_0">
+                                            <label className="label_field hidden">hidden label</label>
+                                            <button onClick={submit} className="main_bt">{lang["signin"]}</button>
+                                        </div>
                                     </fieldset>
                                 </form>
                             </div>
@@ -47,6 +127,6 @@ export default () => {
                     </div>
                 </div>
             </div>
-      </div>
+        </div>
     )
 }

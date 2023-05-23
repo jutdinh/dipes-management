@@ -14,17 +14,23 @@ export default {
     "help": "Trợ giúp",
     "signout": "Đăng xuất",
     "dashboard": "Bảng điều khiển",
-    "projects manager": "Dự án",
-    "accounts manager": "Tài khoản người dùng",
+    "projects manager": "Quản lý dự án",
+    "accounts manager": "Quản lý người dùng",
+    "report":"Báo cáo",
     "tasks": "Yêu cầu",
     "statistic": "Thống kê",
+    "workflow": "Quy trình",
     "about us": "Giới thiệu",
     "contacts": "Liên hệ",
     "404": "KHÔNG TÌM THẤY",
+
     "settings.title": "Cấu hình",
     "settings.desc": "Cấu hình chung cho ứng dụng",
     "settings.languages": "Ngôn ngữ",
+    "settings.color": "Màu sắc",
 
-    "projects.title": "Dự án",
-    "projects.desc": "Quản lý dự án",
+
+    "projects.title": "Quản lý dự án",
+    "users.title": "Quản lý người dùng",
+   
 }
