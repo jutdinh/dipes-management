@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 export default () => {
     const { proxy, lang, auth } = useSelector(state => state);
+
+    console.log(auth)
     const [defaultValue, setDefaultValue] = useState({})
     const fullname = localStorage.getItem("fullname");
 

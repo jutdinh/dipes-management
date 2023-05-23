@@ -31,13 +31,15 @@ function App() {
         if(  !_token  ){
              window.location = '/login'
         }
-        dispatch({
-          branch: "default",
-          type: "setAuthInfor",
-          payload: {
-            user
-          }
-        })
+        if( user ){
+          dispatch({
+            branch: "default",
+            type: "setAuthInfor",
+            payload: {
+              user
+            }
+          })
+        }
     }
 
 }, [])
