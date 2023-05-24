@@ -54,7 +54,7 @@ export default () => {
                      </li>
                      // <li><a href="price.html"><i class="fa fa-briefcase blue1_color"></i> <span>Pricing Tables</span></a></li> */}
                <li><a href="/projects"><i class="fa fa-briefcase purple_color2"></i> <span>{lang["projects manager"]}</span></a></li>
-               <li><a href="/account"><i class="fa fa-users "></i> <span>{lang["accounts manager"]}</span></a></li>
+               <li><a href="/users"><i class="fa fa-users "></i> <span>{lang["accounts manager"]}</span></a></li>
                <li><a href="/report"><i class="fa fa-file-excel-o blue_color_custom"></i> <span>{lang["report"]}</span></a></li>
                <li><a href="/statistic"><i class="fa fa-bar-chart-o green_color"></i> <span>{lang["statistic"]}</span></a></li>
                <li><a href="/workflow"><i class="fa fa-clock-o orange_color"></i> <span>{lang["workflow"]}</span></a></li>

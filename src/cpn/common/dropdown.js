@@ -25,7 +25,7 @@ export default (props) => {
                     data-toggle="dropdown" 
                     aria-haspopup="true" 
                     aria-expanded="false"  
-                    style={ fitWidth && { minWidth: "140px" } }                  
+                    style={ fitWidth && { minWidth: "120px" } }                  
             > { value.label }
             </button>
             <div className="dropdown-menu" aria-labelledby={ thisWidgetID }>

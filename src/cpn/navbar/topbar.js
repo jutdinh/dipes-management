@@ -70,13 +70,9 @@ export default () => {
                             aria-haspopup="true"
                             aria-expanded="false"
                         >
-                            <div className="img">
-                                <img src="" />
-                            </div>
-                            <a href="#"
-                                className="d-block text-light "
-                            > {renderLanguage(defaultValue.label, defaultValue.flag, false)} </a>
-                            <a className="d-block ml-2" href="#"><i class="fa fa-angle-down white_color"></i></a>
+                            
+                            <a href="#" className="d-block text-light "> {renderLanguage(defaultValue.label, defaultValue.flag, false)} </a>
+                            <a className="d-block ml-2" href="#"><i class="fa fa-caret-down"></i></a>
                         </div>
                         <div className="dropdown-menu" aria-labelledby="#lang-drop-toggle">
                             {options.map(opt =>
@@ -97,7 +93,7 @@ export default () => {
                                 <li>
                                     <a class="dropdown-toggle" data-toggle="dropdown">
                                         <img class="img-responsive " src={proxy + auth.avatar} alt="#" />
-                                        <span class="name_user">Hi, { generateUserLastName() }</span>
+                                        <span class="name_user">{lang["user info"]}, { generateUserLastName() }</span>
                                     </a>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="profile.html">{lang["my profile"]}</a>

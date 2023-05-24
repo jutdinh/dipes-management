@@ -1,5 +1,5 @@
 export default () => {
     return(
-        <span>Sign Up</span>
+        <span>Sign Up </span>
     )
 }

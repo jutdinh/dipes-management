@@ -12,6 +12,7 @@ export default () => {
             submit()
         }
     }
+    
     useEffect(() => {
         const storedAccountString = localStorage.getItem("username");
         const storedPwdString = localStorage.getItem("password");
@@ -54,17 +55,17 @@ export default () => {
                 // localStorage.setItem('fullname', data.data.fullname)
                 const stringifiedUser = JSON.stringify(data.data)
                 localStorage.setItem('user', stringifiedUser);
-                Swal.fire({
-                    title: "Đăng nhập thành công!",
-                    text: content,
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500,
-                }).then(function () {
+                // Swal.fire({
+                //     title: "Đăng nhập thành công!",
+                //     text: content,
+                //     icon: "success",
+                //     showConfirmButton: false,
+                //     timer: 1500,
+                // }).then(function () {
 
-                     window.location = "/projects";
-                });
-
+                //      window.location = "/projects";
+                // });
+                window.location = "/projects";
 
             } else {
                 Swal.fire({

@@ -14,10 +14,11 @@ export default {
     "help": "Help",
     "signout": "Sign Out",
     "dashboard": "Dashboard",
-
+    "user info": "Hi",
     "projects manager": "Project Manager",
 
     "accounts manager": "Accounts Manager",
+    "accounts list": "Accounts",
     "report":"Reports",
     "tasks": "Tasks",
 
@@ -32,6 +33,8 @@ export default {
     "settings.desc": "Application global settings",
     "settings.languages": "Languages",
     "settings.color": "Colors",
+    "settings.color button": "Change",
+
 
     "projects.title": "Projects",
     "projects.desc": "Project manager",

@@ -14,8 +14,11 @@ export default {
     "help": "Trợ giúp",
     "signout": "Đăng xuất",
     "dashboard": "Bảng điều khiển",
+    "user info": "Xin chào",
     "projects manager": "Quản lý dự án",
-    "accounts manager": "Quản lý người dùng",
+    "accounts manager": "Quản lý tài khoản",
+    "accounts list": "Dánh sách tài khoản",
+
     "report":"Báo cáo",
     "tasks": "Yêu cầu",
     "statistic": "Thống kê",
@@ -28,6 +31,7 @@ export default {
     "settings.desc": "Cấu hình chung cho ứng dụng",
     "settings.languages": "Ngôn ngữ",
     "settings.color": "Màu sắc",
+    "settings.color button": "Thay đổi",
 
 
     "projects.title": "Quản lý dự án",

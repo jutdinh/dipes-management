@@ -58,7 +58,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="row column4 graph">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="white_shd full margin_bottom_30">
                                         <div class="full graph_head">
                                             <div class="heading1 margin_0">
@@ -75,7 +75,7 @@ export default () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="white_shd full margin_bottom_30">
                                         <div class="full graph_head">
                                             <div class="heading1 margin_0">
@@ -87,7 +87,7 @@ export default () => {
 
                                             </div>
                                             <div className="col-md-6">
-                                                <button className="btn btn-primary" onClick={changeTheme}>Thay đổi</button>
+                                                <button className="btn btn-primary" onClick={changeTheme} style={{ minWidth: "120px" } }>{lang["settings.color button"]}</button>
                                             </div>
                                         </div>
                                     </div>
