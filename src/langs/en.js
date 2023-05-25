@@ -18,6 +18,7 @@ export default {
     "projects manager": "Project Manager",
 
     "accounts manager": "Accounts Manager",
+    "profile":"Profile",
     "accounts list": "Accounts",
     "report":"Reports",
     "tasks": "Tasks",

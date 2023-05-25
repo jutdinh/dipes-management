@@ -18,6 +18,7 @@ export default {
     "projects manager": "Quản lý dự án",
     "accounts manager": "Quản lý tài khoản",
     "accounts list": "Dánh sách tài khoản",
+    "profile":"Hồ sơ",
 
     "report":"Báo cáo",
     "tasks": "Yêu cầu",

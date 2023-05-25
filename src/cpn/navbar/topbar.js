@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export default () => {
     const { proxy, lang, auth } = useSelector(state => state);
 
-    console.log(auth)
+   
     const [defaultValue, setDefaultValue] = useState({})
     const fullname = localStorage.getItem("fullname");
 
@@ -36,13 +36,13 @@ export default () => {
     }
 
     const clickHandler = (e, opt) => {
-        console.log(opt)
+       
         e.preventDefault()
         setLanguage(opt)
     }
 
     const setLanguage = ({ value }) => {
-        console.log(value)
+       
         localStorage.setItem("lang", value);
         window.location.reload()
     }
@@ -96,7 +96,7 @@ export default () => {
                                         <span class="name_user">{lang["user info"]}, { generateUserLastName() }</span>
                                     </a>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="profile.html">{lang["my profile"]}</a>
+                                        <a class="dropdown-item" href="/users/profile">{lang["my profile"]}</a>
                                         <a class="dropdown-item" href="settings.html">{lang["settings"]}</a>
                                         <a class="dropdown-item" href="help.html">{lang["help"]}</a>
 

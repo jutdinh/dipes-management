@@ -27,6 +27,7 @@ export default () => {
         }
 
     }, []);
+
     const submit = (e) => {
         e.preventDefault()
         fetch(`${proxy}/auth/login`, {
@@ -52,6 +53,7 @@ export default () => {
                 // localStorage.setItem('role', data.data.role)
                 // localStorage.setItem('username', data.data.username)
                 localStorage.setItem('_token', data.token)
+                
                 // localStorage.setItem('fullname', data.data.fullname)
                 const stringifiedUser = JSON.stringify(data.data)
                 localStorage.setItem('user', stringifiedUser);

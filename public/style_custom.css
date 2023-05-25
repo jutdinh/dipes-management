@@ -23,9 +23,40 @@
 .language-custom{
 color: white;
 }
-
-
-
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .profile_details {
+    position: relative;
+  }
+  
+  .close-button {
+    display: none;
+    position: absolute;
+    background-color: aquamarine;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .profile_details:hover .close-button {
+    display: block;
+  }
+  
+.error-message{
+    color: red;
+}
+.red_start{
+    color: red;
+}
 .blue_color_custom {
     color: #34a83e !important;
 }
