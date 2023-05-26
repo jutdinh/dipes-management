@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import $ from 'jquery';
 
 export default () => {
-    const { lang } = useSelector(state => state);
+    const { lang, socket } = useSelector(state => state);
     const [defaultValue, setDefaultValue] = useState({})
 
     const [pageState, setPageState] = useState(0);
@@ -91,7 +91,8 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                               
+
                             </div>
                         </div>
                     </div>

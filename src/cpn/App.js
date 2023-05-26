@@ -11,6 +11,7 @@ import { Home } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
 import { Login, SignUp, SignOut } from './auth';
 
+
 import { Settings } from './settings';
 import { Projects, ProjectsCard } from './projects';
 import { ListUser, Profile } from './users';
@@ -18,14 +19,15 @@ import { ListUser, Profile } from './users';
 
 function App() {
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch()  
 
   useEffect(() => {
     const specialURLs = ["/login", "/signup", "/signout"]
     const url = window.location.pathname;
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const user = JSON.parse(stringifiedUser)
+    const user = JSON.parse(stringifiedUser)   
+    
 
     if (specialURLs.indexOf(url) === -1) {
       if (!_token) {

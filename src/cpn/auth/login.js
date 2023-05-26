@@ -9,7 +9,7 @@ export default () => {
 
     const enterTriggered = (e) => {
         if (e.keyCode === 13) {
-            submit()
+            submit(e)
         }
     }
     
