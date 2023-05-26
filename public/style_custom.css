@@ -52,22 +52,4 @@ color: white;
 }
 .blue_color_custom {
     color: #34a83e !important;
-} 
-
-.modal-dialog-left {
-        position: absolute;
-        left: 0;
-        margin-left: 0;
-        transform: none;
-    }
-
-    .modal-dialog {
-        max-width: none;
-        margin-top: 4.5rem;
-       
-    }
-    
-    .form-group{
-        width: 100%;
-        max-width: 500px;
-    }
+}
