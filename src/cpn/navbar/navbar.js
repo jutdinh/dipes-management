@@ -1,7 +1,11 @@
 import { useSelector } from "react-redux"
-
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 export default () => {
    const { proxy, lang } = useSelector(state => state)
+   const stringifiedUser = localStorage.getItem("user");
+   const user = JSON.parse(stringifiedUser) || {}
+   const [activeLink, setActiveLink] = useState("/");
 
    return (
       <nav id="sidebar">
@@ -23,39 +27,20 @@ export default () => {
          <div class="sidebar_blog_2">
             <h4>{lang["general"]}</h4>
             <ul class="list-unstyled components">
-               {/* <li class="active">
-                  <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-dashboard yellow_color"></i> <span>{lang["dashboard"]}</span></a>
-                  <ul class="collapse list-unstyled" id="dashboard">
-                     <li>
-                        <a href="/projects"> <span>{lang["projects manager"]}</span></a>
-                        
-                     </li>
-                     <li>
-                        <a href="/accounts"> <span>{lang["accounts manager"]}</span></a>
-                     </li>
-                  </ul>
-               </li>  <li>
-                        <a href="#element" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-diamond purple_color"></i> <span>Elements</span></a>
-                        <ul class="collapse list-unstyled" id="element">
-                           <li><a > <span>General Elements</span></a></li>
-                           <li><a > <span>Media Gallery</span></a></li>
-                           <li><a > <span>Icons</span></a></li>
-                           <li><a > <span>Invoice</span></a></li>
-                        </ul>
-                     </li> */}
-              
-               {/* <li>
-                        <a href="#apps" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-object-group blue2_color"></i> <span>Apps</span></a>
-                        <ul class="collapse list-unstyled" id="apps">
-                           <li><a > <span>Email</span></a></li>
-                           <li><a> <span>Calendar</span></a></li>
-                           <li><a > <span>Media Gallery</span></a></li>
-                        </ul>
-                     </li>
-                     // <li><a href="price.html"><i class="fa fa-briefcase blue1_color"></i> <span>Pricing Tables</span></a></li> */}
-               <li><a href="/projects"><i class="fa fa-briefcase purple_color2"></i> <span>{lang["projects manager"]}</span></a></li>
-               <li><a href="/users"><i class="fa fa-users "></i> <span>{lang["accounts manager"]}</span></a></li>
-               <li><a href="/report"><i class="fa fa-file-excel-o blue_color_custom"></i> <span>{lang["report"]}</span></a></li>
+               <li className="navbar-item">
+                  <NavLink to="/projects" activeClassName="nav-active">
+                     <i class="fa fa-briefcase purple_color2"></i>
+                     <span>{lang["projects manager"]}</span>
+                  </NavLink>
+               </li>
+               {user.role === "ad" || user.role === "uad" ? (
+                  <li className="navbar-item">
+                     <NavLink to="/users" activeClassName="nav-active">
+                        <i class="fa fa-users"></i>
+                        <span>{lang["accounts manager"]}</span>
+                     </NavLink>
+                  </li>
+               ) : null}
                <li><a href="/statistic"><i class="fa fa-bar-chart-o green_color"></i> <span>{lang["statistic"]}</span></a></li>
                <li><a href="/workflow"><i class="fa fa-clock-o orange_color"></i> <span>{lang["workflow"]}</span></a></li>
                <li>

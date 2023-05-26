@@ -3,7 +3,7 @@ import { Dropdown } from "../common";
 import { useEffect, useState } from "react";
 
 export default () => {
-    const { proxy, lang, auth } = useSelector(state => state);
+    const { proxy, lang, auth, profiles } = useSelector(state => state);
 
    
     const [defaultValue, setDefaultValue] = useState({})
@@ -92,8 +92,8 @@ export default () => {
                             <ul class="user_profile_dd ">
                                 <li>
                                     <a class="dropdown-toggle" data-toggle="dropdown">
-                                        <img class="img-responsive " src={proxy + auth.avatar} alt="#" />
-                                        <span class="name_user">{lang["user info"]}, { generateUserLastName() }</span>
+                                        <img class="img-responsive circle-image" src={proxy + auth.avatar} alt="#" />
+                                        <span class="name_user"> { generateUserLastName() }</span>
                                     </a>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="/users/profile">{lang["my profile"]}</a>

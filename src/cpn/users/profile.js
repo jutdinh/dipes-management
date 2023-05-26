@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import React, { useRef } from "react";
 import Swal from 'sweetalert2';
+import { Profile } from '.';
 export default (props) => {
     const { lang, proxy } = useSelector(state => state);
-    const [showModal, setShowModal] = useState(false);
-    
+ 
+
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const user = JSON.parse(stringifiedUser)
     const [profile, setProfile] = useState({});
     useEffect(() => {
-        fetch(`${proxy}/auth/u/${ user.username }`, {
+        fetch(`${proxy}/auth/u/${user.username}`, {
             headers: {
                 Authorization: _token
             }
@@ -23,13 +24,49 @@ export default (props) => {
                 if (data != undefined) {
                     setProfile(data);
                     console.log(data)
-                   
+
                 }
             })
     }, [])
     useEffect(() => {
         console.log(profile)
     }, [profile])
+
+    const fileInputRef = useRef(null);
+
+    const handleClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        // Xử lý tệp tin tại đây
+        if( file ){
+           
+            if( file != undefined ){
+
+                const reader = new FileReader();
+                reader.readAsDataURL( file );
+                reader.onload = (e) => {
+                    setProfile({ ...profile, avatar: e.target.result })
+
+                    fetch(`${proxy}/auth/self/avatar`, {
+                        method: "PUT",
+                        headers: {
+                            "content-type": "application/json",
+                            Authorization: _token
+                        },
+                        body: JSON.stringify({ image: e.target.result })
+                    }).then( res => res.json() ).then( data => {
+                        console.log(data)
+                    })
+                }
+            }
+        }
+
+
+
+    };
     return (
 
 
@@ -57,15 +94,52 @@ export default (props) => {
 
                                     <div class="col-lg-12">
                                         <div class="full dis_flex center_text">
-                                            <div class="profile_img"><img width="180" class="rounded-circle" src={proxy+ profile.avatar} alt="#" /></div>
+                                            <div className="profile_img" onClick={handleClick}>
+                                                <img
+                                                    width="120"
+                                                    className="rounded-circle"
+                                                    src={ profile.avatar && profile.avatar.length < 255 ? (proxy + profile.avatar) : profile.avatar }
+                                                    alt="#"
+                                                />
+                                                <input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload} />
+                                            </div>
+
                                             <div class="profile_contant">
                                                 <div class="contact_inner">
-                                                    <h3>{profile.fullname}</h3>
+                                                    <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
-                                                        <li><i class="fa fa-envelope-o"></i> : {profile.email}</li>
-                                                        <li><i class="fa fa-phone"></i> : {profile.phone}</li>
+                                                        <li><i class="fa fa-envelope-o"></i> : {profile.email || "nhan.to@mylangroup.com"}</li>
+                                                        <li> <i class="fa fa-phone"></i> : {profile.phone || "0359695554"}</li>
+
+                                                        <li>Địa chỉ: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
+                                                        <li>Ghi chú: {profile.note || "Ghi chú"}</li>
                                                     </ul>
                                                 </div>
+                                                {/* <div class="user_progress_bar">
+                                                <div class="progress_bar">
+                                                
+                                                   <span class="skill" style={{width:85}}>Web Applications <span class="info_valume">85%</span></span>                   
+                                                   <div class="progress skill-bar ">
+                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"  style={{width:85}}>
+                                                      </div>
+                                                   </div>
+                                                   <span class="skill"  style={{width:78}}>Website Design <span class="info_valume">78%</span></span>   
+                                                   <div class="progress skill-bar">
+                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"  style={{width:78}}>
+                                                      </div>
+                                                   </div>
+                                                   <span class="skill"  style={{width:47}}>Automation & Testing <span class="info_valume">47%</span></span>
+                                                   <div class="progress skill-bar">
+                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100"  style={{width:54}}>
+                                                      </div>
+                                                   </div>
+                                                   <span class="skill"  style={{width:65}}>UI / UX <span class="info_valume">65%</span></span>
+                                                   <div class="progress skill-bar">
+                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"  style={{width:65}}>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div> */}
 
                                             </div>
                                         </div>

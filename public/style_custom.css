@@ -20,35 +20,28 @@
     color: white;
     font-size: 14px;
 }
+.circle-image{
+    border-radius: 50%;
+}
 .language-custom{
 color: white;
 }
-.close-icon {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 5px;
-    background-color: red;
-    color: white;
-    cursor: pointer;
+.navbar-item .active {
+    background-color: #4CAF50; /* Màu nền xanh lá cây */
+    color: white; /* Màu chữ trắng */
   }
   
-  .profile_details {
-    position: relative;
+  .contact_inner .left-cus {
+    width: 70%;
+    float: left;
+    padding-right: 20px;
+}
+.right_button button {
+    margin-right: 10px;
   }
   
-  .close-button {
-    display: none;
-    position: absolute;
-    background-color: aquamarine;
-    top: 0;
-    right: 0;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .profile_details:hover .close-button {
-    display: block;
+  .right_button button:last-child {
+    margin-right: 0;
   }
   
 .error-message{
@@ -59,4 +52,22 @@ color: white;
 }
 .blue_color_custom {
     color: #34a83e !important;
-}
+} 
+
+.modal-dialog-left {
+        position: absolute;
+        left: 0;
+        margin-left: 0;
+        transform: none;
+    }
+
+    .modal-dialog {
+        max-width: none;
+        margin-top: 4.5rem;
+       
+    }
+    
+    .form-group{
+        width: 100%;
+        max-width: 500px;
+    }
