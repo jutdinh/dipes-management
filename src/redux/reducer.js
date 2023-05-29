@@ -18,6 +18,9 @@ export default ( state = initState, action ) => {
         case "langs":
             return LangsBranch(state, action);
             break;
+        // case "default":
+        //     return defaultBranch(state, action);
+        //     break;
         default:
             return defaultBranch(state, action);
             break;

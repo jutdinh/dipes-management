@@ -16,13 +16,16 @@ export default {
     "dashboard": "Dashboard",
     "user info": "Hi",
     "projects manager": "Project Manager",
-
+    "project list":"Project List",
     "accounts manager": "Accounts Manager",
     "profile":"Profile",
-    "accounts list": "Accounts",
+    "accounts list": "Account list",
     "report":"Reports",
     "tasks": "Tasks",
+    "projects worked": "Projects worked on",
+    "profile user":"Account information",
 
+    "min ago":"min ago",
     "statistic": "Statistic",
     "workflow": "Workflow", 
     

@@ -9,6 +9,7 @@
     background-color: #ddd !important;
     color: #fff;
 }
+
 .footer-custom {
     position: absolute;
     bottom: 0;
@@ -16,64 +17,172 @@
     width: 100%;
     text-align: center;
 }
+
 .footer-custom p {
     color: white;
     font-size: 14px;
 }
-.circle-image{
-    border-radius: 50%;
-}
-.language-custom{
-color: white;
-}
-.navbar-item .active {
-    background-color: #4CAF50; /* Màu nền xanh lá cây */
-    color: white; /* Màu chữ trắng */
-  }
+
+.circle-image {
+    border-radius: 100%;
+    width: 48px;
+    padding-right: px;
   
-  .contact_inner .left-cus {
+}
+
+.language-custom {
+    color: white;
+}
+
+
+.navbar-item .active {
+    background-color: #4CAF50;
+    /* Màu nền xanh lá cây */
+    color: white;
+    /* Màu chữ trắng */
+}
+
+.contact_inner .left-cus {
     width: 70%;
     float: left;
     padding-right: 20px;
 }
+
 .right_button button {
     margin-right: 10px;
-  }
-  
-  .right_button button:last-child {
+}
+
+.right_button button:last-child {
     margin-right: 0;
-  }
-  
-.error-message{
+}
+
+.error-message {
     color: red;
 }
-.red_start{
+
+.red_start {
     color: red;
 }
+
 .blue_color_custom {
     color: #34a83e !important;
-} 
+}
 
 .modal-dialog-left {
-        position: absolute;
-        left: 0;
-        margin-left: 0;
-        transform: none;
-    }
+    position: absolute;
+    left: 0;
+    margin-left: 0;
+    transform: none;
+}
 
-    .modal-dialog {
-        max-width: none;
-        margin-top: 4.8rem;
-        padding-left: 282px;
-        height: 1200px;
-       
-    }
-    
-    .form-group{
-        width: 100%;
-     
-        padding-left: 100px;
-    }
-    .modal-content{
-        max-width: 1160px;
-    }
+.modal-dialog {
+    max-width: none;
+    margin-top: 4.7rem;
+    padding-left: 282px;
+
+    height: 100%;
+    /* Chiều cao của modal bằng chiều cao của viewport */
+}
+
+.form-group {
+    width: 100%;
+
+    padding: 0px 100px;
+}
+
+.modal-content {
+    max-width: 1160px;
+}
+.page_title {
+    background: #fff;
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding: 25px 35px 22px 38px;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+    margin-left: -40px;
+    margin-right: -40px;
+    position: relative;
+}
+
+.page_title h4 {
+
+    font-size: 18px;
+    color: #000;
+    line-height: normal;
+    font-weight: 700;
+   
+    padding-left: 15px;
+
+}
+
+.heading1 h4 {
+
+    font-size: 18px;
+    color: #000;
+    line-height: normal;
+    font-weight: 700;
+  
+ 
+
+}
+.custom-buttonadd {
+    border-radius: 50px; /* Adjust the value as needed */
+}
+
+
+
+
+.container-fluid {
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.row .col-md-12{
+    position: relative;
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+
+/* search */
+.search-bar {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-bar input[type="text"] {
+    width: 100%;
+    padding: 5px;
+  }
+  
+  .search-bar button {
+    padding: 5px 10px;
+  }
+  
+
+  .square {
+    position: relative;
+    padding-bottom: 100%; /* Chiều cao bằng với chiều rộng */
+    overflow: hidden;
+  }
+  
+  .square:before {
+    content: "";
+    display: block;
+    padding-top: 100%; /* Tạo không gian bên trong */
+  }
+  
+
+  .profile_contacts{
+    padding-bottom: 10px;
+  }
+
+  .custom-button {
+    border-radius: 20px; /* Adjust the value as needed */
+}
+ 

@@ -303,8 +303,11 @@ export default (props) => {
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
-                        <div class="page_title">
-                            <h2>{lang["accounts manager"]}</h2>
+                    <div class="page_title d-flex align-items-center">
+                            <h4>{lang["accounts manager"]}</h4>
+                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#myModal">
+                                <i class="fa fa-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -315,13 +318,9 @@ export default (props) => {
                                 <div class="heading1 margin_0">
                                     <div className="row justify-content-end">
                                         <div className="col-auto">
-                                            <h2>{lang["accounts list"]}</h2>
+                                            <h4>{lang["accounts list"]}</h4>
                                         </div>
-                                        <div className="col-auto">
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -431,7 +430,7 @@ export default (props) => {
                             </div>
                             {/* Modal edit */}
                             <div class={`modal ${showModal ? 'show' : 'hidden'}`} id="myEditmodal">
-                                <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-dialog modal-dialog-left container">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h4 class="modal-title">Cập nhật thông tin</h4>

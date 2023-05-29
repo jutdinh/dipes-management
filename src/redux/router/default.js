@@ -4,6 +4,8 @@ export default (state, action) => {
         case "setAuthInfor":
             return setAuthInfor(state, action);
             break;
+        case "setProjects":
+            return setProjects(state, action);
         default:
             return state;
     }
@@ -11,6 +13,12 @@ export default (state, action) => {
 
 
 const setAuthInfor = (state, action) => {
-    const { user } = action.payload;
-    return { ...state, auth: user }
+    const currentAccount = action.payload.user;
+
+    return { ...state, auth: currentAccount }
 } 
+
+const setProjects = (state, action) => {
+    const { projects } = action.payload;
+    return { ...state, projects }
+}

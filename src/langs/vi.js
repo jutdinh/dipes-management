@@ -16,12 +16,18 @@ export default {
     "dashboard": "Bảng điều khiển",
     "user info": "Xin chào",
     "projects manager": "Quản lý dự án",
+    "project list":"Danh sách dự án",
+
+
     "accounts manager": "Quản lý tài khoản",
-    "accounts list": "Dánh sách tài khoản",
-    "profile":"Hồ sơ",
+    "accounts list": "Danh sách tài khoản",
+    "profile":"Thông tin cá nhân",
+    "profile user":"Thông tin tài khoản",
+    "min ago": "phút trước",
 
     "report":"Báo cáo",
     "tasks": "Yêu cầu",
+    "projects worked": "Dự án đã tham gia",
     "statistic": "Thống kê",
     "workflow": "Quy trình",
     "about us": "Giới thiệu",

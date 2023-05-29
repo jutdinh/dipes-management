@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { Profile } from '.';
 export default (props) => {
     const { lang, proxy } = useSelector(state => state);
- 
+
 
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
@@ -41,12 +41,12 @@ export default (props) => {
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         // Xử lý tệp tin tại đây
-        if( file ){
-           
-            if( file != undefined ){
+        if (file) {
+
+            if (file != undefined) {
 
                 const reader = new FileReader();
-                reader.readAsDataURL( file );
+                reader.readAsDataURL(file);
                 reader.onload = (e) => {
                     setProfile({ ...profile, avatar: e.target.result })
 
@@ -57,7 +57,7 @@ export default (props) => {
                             Authorization: _token
                         },
                         body: JSON.stringify({ image: e.target.result })
-                    }).then( res => res.json() ).then( data => {
+                    }).then(res => res.json()).then(data => {
                         console.log(data)
                     })
                 }
@@ -75,33 +75,33 @@ export default (props) => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h2>{lang["profile"]}</h2>
+                            <h4>{lang["profile"]}</h4>
                         </div>
                     </div>
                 </div>
 
                 <div class="row column1">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>User profile</h2>
+                                    <h5>{lang["profile user"]}</h5>
                                 </div>
                             </div>
                             <div class="full price_table padding_infor_info">
                                 <div class="row">
-
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-8">
                                         <div class="full dis_flex center_text">
                                             <div className="profile_img" onClick={handleClick}>
                                                 <img
-                                                    width="120"
+                                                    width="180"
                                                     className="rounded-circle"
-                                                    src={ profile.avatar && profile.avatar.length < 255 ? (proxy + profile.avatar) : profile.avatar }
+                                                    src={profile.avatar && profile.avatar.length < 255 ? (proxy + profile.avatar) : profile.avatar}
                                                     alt="#"
                                                 />
-                                                <input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload} />
+                                                <input type="file"
+                                                    accept='image/*'
+                                                    ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload} />
                                             </div>
 
                                             <div class="profile_contant">
@@ -115,31 +115,16 @@ export default (props) => {
                                                         <li>Ghi chú: {profile.note || "Ghi chú"}</li>
                                                     </ul>
                                                 </div>
-                                                {/* <div class="user_progress_bar">
-                                                <div class="progress_bar">
-                                                
-                                                   <span class="skill" style={{width:85}}>Web Applications <span class="info_valume">85%</span></span>                   
-                                                   <div class="progress skill-bar ">
-                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"  style={{width:85}}>
-                                                      </div>
-                                                   </div>
-                                                   <span class="skill"  style={{width:78}}>Website Design <span class="info_valume">78%</span></span>   
-                                                   <div class="progress skill-bar">
-                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"  style={{width:78}}>
-                                                      </div>
-                                                   </div>
-                                                   <span class="skill"  style={{width:47}}>Automation & Testing <span class="info_valume">47%</span></span>
-                                                   <div class="progress skill-bar">
-                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100"  style={{width:54}}>
-                                                      </div>
-                                                   </div>
-                                                   <span class="skill"  style={{width:65}}>UI / UX <span class="info_valume">65%</span></span>
-                                                   <div class="progress skill-bar">
-                                                      <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"  style={{width:65}}>
-                                                      </div>
-                                                   </div>
+                                                <div class="user_progress_bar">
+                                                    <div class="progress_bar">
+
+                                                        <span class="skill" style={{ width: 500 }}>Web Applications <span class="info_valume">85%</span></span>
+                                                        <div class="progress skill-bar ">
+                                                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 500 }}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                             </div> */}
 
                                             </div>
                                         </div>
@@ -148,9 +133,8 @@ export default (props) => {
                                                 <div class="tabbar">
                                                     <nav>
                                                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#recent_activity" role="tab" aria-selected="true">Recent Activity</a>
-                                                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#project_worked" role="tab" aria-selected="false">Projects Worked on</a>
-                                                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#profile_section" role="tab" aria-selected="false">Profile</a>
+                                                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#recent_activity" role="tab" aria-selected="true">{lang["tasks"]}</a>
+                                                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#project_worked" role="tab" aria-selected="false">{lang["projects worked"]}</a>
                                                         </div>
                                                     </nav>
                                                     <div class="tab-content" id="nav-tabContent">
@@ -158,19 +142,23 @@ export default (props) => {
                                                             <div class="msg_list_main">
                                                                 <ul class="msg_list">
                                                                     <li>
-                                                                        <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
+                                                                        {/* <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span> */}
                                                                         <span>
-                                                                            <span class="name_user">Taison Jack</span>
-                                                                            <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                                                            <span class="time_ago">12 min ago</span>
+
+                                                                            <span class="name_user">Yêu cầu 1</span>
+                                                                            <span class="msg_user">Mô tả</span>< br />
+                                                                            <span class="msg_user">Dự án: Tên dự án</span>
+                                                                            <span class="time_ago">12 {lang["min ago"]}</span>
                                                                         </span>
                                                                     </li>
                                                                     <li>
-                                                                        <span><img src="images/layout_img/msg3.png" class="img-responsive" alt="#" /></span>
+                                                                        {/* <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span> */}
                                                                         <span>
-                                                                            <span class="name_user">Mike John</span>
-                                                                            <span class="msg_user">On the other hand, we denounce.</span>
-                                                                            <span class="time_ago">12 min ago</span>
+
+                                                                            <span class="name_user">Yêu cầu 2</span>
+                                                                            <span class="msg_user">Mô tả</span>< br />
+                                                                            <span class="msg_user">Dự án: Tên dự án</span>
+                                                                            <span class="time_ago">12 {lang["min ago"]}</span>
                                                                         </span>
                                                                     </li>
                                                                 </ul>
@@ -182,21 +170,18 @@ export default (props) => {
                                                                 qui ratione voluptatem sequi nesciunt.
                                                             </p>
                                                         </div>
-                                                        <div class="tab-pane fade" id="profile_section" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et
-                                                                quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-                                                                qui ratione voluptatem sequi nesciunt.
-                                                            </p>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-4">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2"></div>
+
                     </div>
                 </div>
             </div>
