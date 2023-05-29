@@ -335,6 +335,7 @@ export default (props) => {
                                         </div>
                                         <div class="modal-body">
                                             <form>
+                                        
                                                 <div class="form-group">
                                                     <label>Tên đăng nhập <span className='red_start'>*</span></label>
                                                     <input type="text" class="form-control" value={user.username} onChange={

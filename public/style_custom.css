@@ -52,4 +52,28 @@ color: white;
 }
 .blue_color_custom {
     color: #34a83e !important;
-}
+} 
+
+.modal-dialog-left {
+        position: absolute;
+        left: 0;
+        margin-left: 0;
+        transform: none;
+    }
+
+    .modal-dialog {
+        max-width: none;
+        margin-top: 4.8rem;
+        padding-left: 282px;
+        height: 1200px;
+       
+    }
+    
+    .form-group{
+        width: 100%;
+     
+        padding-left: 100px;
+    }
+    .modal-content{
+        max-width: 1160px;
+    }
