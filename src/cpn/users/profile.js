@@ -93,6 +93,7 @@ export default (props) => {
                                                 <div class="contact_inner">
                                                     <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
+                                                        <li>Tài khoản: {profile.role}</li>
                                                         <li><i class="fa fa-envelope-o"></i> : {profile.email || "nhan.to@mylangroup.com"}</li>
                                                         <li> <i class="fa fa-phone"></i> : {profile.phone || "0359695554"}</li>
                                                         <li>Địa chỉ: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
