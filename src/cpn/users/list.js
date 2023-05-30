@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 export default (props) => {
-    const { lang, proxy } = useSelector(state => state);
+    const { lang, proxy, auth } = useSelector(state => state);
+
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
-    const [errorMessages, setErrorMessages] = useState({});
+    const [errorMessagesadd, setErrorMessagesadd] = useState({});
+    const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [isDataAdded, setIsDataAdded] = useState(false);
     const roles = [
         { id: 0, label: "Quản trị viên ( Administrator )", value: "ad" },
@@ -16,9 +18,13 @@ export default (props) => {
         { id: 2, label: "Người triển khai ( Implementation Staff )", value: "pd" },
         { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
+
     const [user, setUser] = useState({});
     const [editUser, setEditUser] = useState({});
+    // Close Modal
     const handleCloseModal = () => {
+        setErrorMessagesadd({});
+        setErrorMessagesedit({});
         setEditUser({
             username: '',
             password: '',
@@ -32,6 +38,7 @@ export default (props) => {
         setUser({
             username: '',
             password: '',
+            confirmPassword: '',
             fullname: '',
             role: '',
             email: '',
@@ -41,6 +48,7 @@ export default (props) => {
         });
         setShowModal(false);
     };
+    // Get all user
     const [profiles, setProfile] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
@@ -70,6 +78,7 @@ export default (props) => {
             [name]: value
         }));
     };
+    // Check email, phone
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -81,43 +90,44 @@ export default (props) => {
     // Add user
     const submit = (e) => {
         e.preventDefault();
-        // const { username, password, fullname, role, email, phone, address } = user;
-        // const errors = {};
-        // if (!username) {
-        //     errors.username = "Vui lòng nhập tên đăng nhập";
-        // }
-        // if (!password) {
-        //     errors.password = "Vui lòng nhập mật khẩu";
-        // }
-        // if (!fullname) {
-        //     errors.fullname = "Vui lòng nhập họ tên";
-        // }
-        // if (!role) {
-        //     errors.role = "Vui lòng chọn quyền";
-        // }
-        // if (!email) {
-        //     errors.email = "Vui lòng nhập email";
-        // } else if (!isValidEmail(email)) { // Kiểm tra tính hợp lệ của email
-        //     errors.email = "Email không hợp lệ";
-        // }
-        // if (!phone) {
-        //     errors.phone = "Vui lòng nhập số điện thoại";
-        // }
-        // else if (!isValidPhone(phone)) { // Kiểm tra tính hợp lệ của phone
-        //     errors.phone = "Số điện thoại không hợp lệ";
-        // }
-        // if (!address) {
-        //     errors.address = "Vui lòng nhập địa chỉ";
-        // }
-        // if (user.password !== user.confirmPassword) {
-        //     setErrorMessages({ ...errorMessages, confirmPassword: "Mật khẩu không khớp" });
-        //     return;
-        // }
-        // // Kiểm tra xem có lỗi không
-        // if (Object.keys(errors).length > 0) {
-        //     setErrorMessages(errors);
-        //     return;
-        // }
+        const { username, password, fullname, role, email, phone, address } = user;
+        const errors = {};
+        if (!username) {
+            errors.username = lang["error.username"];
+        }
+        if (!password) {
+            errors.password = lang["error.password"];
+        }
+        if (!fullname) {
+            errors.fullname = lang["error.fullname"];
+        }
+        if (!role) {
+            errors.role = lang["error.permission"];
+        }
+
+        if (!email) {
+            errors.email = lang["error.email"];
+        } else if (!isValidEmail(email)) {
+            errors.email = lang["error.vaildemail"];
+        }
+        if (!phone) {
+            errors.phone = lang["error.phone"];
+        }
+        else if (!isValidPhone(phone)) {
+            errors.phone = lang["error.vaildphone"];
+        }
+        if (!address) {
+            errors.address = lang["error.address"];
+        }
+        if (user.password != user.confirmPassword) {
+            errors.confirmPassword = lang["error.confirmpassowrd"];
+
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesadd(errors);
+            return;
+        }
         // console.log(_token);
         if (user.username && user.password) {
             fetch(`${proxy}/auth/signup`, {
@@ -152,13 +162,13 @@ export default (props) => {
                             showConfirmButton: false,
                             timer: 2000,
                         }).then(function () {
-                            // Không cần reload trang
+
                         });
                     }
                 });
         }
     };
-
+    // Remove user
     const handleDeleteUser = (user) => {
         const requestBody = {
             account: {
@@ -173,7 +183,7 @@ export default (props) => {
             confirmButtonText: 'Xóa',
             cancelButtonText: 'Hủy',
             confirmButtonColor: 'rgb(209, 72, 81)',
-          }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/auth/user`, {
                     method: 'DELETE',
@@ -186,8 +196,7 @@ export default (props) => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        if(status==="0x52404")
-                        {
+                        if (status === "0x52404") {
                             Swal.fire({
                                 title: "Cảnh báo!",
                                 text: content,
@@ -222,11 +231,11 @@ export default (props) => {
                         }
                     });
             }
-          });
-                  // console.log(requestBody)
-       
-    }
+        });
+        // console.log(requestBody)
 
+    }
+    // Update user
     const submitUpdate = (e) => {
         e.preventDefault();
         if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
@@ -293,19 +302,28 @@ export default (props) => {
                 $('.modal-backdrop').remove()
             });
             setShowModal(false);
+
             return;
+
+        } else {
+            setEditUser(editUser)
+            setShowModal(true); // 
         }
-        setEditUser(editUser)
-        setShowModal(true); // 
     }
+    // 
+    const admins = profiles.filter(profile => profile.role === 'ad');
+    const projectManagers = profiles.filter(profile => profile.role === 'pm');
+    const implementers = profiles.filter(profile => profile.role === 'pd');
+    const projectFollowers = profiles.filter(profile => profile.role === 'ps');
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
-                    <div class="page_title d-flex align-items-center">
+                        <div class="page_title d-flex align-items-center">
                             <h4>{lang["accounts manager"]}</h4>
-                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#myModal">
+                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#quoteForm">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -314,197 +332,188 @@ export default (props) => {
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            {/* <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <div className="row justify-content-end">
                                         <div className="col-auto">
                                             <h4>{lang["accounts list"]}</h4>
                                         </div>
-                                       
+
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                             {/* Modal add */}
-                            <div class={`modal ${showModal ? 'show' : ''}`} id="myModal">
-                                <div class="modal-dialog modal-dialog-left container">
-                                    <div class="modal-content">
+                            <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
+                                    <div class="modal-content p-md-3">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Thêm mới người dùng</h4>
-                                            <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">{lang["adduser.title"]} </h4>
+                                            <button class="close" type="button" onClick={handleCloseModal} data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                         </div>
                                         <div class="modal-body">
                                             <form>
-                                        
-                                                <div class="form-group">
-                                                    <label>Tên đăng nhập <span className='red_start'>*</span></label>
-                                                    <input type="text" class="form-control" value={user.username} onChange={
-                                                        (e) => { setUser({ ...user, username: e.target.value }) }
-                                                    } placeholder="Nhập tên đăng nhập" />
-                                                    {errorMessages.username && <span class="error-message">{errorMessages.username}</span>}
+                                                <div class="row">
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="firstname">{lang["fullname"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input type="text" class="form-control" value={user.fullname} onChange={
+                                                            (e) => { setUser({ ...user, fullname: e.target.value }) }
+                                                        } placeholder={lang["p.fullname"]} />
+                                                        {errorMessagesadd.username && <span class="error-message">{errorMessagesadd.fullname}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="firstname">{lang["username"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input type="text" class="form-control" value={user.username} onChange={
+                                                            (e) => { setUser({ ...user, username: e.target.value }) }
+                                                        } placeholder={lang["p.username"]} />
+                                                        {errorMessagesadd.username && <span class="error-message">{errorMessagesadd.username}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="lastname">{lang["password"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input type="password" class="form-control" value={user.password} onChange={
+                                                            (e) => { setUser({ ...user, password: e.target.value }) }
+                                                        } placeholder={lang["p.password"]} />
+                                                        {errorMessagesadd.password && <span class="error-message">{errorMessagesadd.password}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="lastname">{lang["re-password"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input
+                                                            type="password"
+                                                            class="form-control"
+                                                            value={user.confirmPassword}
+                                                            onChange={(e) => {
+                                                                setUser({ ...user, confirmPassword: e.target.value });
+                                                            }}
+                                                            placeholder={lang["p.re-password"]}
+                                                        />
+                                                        {errorMessagesadd.confirmPassword && <span class="error-message">{errorMessagesadd.confirmPassword}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="email">{lang["email"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="email" class="form-control" value={user.email} onChange={
+                                                            (e) => { setUser({ ...user, email: e.target.value }) }
+                                                        } placeholder={lang["p.email"]} />
+                                                        {errorMessagesadd.email && <span class="error-message">{errorMessagesadd.email}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="phone">{lang["phone"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="phone" class="form-control" value={user.phone} onChange={
+                                                            (e) => { setUser({ ...user, phone: e.target.value }) }
+                                                        } placeholder={lang["p.phone"]} />
+                                                        {errorMessagesadd.phone && <span class="error-message">{errorMessagesadd.phone}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="projecttype">{lang["permission"]}<span class="red_star ml-1">*</span></label>
+                                                        <select className="form-control" name="role" value={user.role} onChange={handleChange} >
+                                                            <option value="">{lang["p.permission"]}</option>
+                                                            {users.role === "ad" ? (
+                                                                roles.slice(1, 4).map(role => (
+                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                ))
+                                                            ) : (
+                                                                roles.map(role => (
+                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                ))
+                                                            )}
+                                                        </select>
+                                                        {errorMessagesadd.role && <span className="error-message">{errorMessagesadd.role}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
+                                                        <textarea rows={5} type="text" class="form-control" value={user.address} onChange={
+                                                            (e) => { setUser({ ...user, address: e.target.value }) }
+                                                        } placeholder={lang["p.address"]} />
+                                                        {errorMessagesadd.address && <span class="error-message">{errorMessagesadd.address}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
+                                                        <textarea rows={5} type="text" class="form-control" value={user.note} onChange={
+                                                            (e) => { setUser({ ...user, note: e.target.value }) }
+                                                        } placeholder={lang["p.note"]} />
+                                                    </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>Mật khẩu <span className='red_start'>*</span></label>
-                                                    <input type="password" class="form-control" value={user.password} onChange={
-                                                        (e) => { setUser({ ...user, password: e.target.value }) }
-                                                    } placeholder="Nhập mật khẩu" />
-                                                    {errorMessages.password && <span class="error-message">{errorMessages.password}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Nhập lại mật khẩu <span className='red_start'>*</span></label>
-                                                    <input
-                                                        type="password"
-                                                        class="form-control"
-                                                        value={user.confirmPassword}
-                                                        onChange={(e) => {
-                                                            setUser({ ...user, confirmPassword: e.target.value });
-                                                        }}
-                                                        placeholder="Nhập lại mật khẩu"
-                                                    />
-                                                    {errorMessages.confirmPassword && <span class="error-message">{errorMessages.confirmPassword}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label >Họ tên <span className='red_start'>*</span></label>
-                                                    <input type="text" class="form-control" value={user.fullname} onChange={
-                                                        (e) => { setUser({ ...user, fullname: e.target.value }) }
-                                                    } placeholder="Nhập đầy đủ họ tên" />
-                                                    {errorMessages.fullname && <span class="error-message">{errorMessages.fullname}</span>}
-                                                </div>
-                                                <div className="form-group">
-                                                    <label htmlFor="sel1">Quyền <span className='red_start'>*</span></label>
-                                                    <select className="form-control" name="role" value={user.role} onChange={handleChange}>
-                                                        <option value="">Chọn quyền</option>
-                                                        {users.role === "ad" ? (
-                                                            roles.slice(1, 4).map(role => (
-                                                                <option key={role.id} value={role.value}>{role.label}</option>
-                                                            ))
-                                                        ) : (
-                                                            roles.map(role => (
-                                                                <option key={role.id} value={role.value}>{role.label}</option>
-                                                            ))
-                                                        )}
-                                                    </select>
-                                                    {errorMessages.role && <span className="error-message">{errorMessages.role}</span>}
-                                                </div>
-
-
-                                                <div class="form-group">
-                                                    <label>Email <span className='red_start'>*</span></label>
-                                                    <input type="email" class="form-control" value={user.email} onChange={
-                                                        (e) => { setUser({ ...user, email: e.target.value }) }
-                                                    } placeholder="Nhập email" />
-                                                    {errorMessages.email && <span class="error-message">{errorMessages.email}</span>}
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Số điện thoại <span className='red_start'>*</span></label>
-                                                    <input type="phone" class="form-control" value={user.phone} onChange={
-                                                        (e) => { setUser({ ...user, phone: e.target.value }) }
-                                                    } placeholder="Số điện thoại" />
-                                                    {errorMessages.phone && <span class="error-message">{errorMessages.phone}</span>}
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Địa chỉ <span className='red_start'>*</span></label>
-                                                    <input type="text" class="form-control" value={user.address} onChange={
-                                                        (e) => { setUser({ ...user, address: e.target.value }) }
-                                                    } placeholder="Địa chỉ" />
-                                                    {errorMessages.address && <span class="error-message">{errorMessages.address}</span>}
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input type="text" class="form-control" value={user.note} onChange={
-                                                        (e) => { setUser({ ...user, note: e.target.value }) }
-                                                    } placeholder="Ghi chú" />
-                                                </div>
-
                                             </form>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" onClick={submit} class="btn btn-success">Thêm mới</button>
-                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">Đóng</button>
-
+                                            <button type="button" onClick={submit} class="btn btn-success">{lang["btn.create"]}</button>
+                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             {/* Modal edit */}
-                            <div class={`modal ${showModal ? 'show' : 'hidden'}`} id="myEditmodal">
-                                <div class="modal-dialog modal-dialog-left container">
-                                    <div class="modal-content">
+                            <div class="modal fade" tabindex="-1" role="dialog" id="myEditmodal" aria-labelledby="edit" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
+                                    <div class="modal-content p-md-3">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Cập nhật thông tin</h4>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">{lang["edituser.title"]} </h4>
+
+                                            <button class="close" type="button" onClick={handleCloseModal} data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                         </div>
                                         <div class="modal-body">
                                             <form>
-                                                <div class="form-group">
-                                                    <input type="hidden" class="form-control" value={editUser.username} onChange={
-                                                        (e) => { setEditUser({ ...editUser, username: e.target.value }) }
-                                                    } placeholder="Nhập tên đăng nhập" />
-                                                    {errorMessages.username && <span class="error-message">{errorMessages.username}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <input type="hidden" class="form-control" value={editUser.password} onChange={
-                                                        (e) => { setEditUser({ ...editUser, password: e.target.value }) }
-                                                    } placeholder="Nhập mật khẩu" />
-                                                    {errorMessages.password && <span class="error-message">{errorMessages.password}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label >Họ tên <span className='red_start'>*</span></label>
-                                                    <input type="text" class="form-control" value={editUser.fullname} onChange={
-                                                        (e) => { setEditUser({ ...editUser, fullname: e.target.value }) }
-                                                    } placeholder="Nhập đầy đủ họ tên" />
-                                                    {errorMessages.fullname && <span class="error-message">{errorMessages.fullname}</span>}
-                                                </div>
-                                                <div className="form-group">
-                                                    <label htmlFor="sel1">Quyền <span className='red_start'>*</span></label>
-                                                    <select className="form-control" name="role" value={editUser.role} onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}>
-                                                        <option value="">Chọn quyền</option>
-                                                        {users.role === "ad" ? (
-                                                            roles.slice(1, 4).map(role => (
-                                                                <option key={role.id} value={role.value}>{role.label}</option>
-                                                            ))
-                                                        ) : (
-                                                            roles.map(role => (
-                                                                <option key={role.id} value={role.value}>{role.label}</option>
-                                                            ))
-                                                        )}
-                                                    </select>
-                                                    {errorMessages.role && <span className="error-message">{errorMessages.role}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Email <span className='red_start'>*</span></label>
-                                                    <input type="email" class="form-control" value={editUser.email} onChange={
-                                                        (e) => { setEditUser({ ...editUser, email: e.target.value }) }
-                                                    } placeholder="Nhập email" />
-                                                    {errorMessages.email && <span class="error-message">{errorMessages.email}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Số điện thoại <span className='red_start'>*</span></label>
-                                                    <input type="phone" class="form-control" value={editUser.phone} onChange={
-                                                        (e) => { setEditUser({ ...editUser, phone: e.target.value }) }
-                                                    } placeholder="Số điện thoại" />
-                                                    {errorMessages.phone && <span class="error-message">{errorMessages.phone}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Địa chỉ <span className='red_start'>*</span></label>
-                                                    <input type="text" class="form-control" value={editUser.address} onChange={
-                                                        (e) => { setEditUser({ ...editUser, address: e.target.value }) }
-                                                    } placeholder="Địa chỉ" />
-                                                    {errorMessages.address && <span class="error-message">{errorMessages.address}</span>}
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input type="text" class="form-control" value={editUser.note} onChange={
-                                                        (e) => { setEditUser({ ...editUser, note: e.target.value }) }
-                                                    } placeholder="Ghi chú" />
+                                                <div class="row">
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="firstname">{lang["fullname"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input type="text" class="form-control" value={editUser.fullname} onChange={
+                                                            (e) => { setEditUser({ ...editUser, fullname: e.target.value }) }
+                                                        } placeholder={lang["p.fullname"]} />
+                                                        {errorMessagesedit.username && <span class="error-message">{errorMessagesedit.fullname}</span>}
+                                                    </div>
+
+
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="email">{lang["email"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="email" class="form-control" value={editUser.email} onChange={
+                                                            (e) => { setEditUser({ ...editUser, email: e.target.value }) }
+                                                        } placeholder={lang["p.email"]} />
+                                                        {errorMessagesedit.email && <span class="error-message">{errorMessagesedit.email}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="phone">{lang["phone"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="phone" class="form-control" value={editUser.phone} onChange={
+                                                            (e) => { setEditUser({ ...editUser, phone: e.target.value }) }
+                                                        } placeholder={lang["p.phone"]} />
+                                                        {errorMessagesedit.phone && <span class="error-message">{errorMessagesedit.phone}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label htmlFor="sel1">{lang["permission"]} <span className='red_star'>*</span></label>
+                                                        <select className="form-control" name="role" value={editUser.role} onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}>
+                                                            <option value="">{lang["p.permission"]}</option>
+                                                            {users.role === "ad" ? (
+                                                                roles.slice(1, 4).map(role => (
+                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                ))
+                                                            ) : (
+                                                                roles.map(role => (
+                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                ))
+                                                            )}
+                                                        </select>
+                                                        {errorMessagesedit.role && <span class="error-message">{errorMessagesedit.role}</span>}
+                                                    </div>
+
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
+                                                        <textarea rows={5} type="text" class="form-control" value={editUser.address} onChange={
+                                                            (e) => { setEditUser({ ...editUser, address: e.target.value }) }
+                                                        } placeholder={lang["p.address"]} />
+                                                        {errorMessagesedit.address && <span class="error-message">{errorMessagesedit.address}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
+                                                        <textarea rows={5} type="text" class="form-control" value={editUser.note} onChange={
+                                                            (e) => { setEditUser({ ...editUser, note: e.target.value }) }
+                                                        } placeholder={lang["p.note"]} />
+
+                                                    </div>
+
                                                 </div>
                                             </form>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" onClick={submitUpdate} class="btn btn-success">Cập nhật</button>
-                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">Đóng</button>
+                                            <button type="button" onClick={submitUpdate} class="btn btn-success">{lang["btn.update"]}</button>
+                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+
                                         </div>
                                     </div>
                                 </div>
@@ -512,49 +521,188 @@ export default (props) => {
                             {/* List user */}
                             <div class="full price_table padding_infor_info">
                                 <div class="container-fluid">
-                                    <div class="row">
-                                        {profiles.map((item) => (
-                                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
-                                                <div class="contact_blog">
-                                                    <div class="contact_inner">
-                                                        <div class="left-cus">
-                                                            <h3>{item.fullname}</h3>
-                                                            <p><strong>Tài khoản: {item.username} </strong></p>
-                                                            <p><strong>Quyền: </strong>
-                                                                {item.role === "ad" ? "Quản trị viên" :
-                                                                    item.role === "pm" ? "Quản lý dự án" :
-                                                                        item.role === "pd" ? "Người triển khai" :
-                                                                            item.role === "ps" ? "Người theo dõi dự án" :
-                                                                                item.role}</p>
-                                                            <ul class="list-unstyled">
-                                                                <li><i class="fa fa-envelope-o"></i> : {item.email}</li>
-                                                                <li><i class="fa fa-phone"></i> : {item.phone}</li>
-                                                                <li>Tạo bởi: {item.create_by}</li>
-                                                                <li>Thời gian: {item.create_at}</li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="right">
-                                                            <div class="profile_contacts">
-                                                                <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                    {admins.length > 0 && (
+                                        <div class="row group">
+                                            <h4 class="col-lg-12">{lang["administrator"]}</h4>
+                                            {admins.map((item) => (
+                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                    <div class="contact_blog">
+                                                        <div class="contact_inner">
+                                                            <div class="left-cus">
+                                                                <h4>{item.fullname}</h4>
+                                                                <p><strong>Tài khoản: {item.username} </strong></p>
+                                                                <p><strong>Quyền: </strong>
+                                                                    {item.role === "ad" ? "Quản trị viên" :
+                                                                        item.role === "pm" ? "Quản lý dự án" :
+                                                                            item.role === "pd" ? "Người triển khai" :
+                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                                    item.role}</p>
+                                                                <ul class="list-unstyled">
+                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>Tạo bởi: {item.create_by}</li>
+                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                </ul>
                                                             </div>
+                                                            <div class="right">
+                                                                <div class="profile_contacts">
+                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                </div>
+                                                            </div>
+                                                            {item.username !== auth.username && item.role !== auth.role && (
+                                                                <div class="bottom_list">
+                                                                    <div class="right_button">
+                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                            <i class="fa fa-trash-o"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                        <div class="bottom_list">
-                                                            <div class="right_button">
-                                                                <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
-                                                                    <i class="fa fa-edit"></i>
-                                                                </button>
-                                                                <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                                                                    <i class="fa fa-trash-o"></i>
-                                                                </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {projectManagers.length > 0 && (
+                                        <div class="row group">
+                                            <h4 class="col-lg-12">{lang["projectmanager"]}</h4>
+                                            {projectManagers.map((item) => (
+                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                    <div class="contact_blog">
+                                                        <div class="contact_inner">
+                                                            <div class="left-cus">
+                                                                <h4>{item.fullname}</h4>
+                                                                <p><strong>Tài khoản: {item.username} </strong></p>
+                                                                <p><strong>Quyền: </strong>
+                                                                    {item.role === "ad" ? "Quản trị viên" :
+                                                                        item.role === "pm" ? "Quản lý dự án" :
+                                                                            item.role === "pd" ? "Người triển khai" :
+                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                                    item.role}</p>
+                                                                <ul class="list-unstyled">
+                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>Tạo bởi: {item.create_by}</li>
+                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="right">
+                                                                <div class="profile_contacts">
+                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="bottom_list">
+                                                                <div class="right_button">
+                                                                    <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                        <i class="fa fa-trash-o"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                        ))}
-
-                                    </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {implementers.length > 0 && (
+                                        <div class="row group">
+                                            <h4 class="col-lg-12">{lang["implementation"]}</h4>
+                                            {implementers.map((item) => (
+                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                    <div class="contact_blog">
+                                                        <div class="contact_inner">
+                                                            <div class="left-cus">
+                                                                <h4>{item.fullname}</h4>
+                                                                <p><strong>Tài khoản: {item.username} </strong></p>
+                                                                <p><strong>Quyền: </strong>
+                                                                    {item.role === "ad" ? "Quản trị viên" :
+                                                                        item.role === "pm" ? "Quản lý dự án" :
+                                                                            item.role === "pd" ? "Người triển khai" :
+                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                                    item.role}</p>
+                                                                <ul class="list-unstyled">
+                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>Tạo bởi: {item.create_by}</li>
+                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="right">
+                                                                <div class="profile_contacts">
+                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="bottom_list">
+                                                                {item.username !== auth.username && item.role !== auth.role && (
+                                                                    <div class="right_button">
+                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                            <i class="fa fa-trash-o"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {projectFollowers.length > 0 && (
+                                        <div class="row group">
+                                            <h4 class="col-lg-12">{lang["monitor"]}</h4>
+                                            {projectFollowers.map((item) => (
+                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                    <div class="contact_blog">
+                                                        <div class="contact_inner">
+                                                            <div class="left-cus">
+                                                                <h4>{item.fullname}</h4>
+                                                                <p><strong>Tài khoản: {item.username} </strong></p>
+                                                                <p><strong>Quyền: </strong>
+                                                                    {item.role === "ad" ? "Quản trị viên" :
+                                                                        item.role === "pm" ? "Quản lý dự án" :
+                                                                            item.role === "pd" ? "Người triển khai" :
+                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                                    item.role}</p>
+                                                                <ul class="list-unstyled">
+                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>Tạo bởi: {item.create_by}</li>
+                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="right">
+                                                                <div class="profile_contacts">
+                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="bottom_list">
+                                                                {item.username !== auth.username && item.role !== auth.role && (
+                                                                    <div class="right_button">
+                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                            <i class="fa fa-trash-o"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

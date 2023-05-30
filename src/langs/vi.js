@@ -16,16 +16,13 @@ export default {
     "dashboard": "Bảng điều khiển",
     "user info": "Xin chào",
     "projects manager": "Quản lý dự án",
-    "project list":"Danh sách dự án",
-
-
+    "project list": "Danh sách dự án",
     "accounts manager": "Quản lý tài khoản",
     "accounts list": "Danh sách tài khoản",
-    "profile":"Thông tin cá nhân",
-    "profile user":"Thông tin tài khoản",
+    "profile": "Thông tin cá nhân",
+    "profile user": "Thông tin tài khoản",
     "min ago": "phút trước",
-
-    "report":"Báo cáo",
+    "report": "Báo cáo",
     "tasks": "Yêu cầu",
     "projects worked": "Dự án đã tham gia",
     "statistic": "Thống kê",
@@ -33,15 +30,61 @@ export default {
     "about us": "Giới thiệu",
     "contacts": "Liên hệ",
     "404": "KHÔNG TÌM THẤY",
-
     "settings.title": "Cấu hình",
     "settings.desc": "Cấu hình chung cho ứng dụng",
     "settings.languages": "Ngôn ngữ",
     "settings.color": "Màu sắc",
     "settings.color button": "Thay đổi",
-
-
     "projects.title": "Quản lý dự án",
     "users.title": "Quản lý người dùng",
-   
+    //Group user
+
+    "administrator": "Quản trị viên",
+    "projectmanager": "Quản lý dự án",
+    "implementation": "Người triển khai",
+    "monitor": "Người theo dõi dự án",
+    // modal add user
+    "btn.create": "Thêm mới",
+    "btn.close": "Đóng",
+    "adduser.title": "Thêm người dùng",
+    "fullname": "Họ tên",
+    "p.fullname": "Nhập đầy đủ họ tên",
+    "username": "Tên đăng nhập",
+    "p.username": "Nhập tên đăng nhập",
+    "password": "Mật khẩu",
+    "p.password": "Nhập mật khẩu",
+    "re-password": "Nhập lại mật khẩu",
+    "p.re-password": "Nhập lại mật khẩu",
+    "email": "Email",
+    "p.email": "Nhập tài khoản email",
+    "phone": "Số điện thoại",
+    "p.phone": "Nhập số điện thoại",
+    "permission": "Quyền",
+    "p.permission": "Chọn quyền",
+    "address": "Địa chỉ",
+    "p.address": "Nhập địa chỉ",
+    "note": "Ghi chú",
+    "p.note": "Nhập ghi chú",
+    //Error
+    "error.fullname": "Vui lòng nhập đầy đủ họ tên",
+    "error.username": "Vui lòng nhập tên đăng nhập",
+    "error.password": "Vui lòng nhập mật khẩu",
+    "error.confirmpassowrd": "Mật khẩu không khớp",
+    "error.email": "Vui lòng nhập email",
+    "error.validemail": "Email không hợp lệ",
+    "error.phone": "Vui lòng nhập số điện thoại",
+    "error.vaildphone": "Số điện thoại không hợp lệ",
+    "error.permission": "Vui lòng chọn quyền",
+    "error.address": "Vui lòng nhập địa chỉ",
+
+
+
+    // modal edit user
+    "btn.update": "Lưu lại",
+    "edituser.title": "Chỉnh sửa người dùng",
+
+
+
+
+
 }

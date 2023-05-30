@@ -56,7 +56,7 @@ export default () => {
          </div>
 
          <div class="footer-custom">
-            <p>Copyright &copy; 2023 <br /> Designed by Mylan Group. </p>
+            <p>&copy; 2023 - Designed by Mylan Group. </p>
          </div>
 
       </nav>

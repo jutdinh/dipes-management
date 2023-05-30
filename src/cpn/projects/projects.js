@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Swal from 'sweetalert2';
 export default () => {
-    const { lang, proxy } = useSelector(state => state);
+    const { lang, proxy, auth } = useSelector(state => state);
     const dispatch = useDispatch()
     const handleCloseModal = () => {
         setShowModal(false);
@@ -12,7 +12,13 @@ export default () => {
         { id: 0, label: "Mới nhất", value: "latest" },
         { id: 1, label: "Cũ nhất", value: "oldest" },
     ]
-
+    const status = [
+        { id: 0, label: "Khởi tạo", value: "1" },
+        { id: 1, label: "Thực hiện", value: "2" },
+        { id: 2, label: "Triển khai", value: "3" },
+        { id: 3, label: "Hoàn thành", value: "4" },
+        { id: 4, label: "Tạm dừng", value: "5" }
+    ]
 
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
@@ -29,12 +35,10 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                //  console.log(resp)
+                console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
-
-
                         dispatch({
                             branch: "default",
                             type: "setProjects",
@@ -70,12 +74,9 @@ export default () => {
             })
     }, [])
 
-
     const submit = (e) => {
         e.preventDefault();
-
         // console.log(_token);
-
         fetch(`${proxy}/projects/create`, {
             method: "POST",
             headers: {
@@ -84,9 +85,7 @@ export default () => {
             },
             body: JSON.stringify({ project, manager: { username: users.username } }),
         })
-
             .then((res) => res.json())
-
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
@@ -99,9 +98,7 @@ export default () => {
                     }).then(function () {
                         window.location.reload();
                     });
-
                     setShowModal(false);
-
                 } else {
                     Swal.fire({
                         title: "Thất bại!",
@@ -114,13 +111,75 @@ export default () => {
                     });
                 }
             });
-
     };
 
-
-
+    const handleDeleteUser = (project) => {
+        console.log(project)
+        const requestBody = {
+            project: {
+                project_id: project.project_id
+            }
+        };
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa người dùng này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/projects/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(res => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        if (status === "0x52404") {
+                            Swal.fire({
+                                title: "Cảnh báo!",
+                                text: content,
+                                icon: "warning",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                            return;
+                        }
+                        if (success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: content,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(function () {
+                                // Không cần reload trang
+                            });
+                        }
+                    });
+            }
+        });
+        // console.log(requestBody)
+    }
     console.log(users)
-
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -128,9 +187,12 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
-                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                            {
+                                ["ad"].indexOf(auth.role) != -1 ?
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
+                                        <i class="fa fa-plus"></i>
+                                    </button> : null
+                            }
                         </div>
                     </div>
                 </div>
@@ -143,8 +205,7 @@ export default () => {
 
                         </div>
                     </div>
-                </div> */}
-
+                </div>
                 <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                         <div class="modal-content p-md-3">
@@ -157,7 +218,9 @@ export default () => {
                                     <div class="row">
                                         <div class="form-group col-lg-6">
                                             <label class="font-weight-bold text-small" for="firstname">First name<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="firstname" type="text" placeholder="Enter your first name" required="" />
+                                            <input type="text" class="form-control" value={project.project_name} onChange={
+                                                (e) => { setProject({ ...project, project_name: e.target.value }) }
+                                            } placeholder="Nhập tên dự án" />
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label class="font-weight-bold text-small" for="lastname">Last name<span class="text-primary ml-1">*</span></label>
@@ -195,8 +258,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                </div>
-
+                </div> */}
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
                     <div class="modal-dialog modal-dialog-left container">
@@ -207,50 +269,61 @@ export default () => {
                             </div>
                             <div class="modal-body">
                                 <form>
-
-                                    <div class="form-group">
-                                        <label>Tên dự án <span className='red_start'>*</span></label>
-                                        <input type="text" class="form-control" value={project.project_name} onChange={
-                                            (e) => { setProject({ ...project, project_name: e.target.value }) }
-                                        } placeholder="Nhập tên dự án" />
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Mã dự án <span className='red_start'>*</span></label>
-                                        <input type="text" class="form-control" value={project.project_code} onChange={
-                                            (e) => { setProject({ ...project, project_code: e.target.value }) }
-                                        } placeholder="Nhập mã dự án" />
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Trạng thái <span className='red_start'>*</span></label>
-                                        <input type="text" class="form-control" value={project.username} onChange={
-                                            (e) => { setProject({ ...project, project_status: e.target.value }) }
-                                        } placeholder="Nhập mã dự án" />
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Mô tả <span className='red_start'>*</span></label>
-                                        <input type="text" class="form-control" value={project.project_descripstion} onChange={
-                                            (e) => { setProject({ ...project, project_descripstion: e.target.value }) }
-                                        } placeholder="Nhập mã dự án" />
-
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
-                                        <select className="form-control" value={users.username} onChange={(e) => setUsers({ ...users, username: e.target.value })}>
-                                            <option value="">Chọn người quản lý</option>
-                                            {Object.values(users).map((user, index) => {
-                                                if (user.role === "ad") {
-                                                    return (
-                                                        <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
-                                                    );
-                                                } else {
-                                                    return null;
-                                                }
-                                            })}
-                                        </select>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Tên dự án <span className='red_start'>*</span></label>
+                                            <input type="text" class="form-control" value={project.project_name} onChange={
+                                                (e) => { setProject({ ...project, project_name: e.target.value }) }
+                                            } placeholder="Nhập tên dự án" />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Mã dự án <span className='red_start'>*</span></label>
+                                            <input type="text" class="form-control" value={project.project_code} onChange={
+                                                (e) => { setProject({ ...project, project_code: e.target.value }) }
+                                            } placeholder="Nhập mã dự án" />
+                                        </div>
+                                        <div class="form-group col-lg-6 ">
+                                            <label>Trạng thái <span className='red_start'>*</span></label>
+                                            <input type="text" class="form-control" value={project.username} onChange={
+                                                (e) => { setProject({ ...project, project_status: e.target.value }) }
+                                            } placeholder="Trạng thái" />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Mô tả <span className='red_start'>*</span></label>
+                                            <input type="text" class="form-control" value={project.project_descripstion} onChange={
+                                                (e) => { setProject({ ...project, project_descripstion: e.target.value }) }
+                                            } placeholder="Nhập mô tả" />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
+                                            <select className="form-control" value={users.username} onChange={(e) => setUsers({ ...users, username: e.target.value })}>
+                                                <option value="">Chọn người quản lý</option>
+                                                {Object.values(users).map((user, index) => {
+                                                    if (user.role === "ad") {
+                                                        return (
+                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
+                                                        );
+                                                    } else {
+                                                        return null;
+                                                    }
+                                                })}
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="sel1">Thêm thành viên cho dự án <span className="red_star">*</span></label>
+                                            <select className="form-control" value={users.username} onChange={(e) => setUsers({ ...users, username: e.target.value })}>
+                                                <option value="">Chọn người quản lý</option>
+                                                {Object.values(users).map((user, index) => {
+                                                    if (user.role === "ad") {
+                                                        return (
+                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
+                                                        );
+                                                    } else {
+                                                        return null;
+                                                    }
+                                                })}
+                                            </select>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -265,11 +338,11 @@ export default () => {
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            {/* <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h4>{lang["project list"]}</h4>
                                 </div>
-                            </div>
+                            </div> */}
                             <div class="full price_table padding_infor_info">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -278,11 +351,15 @@ export default () => {
                                                 <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                                                     <div class="card project-block">
                                                         <div class="card-body">
-                                                            <h4 class="project-name d-flex align-items-center">{item.project_name}</h4>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
-                                                                X
-                                                            </button>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <h4 class="project-name d-flex align-items-center">{item.project_name}</h4>
+                                                                </div>
+                                                                <div class="col-auto cross-hide pointer scaled-hover">
+                                                                    <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
 
+                                                                </div>
+                                                            </div>
                                                             <p class="card-title">Mã dự án: {item.project_code}</p>
                                                             <p><i class="fa fa-clock-o "></i>: {item.create_at}</p>
                                                             <p class="card-text">{item.project_descripstion}</p>
@@ -294,13 +371,11 @@ export default () => {
                                                             <div class="profile_contacts ">
                                                                 <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
                                                                 <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
-                                                                <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
-                                                                <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
                                                             </div>
                                                             <button type="button" class="btn btn-success custom-button" data-toggle="modal" data-target="#myEditmodal">
                                                                 Trạng thái
                                                             </button>
-                                                            <span class="skill" style={{ width: 250 }}><span class="info_valume">85%</span></span>
+                                                            <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
                                                                 <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
                                                                 </div>
@@ -310,7 +385,6 @@ export default () => {
                                                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myEditmodal">
                                                                         <i class="fa fa-edit"></i> Xem chi tiết
                                                                     </button>
-
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -318,18 +392,13 @@ export default () => {
                                                 </div>
                                             ))}
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
 

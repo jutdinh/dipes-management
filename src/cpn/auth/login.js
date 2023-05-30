@@ -12,7 +12,7 @@ export default () => {
             submit(e)
         }
     }
-    
+
     useEffect(() => {
         const storedAccountString = localStorage.getItem("username");
         const storedPwdString = localStorage.getItem("password");
@@ -53,7 +53,7 @@ export default () => {
                 // localStorage.setItem('role', data.data.role)
                 // localStorage.setItem('username', data.data.username)
                 localStorage.setItem('_token', data.token)
-                
+
                 // localStorage.setItem('fullname', data.data.fullname)
                 const stringifiedUser = JSON.stringify(data.data)
                 localStorage.setItem('user', stringifiedUser);
@@ -101,11 +101,11 @@ export default () => {
                                             <input type="text" onKeyUp={enterTriggered}
                                                 onChange={
                                                     (e) => { setAuth({ ...auth, username: e.target.value }) }
-                                                } value={auth.username || ""}placeholder={lang["account"]} />
+                                                } value={auth.username || ""} placeholder={lang["account"]} />
                                         </div>
                                         <div className="field">
                                             <label className="label_field">{lang["password"]}</label>
-                                            <input type="password" onKeyUp={enterTriggered} onChange={(e) => { setAuth({ ...auth, password: e.target.value }) }} value={auth.password || ""}placeholder={lang["password"]} />
+                                            <input type="password" onKeyUp={enterTriggered} onChange={(e) => { setAuth({ ...auth, password: e.target.value }) }} value={auth.password || ""} placeholder={lang["password"]} />
                                         </div>
                                         <div className="field">
                                             <label className="label_field hidden">hidden label</label>

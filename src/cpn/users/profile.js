@@ -6,7 +6,6 @@ import { Profile } from '.';
 export default (props) => {
     const { lang, proxy } = useSelector(state => state);
 
-
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const user = JSON.parse(stringifiedUser)
@@ -24,32 +23,25 @@ export default (props) => {
                 if (data != undefined) {
                     setProfile(data);
                     console.log(data)
-
                 }
             })
     }, [])
     useEffect(() => {
         console.log(profile)
     }, [profile])
-
     const fileInputRef = useRef(null);
-
     const handleClick = () => {
         fileInputRef.current.click();
     };
-
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         // Xử lý tệp tin tại đây
         if (file) {
-
             if (file != undefined) {
-
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (e) => {
                     setProfile({ ...profile, avatar: e.target.result })
-
                     fetch(`${proxy}/auth/self/avatar`, {
                         method: "PUT",
                         headers: {
@@ -63,13 +55,8 @@ export default (props) => {
                 }
             }
         }
-
-
-
     };
     return (
-
-
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
@@ -79,7 +66,6 @@ export default (props) => {
                         </div>
                     </div>
                 </div>
-
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
@@ -103,21 +89,18 @@ export default (props) => {
                                                     accept='image/*'
                                                     ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload} />
                                             </div>
-
                                             <div class="profile_contant">
                                                 <div class="contact_inner">
                                                     <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
                                                         <li><i class="fa fa-envelope-o"></i> : {profile.email || "nhan.to@mylangroup.com"}</li>
                                                         <li> <i class="fa fa-phone"></i> : {profile.phone || "0359695554"}</li>
-
                                                         <li>Địa chỉ: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
                                                         <li>Ghi chú: {profile.note || "Ghi chú"}</li>
                                                     </ul>
                                                 </div>
                                                 <div class="user_progress_bar">
                                                     <div class="progress_bar">
-
                                                         <span class="skill" style={{ width: 500 }}>Web Applications <span class="info_valume">85%</span></span>
                                                         <div class="progress skill-bar ">
                                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 500 }}>
@@ -125,7 +108,6 @@ export default (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                         <div class="full inner_elements margin_top_30">
@@ -144,7 +126,6 @@ export default (props) => {
                                                                     <li>
                                                                         {/* <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span> */}
                                                                         <span>
-
                                                                             <span class="name_user">Yêu cầu 1</span>
                                                                             <span class="msg_user">Mô tả</span>< br />
                                                                             <span class="msg_user">Dự án: Tên dự án</span>
@@ -154,7 +135,6 @@ export default (props) => {
                                                                     <li>
                                                                         {/* <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span> */}
                                                                         <span>
-
                                                                             <span class="name_user">Yêu cầu 2</span>
                                                                             <span class="msg_user">Mô tả</span>< br />
                                                                             <span class="msg_user">Dự án: Tên dự án</span>
@@ -170,7 +150,6 @@ export default (props) => {
                                                                 qui ratione voluptatem sequi nesciunt.
                                                             </p>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -181,11 +160,9 @@ export default (props) => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
 
 

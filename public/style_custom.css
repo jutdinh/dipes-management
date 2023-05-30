@@ -60,7 +60,7 @@
     color: red;
 }
 
-.red_start {
+.red_star {
     color: red;
 }
 
@@ -126,7 +126,8 @@
 
 }
 .custom-buttonadd {
-    border-radius: 50px; /* Adjust the value as needed */
+    border-radius: 50%; /* Adjust the value as needed */
+    margin-right: 10px;
 }
 
 
@@ -185,4 +186,39 @@
   .custom-button {
     border-radius: 20px; /* Adjust the value as needed */
 }
- 
+.group {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 1px 1px 5px 2px hsla(0,0%,66%,.2);
+  }
+
+
+  .contact_blog {
+    float: left;
+    width: 100%;
+    border: solid #ddd 1px;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.cross-hide {
+    display: none;
+}
+
+.card-body:hover .cross-hide {
+    display:block;
+}
+
+.pointer { 
+    cursor: pointer;
+}
+
+.scaled-hover-target{
+    transition: ease-in-out 0.25s;
+}
+
+.scaled-hover:hover .scaled-hover-target {
+    transform: scale(1.1);    
+}
+
