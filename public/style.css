@@ -114,7 +114,7 @@ body.demos .container-fluid {
 }
 
 *::-webkit-scrollbar{
-    display: none;
+    
     width: 8px;
     height: 3px;
 }

@@ -8,7 +8,7 @@ const initState = {
     ...config,
     functions,
     auth: {},
-    socket,
+    // socket,
     proxy,
     lang: Langs[ localStorage.getItem("lang") ? localStorage.getItem("lang"): "Vi" ]
 }

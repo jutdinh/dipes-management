@@ -26,8 +26,13 @@
 .circle-image {
     border-radius: 100%;
     width: 48px;
-    padding-right: px;
-  
+
+}
+
+.circle-image-list {
+    border-radius: 100%;
+
+
 }
 
 .language-custom {
@@ -92,7 +97,9 @@
 
 .modal-content {
     max-width: 1160px;
+    min-height: 80vh;
 }
+
 .page_title {
     background: #fff;
     margin-top: 0;
@@ -110,7 +117,7 @@
     color: #000;
     line-height: normal;
     font-weight: 700;
-   
+
     padding-left: 15px;
 
 }
@@ -121,12 +128,14 @@
     color: #000;
     line-height: normal;
     font-weight: 700;
-  
- 
+
+
 
 }
+
 .custom-buttonadd {
-    border-radius: 50%; /* Adjust the value as needed */
+    border-radius: 50%;
+    /* Adjust the value as needed */
     margin-right: 10px;
 }
 
@@ -142,7 +151,7 @@
 }
 
 
-.row .col-md-12{
+.row .col-md-12 {
     position: relative;
     width: 100%;
     padding-right: 0px;
@@ -154,47 +163,51 @@
 .search-bar {
     display: flex;
     align-items: center;
-  }
-  
-  .search-bar input[type="text"] {
+}
+
+.search-bar input[type="text"] {
     width: 100%;
     padding: 5px;
-  }
-  
-  .search-bar button {
-    padding: 5px 10px;
-  }
-  
+}
 
-  .square {
+.search-bar button {
+    padding: 5px 10px;
+}
+
+
+.square {
     position: relative;
-    padding-bottom: 100%; /* Chiều cao bằng với chiều rộng */
+    padding-bottom: 100%;
+    /* Chiều cao bằng với chiều rộng */
     overflow: hidden;
-  }
-  
-  .square:before {
+}
+
+.square:before {
     content: "";
     display: block;
-    padding-top: 100%; /* Tạo không gian bên trong */
-  }
-  
-
-  .profile_contacts{
-    padding-bottom: 10px;
-  }
-
-  .custom-button {
-    border-radius: 20px; /* Adjust the value as needed */
+    padding-top: 100%;
+    /* Tạo không gian bên trong */
 }
+
+
+.profile_contacts {
+    padding-bottom: 10px;
+}
+
+.custom-button {
+    border-radius: 20px;
+    /* Adjust the value as needed */
+}
+
 .group {
     border: 1px solid #ccc;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 1px 1px 5px 2px hsla(0,0%,66%,.2);
-  }
+    box-shadow: 1px 1px 5px 2px hsla(0, 0%, 66%, .2);
+}
 
 
-  .contact_blog {
+.contact_blog {
     float: left;
     width: 100%;
     border: solid #ddd 1px;
@@ -207,18 +220,167 @@
 }
 
 .card-body:hover .cross-hide {
-    display:block;
+    display: block;
 }
 
-.pointer { 
+.pointer {
     cursor: pointer;
 }
 
-.scaled-hover-target{
+.scaled-hover-target {
     transition: ease-in-out 0.25s;
 }
 
 .scaled-hover:hover .scaled-hover-target {
-    transform: scale(1.1);    
+    transform: scale(1.1);
 }
 
+/* CSS cho 3 khối */
+.options-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.option h5 {
+    margin-bottom: 10px;
+}
+
+.add-option {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.add-option:hover {
+    background-color: #0056b3;
+}
+
+.status-label {
+    display: inline-block;
+    padding: 0.5em 1em;
+    color: rgb(168, 97, 97);
+    border-radius: 0.25rem;
+}
+
+
+/* CSS cho phần popup */
+.user-popup {
+    position: fixed;
+    font-size: 14px;
+    top: 50%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+
+    color: #333;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.user-popup2 {
+    position: fixed;
+    font-size: 14px;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-popup3 {
+    position: fixed;
+    font-size: 14px;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.user-popup-content {
+    padding: 5px;
+    max-height: 10em; 
+    overflow-y: auto; 
+    border-bottom: 1px solid #999595;
+    
+}
+
+
+.user-popup-actions {
+    display: flex;
+    justify-content:space-around;
+    padding-top: 5px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-checkbox {
+    margin-right: 10px;
+}
+
+.user-image {
+    margin-right: 10px;
+}
+
+
+.user-popup button {
+
+    margin: 0 auto;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.user-popup button:hover {}
+
+
+.profile_contacts {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 3px;
+}

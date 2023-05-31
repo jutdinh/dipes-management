@@ -5,20 +5,119 @@ import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const dispatch = useDispatch()
+    const [showAdminPopup, setShowAdminPopup] = useState(false);
+    const [showImplementationPopup, setShowImplementationPopup] = useState(false);
+    const [showMonitorPopup, setShowMonitorPopup] = useState(false);
+    const [manager, setManager] = useState("")
+
+    const handleOpenAdminPopup = () => {
+        setShowAdminPopup(true);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+        setTempSelectedUsers([...selectedUsers]);
+    };
+    const handleOpenImplementationPopup = () => {
+        setShowAdminPopup(false);
+        setShowImplementationPopup(true);
+        setShowMonitorPopup(false);
+        setTempSelectedImple([...selectedImple]);
+
+    };
+    const handleOpenMonitorPopup = () => {
+        setShowAdminPopup(false);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(true);
+        setTempSelectedMonitor([...selectedMonitor]);
+    };
+    const handleClosePopup = () => {
+        setShowAdminPopup(false);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+
+    };
+
+    const [selectedUsers, setSelectedUsers] = useState([]); // admin
+    const [selectedImple, setSelectedImple] = useState([]);
+    const [selectedMonitor, setSelectedMonitor] = useState([]);
+
+    const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
+    const [tempSelectedImple, setTempSelectedImple] = useState([]);
+    const [tempSelectedMonitor, setTempSelectedMonitor] = useState([]);
+
+    const handleAdminCheck = (user, role) => {
+        const userWithRole = { username: user.username, role };
+        setTempSelectedUsers(prevTempSelectedUsers => {
+            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
+                return prevTempSelectedUsers.filter(u => u.username !== user.username);
+            } else {
+                return [...prevTempSelectedUsers, userWithRole];
+            }
+        });
+    };
+
+    const handleImpleCheck = (user, role) => {
+        const userWithRole = { username: user.username, role };
+        setTempSelectedImple(prevTempSelectedUsers => {
+            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
+                return prevTempSelectedUsers.filter(u => u.username !== user.username);
+            } else {
+                return [...prevTempSelectedUsers, userWithRole];
+            }
+        });
+    };
+
+    const handleMonitorCheck = (user, role) => {
+        const userWithRole = { username: user.username, role };
+        setTempSelectedMonitor(prevTempSelectedUsers => {
+            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
+                return prevTempSelectedUsers.filter(u => u.username !== user.username);
+            } else {
+                return [...prevTempSelectedUsers, userWithRole];
+            }
+        });
+    };
+    const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
+    console.log(combinedArray)
+
+
+    console.log("admin", selectedUsers)
+    console.log("imple", selectedImple)
+    console.log("monitor", selectedMonitor)
+
+    const handleSaveUsers = () => {
+        setSelectedUsers(tempSelectedUsers);
+        setTempSelectedUsers([]);
+        setShowAdminPopup(false);
+    };
+
+    const handleSaveImple = () => {
+        setSelectedImple(tempSelectedImple);
+        setTempSelectedImple([]);
+        setShowImplementationPopup(false);
+    };
+
+    const handleSaveMonitor = () => {
+        setSelectedMonitor(tempSelectedMonitor);
+        setTempSelectedMonitor([]);
+        setShowMonitorPopup(false);
+    };
+
     const handleCloseModal = () => {
         setShowModal(false);
     };
+
     const sortOptions = [
         { id: 0, label: "Mới nhất", value: "latest" },
         { id: 1, label: "Cũ nhất", value: "oldest" },
     ]
     const status = [
-        { id: 0, label: "Khởi tạo", value: "1" },
-        { id: 1, label: "Thực hiện", value: "2" },
-        { id: 2, label: "Triển khai", value: "3" },
-        { id: 3, label: "Hoàn thành", value: "4" },
-        { id: 4, label: "Tạm dừng", value: "5" }
+        { id: 0, label: "Khởi tạo", value: "1", color: "#82ca9d" },
+        { id: 1, label: "Thực hiện", value: "2", color: "#8884d8" },
+        { id: 2, label: "Triển khai", value: "3", color: "#ffc658" },
+        { id: 3, label: "Hoàn thành", value: "4", color: "#ff8042" },
+        { id: 4, label: "Tạm dừng", value: "5", color: "#FF0000" }
     ]
+
 
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
@@ -26,7 +125,10 @@ export default () => {
     // const users = JSON.parse(stringifiedUser)
     const [project, setProject] = useState({});
     const [projects, setProjects] = useState([]);
+
     useEffect(() => {
+
+
         fetch(`${proxy}/projects/all/projects`, {
             headers: {
                 Authorization: _token
@@ -53,6 +155,7 @@ export default () => {
             })
     }, [])
     const [users, setUsers] = useState([]);
+
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -76,45 +179,94 @@ export default () => {
 
     const submit = (e) => {
         e.preventDefault();
-        // console.log(_token);
+
+        const body = {
+            project,
+            manager: { username: manager },
+        };
+
         fetch(`${proxy}/projects/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
             },
-            body: JSON.stringify({ project, manager: { username: users.username } }),
+            body: JSON.stringify(body),
         })
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
-                    setShowModal(false);
+                    // Xử lý fetch thứ hai ở đây nếu có người dùng được chọn
+                    if (selectedUsers.length > 0) {
+                        const projectId = data.project_id;
+                        return fetch(`${proxy}/projects/members`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `${_token}`,
+                            },
+                            body: JSON.stringify({
+                                project_id: projectId,
+                                usernames: combinedArray,
+                            }),
+                        });
+                    } else {
+                        // Không có người dùng nào được chọn, hiển thị thông báo thành công
+                        Swal.fire({
+                            title: "Thành công!",
+                            text: content,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then(function () {
+                            setShowModal(false);
+                        });
+                    }
                 } else {
                     Swal.fire({
                         title: "Thất bại!",
-                        text: content,
+                        text: "error.message",
                         icon: "error",
                         showConfirmButton: false,
                         timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
                     });
+                    throw new Error(content);
                 }
+            })
+            .then(res => res && res.json())
+            .then((resp) => {
+                if (resp) {
+                    const { success, content, data, status } = resp;
+                    if (success) {
+                        Swal.fire({
+                            title: "Thành công!",
+                            text: content,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then(function () {
+                            setShowModal(false);
+                        });
+                    } else {
+                        throw new Error(content);
+                    }
+                }
+            })
+            .catch((error) => {
+                Swal.fire({
+                    title: "Thất bại!",
+                    text: error.message,
+                    icon: "error",
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
             });
     };
 
+    console.log(selectedUsers)
     const handleDeleteUser = (project) => {
-        console.log(project)
+
         const requestBody = {
             project: {
                 project_id: project.project_id
@@ -179,7 +331,7 @@ export default () => {
         });
         // console.log(requestBody)
     }
-    console.log(users)
+
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -284,51 +436,162 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-6 ">
                                             <label>Trạng thái <span className='red_start'>*</span></label>
-                                            <input type="text" class="form-control" value={project.username} onChange={
-                                                (e) => { setProject({ ...project, project_status: e.target.value }) }
-                                            } placeholder="Trạng thái" />
+
+                                            <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
+                                                <option value="">Chọn trạng thái</option>
+                                                {status.map((status, index) => {
+
+                                                    return (
+                                                        <option key={index} value={status.value}>{status.label}</option>
+                                                    );
+
+                                                })}
+                                            </select>
+
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div className="form-group col-lg-6">
+                                            <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
+                                            <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
+                                                <option value="">Chọn người quản lý</option>
+                                                {users && users.map((user, index) => {
+                                                    if (user.role === "ad") {
+                                                        return (
+                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
+                                                        );
+                                                    } else {
+                                                        return null;
+                                                    }
+                                                })}
+                                            </select>
+                                        </div>
+                                        <div class="form-group ">
                                             <label>Mô tả <span className='red_start'>*</span></label>
-                                            <input type="text" class="form-control" value={project.project_descripstion} onChange={
+                                            <textarea type="text" class="form-control" value={project.project_descripstion} onChange={
                                                 (e) => { setProject({ ...project, project_descripstion: e.target.value }) }
                                             } placeholder="Nhập mô tả" />
                                         </div>
+
+
                                         <div className="form-group">
-                                            <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
-                                            <select className="form-control" value={users.username} onChange={(e) => setUsers({ ...users, username: e.target.value })}>
-                                                <option value="">Chọn người quản lý</option>
-                                                {Object.values(users).map((user, index) => {
-                                                    if (user.role === "ad") {
-                                                        return (
-                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
-                                                        );
-                                                    } else {
-                                                        return null;
-                                                    }
-                                                })}
-                                            </select>
+                                            <div class="options-container">
+                                                <div class="option">
+                                                    <h5>Phụ trách dự án</h5>
+                                                    {selectedUsers.map(user => (
+                                                        <div> <p>{user.username} - Phụ trách</p>
+                                                        </div>
+                                                    ))}
+                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenAdminPopup}>+</button>
+                                                </div>
+                                                <div class="option">
+
+                                                    <h5>Triển Khai</h5>
+                                                    {selectedImple.map(imple => (
+                                                        <div> <p>{imple.username} - Triển khai</p>
+                                                        </div>
+                                                    ))}
+                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenImplementationPopup}>+</button>
+                                                </div>
+                                                <div class="option">
+                                                    <h5>Theo Dõi</h5>
+                                                    {selectedMonitor.map(monitor => (
+                                                        <div> <p>{monitor.username} - Theo dõi</p>
+                                                        </div>
+                                                    ))}
+                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenMonitorPopup}>+</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="form-group">
-                                            <label htmlFor="sel1">Thêm thành viên cho dự án <span className="red_star">*</span></label>
-                                            <select className="form-control" value={users.username} onChange={(e) => setUsers({ ...users, username: e.target.value })}>
-                                                <option value="">Chọn người quản lý</option>
-                                                {Object.values(users).map((user, index) => {
-                                                    if (user.role === "ad") {
-                                                        return (
-                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
-                                                        );
-                                                    } else {
+                                        {showAdminPopup && (
+                                            <div class="user-popup">
+                                                <div class="user-popup-content">
+                                                    {users && users.map(user => {
+                                                        if (user.username !== manager && !selectedImple.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                            return (
+                                                                <div key={user.username} class="user-item">
+
+                                                                    <input
+                                                                        class="user-checkbox"
+                                                                        type="checkbox"
+                                                                        checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                        onChange={() => handleAdminCheck(user, 'pm')}
+                                                                    />
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'pm')}>
+                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        }
                                                         return null;
-                                                    }
-                                                })}
-                                            </select>
-                                        </div>
+                                                    })}
+                                                </div>
+                                                <div className="user-popup-actions">
+                                                    <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                </div>
+                                            </div>
+
+                                        )}
+                                        {showImplementationPopup && (
+                                            <div class="user-popup2">
+                                                <div class="user-popup-content">
+                                                    {users && users.map(user => {
+                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                            return (
+                                                                <div key={user.username} class="user-item">
+                                                                    <input
+                                                                        class="user-checkbox"
+                                                                        type="checkbox"
+                                                                        checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                        onChange={() => handleImpleCheck(user, 'pd')}
+                                                                    />
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'pd')}>
+                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </div>
+                                                <div className="user-popup-actions">
+                                                    <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {showMonitorPopup && (
+                                            <div class="user-popup3">
+                                                <div class="user-popup-content">
+                                                    {users && users.map(user => {
+                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
+                                                            return (
+                                                                <div key={user.username} class="user-item">
+                                                                    <input
+                                                                        class="user-checkbox"
+                                                                        type="checkbox"
+                                                                        checked={tempSelectedMonitor.some(u => u.username === user.username)}
+                                                                        onChange={() => handleMonitorCheck(user, 'ps')}
+                                                                    />
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'ps')}>
+                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </div>
+                                                <div className="user-popup-actions">
+                                                    <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submit} class="btn btn-success">Thêm mới</button>
+                                <button type="button" onClick={submit} class="btn btn-success ">Thêm mới</button>
                                 <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">Đóng</button>
 
                             </div>
@@ -368,13 +631,38 @@ export default () => {
                                                                 <img class="img-responsive circle-image" src={proxy + item.create_by.avatar} alt="#" />
                                                             </div>
                                                             <p class="font-weight-bold">Thành viên</p>
-                                                            <div class="profile_contacts ">
-                                                                <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
-                                                                <img class="img-responsive circle-image" src="/images/test/su.png" alt="#" />
+
+                                                            <div class="profile_contacts">
+                                                                {
+                                                                    item.members && item.members.length > 0 ?
+                                                                        item.members.slice(0, 2).map(member => (
+                                                                            <img
+                                                                                class="img-responsive circle-image"
+                                                                                src={proxy + member.avatar}
+                                                                                alt={member.username}
+                                                                            />
+                                                                        )) : <div class="profile_contacts">
+                                                                            <p>Dự án này chưa có thành viên </p>
+                                                                        </div>
+                                                                }
+                                                                {
+                                                                    item.members.length > 2 &&
+                                                                    <div className="extra-images">
+                                                                        +{item.members.length - 2}
+                                                                    </div>
+                                                                }
                                                             </div>
-                                                            <button type="button" class="btn btn-success custom-button" data-toggle="modal" data-target="#myEditmodal">
-                                                                Trạng thái
-                                                            </button>
+
+                                                            <span
+                                                                class="status-label"
+                                                                style={{
+                                                                    backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                                }}
+                                                            >
+                                                                {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                            </span>
+
+
                                                             <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
                                                                 <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
@@ -398,8 +686,8 @@ export default () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
 
 
 
