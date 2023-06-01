@@ -1796,7 +1796,7 @@ button.main_bt {
     font-weight: 600;
     color: #455a64;
 }
-
+/* 
 .task_list li:nth-child(1) {
     border-left-color: #ff9800;
 }
@@ -1835,7 +1835,7 @@ button.main_bt {
 
 .msg_list li:nth-child(5) {
     border-left-color: #1ed085;
-}
+} */
 
 .task_list_main {
     float: left;

@@ -13,8 +13,9 @@ import { Login, SignUp, SignOut } from './auth';
 
 
 import { Settings } from './settings';
-import { Projects, ProjectsCard } from './projects';
+import { Projects, ProjectsCard, ProjectDetail } from './projects';
 import { ListUser, Profile } from './users';
+
 
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
         <Route exac path="/" element={<Navigation Child={Home} />} />
         <Route exac path="/projects" element={<Navigation Child={Projects} />} />
         <Route exac path="/project/:project_id" element={<Navigation Child={ProjectsCard} />} />
+        <Route exac path="/project/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route exac path="/users" element={<Navigation Child={ListUser} />} />
         <Route exac path="/users/profile" element={<Navigation Child={Profile} />} />
         <Route exac path="/settings" element={<Navigation Child={Settings} />} />

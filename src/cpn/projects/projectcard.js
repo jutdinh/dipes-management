@@ -39,11 +39,11 @@ export default () => {
 
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            {/* <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h2>Tab Bar Style 1</h2>
                                 </div>
-                            </div>
+                            </div> */}
                             <div class="full inner_elements">
                                 <div class="row">
                                     <div class="col-md-12">

@@ -28,11 +28,12 @@
     width: 48px;
 
 }
+.circle-image-member{
+    width: 80px;
+}
 
 .circle-image-list {
     border-radius: 100%;
-
-
 }
 
 .language-custom {
@@ -235,6 +236,10 @@
     transform: scale(1.1);
 }
 
+
+.icon-hover:hover .scaled-hover-target {
+    transform: scale(1.1);
+}
 /* CSS cho 3 khối */
 .options-container {
     display: flex;
@@ -271,8 +276,8 @@
 
 .status-label {
     display: inline-block;
-    padding: 0.5em 1em;
-    color: rgb(168, 97, 97);
+    padding: 3px 3px;
+    color: rgb(8, 8, 8);
     border-radius: 0.25rem;
 }
 
@@ -384,3 +389,80 @@
     align-items: center;
     gap: 3px;
 }
+
+.dash_head {
+    background-image: url(images/layout_img/pattern_h.png);
+    font-weight: normal;
+    height: auto;
+    border-radius: 5px 5px 0 0;
+    padding: px;
+    background-size: cover;
+    background-color: #214162;
+    position: relative;
+}
+.dash_blog{
+    min-height: 300px;
+}
+.padding_infor_info {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    min-height: 179px;
+   
+}
+.padding_infor_info h3, 
+.padding_infor_info p, 
+.padding_infor_info span.status-label {
+    margin-bottom: 10px; /* thay đổi giá trị này để điều chỉnh khoảng cách */
+}
+
+/* .span-hover:hover{
+    background-color: #f3eded !important;
+    color: #050505;
+    margin-right: -15px;
+    margin-left: -15px;
+} */
+
+.col-md-6{
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.size {
+    font-size: 18px;  
+}
+.msg_list li {
+  position: relative;  /* Bắt buộc cho 'position: absolute' hoạt động trong .close-button */
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 10%;  /* Chuyển hình ảnh xuống 10% */
+    transform: translateY(-50%);
+    opacity: 0;
+    padding-top: 5px;
+    padding-right: 5px;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+.close-button .abc{
+    width: 20px;
+    border-radius: 100%;
+}
+
+
+
+  .msg_list_main ul li > span img {
+    width: 70px;
+    border-radius: 100%;
+}  
+
+
+
+  .msg_list li:hover .close-button {
+    opacity: 1;    /* Dấu X sẽ nhìn thấy khi di chuột qua li */
+  }
+    

@@ -36,6 +36,7 @@ export default {
     "settings.color": "Màu sắc",
     "settings.color button": "Thay đổi",
     "projects.title": "Quản lý dự án",
+    "project_detail.title": "Chi tiết dự án",
     "users.title": "Quản lý người dùng",
     //Group user
 
@@ -65,7 +66,8 @@ export default {
     "p.address": "Nhập địa chỉ",
     "note": "Ghi chú",
     "p.note": "Nhập ghi chú",
-    //Error
+
+    //Error user
     "error.fullname": "Vui lòng nhập đầy đủ họ tên",
     "error.username": "Vui lòng nhập tên đăng nhập",
     "error.password": "Vui lòng nhập mật khẩu",
@@ -78,12 +80,14 @@ export default {
     "error.address": "Vui lòng nhập địa chỉ",
 
 
-
-    // modal edit user
+    // button modal edit user
     "btn.update": "Lưu lại",
     "edituser.title": "Chỉnh sửa người dùng",
 
-
+    // error project
+    "error.project_name": "Vui lòng nhập tên dự án",
+    "error.project_status": "Vui lòng chọn trạng thái dự án",
+    
 
 
 

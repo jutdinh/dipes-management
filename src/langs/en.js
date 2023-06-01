@@ -41,7 +41,9 @@ export default {
 
 
     "projects.title": "Projects",
+
     "projects.desc": "Project manager",
+    "project_detail.title": "Project detail",
 
     "users.title": "Users",
     "users.desc": "Users management",
@@ -72,7 +74,7 @@ export default {
     "p.address": "Enter the address",
     "note": "Note",
     "p.note": "Type a note",
-    // error
+    // error user
     "error.fullname": "Please enter your full name",
     "error.username": "Please enter your username",
     "error.password": "Please enter your password",
@@ -87,6 +89,12 @@ export default {
     // modal edit user
     "btn.update": "Save",
     "edituser.title": "Update",
+
+
+    // error project
+    "error.project_name": "Please enter your project name",
+    "error.project_status": "Please select project status",
+   
 }
 
 

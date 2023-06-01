@@ -9,6 +9,7 @@ export default () => {
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
     const [showMonitorPopup, setShowMonitorPopup] = useState(false);
     const [manager, setManager] = useState("")
+    const [selectedProject, setSelectedProject] = useState(null);
 
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
@@ -111,11 +112,11 @@ export default () => {
         { id: 1, label: "Cũ nhất", value: "oldest" },
     ]
     const status = [
-        { id: 0, label: "Khởi tạo", value: "1", color: "#82ca9d" },
-        { id: 1, label: "Thực hiện", value: "2", color: "#8884d8" },
-        { id: 2, label: "Triển khai", value: "3", color: "#ffc658" },
-        { id: 3, label: "Hoàn thành", value: "4", color: "#ff8042" },
-        { id: 4, label: "Tạm dừng", value: "5", color: "#FF0000" }
+        { id: 0, label: "Khởi tạo", value: 1, color: "#1ed085" },
+        { id: 1, label: "Thực hiện", value: 2, color: "#8884d8" },
+        { id: 2, label: "Triển khai", value: 3, color: "#ffc658" },
+        { id: 3, label: "Hoàn thành", value: 4, color: "#ff8042" },
+        { id: 4, label: "Tạm dừng", value: 5, color: "#FF0000" }
     ]
 
 
@@ -220,6 +221,7 @@ export default () => {
                             showConfirmButton: false,
                             timer: 1500,
                         }).then(function () {
+                            window.location.reload();
                             setShowModal(false);
                         });
                     }
@@ -246,6 +248,7 @@ export default () => {
                             showConfirmButton: false,
                             timer: 1500,
                         }).then(function () {
+                            window.location.reload();
                             setShowModal(false);
                         });
                     } else {
@@ -331,7 +334,12 @@ export default () => {
         });
         // console.log(requestBody)
     }
-
+    const detailProject = (project) => {
+        setSelectedProject(project);
+        console.log(project)
+        window.location.href = `project/detail/${project.project_id}`;
+    };
+    
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -348,69 +356,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                {/* <div class="container py-5">
-                    <div class="py-5">
-                        <div class="row">
-                            <div class="col-lg-6 mb-5">
-                                <button class="btn btn-primary" type="button" data-target="#quoteForm" data-toggle="modal">Request a quote</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div class="modal-content p-md-3">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Request a <span class="text-primary">quote</span></h4>
-                                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="#">
-                                    <div class="row">
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="firstname">First name<span class="text-primary ml-1">*</span></label>
-                                            <input type="text" class="form-control" value={project.project_name} onChange={
-                                                (e) => { setProject({ ...project, project_name: e.target.value }) }
-                                            } placeholder="Nhập tên dự án" />
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="lastname">Last name<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="lastname" type="text" placeholder="Enter your last name" required="" />
-                                        </div>
-                                        <div class="form-group col-lg-12">
-                                            <label class="font-weight-bold text-small" for="email">Email address<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="email" type="email" placeholder="Enter your email address" required="" />
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="phone">Phone number <small class="small text-gray">optional</small></label>
-                                            <input class="form-control" id="phone" type="tel" placeholder="Enter your phone number" />
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="projecttype">Project type<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="projecttype" type="text" placeholder="Enter your project type" required="" />
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="budget">Estimated budget<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="budget" type="text" placeholder="Enter your estimated budget" required="" /><small class="form-text text-muted">Project budget will be on <span class="text-dark">$</span></small>
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label class="font-weight-bold text-small" for="timeframe">Time frame<span class="text-primary ml-1">*</span></label>
-                                            <input class="form-control" id="timeframe" type="text" placeholder="Maximum time for the project" required="" />
-                                        </div>
-                                        <div class="form-group col-lg-12">
-                                            <label class="font-weight-bold text-small" for="projectdetail">Project details<span class="text-primary ml-1">*</span></label>
-                                            <textarea class="form-control" id="projectdetail" rows="5" placeholder="Provide a short brief about your project" required=""></textarea>
-                                        </div>
-                                        <div class="form-group col-lg-12">
-                                            <button class="btn btn-primary" type="button">Submit your request</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
+               
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
                     <div class="modal-dialog modal-dialog-left container">
@@ -466,8 +412,8 @@ export default () => {
                                         </div>
                                         <div class="form-group ">
                                             <label>Mô tả <span className='red_start'>*</span></label>
-                                            <textarea type="text" class="form-control" value={project.project_descripstion} onChange={
-                                                (e) => { setProject({ ...project, project_descripstion: e.target.value }) }
+                                            <textarea type="text" class="form-control" value={project.project_description} onChange={
+                                                (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder="Nhập mô tả" />
                                         </div>
 
@@ -653,15 +599,13 @@ export default () => {
                                                                 }
                                                             </div>
 
-                                                            <span
-                                                                class="status-label"
-                                                                style={{
-                                                                    backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
-                                                                }}
-                                                            >
+                                                            
+
+                                                            <span className="status-label" style={{
+                                                                backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                            }}>
                                                                 {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                             </span>
-
 
                                                             <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
@@ -670,7 +614,7 @@ export default () => {
                                                             </div>
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
-                                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myEditmodal">
+                                                                    <button type="button" class="btn btn-primary" onClick={() => detailProject(item) }>
                                                                         <i class="fa fa-edit"></i> Xem chi tiết
                                                                     </button>
                                                                 </div>
