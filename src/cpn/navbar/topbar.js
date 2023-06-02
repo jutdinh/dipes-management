@@ -1,17 +1,17 @@
 import { useSelector } from "react-redux";
 import { Dropdown } from "../common";
 import { useEffect, useState } from "react";
-
+import { useMediaQuery } from 'react-responsive'
 export default () => {
     const { proxy, lang, auth, profiles } = useSelector(state => state);
 
-   
+    const isMobile = useMediaQuery({ query: '(max-width: 767px)' })
     const [defaultValue, setDefaultValue] = useState({})
     const fullname = localStorage.getItem("fullname");
 
     const langs = [
-        { id: 0, label: "Tiếng Việt", flag: "vietnam.png", value: "Vi" },
-        { id: 1, label: "English", flag: "united-kingdom.png", value: "En" },
+        { id: 0, label: lang["vi"],  flag: "vietnam.png", value: "Vi" },
+        { id: 1, label: lang["en"], flag: "united-kingdom.png", value: "En" },
     ]
     const options = langs;
 
@@ -22,38 +22,50 @@ export default () => {
         setDefaultValue(defaultLang)
     }, [])
 
-    const renderLanguage = (name, flag, color = true) => {
+    const LanguageRender = ({ name, flag }) => {
+        
+
         return (
             <div className="d-flex flex-nowrap">
                 <img style={{ width: 22 }} src={`/images/flags/${flag}`} />
-                <span className={`d-block ml-2 ${!color && "language-custom"}`}>{name}</span>
+                {!isMobile && <span className={`d-block ml-2`}>{name}</span>}
             </div>
         )
     }
+    const DropdownLanguageRender = ({ name, flag }) => {
+        
+        return (
+            <div className="d-flex flex-nowrap">
+                <img style={{ width: 22 }} src={`/images/flags/${flag}`} />
+                <span className={`d-block ml-2`}>{name}</span>
+            </div>
+        )
+    }
+
 
     const signOut = () => {
         window.location = '/signout'
     }
 
     const clickHandler = (e, opt) => {
-       
+
         e.preventDefault()
         setLanguage(opt)
     }
 
     const setLanguage = ({ value }) => {
-       
+
         localStorage.setItem("lang", value);
         window.location.reload()
     }
 
     const generateUserLastName = () => {
         const { fullname } = auth
-        if( fullname ){
+        if (fullname) {
             const names = fullname.split(' ');
             const displayFullName = names[names.length - 1];
             return displayFullName
-        }else{
+        } else {
             return ""
         }
     }
@@ -70,16 +82,24 @@ export default () => {
                             aria-haspopup="true"
                             aria-expanded="false"
                         >
-                            
-                            <a href="#" className="d-block text-light "> {renderLanguage(defaultValue.label, defaultValue.flag, false)} </a>
+
+                            <a href="#" className="d-block text-light">
+                                
+                                {isMobile
+                                    ? <LanguageRender flag={defaultValue.flag} />
+                                    : <DropdownLanguageRender name={defaultValue.label} flag={defaultValue.flag} />}
+                            </a>
+
                             <a className="d-block ml-2" href="#"><i class="fa fa-caret-down"></i></a>
                         </div>
                         <div className="dropdown-menu" aria-labelledby="#lang-drop-toggle">
-                            {options.map(opt =>
+                            {options.map(opt => (
                                 <a key={opt.id} href="#" className="dropdown-item cursor-pointer" onClick={(e) => { clickHandler(e, opt) }}>
-                                    {renderLanguage(opt.label, opt.flag)}
+                                    <DropdownLanguageRender name={opt.label} flag={opt.flag} />
                                 </a>
-                            )}
+                            ))
+
+                            }
                         </div>
                     </div>
                     <div class="d-flex flex-nowrap">
@@ -87,13 +107,13 @@ export default () => {
                             <ul>
                                 {/* <li><a href="#"><i class="fa fa-question-circle"></i></a></li>
                                 <li><a href="#"><i class="fa fa-bell-o"></i><span class="badge">2</span></a></li> */}
-                                <li><a href="#"><i class="fa fa-envelope-o"></i><span class="badge">1</span></a></li> 
+                                <li><a href="#"><i class="fa fa-envelope-o"></i><span class="badge">1</span></a></li>
                             </ul>
                             <ul class="user_profile_dd ">
                                 <li>
                                     <a class="dropdown-toggle" data-toggle="dropdown">
                                         <img class="img-responsive circle-image" src={proxy + auth.avatar} alt="#" />
-                                        <span class="name_user"> { generateUserLastName() }</span>
+                                        <span class="name_user"> {generateUserLastName()}</span>
                                     </a>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="/users/profile">{lang["my profile"]}</a>

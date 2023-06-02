@@ -344,7 +344,7 @@ export default (props) => {
                             </div> */}
                             {/* Modal add */}
                             <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
+                                <div class="modal-dialog modal-lg modal-dialog-center" role="document">
                                     <div class="modal-content p-md-3">
                                         <div class="modal-header">
                                             <h4 class="modal-title">{lang["adduser.title"]} </h4>

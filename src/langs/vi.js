@@ -1,4 +1,7 @@
 export default {
+    // lang
+    "vi":"Tiếng Việt",
+    "en": "English",
     "signin": "Đăng nhập",
     "account": "Tên đăng nhập",
     "password": "Mật khẩu",
@@ -14,6 +17,7 @@ export default {
     "help": "Trợ giúp",
     "signout": "Đăng xuất",
     "dashboard": "Bảng điều khiển",
+    "home":"Trang chủ",
     "user info": "Xin chào",
     "projects manager": "Quản lý dự án",
     "project list": "Danh sách dự án",
@@ -21,6 +25,7 @@ export default {
     "accounts list": "Danh sách tài khoản",
     "profile": "Thông tin cá nhân",
     "profile user": "Thông tin tài khoản",
+    "profile user update": "Cập nhật thông tin cá nhân",
     "min ago": "phút trước",
     "report": "Báo cáo",
     "tasks": "Yêu cầu",

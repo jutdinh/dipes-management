@@ -82,23 +82,22 @@
 }
 
 .modal-dialog {
-    max-width: none;
+   
     margin-top: 4.7rem;
-    padding-left: 282px;
+   
 
     height: 100%;
     /* Chiều cao của modal bằng chiều cao của viewport */
 }
 
-.form-group {
+/* .form-group {
     width: 100%;
 
     padding: 0px 100px;
-}
+} */
 
 .modal-content {
-    max-width: 1160px;
-    min-height: 80vh;
+    min-height: 70vh;
 }
 
 .page_title {
@@ -192,7 +191,7 @@
 
 
 .profile_contacts {
-    padding-bottom: 10px;
+    padding-bottom: 15px;
 }
 
 .custom-button {
@@ -262,12 +261,13 @@
     margin-bottom: 10px;
 }
 
-.add-option {
-    background-color: #007bff;
-    color: white;
+
+.custom-buttonadd {
+    border-radius: 50%;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 .add-option:hover {
@@ -440,17 +440,20 @@
 .close-button {
     position: absolute;
     right: 0;
-    top: 10%;  /* Chuyển hình ảnh xuống 10% */
+    top: 1em;  /* Chuyển hình ảnh xuống 10% */
     transform: translateY(-50%);
     opacity: 0;
-    padding-top: 5px;
-    padding-right: 5px;
+    padding-top: 15px;
+    padding-right:15px;
     transition: opacity 0.2s ease-in-out;
+
+   
   }
 
 .close-button .abc{
-    width: 20px;
+    width: 18px;
     border-radius: 100%;
+
 }
 
 
@@ -466,3 +469,19 @@
     opacity: 1;    /* Dấu X sẽ nhìn thấy khi di chuột qua li */
   }
     
+.dash_blog_inner .list_cont p{
+    font-size: 14px;
+}
+
+
+.msg_list_main ul li {
+    padding: 22px 40px;
+    border-bottom: solid #eee 1px;
+    line-height: normal;
+    font-size: 14px;
+     border-left: solid 5px #ffffff;
+    float: left;
+    width: 100%;
+    display: flex;
+    position: relative;
+}

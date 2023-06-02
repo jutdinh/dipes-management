@@ -1,4 +1,7 @@
 export default {
+    // lang
+    "vi":"Vietnamese",
+    "en": "English",
     "signin": "Sign In",
     "account": "Account",
     "password": "Password",
@@ -14,6 +17,7 @@ export default {
     "help": "Help",
     "signout": "Sign Out",
     "dashboard": "Dashboard",
+    "home": "Home",
     "user info": "Hi",
     "projects manager": "Project Manager",
     "project list": "Project List",
@@ -23,8 +27,8 @@ export default {
     "report": "Reports",
     "tasks": "Tasks",
     "projects worked": "Projects worked on",
-    "profile user": "Account information",
-
+    "profile user ": "Account information",
+    "profile user update ": "Update information",
     "min ago": "min ago",
     "statistic": "Statistic",
     "workflow": "Workflow",

@@ -78,12 +78,17 @@ export default () => {
         });
     };
     const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
-    console.log(combinedArray)
+    const uniqueArray = Array.from(new Set(combinedArray.map(user => user.username)))
+        .map(username => {
+            return combinedArray.find(user => user.username === username);
+        });
+    // console.log("a",combinedArray)
+    // console.log("b",uniqueArray)
 
 
-    console.log("admin", selectedUsers)
-    console.log("imple", selectedImple)
-    console.log("monitor", selectedMonitor)
+    // console.log("admin", selectedUsers)
+    // console.log("imple", selectedImple)
+    // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -128,8 +133,6 @@ export default () => {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
-
-
         fetch(`${proxy}/projects/all/projects`, {
             headers: {
                 Authorization: _token
@@ -209,7 +212,7 @@ export default () => {
                             },
                             body: JSON.stringify({
                                 project_id: projectId,
-                                usernames: combinedArray,
+                                usernames: uniqueArray,
                             }),
                         });
                     } else {
@@ -267,7 +270,7 @@ export default () => {
             });
     };
 
-    console.log(selectedUsers)
+
     const handleDeleteUser = (project) => {
 
         const requestBody = {
@@ -339,7 +342,7 @@ export default () => {
         console.log(project)
         window.location.href = `project/detail/${project.project_id}`;
     };
-    
+
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -356,10 +359,10 @@ export default () => {
                         </div>
                     </div>
                 </div>
-               
+
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
-                    <div class="modal-dialog modal-dialog-left container">
+                    <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Thêm mới dự án</h4>
@@ -369,19 +372,19 @@ export default () => {
                                 <form>
                                     <div class="row">
                                         <div class="form-group col-lg-6">
-                                            <label>Tên dự án <span className='red_start'>*</span></label>
+                                            <label>Tên dự án <span className='red_star'>*</span></label>
                                             <input type="text" class="form-control" value={project.project_name} onChange={
                                                 (e) => { setProject({ ...project, project_name: e.target.value }) }
                                             } placeholder="Nhập tên dự án" />
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label>Mã dự án <span className='red_start'>*</span></label>
+                                            <label>Mã dự án </label>
                                             <input type="text" class="form-control" value={project.project_code} onChange={
                                                 (e) => { setProject({ ...project, project_code: e.target.value }) }
                                             } placeholder="Nhập mã dự án" />
                                         </div>
                                         <div class="form-group col-lg-6 ">
-                                            <label>Trạng thái <span className='red_start'>*</span></label>
+                                            <label>Trạng thái <span className='red_star'>*</span></label>
 
                                             <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
                                                 <option value="">Chọn trạng thái</option>
@@ -400,7 +403,7 @@ export default () => {
                                             <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
                                                 <option value="">Chọn người quản lý</option>
                                                 {users && users.map((user, index) => {
-                                                    if (user.role === "ad") {
+                                                    if (user.role === "pm") {
                                                         return (
                                                             <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
                                                         );
@@ -410,7 +413,7 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-                                        <div class="form-group ">
+                                        <div class="form-group col-lg-12">
                                             <label>Mô tả <span className='red_start'>*</span></label>
                                             <textarea type="text" class="form-control" value={project.project_description} onChange={
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
@@ -418,32 +421,62 @@ export default () => {
                                         </div>
 
 
-                                        <div className="form-group">
+                                        <div className="form-group col-lg-12">
+                                            <label>Thành viên dự án</label>
                                             <div class="options-container">
                                                 <div class="option">
-                                                    <h5>Phụ trách dự án</h5>
-                                                    {selectedUsers.map(user => (
-                                                        <div> <p>{user.username} - Phụ trách</p>
-                                                        </div>
-                                                    ))}
-                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenAdminPopup}>+</button>
+                                                    <h5>Phụ trách</h5>
+                                                    {
+                                                        selectedUsers.map(user => {
+                                                            const userData = users.find(u => u.username === user.username);
+
+                                                            return (
+                                                                <div key={user.username}>
+                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+
+                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
                                                 </div>
                                                 <div class="option">
 
                                                     <h5>Triển Khai</h5>
-                                                    {selectedImple.map(imple => (
-                                                        <div> <p>{imple.username} - Triển khai</p>
-                                                        </div>
-                                                    ))}
-                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenImplementationPopup}>+</button>
+                                                    {
+                                                        selectedImple.map(user => {
+                                                            const userData = users.find(u => u.username === user.username);
+
+                                                            return (
+                                                                <div key={user.username}>
+                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+
                                                 </div>
                                                 <div class="option">
                                                     <h5>Theo Dõi</h5>
-                                                    {selectedMonitor.map(monitor => (
-                                                        <div> <p>{monitor.username} - Theo dõi</p>
-                                                        </div>
-                                                    ))}
-                                                    <button type="button" class="btn btn-primary add-option" onClick={handleOpenMonitorPopup}>+</button>
+                                                    {
+                                                        selectedMonitor.map(user => {
+                                                            const userData = users.find(u => u.username === user.username);
+
+                                                            return (
+                                                                <div key={user.username}>
+                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -564,6 +597,7 @@ export default () => {
                                                                 <div class="col">
                                                                     <h4 class="project-name d-flex align-items-center">{item.project_name}</h4>
                                                                 </div>
+                                                                
                                                                 <div class="col-auto cross-hide pointer scaled-hover">
                                                                     <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
 
@@ -572,9 +606,9 @@ export default () => {
                                                             <p class="card-title">Mã dự án: {item.project_code}</p>
                                                             <p><i class="fa fa-clock-o "></i>: {item.create_at}</p>
                                                             <p class="card-text">{item.project_descripstion}</p>
-                                                            <p class="font-weight-bold">Quản lý dự án: {item.create_by.fullname}</p>
+                                                            <p class="font-weight-bold">Quản lý dự án: {item.manager.fullname}</p>
                                                             <div class="profile_contacts">
-                                                                <img class="img-responsive circle-image" src={proxy + item.create_by.avatar} alt="#" />
+                                                                <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
                                                             </div>
                                                             <p class="font-weight-bold">Thành viên</p>
 
@@ -588,7 +622,7 @@ export default () => {
                                                                                 alt={member.username}
                                                                             />
                                                                         )) : <div class="profile_contacts">
-                                                                            <p>Dự án này chưa có thành viên </p>
+                                                                            <p>Chưa có thành viên </p>
                                                                         </div>
                                                                 }
                                                                 {
@@ -599,7 +633,7 @@ export default () => {
                                                                 }
                                                             </div>
 
-                                                            
+
 
                                                             <span className="status-label" style={{
                                                                 backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
@@ -614,7 +648,7 @@ export default () => {
                                                             </div>
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
-                                                                    <button type="button" class="btn btn-primary" onClick={() => detailProject(item) }>
+                                                                    <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
                                                                         <i class="fa fa-edit"></i> Xem chi tiết
                                                                     </button>
                                                                 </div>

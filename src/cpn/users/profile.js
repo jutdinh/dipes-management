@@ -10,6 +10,14 @@ export default (props) => {
     const stringifiedUser = localStorage.getItem("user");
     const user = JSON.parse(stringifiedUser)
     const [profile, setProfile] = useState({});
+    const [editUser, setEditUser] = useState({});
+    const [errorMessagesedit, setErrorMessagesedit] = useState({});
+    const roles = [
+        { id: 0, label: "Quản trị viên ( Administrator )", value: "ad" },
+        { id: 1, label: "Quản lý dự án ( Project manager )", value: "pm" },
+        { id: 2, label: "Người triển khai ( Implementation Staff )", value: "pd" },
+        { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
+    ]
     useEffect(() => {
         fetch(`${proxy}/auth/u/${user.username}`, {
             headers: {
@@ -22,6 +30,7 @@ export default (props) => {
                 console.log(resp)
                 if (data != undefined) {
                     setProfile(data);
+                    setEditUser(data)
                     console.log(data)
                 }
             })
@@ -50,12 +59,86 @@ export default (props) => {
                         },
                         body: JSON.stringify({ image: e.target.result })
                     }).then(res => res.json()).then(data => {
-                        console.log(data)
+                        const { success, content } = data;
+                      
+                        if (success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: content,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(function () {
+                                // Không cần reload trang
+                            });
+                        }
                     })
                 }
             }
         }
     };
+    const submitUpdate = (e) => {
+        e.preventDefault();
+        if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
+            Swal.fire({
+                title: "Lỗi!",
+                text: "Vui lòng điền đầy đủ thông tin",
+                icon: "error",
+                showConfirmButton: false,
+                timer: 2000,
+            });
+            return;
+        }
+        const requestBody = {
+            account: {
+                ...editUser
+            }
+        };
+        fetch(`${proxy}/auth/self/info`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content } = resp;
+                console.log(resp)
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(function () {
+                        // Không cần reload trang
+                    });
+                }
+            });
+    }
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -70,9 +153,79 @@ export default (props) => {
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
-                                <div class="heading1 margin_0">
-                                    <h5>{lang["profile user"]}</h5>
+
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <div className="heading1 margin_0">
+                                        <h5>{lang["profile user"]}</h5>
+                                    </div>
+                                    <i className="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i>
                                 </div>
+                                <div class="modal fade" tabindex="-1" role="dialog" id="editMember" aria-labelledby="edit" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-center" role="document">
+                                    <div class="modal-content p-md-3">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">{lang["profile user update"]} </h4>
+
+                                            {/* <button class="close" type="button" onClick={handleCloseModal} data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button> */}
+                                        </div>
+                                        <div class="modal-body">
+                                            <form>
+                                                <div class="row">
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="firstname">{lang["fullname"]}<span className='red_star ml-1'>*</span></label>
+                                                        <input type="text" class="form-control" value={editUser.fullname} onChange={
+                                                            (e) => { setEditUser({ ...editUser, fullname: e.target.value }) }
+                                                        } placeholder={lang["p.fullname"]} />
+                                                        {errorMessagesedit.username && <span class="error-message">{errorMessagesedit.fullname}</span>}
+                                                    </div>
+
+
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="email">{lang["email"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="email" class="form-control" value={editUser.email} onChange={
+                                                            (e) => { setEditUser({ ...editUser, email: e.target.value }) }
+                                                        } placeholder={lang["p.email"]} />
+                                                        {errorMessagesedit.email && <span class="error-message">{errorMessagesedit.email}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <label class="font-weight-bold text-small" for="phone">{lang["phone"]}<span class="red_star ml-1">*</span></label>
+                                                        <input type="phone" class="form-control" value={editUser.phone} onChange={
+                                                            (e) => { setEditUser({ ...editUser, phone: e.target.value }) }
+                                                        } placeholder={lang["p.phone"]} />
+                                                        {errorMessagesedit.phone && <span class="error-message">{errorMessagesedit.phone}</span>}
+                                                    </div>
+                                                    
+
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
+                                                        <textarea rows={5} type="text" class="form-control" value={editUser.address} onChange={
+                                                            (e) => { setEditUser({ ...editUser, address: e.target.value }) }
+                                                        } placeholder={lang["p.address"]} />
+                                                        {errorMessagesedit.address && <span class="error-message">{errorMessagesedit.address}</span>}
+                                                    </div>
+                                                    <div class="form-group col-lg-12">
+                                                        <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
+                                                        <textarea rows={5} type="text" class="form-control" value={editUser.note} onChange={
+                                                            (e) => { setEditUser({ ...editUser, note: e.target.value }) }
+                                                        } placeholder={lang["p.note"]} />
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" onClick={submitUpdate} class="btn btn-success">{lang["btn.update"]}</button>
+                                            <button type="button"  data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
                             </div>
                             <div class="full price_table padding_infor_info">
                                 <div class="row">
@@ -93,7 +246,12 @@ export default (props) => {
                                                 <div class="contact_inner">
                                                     <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
-                                                        <li>Tài khoản: {profile.role}</li>
+                                                        <li>Tên đăng nhập: {profile.username}</li>
+                                                        <li>Quyền: {profile.role === "ad" ? "Quản trị viên" :
+                                                            profile.role === "pm" ? "Quản lý dự án" :
+                                                                profile.role === "pd" ? "Người triển khai" :
+                                                                    profile.role === "ps" ? "Người theo dõi dự án" :
+                                                                        profile.role}</li>
                                                         <li><i class="fa fa-envelope-o"></i> : {profile.email || "nhan.to@mylangroup.com"}</li>
                                                         <li> <i class="fa fa-phone"></i> : {profile.phone || "0359695554"}</li>
                                                         <li>Địa chỉ: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
@@ -156,7 +314,10 @@ export default (props) => {
                                             </div>
                                         </div>
                                     </div>
+
+
                                     <div class="col-lg-4">
+
                                     </div>
                                 </div>
                             </div>

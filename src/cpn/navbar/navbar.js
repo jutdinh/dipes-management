@@ -27,6 +27,12 @@ export default () => {
          <div class="sidebar_blog_2">
             <h4>{lang["general"]}</h4>
             <ul class="list-unstyled components">
+            <li className="navbar-item">
+                  <NavLink to="/" activeClassName="nav-active">
+                     <i class="fa fa-home"></i>
+                     <span>{lang["home"]}</span>
+                  </NavLink>
+               </li>
                <li className="navbar-item">
                   <NavLink to="/projects" activeClassName="nav-active">
                      <i class="fa fa-briefcase purple_color2"></i>
@@ -56,7 +62,7 @@ export default () => {
          </div>
 
          <div class="footer-custom">
-            <p>&copy; 2023 - Designed by Mylan Group. </p>
+            <p>&copy; 2023 - Designed by Mylan Group </p>
          </div>
 
       </nav>
