@@ -102,9 +102,9 @@
 
 .page_title {
     background: #fff;
-    margin-top: 0;
+
     margin-bottom: 10px;
-    padding: 25px 35px 22px 38px;
+    padding: 15px 35px 15px 38px;
     box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
     margin-left: -40px;
     margin-right: -40px;
@@ -279,6 +279,7 @@
     padding: 3px 3px;
     color: rgb(8, 8, 8);
     border-radius: 0.25rem;
+   
 }
 
 
@@ -357,6 +358,9 @@
     padding-top: 5px;
 }
 
+.margin_bottom_30 {
+    margin-bottom: 15px;
+}
 .user-item {
     display: flex;
     align-items: center;
@@ -391,15 +395,41 @@
 }
 
 .dash_head {
-    background-image: url(images/layout_img/pattern_h.png);
+    background-image: url();
     font-weight: normal;
     height: auto;
     border-radius: 5px 5px 0 0;
-    padding: px;
+ 
     background-size: cover;
-    background-color: #214162;
+    background-color: white;
     position: relative;
+    border-bottom: solid #f3f3f3 2px;
+    padding: 18px 25px 15px;
 }
+.plus_green_bt {
+    position: absolute;
+    right: 0;
+    bottom: -10px;
+}
+.breadcrumb{
+    font-size: 14px;
+    font-family: "UTM Avo", sans-serif !important;
+    line-height: normal;
+    font-weight: 300;
+}
+.plus_green_bt a {
+    background: #bff3de;
+    color: #fff;
+    width: 45px;
+    height: 45px;
+    float: right;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 45px;
+    font-size: 28px;
+    font-weight: 500;
+}
+
 .dash_blog{
     min-height: 300px;
 }
@@ -433,8 +463,14 @@
 .size {
     font-size: 18px;  
 }
+.msg_list {
+    max-height: 300px; /* Chiều cao của mỗi dòng là 100px */
+    overflow-y: auto;
+  }
+  
 .msg_list li {
   position: relative;  /* Bắt buộc cho 'position: absolute' hoạt động trong .close-button */
+
 }
 
 .close-button {

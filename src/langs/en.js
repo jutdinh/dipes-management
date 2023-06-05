@@ -1,6 +1,6 @@
 export default {
     // lang
-    "vi":"Vietnamese",
+    "vi": "Vietnamese",
     "en": "English",
     "signin": "Sign In",
     "account": "Account",
@@ -42,21 +42,55 @@ export default {
     "settings.languages": "Languages",
     "settings.color": "Colors",
     "settings.color button": "Change",
-
-
+    //description
+    "description": "Description",
+    //Project
+    "projects":"Projects",
     "projects.title": "Projects",
-
     "projects.desc": "Project manager",
     "project_detail.title": "Project detail",
+    //status
+    "initialization": "Initialization",
+    "implement": "Implement",
+    "deploy": "Deploy",
+    "complete": "Complete",
+    "pause": "Pause",
 
+
+
+
+    //List project
+    "projectcode": "Project Code",
+    "projectmanager": "Project Manager",
+    "projectmember": "Members",
+    "projectempty": "No members yet",
+    "createby": "Create by",
+    "by": " by ",
+    //Members
+    "members": "Members",
+    //button project
+    "buttondetail": "View details",
+    //error project
+    "error.project_name": "Please enter your project name",
+    "error.project_status": "Please select project status",
+
+    //Version
+    "version": "Version",
+
+
+    //User
     "users.title": "Users",
     "users.desc": "Users management",
     //Group user
     "administrator": "Administrator",
-    "projectmanager": "Project management",
-    "implementation": "Implementer",
-    "monitor": "Project monitor",
-    // modal add user
+    "projectmanager": "Project manager",
+    "implementation": "Implementation Staff",
+    "monitor": "Monitor Staff",
+    //list
+    "username": "Username",
+    "permission": "Permission",
+    "time": "Time",
+    // modal add user,
     "btn.create": "Create new",
     "btn.close": "Close",
     "adduser.title": "Add user",
@@ -95,10 +129,8 @@ export default {
     "edituser.title": "Update",
 
 
-    // error project
-    "error.project_name": "Please enter your project name",
-    "error.project_status": "Please select project status",
-   
+
+
 }
 
 

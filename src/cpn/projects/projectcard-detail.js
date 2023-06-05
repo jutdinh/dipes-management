@@ -1,6 +1,6 @@
 
 import { useParams } from "react-router-dom";
-
+import Header from "../common/header"
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,11 +19,11 @@ export default () => {
         { id: 1, label: "Cũ nhất", value: "oldest" },
     ]
     const status = [
-        { id: 0, label: "Khởi tạo", value: 1, color: "#1ed085" },
-        { id: 1, label: "Thực hiện", value: 2, color: "#8884d8" },
-        { id: 2, label: "Triển khai", value: 3, color: "#ffc658" },
-        { id: 3, label: "Hoàn thành", value: 4, color: "#ff8042" },
-        { id: 4, label: "Tạm dừng", value: 5, color: "#FF0000" }
+        { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+        { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+        { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
+        { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
+        { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
     ]
 
     const handleOpenAdminPopup = () => {
@@ -155,15 +155,14 @@ export default () => {
                         setProject(data);
                         setProjectVersion(data.versions)
                         setProjectMember(data.members)
-
-                        console.log(project)
+                        setManager(data.manager.username)
                     }
                 } else {
                     window.location = "/404-not-found"
                 }
             })
     }, [])
-
+    console.log(users)
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -177,7 +176,7 @@ export default () => {
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setUsers(data);
-                        // console.log(data)
+
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -379,6 +378,7 @@ export default () => {
         setUniqueUsers(duplicateUsers);
     }, [users, projectmember]);
 
+    // Page 
 
     return (
         <div className="container-fluid">
@@ -386,10 +386,58 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
+
                             <h4>{lang["project_detail.title"]}</h4>
+
                         </div>
                     </div>
                 </div>
+                {/* <div class="row column1">
+                    <div class="white_shd full margin_bottom_30">
+                        <div class="full graph_head">
+                            <div class="heading1 margin_0">
+                                <h2>Tab Bar Style 2</h2>
+                            </div>
+                        </div>
+                        <div class="full inner_elements">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="tab_style2">
+                                        <div class="tabbar padding_infor_info">
+                                            <nav>
+                                                <div class="nav nav-tabs" id="nav-tab1" role="tablist">
+                                                    <a class="nav-item nav-link active" id="nav-home-tab2" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" aria-selected="true">Home</a>
+                                                    <a class="nav-item nav-link" id="nav-profile-tab2" data-toggle="tab" href="#nav-profile_s2" role="tab" aria-controls="nav-profile_s2" aria-selected="false">Profile</a>
+                                                    <a class="nav-item nav-link" id="nav-contact-tab2" data-toggle="tab" href="#nav-contact_s2" role="tab" aria-controls="nav-contacts_s2" aria-selected="false">Contact</a>
+                                                </div>
+                                            </nav>
+                                            <div class="tab-content" id="nav-tabContent_2">
+                                                <div class="tab-pane fade show active" id="nav-home_s2" role="tabpanel" aria-labelledby="nav-home-tab">
+                                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et
+                                                        quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                                                        qui ratione voluptatem sequi nesciunt.
+                                                    </p>
+                                                </div>
+                                                <div class="tab-pane fade" id="nav-profile_s2" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et
+                                                        quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                                                        qui ratione voluptatem sequi nesciunt.
+                                                    </p>
+                                                </div>
+                                                <div class="tab-pane fade" id="nav-contact_s2" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et
+                                                        quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                                                        qui ratione voluptatem sequi nesciunt.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> */}
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
@@ -406,34 +454,46 @@ export default () => {
                                                 {/* Proejct */}
                                                 {/* Detail */}
                                                 <div class="col-md-6">
-                                                    <div class="white_shd full margin_bottom_30">
-                                                        <div class="full graph_head">
-                                                            <div class="row">
-                                                                <div class="col-md-11">
-                                                                    <h5>{projectdetail.project_name}</h5>
-                                                                </div>
-                                                                <div class="col-md-1">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
-                                                                </div>
+                                                    <div class="dash_blog">
+                                                        <div class="dash_blog_inner">
+                                                            <div class="dash_head">
+                                                                <h3>
+                                                                <h5>{projectdetail.project_name}</h5>
+                                                                    <span class="plus_green_bt">
+                                                                        <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
+                                                                    </span>
+                                                                </h3>
                                                             </div>
-                                                        </div>
-                                                        <div class="full progress_bar_inner">
+                                                            
+                                                            <div class="msg_list_main">
                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <div class="full">
                                                                         <div class="padding_infor_info">
-                                                                            <p>Mã dự án: {projectdetail.project_code}</p>
+                                                                            <p class="font-weight-bold">{lang["projectcode"]}: {projectdetail.project_code}</p>
                                                                             <span className="status-label" style={{
                                                                                 backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
                                                                             }}>
                                                                                 {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
                                                                             </span>
-                                                                            <p>Người tạo dự án: {projectdetail.create_by?.fullname}</p>
-                                                                            <p>Thời gian: {projectdetail.create_at}</p>
-                                                                            <p>Mô tả: {projectdetail.project_description}</p>
+                                                                            <p class="font-weight-bold">{lang["projectmanager"]}: {projectdetail.manager?.fullname}</p>
+
+                                                                            <p>
+                                                                                {lang["time"]}: {
+                                                                                    lang["time"] === "Time" && projectdetail.create_at ?
+                                                                                        projectdetail.create_at.replace("lúc", "at") :
+                                                                                        projectdetail.create_at
+                                                                                }
+                                                                                {lang["by"]}
+                                                                                {projectdetail.create_by?.fullname} </p>
+                                                                            <p>{lang["description"]}: {projectdetail.project_description}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                            </div>
+                                                            <div class="read_more">
+                                                                {/* <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div> */}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -493,13 +553,13 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* Version */}
+                                                {/* Manager */}
                                                 <div class="col-md-6">
                                                     <div class="white_shd full margin_bottom_30">
                                                         <div class="full graph_head">
                                                             <div class="row">
                                                                 <div class="col-md-11">
-                                                                    <h5>Version</h5>
+                                                                    <h5>{lang["version"]} .. .</h5>
                                                                 </div>
                                                                 <div class="col-md-1">
                                                                     <p><i class="fa fa-edit size pointer"></i></p>
@@ -542,55 +602,53 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* Task */}
+
+                                                {/* Version */}
                                                 <div class="col-md-6">
-                                                    <div class="dash_blog">
-                                                        <div class="dash_blog_inner">
-                                                            <div class="dash_head">
-                                                                <h3><span><i class="fa fa-comments-o"></i> Updates</span><span class="plus_green_bt"><a href="#">+</a></span></h3>
+                                                    <div class="white_shd full margin_bottom_30">
+                                                        <div class="full graph_head">
+                                                            <div class="row">
+                                                                <div class="col-md-11">
+                                                                    <h5>{lang["version"]}</h5>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <p><i class="fa fa-edit size pointer"></i></p>
+                                                                </div>
                                                             </div>
-                                                            <div class="list_cont">
-                                                                <p>User confirmation</p>
+                                                        </div>
+                                                        <div class="full progress_bar_inner">
+                                                            <div class="row span-hover">
+                                                                <div class="col-md-6">
+                                                                    <div class="full">
+                                                                        <div class="padding_infor_info">
+                                                                            {versions.map(version => (
+                                                                                <span> {version.version_name} <br />
+                                                                                </span>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="full">
+                                                                        <div class="padding_infor_info">
+                                                                            {versions.map(version => (
+                                                                                <span> {version.version_description} <br />
+
+                                                                                </span>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="full">
+                                                                        <div class="padding_infor_info scaled-hover-targe pointer">
+                                                                            <i class="fa fa-cogs"></i>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div class="msg_list_main">
-                                                                <ul class="msg_list">
-                                                                    <li>
-                                                                        <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
-                                                                        <span>
-                                                                            <span class="name_user">John Smith</span>
-                                                                            <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                                                            <span class="time_ago">12 min ago</span>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span><img src="images/layout_img/msg3.png" class="img-responsive" alt="#" /></span>
-                                                                        <span>
-                                                                            <span class="name_user">John Smith</span>
-                                                                            <span class="msg_user">On the other hand, we denounce.</span>
-                                                                            <span class="time_ago">12 min ago</span>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
-                                                                        <span>
-                                                                            <span class="name_user">John Smith</span>
-                                                                            <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                                                            <span class="time_ago">12 min ago</span>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span><img src="images/layout_img/msg3.png" class="img-responsive" alt="#" /></span>
-                                                                        <span>
-                                                                            <span class="name_user">John Smith</span>
-                                                                            <span class="msg_user">On the other hand, we denounce.</span>
-                                                                            <span class="time_ago">12 min ago</span>
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="read_more">
-                                                                <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
-                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -598,15 +656,21 @@ export default () => {
                                                 <div class="col-md-6">
                                                     <div class="dash_blog">
                                                         <div class="dash_blog_inner">
-                                                            <div class="full graph_head">
+                                                            <div class="dash_head">
+                                                                <h3>
+                                                                    <h5>{lang["members"]}</h5>
+                                                                    <span class="plus_green_bt">
+                                                                        <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i></p>
+                                                                    </span>
+                                                                </h3>
+                                                            </div>
+                                                            <div class="list_cont">
                                                                 <div class="row">
-                                                                    <div class="col-md-11">
-                                                                        <h5>Nhân viên triển khai</h5>
+                                                                    <div class="col-md-10">
+                                                                        1
                                                                     </div>
-                                                                    <div class="col-md-1">
-                                                                        <p>
-                                                                            <i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i>
-                                                                        </p>
+                                                                    <div class="col-md-2">
+                                                                        1
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -620,19 +684,23 @@ export default () => {
                                                                                         <span><img src={proxy + member.avatar} class="img-responsive img_custom" alt="#" /></span>
                                                                                         <span>
                                                                                             <span class="name_user">{member.fullname}</span>
-                                                                                            <span class="time_ago">{
+                                                                                            <span class="msg-user">
+                                                                                                {
 
-                                                                                                member.permission === "pm" ? "Quản lý dự án" :
-                                                                                                    member.permission === "pd" ? "Triển khai dự án" :
-                                                                                                        member.permission === "ps" ? "Theo dõi dự án" :
-                                                                                                            "Khác"
-                                                                                            }</span>
+                                                                                                    member.permission === "pm" ? lang["projectmanager"] :
+                                                                                                        member.permission === "pd" ? lang["implementation"] :
+                                                                                                            member.permission === "ps" ? lang["monitor"] :
+                                                                                                                "Khác"
+                                                                                                }
+                                                                                            </span>
+                                                                                            <span class="time_ago close-button"><img class="abc" width={22} src="/images/icon/edit.png"  ></img>
+                                                                                                <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)} ></img></span>
                                                                                         </span>
 
-                                                                                        <span class="close-button">
+                                                                                        {/* <span class="close-button">
                                                                                             <img class="abc" width={22} src="/images/icon/edit.png"  ></img>
                                                                                             <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)} ></img>
-                                                                                        </span>
+                                                                                        </span> */}
                                                                                     </li>
                                                                                 </div>
                                                                             ))
@@ -645,7 +713,7 @@ export default () => {
                                                                 </ul>
                                                             </div>
                                                             <div class="read_more">
-                                                                <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
+                                                                {/* <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div> */}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -668,7 +736,11 @@ export default () => {
                                                                                 <div class="option">
                                                                                     <h5>Phụ trách</h5>
                                                                                     {
+
                                                                                         selectedUsers.map(user => {
+                                                                                            if (user.username === manager) {
+                                                                                                return null;
+                                                                                            }
                                                                                             const userData = users.find(u => u.username === user.username);
 
                                                                                             return (
@@ -676,6 +748,8 @@ export default () => {
                                                                                                     <p>{userData ? userData.fullname : 'User not found'}</p>
                                                                                                 </div>
                                                                                             )
+
+
                                                                                         })
                                                                                     }
 
@@ -815,6 +889,8 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 </div>
+
+
 
                                             </div>
                                         </div>

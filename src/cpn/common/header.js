@@ -1,10 +1,32 @@
-export default (props) => {
-    const { title, desc } = props;
+import { useLocation, Link } from "react-router-dom";
 
-    return(
-        <div className="border-bottom pb-2" style={{ background: "#FAFAFA" }}>
-            <h1 className="block h1">{ title }</h1>
-            <span className="mt-1">{ desc }</span>
-        </div>
-    )
-}
+const Header = () => {
+  const location = useLocation();
+  const pathnames = location.pathname.split("/").filter((x) => x);
+
+  return (
+    <header>
+      {/* Các thành phần khác của header */}
+     
+        {pathnames.length > 1 ? (
+          <>
+            <Link to="/">Home</Link>
+            {pathnames.map((value, index) => {
+              const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+
+              return (
+                <span key={index}>
+                  &nbsp;&gt;&nbsp;
+                  <Link to={to}>{value}</Link>
+                </span>
+              );
+            })}
+          </>
+        ) : null}
+      
+    </header>
+  );
+};
+
+
+export default Header;

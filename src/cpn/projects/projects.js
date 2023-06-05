@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Swal from 'sweetalert2';
+import { Header } from '../common';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const dispatch = useDispatch()
@@ -117,11 +118,11 @@ export default () => {
         { id: 1, label: "Cũ nhất", value: "oldest" },
     ]
     const status = [
-        { id: 0, label: "Khởi tạo", value: 1, color: "#1ed085" },
-        { id: 1, label: "Thực hiện", value: 2, color: "#8884d8" },
-        { id: 2, label: "Triển khai", value: 3, color: "#ffc658" },
-        { id: 3, label: "Hoàn thành", value: 4, color: "#ff8042" },
-        { id: 4, label: "Tạm dừng", value: 5, color: "#FF0000" }
+        { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+        { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+        { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
+        { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
+        { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
     ]
 
 
@@ -176,7 +177,7 @@ export default () => {
                         // console.log(data)
                     }
                 } else {
-                    window.location = "/404-not-found"
+                    window.location = "/login"
                 }
             })
     }, [])
@@ -269,8 +270,6 @@ export default () => {
                 });
             });
     };
-
-
     const handleDeleteUser = (project) => {
 
         const requestBody = {
@@ -340,9 +339,8 @@ export default () => {
     const detailProject = (project) => {
         setSelectedProject(project);
         console.log(project)
-        window.location.href = `project/detail/${project.project_id}`;
+        window.location.href = `projects/detail/${project.project_id}`;
     };
-
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -350,15 +348,19 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
+                            <p><Header/></p>
+                           
                             {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
                                     </button> : null
-                            }
+                            } 
                         </div>
                     </div>
+                   
                 </div>
+               
 
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
@@ -385,18 +387,14 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-6 ">
                                             <label>Trạng thái <span className='red_star'>*</span></label>
-
                                             <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
                                                 <option value="">Chọn trạng thái</option>
                                                 {status.map((status, index) => {
-
                                                     return (
                                                         <option key={index} value={status.value}>{status.label}</option>
                                                     );
-
                                                 })}
                                             </select>
-
                                         </div>
                                         <div className="form-group col-lg-6">
                                             <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
@@ -419,8 +417,6 @@ export default () => {
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder="Nhập mô tả" />
                                         </div>
-
-
                                         <div className="form-group col-lg-12">
                                             <label>Thành viên dự án</label>
                                             <div class="options-container">
@@ -429,7 +425,6 @@ export default () => {
                                                     {
                                                         selectedUsers.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
-
                                                             return (
                                                                 <div key={user.username}>
                                                                     <p>{userData ? userData.fullname : 'User not found'}</p>
@@ -437,13 +432,11 @@ export default () => {
                                                             )
                                                         })
                                                     }
-
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
                                                 </div>
                                                 <div class="option">
-
                                                     <h5>Triển Khai</h5>
                                                     {
                                                         selectedImple.map(user => {
@@ -459,7 +452,6 @@ export default () => {
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
-
                                                 </div>
                                                 <div class="option">
                                                     <h5>Theo Dõi</h5>
@@ -487,7 +479,6 @@ export default () => {
                                                         if (user.username !== manager && !selectedImple.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
                                                             return (
                                                                 <div key={user.username} class="user-item">
-
                                                                     <input
                                                                         class="user-checkbox"
                                                                         type="checkbox"
@@ -508,7 +499,6 @@ export default () => {
                                                     <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
                                                 </div>
                                             </div>
-
                                         )}
                                         {showImplementationPopup && (
                                             <div class="user-popup2">
@@ -572,7 +562,6 @@ export default () => {
                             <div class="modal-footer">
                                 <button type="button" onClick={submit} class="btn btn-success ">Thêm mới</button>
                                 <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">Đóng</button>
-
                             </div>
                         </div>
                     </div>
@@ -597,20 +586,26 @@ export default () => {
                                                                 <div class="col">
                                                                     <h4 class="project-name d-flex align-items-center">{item.project_name}</h4>
                                                                 </div>
-                                                                
+
                                                                 <div class="col-auto cross-hide pointer scaled-hover">
                                                                     <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
 
                                                                 </div>
                                                             </div>
-                                                            <p class="card-title">Mã dự án: {item.project_code}</p>
-                                                            <p><i class="fa fa-clock-o "></i>: {item.create_at}</p>
-                                                            <p class="card-text">{item.project_descripstion}</p>
-                                                            <p class="font-weight-bold">Quản lý dự án: {item.manager.fullname}</p>
+                                                            <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
+                                                            <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
+
+                                                            <p>{lang["time"]}: {
+                                                                lang["time"] === "Time" ?
+                                                                    item.create_at.replace("lúc", "at") :
+                                                                    item.create_at
+                                                            }</p>
+                                                            {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
+                                                            <p class="font-weight-bold">{lang["projectmanager"]}</p>
                                                             <div class="profile_contacts">
                                                                 <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
                                                             </div>
-                                                            <p class="font-weight-bold">Thành viên</p>
+                                                            <p class="font-weight-bold">{lang["projectmember"]}</p>
 
                                                             <div class="profile_contacts">
                                                                 {
@@ -622,7 +617,7 @@ export default () => {
                                                                                 alt={member.username}
                                                                             />
                                                                         )) : <div class="profile_contacts">
-                                                                            <p>Chưa có thành viên </p>
+                                                                            <p>{lang["projectempty"]} </p>
                                                                         </div>
                                                                 }
                                                                 {
@@ -641,15 +636,15 @@ export default () => {
                                                                 {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                             </span>
 
-                                                            <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
+                                                            {/* <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
                                                                 <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
                                                                     <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
-                                                                        <i class="fa fa-edit"></i> Xem chi tiết
+                                                                        <i class="fa fa-edit"></i> {lang["buttondetail"]}
                                                                     </button>
                                                                 </div>
                                                             </div>

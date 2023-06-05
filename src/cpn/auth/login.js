@@ -67,7 +67,7 @@ export default () => {
 
                 //      window.location = "/projects";
                 // });
-                window.location = "/projects";
+                window.location = "/";
 
             } else {
                 Swal.fire({

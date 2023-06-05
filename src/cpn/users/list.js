@@ -442,7 +442,7 @@ export default (props) => {
                             </div>
                             {/* Modal edit */}
                             <div class="modal fade" tabindex="-1" role="dialog" id="myEditmodal" aria-labelledby="edit" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
+                                <div class="modal-dialog modal-lg modal-dialog-center" role="document">
                                     <div class="modal-content p-md-3">
                                         <div class="modal-header">
                                             <h4 class="modal-title">{lang["edituser.title"]} </h4>
@@ -530,8 +530,8 @@ export default (props) => {
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                                 <h4>{item.fullname}</h4>
-                                                                <p><strong>Tài khoản: {item.username} </strong></p>
-                                                                <p><strong>Quyền: </strong>
+                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
+                                                                <p><strong>{lang["permission"]}: </strong>
                                                                     {item.role === "ad" ? "Quản trị viên" :
                                                                         item.role === "pm" ? "Quản lý dự án" :
                                                                             item.role === "pd" ? "Người triển khai" :
@@ -540,8 +540,15 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>Tạo bởi: {item.create_by}</li>
-                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                    <li>
+                                                                        {lang["time"]}: {
+                                                                            lang["time"] === "Time" ?
+                                                                                item.create_at.replace("lúc", "at") :
+                                                                                item.create_at
+                                                                        }
+                                                                    </li>
+
                                                                 </ul>
                                                             </div>
                                                             <div class="right">
@@ -576,8 +583,8 @@ export default (props) => {
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                                 <h4>{item.fullname}</h4>
-                                                                <p><strong>Tài khoản: {item.username} </strong></p>
-                                                                <p><strong>Quyền: </strong>
+                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
+                                                                <p><strong>{lang["permission"]}: </strong>
                                                                     {item.role === "ad" ? "Quản trị viên" :
                                                                         item.role === "pm" ? "Quản lý dự án" :
                                                                             item.role === "pd" ? "Người triển khai" :
@@ -586,8 +593,14 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>Tạo bởi: {item.create_by}</li>
-                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                    <li>
+                                                                        {lang["time"]}: {
+                                                                            lang["time"] === "Time" ?
+                                                                                item.create_at.replace("lúc", "at") :
+                                                                                item.create_at
+                                                                        }
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                             <div class="right">
@@ -620,8 +633,8 @@ export default (props) => {
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                                 <h4>{item.fullname}</h4>
-                                                                <p><strong>Tài khoản: {item.username} </strong></p>
-                                                                <p><strong>Quyền: </strong>
+                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
+                                                                <p><strong>{lang["permission"]}: </strong>
                                                                     {item.role === "ad" ? "Quản trị viên" :
                                                                         item.role === "pm" ? "Quản lý dự án" :
                                                                             item.role === "pd" ? "Người triển khai" :
@@ -630,8 +643,14 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>Tạo bởi: {item.create_by}</li>
-                                                                    <li>Thời gian: {item.create_at}</li>
+                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                    <li>
+                                                                        {lang["time"]}: {
+                                                                            lang["time"] === "Time" ?
+                                                                                item.create_at.replace("lúc", "at") :
+                                                                                item.create_at
+                                                                        }
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                             <div class="right">

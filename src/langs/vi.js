@@ -1,6 +1,6 @@
 export default {
     // lang
-    "vi":"Tiếng Việt",
+    "vi": "Tiếng Việt",
     "en": "English",
     "signin": "Đăng nhập",
     "account": "Tên đăng nhập",
@@ -17,7 +17,7 @@ export default {
     "help": "Trợ giúp",
     "signout": "Đăng xuất",
     "dashboard": "Bảng điều khiển",
-    "home":"Trang chủ",
+    "home": "Trang chủ",
     "user info": "Xin chào",
     "projects manager": "Quản lý dự án",
     "project list": "Danh sách dự án",
@@ -40,15 +40,54 @@ export default {
     "settings.languages": "Ngôn ngữ",
     "settings.color": "Màu sắc",
     "settings.color button": "Thay đổi",
+    //description
+    "description": "Mô tả",
+
+
+    //Project
+    "projects":"Dự án",
     "projects.title": "Quản lý dự án",
     "project_detail.title": "Chi tiết dự án",
+    //status
+    "initialization": "Khởi tạo",
+    "implement": "Thực hiện",
+    "deploy": "Triển khai",
+    "complete": "Hoàn thành",
+    "pause": "Tạm dừng",
+    //List project
+    "projectcode": "Mã dự án",
+    "projectmanager": "Quản lý dự án",
+    "projectmember": "Thành viên",
+    "projectempty": "Chưa có thành viên",
+    "createby": "Tạo bởi",
+    "by": " bởi ",
+    //Members
+    "members":"Thành viên",
+    //button project
+    "buttondetail": "Xem chi tiết",
+    // error project
+    "error.project_name": "Vui lòng nhập tên dự án",
+    "error.project_status": "Vui lòng chọn trạng thái dự án",
+
+    //Version
+    "version": "Phiên bản",
+
+    //Task
+    "task": "Yêu cầu",
+    
+
+
+    //User
     "users.title": "Quản lý người dùng",
     //Group user
-
     "administrator": "Quản trị viên",
     "projectmanager": "Quản lý dự án",
     "implementation": "Người triển khai",
     "monitor": "Người theo dõi dự án",
+    //list user
+    "username": "Tên đăng nhập",
+    "permission": "Quyền",
+    "time": "Thời gian",
     // modal add user
     "btn.create": "Thêm mới",
     "btn.close": "Đóng",
@@ -89,10 +128,6 @@ export default {
     "btn.update": "Lưu lại",
     "edituser.title": "Chỉnh sửa người dùng",
 
-    // error project
-    "error.project_name": "Vui lòng nhập tên dự án",
-    "error.project_status": "Vui lòng chọn trạng thái dự án",
-    
 
 
 

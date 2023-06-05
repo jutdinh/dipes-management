@@ -10,25 +10,24 @@ import {
 import { Home } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
 import { Login, SignUp, SignOut } from './auth';
-
-
 import { Settings } from './settings';
 import { Projects, ProjectsCard, ProjectDetail } from './projects';
 import { ListUser, Profile } from './users';
+import { Tasks } from './tasks'; 
 
 
 
 function App() {
 
-  const dispatch = useDispatch()  
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const specialURLs = ["/login", "/signup", "/signout"]
     const url = window.location.pathname;
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const user = JSON.parse(stringifiedUser)   
-    
+    const user = JSON.parse(stringifiedUser)
+
 
     if (specialURLs.indexOf(url) === -1) {
       if (!_token) {
@@ -42,7 +41,7 @@ function App() {
           payload: {
             user
           }
-        })        
+        })
 
       }
     }
@@ -54,20 +53,23 @@ function App() {
   return (
 
     <Router>
+
       <Routes>
-        <Route exac path="/login" element={<Login />} />s
-        <Route exac path="/signup" element={<SignUp />} />
-        <Route exac path="/signout" element={<SignOut />} />
-        <Route exac path="/" element={<Navigation Child={Home} />} />
-        <Route exac path="/projects" element={<Navigation Child={Projects} />} />
-        <Route exac path="/project/:project_id" element={<Navigation Child={ProjectsCard} />} />
-        <Route exac path="/project/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
-        <Route exac path="/users" element={<Navigation Child={ListUser} />} />
-        <Route exac path="/users/profile" element={<Navigation Child={Profile} />} />
-        <Route exac path="/settings" element={<Navigation Child={Settings} />} />
-        <Route exac path="*" element={<PageNotFound />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signout" element={<SignOut />} />
+        <Route path="/" element={<Navigation Child={Home} />} />
+        <Route path="/projects" element={<Navigation Child={Projects} />} />
+        <Route path="/projects/:project_id" element={<Navigation Child={ProjectsCard} />} />
+        <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
+        <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
+        <Route path="/users" element={<Navigation Child={ListUser} />} />
+        <Route path="/users/profile" element={<Navigation Child={Profile} />} />
+        <Route path="/settings" element={<Navigation Child={Settings} />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
+
 
   );
 }

@@ -27,14 +27,19 @@ export default () => {
          <div class="sidebar_blog_2">
             <h4>{lang["general"]}</h4>
             <ul class="list-unstyled components">
-            <li className="navbar-item">
+               <li className="navbar-item">
                   <NavLink to="/" activeClassName="nav-active">
                      <i class="fa fa-home"></i>
                      <span>{lang["home"]}</span>
                   </NavLink>
                </li>
+
                <li className="navbar-item">
-                  <NavLink to="/projects" activeClassName="nav-active">
+                  <NavLink
+                     to="/projects"
+                     activeClassName="nav-active"
+                     isActive={() => window.location.pathname.startsWith("/projects")}
+                  >
                      <i class="fa fa-briefcase purple_color2"></i>
                      <span>{lang["projects manager"]}</span>
                   </NavLink>
