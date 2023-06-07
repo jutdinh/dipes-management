@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from "react-router-dom";
-import { Line } from 'react-chartjs-2';
+
 import { Header } from '../common';
+import {  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, LineChart, Line, PieChart, Pie, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 export default () => {
     const { proxy, lang } = useSelector(state => state)
     const _token = localStorage.getItem("_token");
@@ -26,7 +27,7 @@ export default () => {
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
-                        
+
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -55,19 +56,35 @@ export default () => {
             })
     }, [])
 
-
-
-
-
+    const data = [
+        { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+        { name: 'Page B', uv: 300, pv: 2210, amt: 2290 },
+        { name: 'Page C', uv: 200, pv: 2290, amt: 2000 },
+        { name: 'Page D', uv: 278, pv: 2000, amt: 2181 },
+        { name: 'Page E', uv: 189, pv: 2181, amt: 2500 },
+        { name: 'Page F', uv: 239, pv: 2500, amt: 2100 },
+    ];
+    const data1 = [
+        { name: 'Group A', value: 400 },
+        { name: 'Group B', value: 300 },
+        { name: 'Group C', value: 200 },
+        // additional data entries...
+    ];
+    const data2 = [
+        { subject: 'Math', A: 120, B: 110, fullMark: 150 },
+        { subject: 'Chinese', A: 98, B: 130, fullMark: 150 },
+        { subject: 'English', A: 86, B: 130, fullMark: 150 },
+        // additional data entries...
+    ];
     return (
-        
+
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
                             <h4>{lang["home"]}</h4>
-                            <p><Header/></p>
+
                         </div>
                     </div>
                 </div>
@@ -221,7 +238,14 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <canvas id="line_chart"></canvas>
+                                <LineChart width={250} height={300} data={data}>
+                                    <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                                    <CartesianGrid stroke="#ccc" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                </LineChart>
+                                
                             </div>
                         </div>
                     </div>
@@ -233,7 +257,14 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <canvas id="bar_chart"></canvas>
+                                <BarChart width={500} height={300} data={data}>
+                                    <Bar dataKey="pv" fill="#8884d8" />
+                                    <Bar dataKey="uv" fill="#82ca9d" />
+                                    <CartesianGrid stroke="#ccc" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                </BarChart>
                             </div>
                         </div>
                     </div>
@@ -245,7 +276,15 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <canvas id="radar_chart"></canvas>
+                                <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data2}>
+                                    <PolarGrid />
+                                    <PolarAngleAxis dataKey="subject" />
+                                    <PolarRadiusAxis angle={30} domain={[0, 150]} />
+                                    <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                                    <Radar name="John" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                                    <Tooltip />
+                                </RadarChart>
+
                             </div>
                         </div>
                     </div>
@@ -257,7 +296,10 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <canvas id="pie_chart"></canvas>
+                                <PieChart width={400} height={400}>
+                                    <Pie dataKey="value" isAnimationActive={false} data={data1} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label />
+                                    <Tooltip />
+                                </PieChart>
                             </div>
                         </div>
                     </div>

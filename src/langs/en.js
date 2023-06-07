@@ -42,30 +42,63 @@ export default {
     "settings.languages": "Languages",
     "settings.color": "Colors",
     "settings.color button": "Change",
-    //description
-    "description": "Description",
-    //Project
-    "projects":"Projects",
-    "projects.title": "Projects",
-    "projects.desc": "Project manager",
-    "project_detail.title": "Project detail",
     //status
     "initialization": "Initialization",
     "implement": "Implement",
     "deploy": "Deploy",
     "complete": "Complete",
     "pause": "Pause",
-
-
-
-
+    //description
+    "description": "Description",
+    //Project
+    "projects": "Projects",
+    "projects.title": "Projects",
+    "projects.desc": "Project manager",
+    "project_detail.title": "Project detail",
     //List project
     "projectcode": "Project Code",
     "projectmanager": "Project Manager",
+    "projectprocess": "Project progress",
     "projectmember": "Members",
     "projectempty": "No members yet",
     "createby": "Create by",
     "by": " by ",
+
+    //add project
+    "addproject": "Add proejct",
+    "projectname": "Project name",
+    "p.projectname": "Enter a project name",
+    "projectcode": "Project code",
+    "p.projectcode": "Enter the project code",
+    "projectstatus": "Status",
+    "p.projectstatus": "Select status",
+    "projectrole": "Managers",
+    "p.projectrole": "Choose a manager",
+    "projectdescripton": "Project description",
+    "p.projectdescripton": "Enter a project description",
+    "projectmember": "Project members",
+
+    //update project 
+    "updateproject": "Project update",
+    //Task  
+    "tasklist":"List of tasks",
+    "detailtask":"Task Detail",
+    "addtask": "Add Task",
+    "taskname":"Task name",
+    "p.taskname":"Enter a task name",
+    "taskstatus":"Status",
+    "task_priority": "Priority",
+    "taskmember":"Members",
+    "p.description":"Description of the task",
+
+
+
+
+
+
+
+    //Managers
+    "editmanager": "Edit a project manager",
     //Members
     "members": "Members",
     //button project
@@ -76,6 +109,12 @@ export default {
 
     //Version
     "version": "Version",
+    "versionupdate": "Version update",
+    "versionname": "Version name",
+    "p.versionname": "Enter an version name",
+
+    "p.versiondescription": "Enter a description",
+
 
 
     //User
@@ -94,6 +133,7 @@ export default {
     "btn.create": "Create new",
     "btn.close": "Close",
     "adduser.title": "Add user",
+    "profile.title": "Update profile",
     "fullname": "Fullname",
     "p.fullname": "Enter your full name",
     "username": "Username",
@@ -126,7 +166,10 @@ export default {
 
     // modal edit user
     "btn.update": "Save",
+    "btn.create": "Create new",
+    "btn.close": "Close",
     "edituser.title": "Update",
+
 
 
 

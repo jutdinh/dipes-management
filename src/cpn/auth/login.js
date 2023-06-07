@@ -6,7 +6,7 @@ export default () => {
     const [auth, setAuth] = useState({})
     const { lang, proxy } = useSelector(state => state);
     const [rememberMe, setRememberMe] = useState(false);
-
+    const [authError, setAuthError] = useState(null);
     const enterTriggered = (e) => {
         if (e.keyCode === 13) {
             submit(e)
@@ -70,15 +70,8 @@ export default () => {
                 window.location = "/";
 
             } else {
-                Swal.fire({
-                    title: "Đăng nhập thất bại!",
-                    text: content,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 1300,
-                }).then(function () {
-                    // window.location.reload();
-                });
+                setAuthError(content);
+               
             }
         })
     }
@@ -97,12 +90,40 @@ export default () => {
                                 <form>
                                     <fieldset>
                                         <div className="field">
-                                            <label className="label_field">{lang["account"]}</label>
-                                            <input type="text" onKeyUp={enterTriggered}
-                                                onChange={
-                                                    (e) => { setAuth({ ...auth, username: e.target.value }) }
-                                                } value={auth.username || ""} placeholder={lang["account"]} />
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                   
+                                                </div>
+                                               
+                                                <div class="col-md-8">
+                                                {authError && <span class="error-message error-login">{authError}</span>}
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label className="label_field">{lang["account"]}</label>
+                                                </div>
+                                               
+                                                <div class="col-md-8">
+                                               
+                                                    <input type="text" onKeyUp={enterTriggered}
+                                                        onChange={
+                                                            (e) => {
+                                                                setAuthError(null);
+                                                                setAuth({ ...auth, username: e.target.value });
+                                                            }
+                                                        } value={auth.username || ""} placeholder={lang["account"]} />
+                                                 
+                                                   
+                                                </div>
+                                            </div>
+
+
+
                                         </div>
+                                        
                                         <div className="field">
                                             <label className="label_field">{lang["password"]}</label>
                                             <input type="password" onKeyUp={enterTriggered} onChange={(e) => { setAuth({ ...auth, password: e.target.value }) }} value={auth.password || ""} placeholder={lang["password"]} />

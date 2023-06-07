@@ -1219,7 +1219,7 @@ a[data-toggle="collapse"] {
     margin-top: 10px;
 }
 
-#rebenue {}
+
 
 .graph_revenue {
     padding: 0;
@@ -2414,7 +2414,7 @@ h2.invoice_head small {
     background-color: #fff;
 }
 
-.table_row tbody {}
+
 
 .table_row tbody tr {
     border: none;
@@ -2648,7 +2648,7 @@ ul.inbox-nav li a i {
     top: 1px;
 }
 
-ul.inbox-nav li a span.label {}
+
 
 ul.labels-info li h4 {
     color: #5c5c5e;
@@ -3180,7 +3180,7 @@ ul.labels-category li p {
     padding: 7px 0;
 }
 
-.bottom_list .left_rating p.ratings a {}
+
 
 .fa.fa-star {
     color: #ff9800;

@@ -59,7 +59,7 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                 console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProfile(data);
@@ -264,7 +264,18 @@ export default (props) => {
             .then(res => res.json())
             .then((resp) => {
                 const { success, content } = resp;
-                console.log(resp)
+
+                const newProfiles = profiles.map( user => {
+                    if( user.username == editUser.username ){
+                        return editUser
+                    }else{
+                        return user;
+                    }
+                })
+                setProfile( newProfiles )
+
+                // close modal
+                // console.log(resp)
                 if (success) {
                     Swal.fire({
                         title: "Thành công!",
@@ -273,7 +284,7 @@ export default (props) => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        window.location.reload();
+                        // window.location.reload();
                     });
                 } else {
                     Swal.fire({
@@ -419,14 +430,14 @@ export default (props) => {
                                                     </div>
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
-                                                        <textarea rows={5} type="text" class="form-control" value={user.address} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={user.address} onChange={
                                                             (e) => { setUser({ ...user, address: e.target.value }) }
                                                         } placeholder={lang["p.address"]} />
                                                         {errorMessagesadd.address && <span class="error-message">{errorMessagesadd.address}</span>}
                                                     </div>
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
-                                                        <textarea rows={5} type="text" class="form-control" value={user.note} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={user.note} onChange={
                                                             (e) => { setUser({ ...user, note: e.target.value }) }
                                                         } placeholder={lang["p.note"]} />
                                                     </div>
@@ -478,7 +489,7 @@ export default (props) => {
                                                     <div class="form-group col-lg-6">
                                                         <label htmlFor="sel1">{lang["permission"]} <span className='red_star'>*</span></label>
                                                         <select className="form-control" name="role" value={editUser.role} onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}>
-                                                            <option value="">{lang["p.permission"]}</option>
+                                                            
                                                             {users.role === "ad" ? (
                                                                 roles.slice(1, 4).map(role => (
                                                                     <option key={role.id} value={role.value}>{role.label}</option>
@@ -494,14 +505,14 @@ export default (props) => {
 
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
-                                                        <textarea rows={5} type="text" class="form-control" value={editUser.address} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={editUser.address} onChange={
                                                             (e) => { setEditUser({ ...editUser, address: e.target.value }) }
                                                         } placeholder={lang["p.address"]} />
                                                         {errorMessagesedit.address && <span class="error-message">{errorMessagesedit.address}</span>}
                                                     </div>
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
-                                                        <textarea rows={5} type="text" class="form-control" value={editUser.note} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={editUser.note} onChange={
                                                             (e) => { setEditUser({ ...editUser, note: e.target.value }) }
                                                         } placeholder={lang["p.note"]} />
 
@@ -593,6 +604,7 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>{lang["address"]}: {item.address}</li>
                                                                     <li>{lang["createby"]}: {item.create_by}</li>
                                                                     <li>
                                                                         {lang["time"]}: {
@@ -643,6 +655,7 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>{lang["address"]}: {item.address}</li>
                                                                     <li>{lang["createby"]}: {item.create_by}</li>
                                                                     <li>
                                                                         {lang["time"]}: {
@@ -695,6 +708,7 @@ export default (props) => {
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
                                                                     <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                    <li>{lang["address"]}: {item.address}</li>
                                                                     <li>Tạo bởi: {item.create_by}</li>
                                                                     <li>Thời gian: {item.create_at}</li>
                                                                 </ul>

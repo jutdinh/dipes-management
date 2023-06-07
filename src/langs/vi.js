@@ -57,10 +57,40 @@ export default {
     //List project
     "projectcode": "Mã dự án",
     "projectmanager": "Quản lý dự án",
+    "projectprocess": "Tiến độ dự án",
     "projectmember": "Thành viên",
     "projectempty": "Chưa có thành viên",
     "createby": "Tạo bởi",
     "by": " bởi ",
+    //add project
+    "addproject": "Thêm mới dự án",
+
+    "projectname":"Tên dự án",
+    "p.projectname":"Nhập tên dự án",
+    "projectcode":"Mã dự án",
+    "p.projectcode":"Nhập mã dự án",
+    "projectstatus": "Trạng thái",
+    "p.projectstatus": "Chọn trạng thái",
+    "projectrole":"Người quản lý",
+    "p.projectrole":"Chọn người quản lý",
+    "projectdescripton":"Mô tả dự án",
+    "p.projectdescripton":"Nhập mô tả dự án",
+    "projectmember":"Thành viên dự án",
+     //update project
+    "updateproject":"Cập nhật dự án",
+
+//Task  
+    "tasklist":"Danh sách các yêu cầu",
+    "detailtask":"Chi tiết yêu cầu",
+    "addtask": "Thêm yêu cầu",
+    "taskname":"Tên yêu cầu",
+    "p.taskname":"Nhập tên yều cầu",
+    "taskstatus":"Trạng thái",
+    "task_priority": "Mức độ ưu tiên",
+    "taskmember":"Thành viên",
+    "p.description":"Mô tả yêu cầu",
+    //Managers
+    "editmanager":"Chỉnh sửa quản lý dự án",
     //Members
     "members":"Thành viên",
     //button project
@@ -71,10 +101,13 @@ export default {
 
     //Version
     "version": "Phiên bản",
-
+    "versionupdate": "Cập nhật phiên bản",
+    "versionname":"Tên phiên bản",
+    "p.versionname":"Nhập tên phiên bản",
+    "p.versiondescription":"Nhập mô tả",
     //Task
     "task": "Yêu cầu",
-    
+
 
 
     //User
@@ -92,6 +125,7 @@ export default {
     "btn.create": "Thêm mới",
     "btn.close": "Đóng",
     "adduser.title": "Thêm người dùng",
+    "profile.title": "Cập nhật hồ sơ",
     "fullname": "Họ tên",
     "p.fullname": "Nhập đầy đủ họ tên",
     "username": "Tên đăng nhập",

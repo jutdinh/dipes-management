@@ -164,7 +164,7 @@ export default (props) => {
                                 <div class="modal-dialog modal-lg modal-dialog-center" role="document">
                                     <div class="modal-content p-md-3">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">{lang["profile user update"]} </h4>
+                                            <h4 class="modal-title">{lang["profile.title"]} </h4>
 
                                             {/* <button class="close" type="button" onClick={handleCloseModal} data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button> */}
                                         </div>
@@ -198,14 +198,14 @@ export default (props) => {
 
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["address"]}<span class="red_star ml-1">*</span></label>
-                                                        <textarea rows={5} type="text" class="form-control" value={editUser.address} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={editUser.address} onChange={
                                                             (e) => { setEditUser({ ...editUser, address: e.target.value }) }
                                                         } placeholder={lang["p.address"]} />
                                                         {errorMessagesedit.address && <span class="error-message">{errorMessagesedit.address}</span>}
                                                     </div>
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="projectdetail">{lang["note"]}</label>
-                                                        <textarea rows={5} type="text" class="form-control" value={editUser.note} onChange={
+                                                        <textarea maxlength="500" rows="5" type="text" class="form-control" value={editUser.note} onChange={
                                                             (e) => { setEditUser({ ...editUser, note: e.target.value }) }
                                                         } placeholder={lang["p.note"]} />
 
@@ -246,16 +246,16 @@ export default (props) => {
                                                 <div class="contact_inner">
                                                     <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
-                                                        <li>Tên đăng nhập: {profile.username}</li>
-                                                        <li>Quyền: {profile.role === "ad" ? "Quản trị viên" :
+                                                        <li>{lang["username"]}: {profile.username}</li>
+                                                        <li>{lang["permission"]}: {profile.role === "ad" ? "Quản trị viên" :
                                                             profile.role === "pm" ? "Quản lý dự án" :
                                                                 profile.role === "pd" ? "Người triển khai" :
                                                                     profile.role === "ps" ? "Người theo dõi dự án" :
                                                                         profile.role}</li>
                                                         <li><i class="fa fa-envelope-o"></i> : {profile.email || "nhan.to@mylangroup.com"}</li>
                                                         <li> <i class="fa fa-phone"></i> : {profile.phone || "0359695554"}</li>
-                                                        <li>Địa chỉ: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
-                                                        <li>Ghi chú: {profile.note || "Ghi chú"}</li>
+                                                        <li>{lang["address"]}: {profile.address || "Phong Thạnh, Cầu Kè, Trà Vinh"}</li>
+                                                        <li>{lang["note"]}: {profile.note || lang["note"]}</li>
                                                     </ul>
                                                 </div>
                                                 <div class="user_progress_bar">

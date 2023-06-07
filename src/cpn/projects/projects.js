@@ -189,7 +189,10 @@ export default () => {
             project,
             manager: { username: manager },
         };
-
+        
+        const status = body.project.project_status;
+        body.project.project_status = parseInt(status)
+console.log(body)
         fetch(`${proxy}/projects/create`, {
             method: "POST",
             headers: {
@@ -225,7 +228,7 @@ export default () => {
                             showConfirmButton: false,
                             timer: 1500,
                         }).then(function () {
-                            window.location.reload();
+                            // window.location.reload();
                             setShowModal(false);
                         });
                     }
@@ -367,28 +370,28 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm mới dự án</h4>
+                                <h4 class="modal-title">{lang["addproject"]}</h4>
                                 <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div class="row">
                                         <div class="form-group col-lg-6">
-                                            <label>Tên dự án <span className='red_star'>*</span></label>
+                                            <label>{lang["projectname"]} <span className='red_star'>*</span></label>
                                             <input type="text" class="form-control" value={project.project_name} onChange={
                                                 (e) => { setProject({ ...project, project_name: e.target.value }) }
-                                            } placeholder="Nhập tên dự án" />
+                                            } placeholder={lang["p.projectname"]} />
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label>Mã dự án </label>
+                                            <label>{lang["projectcode"]} </label>
                                             <input type="text" class="form-control" value={project.project_code} onChange={
                                                 (e) => { setProject({ ...project, project_code: e.target.value }) }
-                                            } placeholder="Nhập mã dự án" />
+                                            } placeholder={lang["p.projectcode"]} />
                                         </div>
                                         <div class="form-group col-lg-6 ">
-                                            <label>Trạng thái <span className='red_star'>*</span></label>
+                                            <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                             <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
-                                                <option value="">Chọn trạng thái</option>
+                                                <option value="">{lang["p.projectstatus"]}</option>
                                                 {status.map((status, index) => {
                                                     return (
                                                         <option key={index} value={status.value}>{status.label}</option>
@@ -397,13 +400,13 @@ export default () => {
                                             </select>
                                         </div>
                                         <div className="form-group col-lg-6">
-                                            <label htmlFor="sel1">Chọn người quản lý dự án <span className="red_star">*</span></label>
+                                            <label htmlFor="sel1">{lang["projectrole"]} <span className="red_star">*</span></label>
                                             <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
-                                                <option value="">Chọn người quản lý</option>
+                                                <option value="">{lang["p.projectrole"]}</option>
                                                 {users && users.map((user, index) => {
                                                     if (user.role === "pm") {
                                                         return (
-                                                            <option key={index} value={user.username}>{user.username}-{user.fullname}-{user.role}</option>
+                                                            <option key={index} value={user.username}>{user.fullname}</option>
                                                         );
                                                     } else {
                                                         return null;
@@ -412,16 +415,16 @@ export default () => {
                                             </select>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>Mô tả <span className='red_start'>*</span></label>
-                                            <textarea type="text" class="form-control" value={project.project_description} onChange={
+                                            <label>{lang["projectdescripton"]}</label>
+                                            <textarea maxlength="500" rows="5"type="text" class="form-control" value={project.project_description} onChange={
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
-                                            } placeholder="Nhập mô tả" />
+                                            } placeholder={lang["p.projectdescripton"]} />
                                         </div>
                                         <div className="form-group col-lg-12">
-                                            <label>Thành viên dự án</label>
+                                            <label>{lang["projectmember"]}</label>
                                             <div class="options-container">
                                                 <div class="option">
-                                                    <h5>Phụ trách</h5>
+                                                    <h5>{lang["projectmanager"]}</h5>
                                                     {
                                                         selectedUsers.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -437,7 +440,7 @@ export default () => {
                                                     </button>
                                                 </div>
                                                 <div class="option">
-                                                    <h5>Triển Khai</h5>
+                                                    <h5>{lang["implementation"]}</h5>
                                                     {
                                                         selectedImple.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -454,7 +457,7 @@ export default () => {
                                                     </button>
                                                 </div>
                                                 <div class="option">
-                                                    <h5>Theo Dõi</h5>
+                                                    <h5>{lang["monitor"]}</h5>
                                                     {
                                                         selectedMonitor.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -495,8 +498,8 @@ export default () => {
                                                     })}
                                                 </div>
                                                 <div className="user-popup-actions">
-                                                    <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
-                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    <button class="btn btn-success" onClick={handleSaveUsers}>{lang["btn.update"]}</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                                 </div>
                                             </div>
                                         )}
@@ -523,8 +526,8 @@ export default () => {
                                                     })}
                                                 </div>
                                                 <div className="user-popup-actions">
-                                                    <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
-                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                                 </div>
                                             </div>
                                         )}
@@ -560,8 +563,8 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submit} class="btn btn-success ">Thêm mới</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">Đóng</button>
+                                <button type="button" onClick={submit} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
