@@ -564,7 +564,28 @@
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 125px;
+    min-height: 530px;
+   
+}
+.icon::before {
+    content: "";
+    display: inline-block;
+    width: 20px; /* Adjust width as needed */
+    height: 20px; /* Adjust height as needed */
+    background: url('path-to-your-image.jpg') no-repeat center center;
+    background-size: contain; /* This will make sure the image fits into the space */
+  }
+  
+.padding_infor_info-cus {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    min-height: 435px;
+   
+}
+.end-page-cus {
+    
+    min-height: 435px;
    
 }
 
@@ -575,9 +596,22 @@
 .padding_infor_info h3, 
 .padding_infor_info p, 
 .padding_infor_info span.status-label {
-    margin-bottom: 10px; /* thay đổi giá trị này để điều chỉnh khoảng cách */
+    margin-bottom: 1px; /* thay đổi giá trị này để điều chỉnh khoảng cách */
+}
+.align-items-flex-end {
+    align-items: flex-end;
 }
 
+
+.modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1rem;
+    padding-left: 45px;
+    padding-right: 45px;
+}
 /* .span-hover:hover{
     background-color: #f3eded !important;
     color: #050505;

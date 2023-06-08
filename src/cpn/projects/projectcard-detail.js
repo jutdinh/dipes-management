@@ -407,16 +407,16 @@ export default () => {
     useEffect(() => {
         let pm = projectmember.filter(member => member.permission === 'supervisor');
         let pd = projectmember.filter(member => member.permission === 'deployer');
-   
+
         setSelectedUsers(pm);
         setSelectedImple(pd);
-   
+
     }, [projectmember]);
 
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
- 
+
     let sortedMembers = [...projectManagerMembers, ...projectImpli];
     const [isLoading, setIsLoading] = useState(false);
 
@@ -536,727 +536,700 @@ export default () => {
     const paginateTask = (pageNumber) => setCurrentPageTask(pageNumber);
     const totalPagesTask = Math.ceil(tasks.length / rowsPerPageTask);
     return (
-        <div className="container-fluid">
-            <div class="midde_cont">
+        <div class="midde_cont">
+            <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
-                        <div class="page_title d-flex align-items-center">
+                        <div class="page_title">
                             <h4>{lang["project_detail.title"]}</h4>
                         </div>
                     </div>
                 </div>
-                <div class="row column1">
-                    <div class="col-md-12">
+
+
+                <div class="row">
+                    <div class="col-md-5">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full price_table padding_infor_info">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="row column4 graph">
-                                            {/* Proejct */}
-                                            {/* Detail */}
-                                            <div class="col-md-5">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>Thông tin dự án</h5>
-                                                                <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
-                                                                </span>
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="full">
-                                                                            <div class="padding_infor_info">
-                                                                                <p class="font-weight-bold">{lang["projectname"]}: {projectdetail.project_name}</p>
-                                                                                <div class="container-custom">
-                                                                                    <p class="font-weight-bold">{lang["projectcode"]}: {projectdetail.project_code}</p>
-                                                                                    {versions.map(version => (
-                                                                                        <p class="font-weight-bold">{lang["versionname"]}: {version.version_name}</p>
-                                                                                    ))}
-                                                                                </div>
-                                                                                <p>{lang["description"]}: {projectdetail.project_description}</p>
-                                                                                <p class="font-weight-bold">{lang["projectmanager"]}: </p>
-                                                                                <div class="profile_contacts">
-                                                                                    <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
-                                                                                    {projectdetail.manager?.fullname}
-                                                                                </div>
-                                                                                <div class="d-flex align-items-center">
-                                                                                <p class="font-weight-bold">{lang["projectmember"]}: </p>
-                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
-                                                                                        <i class="fa fa-edit"></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                             
-                                                                                <div class="table-responsive">
-                                                                                    {
-                                                                                        sortedMembers && sortedMembers.length > 0 ? (
-                                                                                            <>
-                                                                                                <table class="table table-striped ">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th scope="col">STT</th>
-                                                                                                            <th scope="col">Avatar</th>
-                                                                                                            <th scope="col">Họ và tên</th>
-                                                                                                            <th scope="col">Chức vụ</th>
-                                                                                                            <th scope="col">Hành động</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        {currentMembers.map((member, index) => (
-                                                                                                            <tr key={member.username}>
-                                                                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image" alt="#" /></td>
-                                                                                                                <td>{member.fullname}</td>
-                                                                                                                <td>
-                                                                                                                    {
-                                                                                                                        member.permission === "supervisor" ? lang["supervisor"] :
-                                                                                                                            member.permission === "deployer" ? lang["deployers"] :
-                                                                                                                                    "Khác"
-                                                                                                                    }
-                                                                                                                </td>
-                                                                                                                <td>
-                                                                                                                    <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)}></img>
-                                                                                                                </td>
-                                                                                                            </tr>
-                                                                                                        ))}
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                               
-                                                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                                                    <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} kết quả</p>
-                                                                                                    <nav aria-label="Page navigation example">
-                                                                                                        <ul className="pagination mb-0">
-                                                                                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                                                                                                    &laquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                            {Array(totalPages).fill().map((_, index) => (
-                                                                                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                                                                                        {index + 1}
-                                                                                                                    </button>
-                                                                                                                </li>
-                                                                                                            ))}
-                                                                                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                                                                                                    &raquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                        </ul>
-                                                                                                    </nav>
-                                                                                                </div>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <div class="list_cont ">
-                                                                                                <p>Chưa có thành viên</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                            <div class="full graph_head d-flex justify-content-between align-items-center">
+                                <div class="heading1 margin_0">
+                                    <h5>Thông tin dự án</h5>
+                                </div>
+                                <div>
+                                    <i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i>
+                                </div>
+                            </div>
+
+                            <div class="table_section padding_infor_info">
+
+                                <p class="font-weight-bold">{lang["projectname"]}:</p>
+                                <p class="mb-2">{projectdetail.project_name}</p>
+
+
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                        <p class="mb-2">{projectdetail.project_code}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                        {versions.map(version => (
+                                            <p class="mb-2">{version.version_name}</p>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <p class="font-weight-bold">{lang["description"]}: </p>
+                                <p class="mb-2">{projectdetail.project_description}</p>
+                                <p class="font-weight-bold">{lang["projectmanager"]}: </p>
+                                <div class="profile_contacts">
+                                    <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
+                                    {projectdetail.manager?.fullname}
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <p class="font-weight-bold">{lang["projectmember"]}: </p>
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    {
+                                        sortedMembers && sortedMembers.length > 0 ? (
+                                            <>
+                                                <table class="table table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">STT</th>
+                                                            <th scope="col">Avatar</th>
+                                                            <th scope="col">Họ và tên</th>
+                                                            <th scope="col">Chức vụ</th>
+                                                            {/* <th scope="col">Hành động</th> */}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentMembers.map((member, index) => (
+                                                            <tr key={member.username}>
+                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image" alt="#" /></td>
+                                                                <td>{member.fullname}</td>
+                                                                <td>
+                                                                    {
+                                                                        member.permission === "supervisor" ? lang["supervisor"] :
+                                                                            member.permission === "deployer" ? lang["deployers"] :
+                                                                                "Khác"
+                                                                    }
+                                                                </td>
+                                                                {/* <td>
+                                                                    <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)}></img>
+                                                                </td> */}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} kết quả</p>
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul className="pagination mb-0">
+                                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                                    &laquo;
+                                                                </button>
+                                                            </li>
+                                                            {Array(totalPages).fill().map((_, index) => (
+                                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                        {index + 1}
+                                                                    </button>
+                                                                </li>
+                                                            ))}
+                                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                                    &raquo;
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>Chưa có thành viên</p>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    {/* Update member */}
+                    <div class={`modal show`} id="editMember">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Cập nhật thành viên dự án</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div className="form-group col-lg-12">
+                                                <label>Thành viên dự án</label>
+                                                <div class="options-container">
+
+                                                    <div class="option">
+                                                        <h5>{lang["supervisor"]}</h5>
+                                                        {
+                                                            selectedImple.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option">
+                                                        <h5>{lang["deployers"]}</h5>
+                                                        {
+                                                            selectedMonitor.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                             {/* Update member */}
-                                             <div class={`modal show`} id="editMember">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Cập nhật thành viên dự án</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div className="form-group col-lg-12">
-                                                                        <label>Thành viên dự án</label>
-                                                                        <div class="options-container">
-                                                                            
-                                                                            <div class="option">
-                                                                                <h5>{lang["supervisor"]}</h5>
-                                                                                {
-                                                                                    selectedImple.map(user => {
-                                                                                        const userData = users.find(u => u.username === user.username);
-                                                                                        return (
-                                                                                            <div key={user.username}>
-                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    })
-                                                                                }
-                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
-                                                                                    <i class="fa fa-plus"></i>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="option">
-                                                                            <h5>{lang["deployers"]}</h5>
-                                                                                {
-                                                                                    selectedMonitor.map(user => {
-                                                                                        const userData = users.find(u => u.username === user.username);
-                                                                                        return (
-                                                                                            <div key={user.username}>
-                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    })
-                                                                                }
-                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
-                                                                                    <i class="fa fa-plus"></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
+
+                                            {showImplementationPopup && (
+                                                <div class="user-popup2">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (!selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                            onChange={() => handleImpleCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
                                                                     </div>
-                                                                   
-                                                                    {showImplementationPopup && (
-                                                                        <div class="user-popup2">
-                                                                            <div class="user-popup-content">
-                                                                                {users && users.map(user => {
-                                                                                    if (!selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
-                                                                                        return (
-                                                                                            <div key={user.username} class="user-item">
-                                                                                                <input
-                                                                                                    class="user-checkbox"
-                                                                                                    type="checkbox"
-                                                                                                    checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                                                    onChange={() => handleImpleCheck(user, 'supervisor')}
-                                                                                                />
-                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
-                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                    return null;
-                                                                                })}
-                                                                            </div>
-                                                                            <div className="user-popup-actions">
-                                                                                <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
-                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                    {showMonitorPopup && (
-                                                                        <div class="user-popup3">
-                                                                            <div class="user-popup-content">
-                                                                                {users && users.map(user => {
-                                                                                    if ( !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
-                                                                                        return (
-                                                                                            <div key={user.username} class="user-item">
-                                                                                                <input
-                                                                                                    class="user-checkbox"
-                                                                                                    type="checkbox"
-                                                                                                    checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                                                    onChange={() => handleMonitorCheck(user, 'deployer')}
-                                                                                                />
-                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
-                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                    return null;
-                                                                                })}
-                                                                            </div>
-                                                                            <div className="user-popup-actions">
-                                                                                <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
-                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={addMember} class="btn btn-success ">Lưu lại</button>
-                                                            <button type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
-                                                        </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
                                                     </div>
                                                 </div>
+                                            )}
+                                            {showMonitorPopup && (
+                                                <div class="user-popup3">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (!selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedMonitor.some(u => u.username === user.username)}
+                                                                            onChange={() => handleMonitorCheck(user, 'deployer')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={addMember} class="btn btn-success ">Lưu lại</button>
+                                    <button type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Update Project */}
+                    <div class={`modal show`} id="editProject">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["updateproject"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={project.project_name} onChange={
+                                                    (e) => { setProject({ ...project, project_name: e.target.value }) }
+                                                } placeholder={lang["p.projectname"]} />
+                                                {errorMessagesedit.project_name && <span class="error-message">{errorMessagesedit.project_name}</span>}
                                             </div>
-                                            {/* Update Project */}
-                                            <div class={`modal show`} id="editProject">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["updateproject"]}</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["projectname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={project.project_name} onChange={
-                                                                            (e) => { setProject({ ...project, project_name: e.target.value }) }
-                                                                        } placeholder={lang["p.projectname"]} />
-                                                                        {errorMessagesedit.project_name && <span class="error-message">{errorMessagesedit.project_name}</span>}
-                                                                    </div>
-                                                                    <div class="form-group col-lg-6">
-                                                                        <label>{lang["projectcode"]} </label>
-                                                                        <input type="text" class="form-control" value={project.project_code} onChange={
-                                                                            (e) => { setProject({ ...project, project_code: e.target.value }) }
-                                                                        } placeholder={lang["p.projectcode"]} />
-                                                                    </div>
-                                                                    <div class="form-group col-lg-6 ">
-                                                                        <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
-                                                                        <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
-                                                                            {status.map((status, index) => {
-                                                                                return (
-                                                                                    <option key={index} value={status.value}>{status.label}</option>
-                                                                                );
-                                                                            })}
-                                                                        </select>
-                                                                        {errorMessagesedit.project_status && <span class="error-message">{errorMessagesedit.project_status}</span>}
-                                                                    </div>
-                                                                    <div class="form-group col-lg-12 ">
-                                                                        <label>{lang["projectdescripton"]} </label>
-                                                                        <textarea rows="5" type="text" class="form-control" value={project.project_description} onChange={
-                                                                            (e) => { setProject({ ...project, project_description: e.target.value }) }
-                                                                        } placeholder={lang["p.projectdescripton"]} />
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={submitUpdateProject} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                            <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div class="form-group col-lg-6">
+                                                <label>{lang["projectcode"]} </label>
+                                                <input type="text" class="form-control" value={project.project_code} onChange={
+                                                    (e) => { setProject({ ...project, project_code: e.target.value }) }
+                                                } placeholder={lang["p.projectcode"]} />
                                             </div>
-                                            {/* Progress */}
-                                            <div class="col-md-7">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>{lang["projectprocess"]}</h5>
-                                                                {/* <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editManager"></i></p>
-                                                                </span> */}
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="full">
-                                                                            <div class="padding_infor_info">
-                                                                                <div class="progress-cus">
-                                                                                    <span className="status-label" style={{
-                                                                                        backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
-                                                                                    }}>
-                                                                                        {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                    </span>
-                                                                                    <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
-                                                                                    <div class="progress skill-bar ">
-                                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#addTask">
-                                                                                        <i class="fa fa-plus"></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                                <div class="table-responsive">
-                                                                                    {
-                                                                                        sortedMembers && sortedMembers.length > 0 ? (
-                                                                                            <>
-                                                                                                <table class="table table-striped">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th scope="col">SST</th>
-                                                                                                            <th scope="col">Công việc</th>
-                                                                                                            <th scope="col">Người thực hiện</th>
-                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Trạng thái</th>
-                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Thao tác</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        {currentMembersTask.map((task, index) => (
-                                                                                                            <tr key={task.id}>
-                                                                                                                <td scope="row">{index + 1}</td>
-                                                                                                                <td>{task.task_name}</td>
-                                                                                                                <td >
-                                                                                                                    {
-                                                                                                                        task.members && task.members.length > 0 ?
-                                                                                                                            task.members.slice(0, 3).map(member => (
-                                                                                                                                <img
-                                                                                                                                    class="img-responsive circle-image-cus"
-                                                                                                                                    src={proxy + member.avatar}
-                                                                                                                                    alt={member.username}
-                                                                                                                                />
-
-                                                                                                                            )) :
-                                                                                                                            <p>{lang["projectempty"]} </p>
-                                                                                                                    }
-                                                                                                                    {
-                                                                                                                        task.members.length > 3 &&
-                                                                                                                        <div className="extra-images-cus">
-                                                                                                                            +{task.members.length - 3}
-                                                                                                                        </div>
-                                                                                                                    }
-                                                                                                                </td>
-                                                                                                                <td style={{ textAlign: "center" }}><span className="status-label" style={{
-                                                                                                                    backgroundColor: (statusTask.find((s) => s.value === task.task_status) || {}).color
-                                                                                                                }}>
-                                                                                                                    {(statusTask.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                                                </span></td>
-                                                                                                                <td style={{ textAlign: "center" }}>
-
-                                                                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
-                                                                                                                    <i class="fa fa-trash-o"></i>
-                                                                                                                </td>
-
-                                                                                                            </tr>
-                                                                                                        ))}
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                                                    <p>Hiển thị {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} của {tasks.length} kết quả</p>
-                                                                                                    <nav aria-label="Page navigation example">
-                                                                                                        <ul className="pagination mb-0">
-                                                                                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
-                                                                                                                    &laquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                            {Array(totalPagesTask).fill().map((_, index) => (
-                                                                                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
-                                                                                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
-                                                                                                                        {index + 1}
-                                                                                                                    </button>
-                                                                                                                </li>
-                                                                                                            ))}
-                                                                                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
-                                                                                                                    &raquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                        </ul>
-                                                                                                    </nav>
-                                                                                                </div>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <div class="list_cont ">
-                                                                                                <p>Chưa có thành viên</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
+                                                    {status.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                                {errorMessagesedit.project_status && <span class="error-message">{errorMessagesedit.project_status}</span>}
                                             </div>
-                                            {/* Add Progress */}
-                                            <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["addtask"]}</h4>
-                                                            <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={task.task_name} onChange={
-                                                                            (e) => { setTask({ ...task, task_name: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-6 ">
-                                                                        <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
-                                                                        <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-                                                                            <option value="">{lang["p.projectstatus"]}</option>
-                                                                            {statusPriority.map((status, index) => {
-                                                                                return (
-                                                                                    <option key={index} value={status.value}>{status.label}</option>
-                                                                                );
-                                                                            })}
-                                                                        </select>
-                                                                        <input type="hidden" class="form-control" value={task.task_status} onChange={
-                                                                            (e) => { setTask({ ...task, task_status: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["projectdescripton"]}</label>
-                                                                        <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
-                                                                            (e) => { setTask({ ...task, task_description: e.target.value }) }
-                                                                        } placeholder={lang["p.description"]} />
-                                                                    </div>
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>Quản lý</label>
-                                                                        <div class="user-checkbox-container">
-                                                                            {projectdetail.members?.map((user, index) => (
-                                                                                <div key={index} class="user-checkbox-item">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        value={JSON.stringify(user)}
-                                                                                        onChange={(e) => {
-                                                                                            let selectedUser = JSON.parse(e.target.value);
-                                                                                            let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
-                                                                                            if (alreadySelected) {
-                                                                                                setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
-                                                                                            } else {
-                                                                                                setSelectedMemberTask([...selectedMemberTask, selectedUser]);
-                                                                                            }
-                                                                                        }}
-                                                                                    />
-                                                                                    <label>{user.fullname}</label>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
-                                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/* View Task */}
-                                            <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["detailtask"]}</h4>
-                                                            <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={taskDetail.task_name} readOnly />
-                                                                        <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
-                                                                        <label>{lang["description"]} <span className='red_star'>*</span></label>
-                                                                        <textarea rows={6} class="form-control" value={taskDetail.task_description} readOnly />
-
-                                                                    </div>
-
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                          
-                                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div class="form-group col-lg-12 ">
+                                                <label>{lang["projectdescripton"]} </label>
+                                                <textarea rows="5" type="text" class="form-control" value={project.project_description} onChange={
+                                                    (e) => { setProject({ ...project, project_description: e.target.value }) }
+                                                } placeholder={lang["p.projectdescripton"]} />
                                             </div>
                                         </div>
-                                        <div class="row column4 graph">
-                                            {/* Proejct */}
-                                            {/* Website */}
-                                            <div class="col-md-12">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>Thông tin website triển khai</h5>
-                                                                <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#"></i></p>
-                                                                </span>
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row column1">
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-briefcase purple_color2"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">1</p>
-                                                                                    <p class="head_couter">Bảng</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-users blue1_color"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">1</p>
-                                                                                    <p class="head_couter">API</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-cloud-download green_color"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">5</p>
-                                                                                    <p class="head_couter">UI</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={submitUpdateProject} class="btn btn-success ">{lang["btn.update"]}</button>
+                                    <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Progress */}
+                    <div class="col-md-7">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0">
+                                    <h5>{lang["projectprocess"]}</h5>
+                                </div>
+                            </div>
+                            <div class="table_section padding_infor_info">
 
-                                                                </div>
-                                                                <div class="row column1">
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách bảng </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên bảng</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>Bảng 1</td>
-                                                                                    <td>06/06/2023 11:12</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>Bảng 2</td>
-                                                                                    <td>06/06/2023 11:14</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>Bảng 3</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách API </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên API</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>API 1</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>API 2</td>
-                                                                                    <td>06/06/2023 11:17</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>API 3</td>
-                                                                                    <td>j06/06/2023 11:18</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách UI </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên trang</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>Page 1</td>
-                                                                                    <td>06/06/2023 11:18</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>Page 2</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>Page 3</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
+                                <div class="progress-cus">
+                                    <span className="status-label" style={{
+                                        backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
+                                    }}>
+                                        {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
+                                    </span>
+                                    <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
+                                    <div class="progress skill-bar ">
+                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <p class="font-weight-bold">{lang["tasklist"]}: </p>
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#addTask">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    {
+                                        sortedMembers && sortedMembers.length > 0 ? (
+                                            <>
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">SST</th>
+                                                            <th scope="col">Công việc</th>
+                                                            <th scope="col">Người thực hiện</th>
+                                                            <th scope="col" style={{ textAlign: "center" }}>Trạng thái</th>
+                                                            <th scope="col" style={{ textAlign: "center" }}>Thao tác</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentMembersTask.map((task, index) => (
+                                                            <tr key={task.id}>
+                                                                <td scope="row">{index + 1}</td>
+                                                                <td>{task.task_name}</td>
+                                                                <td >
+                                                                    {
+                                                                        task.members && task.members.length > 0 ?
+                                                                            task.members.slice(0, 3).map(member => (
+                                                                                <img
+                                                                                    class="img-responsive circle-image-cus"
+                                                                                    src={proxy + member.avatar}
+                                                                                    alt={member.username}
+                                                                                />
+
+                                                                            )) :
+                                                                            <p>{lang["projectempty"]} </p>
+                                                                    }
+                                                                    {
+                                                                        task.members.length > 3 &&
+                                                                        <div className="extra-images-cus">
+                                                                            +{task.members.length - 3}
+                                                                        </div>
+                                                                    }
+                                                                </td>
+                                                                <td style={{ textAlign: "center" }}><span className="status-label" style={{
+                                                                    backgroundColor: (statusTask.find((s) => s.value === task.task_status) || {}).color
+                                                                }}>
+                                                                    {(statusTask.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
+                                                                </span></td>
+                                                                <td style={{ textAlign: "center" }}>
+
+                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
+                                                                    <i class="fa fa-trash-o"></i>
+                                                                </td>
+
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <p>Hiển thị {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} của {tasks.length} kết quả</p>
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul className="pagination mb-0">
+                                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
+                                                                    &laquo;
+                                                                </button>
+                                                            </li>
+                                                            {Array(totalPagesTask).fill().map((_, index) => (
+                                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
+                                                                        {index + 1}
+                                                                    </button>
+                                                                </li>
+                                                            ))}
+                                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
+                                                                    &raquo;
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>Chưa có thành viên</p>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    {/* Add Progress */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["addtask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={task.task_name} onChange={
+                                                    (e) => { setTask({ ...task, task_name: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
+                                                    <option value="">{lang["p.projectstatus"]}</option>
+                                                    {statusPriority.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                                <input type="hidden" class="form-control" value={task.task_status} onChange={
+                                                    (e) => { setTask({ ...task, task_status: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectdescripton"]}</label>
+                                                <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
+                                                    (e) => { setTask({ ...task, task_description: e.target.value }) }
+                                                } placeholder={lang["p.description"]} />
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label>Quản lý</label>
+                                                <div class="user-checkbox-container">
+                                                    {projectdetail.members?.map((user, index) => (
+                                                        <div key={index} class="user-checkbox-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                value={JSON.stringify(user)}
+                                                                onChange={(e) => {
+                                                                    let selectedUser = JSON.parse(e.target.value);
+                                                                    let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                    if (alreadySelected) {
+                                                                        setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                    } else {
+                                                                        setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <label>{user.fullname}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* View Task */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["detailtask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={taskDetail.task_name} readOnly />
+                                                <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
+                                                <label>{lang["description"]} <span className='red_star'>*</span></label>
+                                                <textarea rows={6} class="form-control" value={taskDetail.task_description} readOnly />
+
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0 ">
+                                    <h5>Thông tin website</h5>
+
+                                </div>
+
+                            </div>
+
+                            <div class="table_section padding_infor_info">
+
+                                <div class="row column1">
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30">
+
+                                            <div class="couter_icon">
+                                                <div class="icon">
+                                                    <img src="/images/icon/table.png" />
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">Table</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30">
+                                            <div class="couter_icon">
+                                                <div class="icon">
+                                                    <img src="/images/icon/api.png" />
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">API</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30">
+                                            <div class="couter_icon">
+                                                <div class="icon">
+                                                    <img src="/images/icon/page.png" />
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">UI</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row column1">
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">Danh sách bảng </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên bảng</th>
+                                                    <th>Ngày tạo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Bảng 1</td>
+                                                    <td>06/06/2023 11:12</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>Bảng 2</td>
+                                                    <td>06/06/2023 11:14</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Bảng 3</td>
+                                                    <td>06/06/2023 11:16</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">Danh sách API </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên API</th>
+                                                    <th>Ngày tạo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>API 1</td>
+                                                    <td>06/06/2023 11:16</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>API 2</td>
+                                                    <td>06/06/2023 11:17</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>API 3</td>
+                                                    <td>j06/06/2023 11:18</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">Danh sách UI </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên trang</th>
+                                                    <th>Ngày tạo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Page 1</td>
+                                                    <td>06/06/2023 11:18</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>Page 2</td>
+                                                    <td>06/06/2023 11:16</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Page 3</td>
+                                                    <td>06/06/2023 11:16</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div >
+
         </div >
-
-
     )
 }
 
