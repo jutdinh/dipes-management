@@ -591,14 +591,14 @@ export default () => {
                                                                                     </button>
                                                                                 </div>
                                                                              
-                                                                                <div class="table-responsive-sm">
+                                                                                <div class="table-responsive">
                                                                                     {
                                                                                         sortedMembers && sortedMembers.length > 0 ? (
                                                                                             <>
                                                                                                 <table class="table table-striped ">
                                                                                                     <thead>
                                                                                                         <tr>
-                                                                                                            <th scope="col">#</th>
+                                                                                                            <th scope="col">STT</th>
                                                                                                             <th scope="col">Avatar</th>
                                                                                                             <th scope="col">Họ và tên</th>
                                                                                                             <th scope="col">Chức vụ</th>
@@ -870,7 +870,7 @@ export default () => {
                                                                                         <i class="fa fa-plus"></i>
                                                                                     </button>
                                                                                 </div>
-                                                                                <div class="table-responsive-sm">
+                                                                                <div class="table-responsive">
                                                                                     {
                                                                                         sortedMembers && sortedMembers.length > 0 ? (
                                                                                             <>
@@ -880,8 +880,8 @@ export default () => {
                                                                                                             <th scope="col">SST</th>
                                                                                                             <th scope="col">Công việc</th>
                                                                                                             <th scope="col">Người thực hiện</th>
-                                                                                                            <th scope="col">Trạng thái</th>
-                                                                                                            <th scope="col">Thao tác</th>
+                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Trạng thái</th>
+                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Thao tác</th>
                                                                                                         </tr>
                                                                                                     </thead>
                                                                                                     <tbody>
@@ -889,7 +889,7 @@ export default () => {
                                                                                                             <tr key={task.id}>
                                                                                                                 <td scope="row">{index + 1}</td>
                                                                                                                 <td>{task.task_name}</td>
-                                                                                                                <td>
+                                                                                                                <td >
                                                                                                                     {
                                                                                                                         task.members && task.members.length > 0 ?
                                                                                                                             task.members.slice(0, 3).map(member => (
@@ -909,14 +909,14 @@ export default () => {
                                                                                                                         </div>
                                                                                                                     }
                                                                                                                 </td>
-                                                                                                                <td><span className="status-label" style={{
+                                                                                                                <td style={{ textAlign: "center" }}><span className="status-label" style={{
                                                                                                                     backgroundColor: (statusTask.find((s) => s.value === task.task_status) || {}).color
                                                                                                                 }}>
                                                                                                                     {(statusTask.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
                                                                                                                 </span></td>
-                                                                                                                <td>
+                                                                                                                <td style={{ textAlign: "center" }}>
 
-                                                                                                                    <i class="fa fa-eye size pointer icon-margin" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
+                                                                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
                                                                                                                     <i class="fa fa-trash-o"></i>
                                                                                                                 </td>
 

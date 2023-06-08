@@ -370,11 +370,13 @@
 .add-option:hover {
     background-color: #0056b3;
 }
-
+.icon-view{
+    color:#34a83e
+}
 .status-label {
     display: inline-block;
-    padding: 3px 3px;
-    color: rgb(8, 8, 8);
+    padding: 5.25px 10.5px;
+    color: rgb(255, 255, 255);
     border-radius: 0.25rem;
    
 }

@@ -219,7 +219,7 @@ export default () => {
                                                                     <td>{log.event_description}</td>
                                                                     <td>{log.create_at}</td>
                                                                     <td style={{ textAlign: "center" }}>
-                                                                        <i class="fa fa-eye size pointer icon-margin" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
+                                                                        <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
 
                                                                     </td>
                                                                 </tr>
