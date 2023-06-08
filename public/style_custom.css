@@ -10,7 +10,10 @@
     color: #fff;
 }
 
-  
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 0.5px solid #dee2e6;
+}
 .footer-custom {
     position: absolute;
     bottom: 0;
@@ -145,16 +148,18 @@
     padding-left: 2px;
 } */
 .table {
-    border: 1px solid #000; /* Thay #000 với màu bạn muốn */
+    border: 1px solid #686565; 
 }
 .table td, .table th ,table tr {
-    border: 1px solid #000; /* Thay #000 với màu bạn muốn */
-   
+    border: 1px solid #dee2e6; 
     border-collapse: collapse;
+}
+.price_table table th{
+    font-weight: bold;
 }
 .price_table table th,
 .price_table table td {
-    border: 1px solid #000;;
+    border: 1px solid #ced4da;
     padding: 10px 15px;
     font-size: 14px;
     color: #666;
@@ -557,8 +562,13 @@
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 200px;
+    min-height: 125px;
    
+}
+
+
+.btn-log{
+    padding: 5.25px 18px;
 }
 .padding_infor_info h3, 
 .padding_infor_info p, 

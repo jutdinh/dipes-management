@@ -197,10 +197,12 @@ export default {
 
     "show": "Showing",
     "of": "of",
-    "results": "results"
+    "results": "results",
 
 
-
+//
+"supervisor":"Supervisor",
+"deployers": "Deployers"
 }
 
 

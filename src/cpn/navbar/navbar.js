@@ -66,7 +66,7 @@ export default () => {
                   <li className="navbar-item">
                      <NavLink to="/logs" activeClassName="nav-active">
                         <i class="fa fa-shield"></i>
-                        <span>Logs</span>
+                        <span>{lang["log.title"]}</span>
                      </NavLink>
                   </li>
                ) : null}

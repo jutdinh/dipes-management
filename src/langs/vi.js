@@ -189,6 +189,10 @@ export default {
 
 "show":"Hiển thị",
 "of": "của",
-"results":"kết quả"
+"results":"kết quả",
+
+
+"supervisor":"Người giám sát",
+"deployers": "Nhân viên triển khai"
 
 }

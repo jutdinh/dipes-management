@@ -79,6 +79,7 @@
 
 html,
 body {    
+    color: #888787;
     font-size: 14px;
     font-family: "UTM Avo", sans-serif !important;
     line-height: normal;
@@ -2852,12 +2853,12 @@ ul.inbox-pagination li {
 }
 
 .modal-header h4.modal-title {
-    font-family: "Open Sans", sans-serif;
+    /* font-family: "Open Sans", sans-serif; */
     font-weight: 300;
 }
 
 .modal-body label {
-    font-family: "Open Sans", sans-serif;
+    /* font-family: "Open Sans", sans-serif; */
     font-weight: 400;
 }
 

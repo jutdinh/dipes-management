@@ -87,9 +87,9 @@ export default () => {
     console.log("b",uniqueArray)
 
 
-    console.log("admin", selectedUsers)
-    console.log("imple", selectedImple)
-    console.log("monitor", selectedMonitor)
+    // console.log("admin", selectedUsers)
+    // console.log("imple", selectedImple)
+    // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -206,7 +206,7 @@ export default () => {
                 const { success, content, data, status } = resp;
                 if (success) {
                   
-                    if (selectedUsers.length > 0) {
+                  
                         const projectId = data.project_id;
                         return fetch(`${proxy}/projects/members`, {
                             method: "POST",
@@ -219,19 +219,7 @@ export default () => {
                                 usernames: uniqueArray,
                             }),
                         });
-                    } else {
-                        // Không có người dùng nào được chọn, hiển thị thông báo thành công
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
-                            // window.location.reload();
-                            setShowModal(false);
-                        });
-                    }
+                    
                 } else {
                     Swal.fire({
                         title: "Thất bại!",
@@ -510,9 +498,9 @@ export default () => {
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                        onChange={() => handleImpleCheck(user, 'spv')}
+                                                                        onChange={() => handleImpleCheck(user, 'supervisor')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'spv')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -538,9 +526,9 @@ export default () => {
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                        onChange={() => handleMonitorCheck(user, 'dpr')}
+                                                                        onChange={() => handleMonitorCheck(user, 'deployer')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'dpr')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -635,11 +623,11 @@ export default () => {
                                                                 {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                             </span>
 
-                                                            {/* <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
+                                                            <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
                                                                 <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
                                                                 </div>
-                                                            </div> */}
+                                                            </div>
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
                                                                     <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>

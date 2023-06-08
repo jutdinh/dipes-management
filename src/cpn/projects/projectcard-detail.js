@@ -44,12 +44,12 @@ export default () => {
 
     ]
 
-    const handleOpenAdminPopup = () => {
-        setShowAdminPopup(true);
-        setShowImplementationPopup(false);
-        setShowMonitorPopup(false);
-        setTempSelectedUsers([...selectedUsers]);
-    };
+    // const handleOpenAdminPopup = () => {
+    //     setShowAdminPopup(true);
+    //     setShowImplementationPopup(false);
+    //     setShowMonitorPopup(false);
+    //     setTempSelectedUsers([...selectedUsers]);
+    // };
     const handleOpenImplementationPopup = () => {
         setShowAdminPopup(false);
         setShowImplementationPopup(true);
@@ -405,19 +405,19 @@ export default () => {
             })
     };
     useEffect(() => {
-        let pm = projectmember.filter(member => member.permission === 'pm');
-        let pd = projectmember.filter(member => member.permission === 'pd');
-        let ps = projectmember.filter(member => member.permission === 'ps');
+        let pm = projectmember.filter(member => member.permission === 'supervisor');
+        let pd = projectmember.filter(member => member.permission === 'deployer');
+   
         setSelectedUsers(pm);
         setSelectedImple(pd);
-        setSelectedMonitor(ps);
+   
     }, [projectmember]);
 
     // Sort 
-    let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'pm') : [];
-    let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'pd') : [];
-    let projectMonitorMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'ps') : [];
-    let sortedMembers = [...projectManagerMembers, ...projectImpli, ...projectMonitorMembers];
+    let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
+    let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
+ 
+    let sortedMembers = [...projectManagerMembers, ...projectImpli];
     const [isLoading, setIsLoading] = useState(false);
 
     const detailTask = async (taskid) => {
@@ -584,12 +584,18 @@ export default () => {
                                                                                     <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
                                                                                     {projectdetail.manager?.fullname}
                                                                                 </div>
+                                                                                <div class="d-flex align-items-center">
                                                                                 <p class="font-weight-bold">{lang["projectmember"]}: </p>
+                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                                                                        <i class="fa fa-edit"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                             
                                                                                 <div class="table-responsive-sm">
                                                                                     {
                                                                                         sortedMembers && sortedMembers.length > 0 ? (
                                                                                             <>
-                                                                                                <table class="table table-striped table-hover">
+                                                                                                <table class="table table-striped ">
                                                                                                     <thead>
                                                                                                         <tr>
                                                                                                             <th scope="col">#</th>
@@ -602,14 +608,13 @@ export default () => {
                                                                                                     <tbody>
                                                                                                         {currentMembers.map((member, index) => (
                                                                                                             <tr key={member.username}>
-                                                                                                                <th scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</th>
+                                                                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                                                                                                 <td><img src={proxy + member.avatar} class="img-responsive circle-image" alt="#" /></td>
                                                                                                                 <td>{member.fullname}</td>
                                                                                                                 <td>
                                                                                                                     {
-                                                                                                                        member.permission === "pm" ? lang["projectmanager"] :
-                                                                                                                            member.permission === "pd" ? lang["implementation"] :
-                                                                                                                                member.permission === "ps" ? lang["monitor"] :
+                                                                                                                        member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                                                            member.permission === "deployer" ? lang["deployers"] :
                                                                                                                                     "Khác"
                                                                                                                     }
                                                                                                                 </td>
@@ -620,20 +625,7 @@ export default () => {
                                                                                                         ))}
                                                                                                     </tbody>
                                                                                                 </table>
-                                                                                                {/* <div className="d-flex justify-content-between">
-                                                                                                <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} dòng</p>
-                                                                                                <nav>
-                                                                                                    <ul className="pagination mb-0">
-                                                                                                        {Array(Math.ceil(sortedMembers.length / rowsPerPage)).fill().map((_, index) => (
-                                                                                                            <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                                                                <button className="page-link custom-pagination-btn" onClick={() => paginate(index + 1)}>
-                                                                                                                    {index + 1}
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                        ))}
-                                                                                                    </ul>
-                                                                                                </nav>
-                                                                                            </div> */}
+                                                                                               
                                                                                                 <div className="d-flex justify-content-between align-items-center">
                                                                                                     <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} kết quả</p>
                                                                                                     <nav aria-label="Page navigation example">
@@ -671,6 +663,122 @@ export default () => {
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             {/* Update member */}
+                                             <div class={`modal show`} id="editMember">
+                                                <div class="modal-dialog modal-dialog-center">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Cập nhật thành viên dự án</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form>
+                                                                <div class="row">
+                                                                    <div className="form-group col-lg-12">
+                                                                        <label>Thành viên dự án</label>
+                                                                        <div class="options-container">
+                                                                            
+                                                                            <div class="option">
+                                                                                <h5>{lang["supervisor"]}</h5>
+                                                                                {
+                                                                                    selectedImple.map(user => {
+                                                                                        const userData = users.find(u => u.username === user.username);
+                                                                                        return (
+                                                                                            <div key={user.username}>
+                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                                            </div>
+                                                                                        )
+                                                                                    })
+                                                                                }
+                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="option">
+                                                                            <h5>{lang["deployers"]}</h5>
+                                                                                {
+                                                                                    selectedMonitor.map(user => {
+                                                                                        const userData = users.find(u => u.username === user.username);
+                                                                                        return (
+                                                                                            <div key={user.username}>
+                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                                            </div>
+                                                                                        )
+                                                                                    })
+                                                                                }
+                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                   
+                                                                    {showImplementationPopup && (
+                                                                        <div class="user-popup2">
+                                                                            <div class="user-popup-content">
+                                                                                {users && users.map(user => {
+                                                                                    if (!selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                                                        return (
+                                                                                            <div key={user.username} class="user-item">
+                                                                                                <input
+                                                                                                    class="user-checkbox"
+                                                                                                    type="checkbox"
+                                                                                                    checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                                                    onChange={() => handleImpleCheck(user, 'supervisor')}
+                                                                                                />
+                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        )
+                                                                                    }
+                                                                                    return null;
+                                                                                })}
+                                                                            </div>
+                                                                            <div className="user-popup-actions">
+                                                                                <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
+                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    {showMonitorPopup && (
+                                                                        <div class="user-popup3">
+                                                                            <div class="user-popup-content">
+                                                                                {users && users.map(user => {
+                                                                                    if ( !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
+                                                                                        return (
+                                                                                            <div key={user.username} class="user-item">
+                                                                                                <input
+                                                                                                    class="user-checkbox"
+                                                                                                    type="checkbox"
+                                                                                                    checked={tempSelectedMonitor.some(u => u.username === user.username)}
+                                                                                                    onChange={() => handleMonitorCheck(user, 'deployer')}
+                                                                                                />
+                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        )
+                                                                                    }
+                                                                                    return null;
+                                                                                })}
+                                                                            </div>
+                                                                            <div className="user-popup-actions">
+                                                                                <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
+                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" onClick={addMember} class="btn btn-success ">Lưu lại</button>
+                                                            <button type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -733,9 +841,9 @@ export default () => {
                                                         <div class="dash_head">
                                                             <h3>
                                                                 <h5>{lang["projectprocess"]}</h5>
-                                                                <span class="plus_green_bt">
+                                                                {/* <span class="plus_green_bt">
                                                                     <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editManager"></i></p>
-                                                                </span>
+                                                                </span> */}
                                                             </h3>
                                                         </div>
                                                         <div class="member-cus">
@@ -758,7 +866,7 @@ export default () => {
                                                                                 </div>
                                                                                 <div class="d-flex align-items-center">
                                                                                     <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#addTask">
                                                                                         <i class="fa fa-plus"></i>
                                                                                     </button>
                                                                                 </div>
@@ -769,7 +877,7 @@ export default () => {
                                                                                                 <table class="table table-striped">
                                                                                                     <thead>
                                                                                                         <tr>
-                                                                                                            <th scope="col">#</th>
+                                                                                                            <th scope="col">SST</th>
                                                                                                             <th scope="col">Công việc</th>
                                                                                                             <th scope="col">Người thực hiện</th>
                                                                                                             <th scope="col">Trạng thái</th>
@@ -779,7 +887,7 @@ export default () => {
                                                                                                     <tbody>
                                                                                                         {currentMembersTask.map((task, index) => (
                                                                                                             <tr key={task.id}>
-                                                                                                                <th scope="row">{index + 1}</th>
+                                                                                                                <td scope="row">{index + 1}</td>
                                                                                                                 <td>{task.task_name}</td>
                                                                                                                 <td>
                                                                                                                     {
@@ -948,14 +1056,15 @@ export default () => {
                                                                         <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
                                                                         <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
                                                                         <label>{lang["description"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={taskDetail.task_description} readOnly />
+                                                                        <textarea rows={6} class="form-control" value={taskDetail.task_description} readOnly />
+
                                                                     </div>
 
                                                                 </div>
                                                             </form>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
+                                                          
                                                             <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                                                         </div>
                                                     </div>
@@ -964,15 +1073,15 @@ export default () => {
                                         </div>
                                         <div class="row column4 graph">
                                             {/* Proejct */}
-                                            {/* Detail */}
+                                            {/* Website */}
                                             <div class="col-md-12">
                                                 <div class="dash_blog">
                                                     <div class="dash_blog_inner">
                                                         <div class="dash_head">
                                                             <h3>
-                                                                <h5>Thông tin dự án</h5>
+                                                                <h5>Thông tin website triển khai</h5>
                                                                 <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
+                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#"></i></p>
                                                                 </span>
                                                             </h3>
                                                         </div>
@@ -994,7 +1103,7 @@ export default () => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-64 col-lg-4">
+                                                                    <div class="col-md-4 col-lg-4">
                                                                         <div class="full counter_section margin_bottom_30">
                                                                             <div class="couter_icon">
                                                                                 <div>
@@ -1045,24 +1154,24 @@ export default () => {
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td>1</td>
-                                                                                    <td>Doe</td>
-                                                                                    <td>john@example.com</td>
+                                                                                    <td>Bảng 1</td>
+                                                                                    <td>06/06/2023 11:12</td>
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>2</td>
-                                                                                    <td>Moe</td>
-                                                                                    <td>mary@example.com</td>
+                                                                                    <td>Bảng 2</td>
+                                                                                    <td>06/06/2023 11:14</td>
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>3</td>
-                                                                                    <td>Dooley</td>
-                                                                                    <td>july@example.com</td>
+                                                                                    <td>Bảng 3</td>
+                                                                                    <td>06/06/2023 11:16</td>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
-                                                                    <div class="col-md-64 col-lg-4">
-                                                                    <div class="d-flex align-items-center mb-1">
+                                                                    <div class="col-md-4 col-lg-4">
+                                                                        <div class="d-flex align-items-center mb-1">
                                                                             <p class="font-weight-bold">Danh sách API </p>
                                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
                                                                                 <i class="fa fa-plus"></i>
@@ -1071,32 +1180,32 @@ export default () => {
                                                                         <table class="table table-hover">
                                                                             <thead>
                                                                                 <tr>
-                                                                                    <th>Firstname</th>
-                                                                                    <th>Lastname</th>
-                                                                                    <th>Email</th>
+                                                                                    <th>STT</th>
+                                                                                    <th>Tên API</th>
+                                                                                    <th>Ngày tạo</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
                                                                                 <tr>
-                                                                                    <td>John</td>
-                                                                                    <td>Doe</td>
-                                                                                    <td>john@example.com</td>
+                                                                                    <td>1</td>
+                                                                                    <td>API 1</td>
+                                                                                    <td>06/06/2023 11:16</td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td>Mary</td>
-                                                                                    <td>Moe</td>
-                                                                                    <td>mary@example.com</td>
+                                                                                    <td>2</td>
+                                                                                    <td>API 2</td>
+                                                                                    <td>06/06/2023 11:17</td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td>July</td>
-                                                                                    <td>Dooley</td>
-                                                                                    <td>july@example.com</td>
+                                                                                    <td>3</td>
+                                                                                    <td>API 3</td>
+                                                                                    <td>j06/06/2023 11:18</td>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
                                                                     <div class="col-md-4 col-lg-4">
-                                                                    <div class="d-flex align-items-center mb-1">
+                                                                        <div class="d-flex align-items-center mb-1">
                                                                             <p class="font-weight-bold">Danh sách UI </p>
                                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
                                                                                 <i class="fa fa-plus"></i>
@@ -1105,26 +1214,26 @@ export default () => {
                                                                         <table class="table table-hover">
                                                                             <thead>
                                                                                 <tr>
-                                                                                    <th>Firstname</th>
-                                                                                    <th>Lastname</th>
-                                                                                    <th>Email</th>
+                                                                                    <th>STT</th>
+                                                                                    <th>Tên trang</th>
+                                                                                    <th>Ngày tạo</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
                                                                                 <tr>
-                                                                                    <td>John</td>
-                                                                                    <td>Doe</td>
-                                                                                    <td>john@example.com</td>
+                                                                                    <td>1</td>
+                                                                                    <td>Page 1</td>
+                                                                                    <td>06/06/2023 11:18</td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td>Mary</td>
-                                                                                    <td>Moe</td>
-                                                                                    <td>mary@example.com</td>
+                                                                                    <td>2</td>
+                                                                                    <td>Page 2</td>
+                                                                                    <td>06/06/2023 11:16</td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td>July</td>
-                                                                                    <td>Dooley</td>
-                                                                                    <td>july@example.com</td>
+                                                                                    <td>3</td>
+                                                                                    <td>Page 3</td>
+                                                                                    <td>06/06/2023 11:16</td>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
