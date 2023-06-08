@@ -131,7 +131,7 @@ export default () => {
                                     <h5>{lang["log.statis"]}</h5>
                                 </div>
                             </div>
-                            <div class="table_section padding_infor_info">
+                            <div class="table_section padding_infor_info-logs">
                                 <div class="member-cus">
                                     <div class="msg_list_main">
                                         <div className="row column1 mb-3 mt-3">

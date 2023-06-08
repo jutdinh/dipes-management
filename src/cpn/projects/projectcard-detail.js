@@ -44,12 +44,12 @@ export default () => {
 
     ]
 
-    // const handleOpenAdminPopup = () => {
-    //     setShowAdminPopup(true);
-    //     setShowImplementationPopup(false);
-    //     setShowMonitorPopup(false);
-    //     setTempSelectedUsers([...selectedUsers]);
-    // };
+    const handleOpenAdminPopup = () => {
+        setShowAdminPopup(true);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+        setTempSelectedUsers([...selectedUsers]);
+    };
     const handleOpenImplementationPopup = () => {
         setShowAdminPopup(false);
         setShowImplementationPopup(true);
@@ -114,10 +114,10 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // console.log("a", combinedArray)
-    // console.log("admin", selectedUsers)
-    // console.log("imple", selectedImple)
-    // console.log("monitor", selectedMonitor)
+    console.log("a", combinedArray)
+    console.log("admin", selectedUsers)
+    console.log("imple", selectedImple)
+    console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -436,6 +436,76 @@ export default () => {
         }
 
     };
+    const [deleteTask, setDelelteTask] = useState(false);
+
+    const handleDeleteTask = (taskid) => {
+        const requestBody = {
+
+            project_id: project.project_id,
+            task_id: taskid.task_id
+
+        };
+        console.log(requestBody)
+
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa yều cầu này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/tasks/task`, {
+                    method: 'DELETE',
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(res => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+
+                        if (status === "0x52404") {
+                            Swal.fire({
+                                title: "Cảnh báo!",
+                                text: content,
+                                icon: "warning",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                            return;
+                        }
+                        if (success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: content,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(function () {
+                                // Không cần reload trang
+                            });
+                        }
+                    });
+            }
+        });
+    }
     const handleDeleteUser = (member) => {
         const requestBody = {
 
@@ -587,9 +657,9 @@ export default () => {
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <p class="font-weight-bold">{lang["projectmember"]}: </p>
-                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                    {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
                                         <i class="fa fa-edit"></i>
-                                    </button>
+                                    </button> */}
                                 </div>
 
                                 <div class="table-responsive">
@@ -663,7 +733,6 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    {/* Update member */}
                     <div class={`modal show`} id="editMember">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -677,9 +746,28 @@ export default () => {
                                             <div className="form-group col-lg-12">
                                                 <label>Thành viên dự án</label>
                                                 <div class="options-container">
-
                                                     <div class="option">
-                                                        <h5>{lang["supervisor"]}</h5>
+                                                        <h5>Phụ trách</h5>
+                                                        {
+
+                                                            selectedUsers.map(user => {
+                                                                if (user.username === manager) {
+                                                                    return null;
+                                                                }
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option">
+                                                        <h5>Triển Khai</h5>
                                                         {
                                                             selectedImple.map(user => {
                                                                 const userData = users.find(u => u.username === user.username);
@@ -695,7 +783,7 @@ export default () => {
                                                         </button>
                                                     </div>
                                                     <div class="option">
-                                                        <h5>{lang["deployers"]}</h5>
+                                                        <h5>Theo Dõi</h5>
                                                         {
                                                             selectedMonitor.map(user => {
                                                                 const userData = users.find(u => u.username === user.username);
@@ -712,21 +800,48 @@ export default () => {
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            {showAdminPopup && (
+                                                <div class="user-popup4">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedImple.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                            onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
                                             {showImplementationPopup && (
                                                 <div class="user-popup2">
                                                     <div class="user-popup-content">
                                                         {users && users.map(user => {
-                                                            if (!selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
                                                                 return (
                                                                     <div key={user.username} class="user-item">
                                                                         <input
                                                                             class="user-checkbox"
                                                                             type="checkbox"
                                                                             checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                            onChange={() => handleImpleCheck(user, 'supervisor')}
+                                                                            onChange={() => handleImpleCheck(user, 'deployers')}
                                                                         />
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployers')}>
                                                                             <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                         </span>
                                                                     </div>
@@ -745,16 +860,16 @@ export default () => {
                                                 <div class="user-popup3">
                                                     <div class="user-popup-content">
                                                         {users && users.map(user => {
-                                                            if (!selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
                                                                 return (
                                                                     <div key={user.username} class="user-item">
                                                                         <input
                                                                             class="user-checkbox"
                                                                             type="checkbox"
                                                                             checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                            onChange={() => handleMonitorCheck(user, 'deployer')}
+                                                                            onChange={() => handleMonitorCheck(user, 'ps')}
                                                                         />
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'ps')}>
                                                                             <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                         </span>
                                                                     </div>
@@ -905,7 +1020,7 @@ export default () => {
                                                                 <td style={{ textAlign: "center" }}>
 
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
-                                                                    <i class="fa fa-trash-o"></i>
+                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)}></i>
                                                                 </td>
 
                                                             </tr>
@@ -969,7 +1084,7 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-                                                    <option value="">{lang["p.projectstatus"]}</option>
+
                                                     {statusPriority.map((status, index) => {
                                                         return (
                                                             <option key={index} value={status.value}>{status.label}</option>

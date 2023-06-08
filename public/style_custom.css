@@ -251,8 +251,8 @@
 .row .col-md-12 {
     position: relative;
     width: 100%;
-    padding-right: 0px;
-    padding-left: 0px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 
@@ -372,6 +372,9 @@
 }
 .icon-view{
     color:#34a83e
+}
+.icon-delete{
+    color:#c13a38
 }
 .status-label {
     display: inline-block;
@@ -566,6 +569,12 @@
     width: 100%;
     min-height: 530px;
    
+}
+.padding_infor_info-logs {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    min-height: 125px;
 }
 .icon::before {
     content: "";
