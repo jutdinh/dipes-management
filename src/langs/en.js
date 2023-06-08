@@ -81,15 +81,15 @@ export default {
     //update project 
     "updateproject": "Project update",
     //Task  
-    "tasklist":"List of tasks",
-    "detailtask":"Task Detail",
+    "tasklist": "List of tasks",
+    "detailtask": "Task Detail",
     "addtask": "Add Task",
-    "taskname":"Task name",
-    "p.taskname":"Enter a task name",
-    "taskstatus":"Status",
+    "taskname": "Task name",
+    "p.taskname": "Enter a task name",
+    "taskstatus": "Status",
     "task_priority": "Priority",
-    "taskmember":"Members",
-    "p.description":"Description of the task",
+    "taskmember": "Members",
+    "p.description": "Description of the task",
 
 
 
@@ -169,8 +169,35 @@ export default {
     "btn.create": "Create new",
     "btn.close": "Close",
     "edituser.title": "Update",
+    // logs
+    "log.information": "Information",
+    "log.warning": "Warning",
+    "log.error": "Error",
+    "log.title": "Logs",
+    "log.statis": "Statistics",
+    "log.type": "Type",
+    "log.selecttype": "Select type",
+    "log.daystart": "Start date",
+    "log.dayend": "End date",
+    "log.listlog": "Log list",
+    "log.no": "No.",
+    "log.id": "ID",
+    "log.listtitle": "Title",
+    "log.dayupdate": "Date",
+    "log.action": "Action",
+    "btn.ok": "Filter",
+    "btn.clear": "Clear",
+    "btn.viewdetail": "View details",
+    "detaillog":"Log details",
+    "log.create_user": "Executor",
+    "log.create_at":"Creation date",
 
 
+    //page
+
+    "show": "Showing",
+    "of": "of",
+    "results": "results"
 
 
 

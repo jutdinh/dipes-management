@@ -45,7 +45,7 @@ export default {
 
 
     //Project
-    "projects":"Dự án",
+    "projects": "Dự án",
     "projects.title": "Quản lý dự án",
     "project_detail.title": "Chi tiết dự án",
     //status
@@ -65,34 +65,34 @@ export default {
     //add project
     "addproject": "Thêm mới dự án",
 
-    "projectname":"Tên dự án",
-    "p.projectname":"Nhập tên dự án",
-    "projectcode":"Mã dự án",
-    "p.projectcode":"Nhập mã dự án",
+    "projectname": "Tên dự án",
+    "p.projectname": "Nhập tên dự án",
+    "projectcode": "Mã dự án",
+    "p.projectcode": "Nhập mã dự án",
     "projectstatus": "Trạng thái",
     "p.projectstatus": "Chọn trạng thái",
-    "projectrole":"Người quản lý",
-    "p.projectrole":"Chọn người quản lý",
-    "projectdescripton":"Mô tả dự án",
-    "p.projectdescripton":"Nhập mô tả dự án",
-    "projectmember":"Thành viên dự án",
-     //update project
-    "updateproject":"Cập nhật dự án",
+    "projectrole": "Người quản lý",
+    "p.projectrole": "Chọn người quản lý",
+    "projectdescripton": "Mô tả dự án",
+    "p.projectdescripton": "Nhập mô tả dự án",
+    "projectmember": "Thành viên dự án",
+    //update project
+    "updateproject": "Cập nhật dự án",
 
-//Task  
-    "tasklist":"Danh sách các yêu cầu",
-    "detailtask":"Chi tiết yêu cầu",
+    //Task  
+    "tasklist": "Danh sách các yêu cầu",
+    "detailtask": "Chi tiết yêu cầu",
     "addtask": "Thêm yêu cầu",
-    "taskname":"Tên yêu cầu",
-    "p.taskname":"Nhập tên yều cầu",
-    "taskstatus":"Trạng thái",
+    "taskname": "Tên yêu cầu",
+    "p.taskname": "Nhập tên yều cầu",
+    "taskstatus": "Trạng thái",
     "task_priority": "Mức độ ưu tiên",
-    "taskmember":"Thành viên",
-    "p.description":"Mô tả yêu cầu",
+    "taskmember": "Thành viên",
+    "p.description": "Mô tả yêu cầu",
     //Managers
-    "editmanager":"Chỉnh sửa quản lý dự án",
+    "editmanager": "Chỉnh sửa quản lý dự án",
     //Members
-    "members":"Thành viên",
+    "members": "Thành viên",
     //button project
     "buttondetail": "Xem chi tiết",
     // error project
@@ -102,9 +102,9 @@ export default {
     //Version
     "version": "Phiên bản",
     "versionupdate": "Cập nhật phiên bản",
-    "versionname":"Tên phiên bản",
-    "p.versionname":"Nhập tên phiên bản",
-    "p.versiondescription":"Nhập mô tả",
+    "versionname": "Tên phiên bản",
+    "p.versionname": "Nhập tên phiên bản",
+    "p.versiondescription": "Nhập mô tả",
     //Task
     "task": "Yêu cầu",
 
@@ -162,7 +162,33 @@ export default {
     "btn.update": "Lưu lại",
     "edituser.title": "Chỉnh sửa người dùng",
 
+    // logs
+    "log.information": "Thông tin",
+    "log.warning": "Cảnh báo",
+    "log.error": "Lỗi",
+    "log.title":"Lịch sử",
+    "log.statis": "Thống kê",
+    "log.type": "Loại",
+    "log.selecttype":"Chọn loại",
+    "log.daystart":"Ngày bắt đầu",
+    "log.dayend": "Ngày kết thúc",
+    "log.listlog":"Danh sách lịch sử",
+    "log.no":"STT",
+    "log.id":"ID",
+    "log.listtitle":"Tiêu đề",
+    "log.dayupdate":"Ngày cập nhật",
+    "log.action": "Thao tác",
+    "btn.ok":"Lọc",
+    "btn.clear":"Xóa",
+    "btn.viewdetail":"Xem chi tiết",
+    "detaillog":"Chi tiết lịch sử",
+    "log.create_user":"Người thực hiện",
+    "log.create_at":"Ngày tạo",
 
+//page
 
+"show":"Hiển thị",
+"of": "của",
+"results":"kết quả"
 
 }

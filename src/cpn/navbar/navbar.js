@@ -62,6 +62,14 @@ export default () => {
                <li><a href="/about"><i class="fa fa-info purple_color2"></i> <span>{lang["about us"]}</span></a></li>
 
                <li><a href="/settings"><i class="fa fa-cog yellow_color"></i> <span>{lang["settings"]}</span></a></li>
+               { user.role === "uad" ? (
+                  <li className="navbar-item">
+                     <NavLink to="/logs" activeClassName="nav-active">
+                        <i class="fa fa-shield"></i>
+                        <span>Logs</span>
+                     </NavLink>
+                  </li>
+               ) : null}
             </ul>
 
          </div>

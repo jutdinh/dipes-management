@@ -14,8 +14,7 @@ import { Settings } from './settings';
 import { Projects, ProjectsCard, ProjectDetail } from './projects';
 import { ListUser, Profile } from './users';
 import { Tasks } from './tasks'; 
-
-
+import { Logs } from './logs';
 
 function App() {
 
@@ -63,6 +62,7 @@ function App() {
         <Route path="/projects/:project_id" element={<Navigation Child={ProjectsCard} />} />
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
+        <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />
         <Route path="/settings" element={<Navigation Child={Settings} />} />

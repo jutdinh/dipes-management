@@ -196,7 +196,7 @@ export default () => {
     }, [])
     const [tasks, setTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
-
+    const [taskDetail, setTaskDetail] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/projects/project/${project_id}/tasks`, {
             headers: {
@@ -418,7 +418,24 @@ export default () => {
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'pd') : [];
     let projectMonitorMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'ps') : [];
     let sortedMembers = [...projectManagerMembers, ...projectImpli, ...projectMonitorMembers];
+    const [isLoading, setIsLoading] = useState(false);
 
+    const detailTask = async (taskid) => {
+
+        setIsLoading(true);
+
+
+        const taskDetail = tasks.find(task => task.task_id === taskid.task_id);
+        if (taskDetail) {
+            // Nếu tìm thấy task, cập nhật state taskDetail
+            setTaskDetail(taskDetail);
+            setIsLoading(false);
+        } else {
+            // Nếu không tìm thấy task, bạn có thể hiển thị thông báo lỗi hoặc xử lý theo cách khác
+            console.error(`Cannot find task with id ${taskid}`);
+        }
+
+    };
     const handleDeleteUser = (member) => {
         const requestBody = {
 
@@ -517,7 +534,7 @@ export default () => {
     const currentMembersTask = tasks.slice(indexOfFirstMemberTask, indexOfLastMemberTask);
 
     const paginateTask = (pageNumber) => setCurrentPageTask(pageNumber);
-    const totalPagesTask = Math.ceil(tasks.length / rowsPerPage);
+    const totalPagesTask = Math.ceil(tasks.length / rowsPerPageTask);
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -791,7 +808,7 @@ export default () => {
                                                                                                                 </span></td>
                                                                                                                 <td>
 
-                                                                                                                    <i class="fa fa-eye size pointer icon-margin" data-toggle="modal" data-target="#viewTask"></i>
+                                                                                                                    <i class="fa fa-eye size pointer icon-margin" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
                                                                                                                     <i class="fa fa-trash-o"></i>
                                                                                                                 </td>
 
@@ -924,47 +941,14 @@ export default () => {
                                                         <div class="modal-body">
                                                             <form>
                                                                 <div class="row">
+
                                                                     <div class="form-group col-lg-12">
                                                                         <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={task.task_name} onChange={
-                                                                            (e) => { setTask({ ...task, task_name: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-6 ">
-                                                                        <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
-                                                                        <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-                                                                            <option value="">{lang["p.projectstatus"]}</option>
-                                                                            {statusPriority.map((status, index) => {
-                                                                                return (
-                                                                                    <option key={index} value={status.value}>{status.label}</option>
-                                                                                );
-                                                                            })}
-                                                                        </select>
-                                                                        <input type="hidden" class="form-control" value={task.task_status} onChange={
-                                                                            (e) => { setTask({ ...task, task_status: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["projectdescripton"]}</label>
-                                                                        <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
-                                                                            (e) => { setTask({ ...task, task_description: e.target.value }) }
-                                                                        } placeholder={lang["p.description"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>Quản lý</label>
-                                                                        <select multiple className="form-control" onChange={(e) => {
-                                                                            let selectedOptions = Array.from(e.target.selectedOptions).map(option => JSON.parse(option.value));
-                                                                            setSelectedMemberTask(selectedOptions);
-                                                                        }}>
-                                                                            {users.map((user, index) => (
-                                                                                <option key={index} value={JSON.stringify(user)}>
-                                                                                    {user.fullname}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
+                                                                        <input type="text" class="form-control" value={taskDetail.task_name} readOnly />
+                                                                        <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
+                                                                        <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
+                                                                        <label>{lang["description"]} <span className='red_star'>*</span></label>
+                                                                        <input type="text" class="form-control" value={taskDetail.task_description} readOnly />
                                                                     </div>
 
                                                                 </div>
@@ -977,14 +961,16 @@ export default () => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            {/* Website Infor */}
+                                        </div>
+                                        <div class="row column4 graph">
+                                            {/* Proejct */}
+                                            {/* Detail */}
                                             <div class="col-md-12">
                                                 <div class="dash_blog">
                                                     <div class="dash_blog_inner">
                                                         <div class="dash_head">
                                                             <h3>
-                                                                <h5>Thông tin website triển khai</h5>
+                                                                <h5>Thông tin dự án</h5>
                                                                 <span class="plus_green_bt">
                                                                     <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
                                                                 </span>
@@ -992,18 +978,165 @@ export default () => {
                                                         </div>
                                                         <div class="member-cus">
                                                             <div class="msg_list_main">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="full">
-
+                                                                <div class="row column1">
+                                                                    <div class="col-md-4 col-lg-4">
+                                                                        <div class="full counter_section margin_bottom_30">
+                                                                            <div class="couter_icon">
+                                                                                <div>
+                                                                                    <i class="fa fa-briefcase purple_color2"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="counter_no">
+                                                                                <div>
+                                                                                    <p class="total_no">1</p>
+                                                                                    <p class="head_couter">Bảng</p>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="col-md-64 col-lg-4">
+                                                                        <div class="full counter_section margin_bottom_30">
+                                                                            <div class="couter_icon">
+                                                                                <div>
+                                                                                    <i class="fa fa-users blue1_color"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="counter_no">
+                                                                                <div>
+                                                                                    <p class="total_no">1</p>
+                                                                                    <p class="head_couter">API</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 col-lg-4">
+                                                                        <div class="full counter_section margin_bottom_30">
+                                                                            <div class="couter_icon">
+                                                                                <div>
+                                                                                    <i class="fa fa-cloud-download green_color"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="counter_no">
+                                                                                <div>
+                                                                                    <p class="total_no">5</p>
+                                                                                    <p class="head_couter">UI</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row column1">
+                                                                    <div class="col-md-4 col-lg-4">
+                                                                        <div class="d-flex align-items-center mb-1">
+                                                                            <p class="font-weight-bold">Danh sách bảng </p>
+                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        <table class="table table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>STT</th>
+                                                                                    <th>Tên bảng</th>
+                                                                                    <th>Ngày tạo</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>1</td>
+                                                                                    <td>Doe</td>
+                                                                                    <td>john@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>2</td>
+                                                                                    <td>Moe</td>
+                                                                                    <td>mary@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>3</td>
+                                                                                    <td>Dooley</td>
+                                                                                    <td>july@example.com</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="col-md-64 col-lg-4">
+                                                                    <div class="d-flex align-items-center mb-1">
+                                                                            <p class="font-weight-bold">Danh sách API </p>
+                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        <table class="table table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Firstname</th>
+                                                                                    <th>Lastname</th>
+                                                                                    <th>Email</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>John</td>
+                                                                                    <td>Doe</td>
+                                                                                    <td>john@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Mary</td>
+                                                                                    <td>Moe</td>
+                                                                                    <td>mary@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>July</td>
+                                                                                    <td>Dooley</td>
+                                                                                    <td>july@example.com</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="col-md-4 col-lg-4">
+                                                                    <div class="d-flex align-items-center mb-1">
+                                                                            <p class="font-weight-bold">Danh sách UI </p>
+                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        <table class="table table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Firstname</th>
+                                                                                    <th>Lastname</th>
+                                                                                    <th>Email</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>John</td>
+                                                                                    <td>Doe</td>
+                                                                                    <td>john@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Mary</td>
+                                                                                    <td>Moe</td>
+                                                                                    <td>mary@example.com</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>July</td>
+                                                                                    <td>Dooley</td>
+                                                                                    <td>july@example.com</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

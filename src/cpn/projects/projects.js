@@ -83,13 +83,13 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // console.log("a",combinedArray)
-    // console.log("b",uniqueArray)
+    console.log("a",combinedArray)
+    console.log("b",uniqueArray)
 
 
-    // console.log("admin", selectedUsers)
-    // console.log("imple", selectedImple)
-    // console.log("monitor", selectedMonitor)
+    console.log("admin", selectedUsers)
+    console.log("imple", selectedImple)
+    console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -192,7 +192,7 @@ export default () => {
         
         const status = body.project.project_status;
         body.project.project_status = parseInt(status)
-console.log(body)
+
         fetch(`${proxy}/projects/create`, {
             method: "POST",
             headers: {
@@ -205,7 +205,7 @@ console.log(body)
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    // Xử lý fetch thứ hai ở đây nếu có người dùng được chọn
+                  
                     if (selectedUsers.length > 0) {
                         const projectId = data.project_id;
                         return fetch(`${proxy}/projects/members`, {
@@ -351,8 +351,7 @@ console.log(body)
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
-                            <p><Header/></p>
-                           
+                          
                             {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
@@ -361,10 +360,7 @@ console.log(body)
                             } 
                         </div>
                     </div>
-                   
                 </div>
-               
-
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
                     <div class="modal-dialog modal-dialog-center">
@@ -423,7 +419,7 @@ console.log(body)
                                         <div className="form-group col-lg-12">
                                             <label>{lang["projectmember"]}</label>
                                             <div class="options-container">
-                                                <div class="option">
+                                                {/* <div class="option">
                                                     <h5>{lang["projectmanager"]}</h5>
                                                     {
                                                         selectedUsers.map(user => {
@@ -438,7 +434,7 @@ console.log(body)
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
-                                                </div>
+                                                </div> */}
                                                 <div class="option">
                                                     <h5>{lang["implementation"]}</h5>
                                                     {
@@ -475,7 +471,7 @@ console.log(body)
                                                 </div>
                                             </div>
                                         </div>
-                                        {showAdminPopup && (
+                                        {/* {showAdminPopup && (
                                             <div class="user-popup">
                                                 <div class="user-popup-content">
                                                     {users && users.map(user => {
@@ -486,9 +482,9 @@ console.log(body)
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
-                                                                        onChange={() => handleAdminCheck(user, 'pm')}
+                                                                        onChange={() => handleAdminCheck(user, 'mgr')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'pm')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'mgr')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -502,7 +498,7 @@ console.log(body)
                                                     <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
                                         {showImplementationPopup && (
                                             <div class="user-popup2">
                                                 <div class="user-popup-content">
@@ -514,9 +510,9 @@ console.log(body)
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                        onChange={() => handleImpleCheck(user, 'pd')}
+                                                                        onChange={() => handleImpleCheck(user, 'spv')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'pd')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'spv')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -542,9 +538,9 @@ console.log(body)
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                        onChange={() => handleMonitorCheck(user, 'ps')}
+                                                                        onChange={() => handleMonitorCheck(user, 'dpr')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'ps')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'dpr')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
