@@ -534,7 +534,7 @@ export default (props) => {
                                 <div class="container-fluid">
                                     {admins.length > 0 && (
                                         <div class="row group">
-                                            <h4 class="col-lg-12">{lang["administrator"]}</h4>
+                                            <h5 class="col-lg-12">{lang["administrator"]}</h5>
                                             {admins.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">
@@ -587,7 +587,7 @@ export default (props) => {
                                     )}
                                     {projectManagers.length > 0 && (
                                         <div class="row group">
-                                            <h4 class="col-lg-12">{lang["projectmanager"]}</h4>
+                                            <h5 class="col-lg-12">{lang["projectmanager"]}</h5>
                                             {projectManagers.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">
@@ -638,7 +638,7 @@ export default (props) => {
                                     )}
                                     {implementers.length > 0 && (
                                         <div class="row group">
-                                            <h4 class="col-lg-12">{lang["implementation"]}</h4>
+                                            <h5 class="col-lg-12">{lang["implementation"]}</h5>
                                             {implementers.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">

@@ -83,8 +83,8 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    console.log("a",combinedArray)
-    console.log("b",uniqueArray)
+    console.log("a", combinedArray)
+    console.log("b", uniqueArray)
 
 
     // console.log("admin", selectedUsers)
@@ -159,6 +159,8 @@ export default () => {
                 }
             })
     }, [])
+
+
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -189,7 +191,7 @@ export default () => {
             project,
             manager: { username: manager },
         };
-        
+
         const status = body.project.project_status;
         body.project.project_status = parseInt(status)
 
@@ -205,21 +207,21 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                  
-                  
-                        const projectId = data.project_id;
-                        return fetch(`${proxy}/projects/members`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `${_token}`,
-                            },
-                            body: JSON.stringify({
-                                project_id: projectId,
-                                usernames: uniqueArray,
-                            }),
-                        });
-                    
+
+
+                    const projectId = data.project_id;
+                    return fetch(`${proxy}/projects/members`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `${_token}`,
+                        },
+                        body: JSON.stringify({
+                            project_id: projectId,
+                            usernames: uniqueArray,
+                        }),
+                    });
+
                 } else {
                     Swal.fire({
                         title: "Thất bại!",
@@ -339,13 +341,13 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
-                          
+
                             {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
                                     </button> : null
-                            } 
+                            }
                         </div>
                     </div>
                 </div>
@@ -400,7 +402,7 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>{lang["projectdescripton"]}</label>
-                                            <textarea maxlength="500" rows="5"type="text" class="form-control" value={project.project_description} onChange={
+                                            <textarea maxlength="500" rows="5" type="text" class="form-control" value={project.project_description} onChange={
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder={lang["p.projectdescripton"]} />
                                         </div>
@@ -424,7 +426,7 @@ export default () => {
                                                     </button>
                                                 </div> */}
                                                 <div class="option">
-                                                    <h5>{lang["implementation"]}</h5>
+                                                    <h5>{lang["supervisor"]}</h5>
                                                     {
                                                         selectedImple.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -441,7 +443,7 @@ export default () => {
                                                     </button>
                                                 </div>
                                                 <div class="option">
-                                                    <h5>{lang["monitor"]}</h5>
+                                                    <h5>{lang["deployers"]}</h5>
                                                     {
                                                         selectedMonitor.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -623,11 +625,13 @@ export default () => {
                                                                 {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                             </span>
 
-                                                            {/* <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
-                                                                <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
+                                                                <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                
+                                                               
                                                                 </div>
-                                                            </div> */}
+                                                            </div>
+                                                            {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
                                                                     <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>

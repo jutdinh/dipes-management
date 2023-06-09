@@ -72,7 +72,7 @@ export default () => {
 
     return (
         <div class="topbar">
-            <nav class="navbar navbar-expand-lg navbar-light">
+            <nav class="bg-cus navbar navbar-expand-lg navbar-light">
                 <div class="full d-flex flex-row">
                     <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-bars"></i></button>
                     <div className="ml-auto dropdown d-flex align-items-center">

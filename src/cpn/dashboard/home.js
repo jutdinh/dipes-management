@@ -276,7 +276,7 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data2}>
+                                <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={400} data={data2}>
                                     <PolarGrid />
                                     <PolarAngleAxis dataKey="subject" />
                                     <PolarRadiusAxis angle={30} domain={[0, 150]} />

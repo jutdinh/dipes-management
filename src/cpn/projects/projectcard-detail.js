@@ -27,14 +27,13 @@ export default () => {
     const status = [
         { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
         { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
-        { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
-        { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
-        { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
+        { id: 2, label: lang["complete"], value: 3, color: "#ff8042" },
+        { id: 3, label: lang["pause"], value: 4, color: "#FF0000" }
     ]
     const statusTask = [
-        { id: 0, label: "Chờ duyệt", value: 1, color: "#1ed085" },
-        { id: 1, label: "Thực hiện", value: 2, color: "#8884d8" },
-        { id: 2, label: "Hoàn thành", value: 3, color: "#ffc658" },
+        { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
+        { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
+
 
     ]
     const statusPriority = [
@@ -148,6 +147,8 @@ export default () => {
     const [versions, setProjectVersion] = useState([]);
     const [users, setUsers] = useState([]);
     const [projectmanager, setProjectManager] = useState({});
+
+    const [process, setProcess] = useState({});
     useEffect(() => {
 
         fetch(`${proxy}/projects/project/${project_id}`, {
@@ -166,6 +167,7 @@ export default () => {
                         setProjectVersion(data.versions)
                         setProjectMember(data.members)
                         setProjectManager(data.manager)
+                        setProcess(data)
                         setManager(data.manager.username)
                     }
                 } else {
@@ -173,7 +175,7 @@ export default () => {
                 }
             })
     }, [])
-
+console.log(process)
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -198,6 +200,7 @@ export default () => {
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
     useEffect(() => {
+
         fetch(`${proxy}/projects/project/${project_id}/tasks`, {
             headers: {
                 Authorization: _token
@@ -210,6 +213,7 @@ export default () => {
                 if (success) {
                     if (data) {
                         setTasks(data);
+                        console.log("data task", data)
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -438,6 +442,52 @@ export default () => {
     };
     const [deleteTask, setDelelteTask] = useState(false);
 
+    const handleConfirmTask = (taskid) => {
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: taskid.task_id,
+            task_approve: true
+
+
+
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/approve`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(function () {
+                        // Không cần reload trang
+                    });
+                }
+            });
+
+
+    }
     const handleDeleteTask = (taskid) => {
         const requestBody = {
 
@@ -582,11 +632,19 @@ export default () => {
         setUniqueUsers(duplicateUsers);
     }, [users, projectmember]);
 
+    const getStatusLabel = (statusId) => {
+        const status = statusTask.find(st => st.id === statusId);
+        return status ? status.label : 'N/A';
+    };
 
+    const getStatusColor = (statusId) => {
+        const status = statusTask.find(st => st.id === statusId);
+        return status ? status.color : 'N/A';
+    };
     //task
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 3;
+    const rowsPerPage = 2;
 
     const indexOfLastMember = currentPage * rowsPerPage;
     const indexOfFirstMember = indexOfLastMember - rowsPerPage;
@@ -618,7 +676,7 @@ export default () => {
 
 
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
@@ -669,10 +727,10 @@ export default () => {
                                                 <table class="table table-striped ">
                                                     <thead>
                                                         <tr>
-                                                            <th scope="col">STT</th>
-                                                            <th scope="col">Avatar</th>
-                                                            <th scope="col">Họ và tên</th>
-                                                            <th scope="col">Chức vụ</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
                                                             {/* <th scope="col">Hành động</th> */}
                                                         </tr>
                                                     </thead>
@@ -680,7 +738,7 @@ export default () => {
                                                         {currentMembers.map((member, index) => (
                                                             <tr key={member.username}>
                                                                 <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image" alt="#" /></td>
+                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
                                                                 <td>{member.fullname}</td>
                                                                 <td>
                                                                     {
@@ -946,7 +1004,7 @@ export default () => {
                         </div>
                     </div>
                     {/* Progress */}
-                    <div class="col-md-7">
+                    <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -961,11 +1019,15 @@ export default () => {
                                     }}>
                                         {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
                                     </span>
-                                    <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
+
+
+                                  
                                     <div class="progress skill-bar ">
-                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
+                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                         </div>
                                     </div>
+                                    <span class="skill" style={{ width: `${process.progress}%` }}><span class="info_valume">{process.progress}%</span></span>
+
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <p class="font-weight-bold">{lang["tasklist"]}: </p>
@@ -980,11 +1042,12 @@ export default () => {
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th scope="col">SST</th>
-                                                            <th scope="col">Công việc</th>
-                                                            <th scope="col">Người thực hiện</th>
-                                                            <th scope="col" style={{ textAlign: "center" }}>Trạng thái</th>
-                                                            <th scope="col" style={{ textAlign: "center" }}>Thao tác</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
+                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["taskstatus"]}</th>
+                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["confirm"]}</th>
+                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1012,15 +1075,31 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
+
                                                                 <td style={{ textAlign: "center" }}><span className="status-label" style={{
-                                                                    backgroundColor: (statusTask.find((s) => s.value === task.task_status) || {}).color
+                                                                    backgroundColor: (status.find((s) => s.value === task.task_status) || {}).color
                                                                 }}>
-                                                                    {(statusTask.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
+                                                                    {(status.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
                                                                 </span></td>
+
+
+
+                                                                <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                                    {getStatusLabel(task.task_approve ? 1 : 0)}
+                                                                </td>
+
                                                                 <td style={{ textAlign: "center" }}>
 
+
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
+                                                                    {
+                                                                        ["pm"].indexOf(auth.role) != -1 ?
+                                                                        <i class="fa fa-check-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)}></i>
+                                                                        :null
+                                                                    }
+                                                                   
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)}></i>
+
                                                                 </td>
 
                                                             </tr>
@@ -1084,7 +1163,7 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-
+                                                    <option value="">Chọn</option>
                                                     {statusPriority.map((status, index) => {
                                                         return (
                                                             <option key={index} value={status.value}>{status.label}</option>

@@ -26,6 +26,7 @@ export default {
     "accounts list": "Account list",
     "report": "Reports",
     "tasks": "Tasks",
+    "task": "Task",
     "projects worked": "Projects worked on",
     "profile user ": "Account information",
     "profile user update ": "Update information",
@@ -94,7 +95,8 @@ export default {
     "p.description": "Description of the task",
 
 
-
+"duty":"Duty",
+"confirm":"Confirm",
 
 
 

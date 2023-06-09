@@ -29,6 +29,7 @@ export default {
     "min ago": "phút trước",
     "report": "Báo cáo",
     "tasks": "Yêu cầu",
+    "task": "Yêu cầu",
     "projects worked": "Dự án đã tham gia",
     "statistic": "Thống kê",
     "workflow": "Quy trình",
@@ -108,9 +109,8 @@ export default {
     "p.versiondescription": "Nhập mô tả",
     //Task
     "task": "Yêu cầu",
-
-
-
+    "duty":"Chức vụ",
+    "confirm":"Xác nhận",
     //User
     "users.title": "Quản lý người dùng",
     //Group user
@@ -193,7 +193,7 @@ export default {
 "results":"kết quả",
 
 
-"supervisor":"Người giám sát",
-"deployers": "Nhân viên triển khai"
+"supervisor":"Giám sát",
+"deployers": "Triển khai"
 
 }
