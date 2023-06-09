@@ -120,7 +120,7 @@ export default {
     "users.title": "Quản lý người dùng",
     //Group user
     "administrator": "Quản trị viên",
-    "projectmanager": "Vận hành",
+    "uprojectmanager": "Vận hành",
     "implementation": "Người dùng",
     "monitor": "Người theo dõi dự án",
     //list user

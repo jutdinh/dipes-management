@@ -573,7 +573,7 @@ export default () => {
                                                         <div class="card-body">
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <h4 class="project-name d-flex align-items-center">{item.project_name}</h4>
+                                                                    <h5 class="project-name d-flex align-items-center">{item.project_name}</h5>
                                                                 </div>
 
                                                                 <div class="col-auto cross-hide pointer scaled-hover">

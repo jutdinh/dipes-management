@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../common/header"
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { StatusEnum } from '../enum/status';
 import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
@@ -24,6 +24,12 @@ export default () => {
     ]
     // page
 
+    // const status = [
+    //     StatusEnum.INITIALIZATION,
+    //     StatusEnum.IMPLEMENT,
+    //     StatusEnum.COMPLETE,
+    //     StatusEnum.PAUSE
+    // ]
     const status = [
         { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
         { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
