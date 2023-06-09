@@ -106,7 +106,7 @@ export default () => {
             })
     };
     const [currentPageLogs, setCurrentPageLogs] = useState(1);
-    const rowsPerPageLogs = 11;
+    const rowsPerPageLogs = 8;
     const indexOfLastMemberLogs = currentPageLogs * rowsPerPageLogs;
     const indexOfFirstMemberLogs = indexOfLastMemberLogs - rowsPerPageLogs;
     const currentMembersLogs = view.slice(indexOfFirstMemberLogs, indexOfLastMemberLogs);

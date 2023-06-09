@@ -24,18 +24,19 @@ export default () => {
     ]
     // page
 
-    // const status = [
-    //     StatusEnum.INITIALIZATION,
-    //     StatusEnum.IMPLEMENT,
-    //     StatusEnum.COMPLETE,
-    //     StatusEnum.PAUSE
-    // ]
     const status = [
-        { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
-        { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
-        { id: 2, label: lang["complete"], value: 3, color: "#ff8042" },
-        { id: 3, label: lang["pause"], value: 4, color: "#FF0000" }
+        StatusEnum.INITIALIZATION,
+        StatusEnum.IMPLEMENT,
+        StatusEnum.COMPLETE,
+        StatusEnum.PAUSE
+
     ]
+    // const status = [
+    //     { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+    //     { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+    //     { id: 2, label: lang["complete"], value: 3, color: "#ff8042" },
+    //     { id: 3, label: lang["pause"], value: 4, color: "#FF0000" }
+    // ]
     const statusTask = [
         { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
         { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
@@ -648,7 +649,7 @@ export default () => {
     //task
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 2;
+    const rowsPerPage = 4;
 
     const indexOfLastMember = currentPage * rowsPerPage;
     const indexOfFirstMember = indexOfLastMember - rowsPerPage;
@@ -659,7 +660,7 @@ export default () => {
 
     // Page member task
     const [currentPageTask, setCurrentPageTask] = useState(1);
-    const rowsPerPageTask = 4;
+    const rowsPerPageTask = 7;
 
     const indexOfLastMemberTask = currentPageTask * rowsPerPageTask;
     const indexOfFirstMemberTask = indexOfLastMemberTask - rowsPerPageTask;
@@ -677,21 +678,41 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["project.info"]}</h5>
                                 </div>
+
                                 <div>
                                     <i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i>
                                 </div>
+
                             </div>
 
                             <div class="table_section padding_infor_info">
+
+                                {/* <p class="font-weight-bold">{lang["projectname"]}:</p>
+                                <p class="mb-2">{projectdetail.project_name}</p>
+
+
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                        <p class="mb-2">{projectdetail.project_code}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                        {versions.map(version => (
+                                            <p class="mb-2">{version.version_name}</p>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <p class="font-weight-bold">{lang["description"]}: </p>
+                                <p class="mb-2">{projectdetail.project_description}</p> */}
 
                                 <p class="font-weight-bold">{lang["projectname"]}:</p>
                                 <p class="mb-2">{projectdetail.project_name}</p>
@@ -712,6 +733,8 @@ export default () => {
 
                                 <p class="font-weight-bold">{lang["description"]}: </p>
                                 <p class="mb-2">{projectdetail.project_description}</p>
+
+
                                 <p class="font-weight-bold">{lang["projectmanager"]}: </p>
                                 <div class="profile_contacts">
                                     <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
@@ -1008,7 +1031,7 @@ export default () => {
                         </div>
                     </div>
                     {/* Progress */}
-                    <div class="col-md-6">
+                    <div class="col-md-7">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -1017,25 +1040,35 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
 
-                                <div class="progress-cus">
-                                    <span className="status-label" style={{
-                                        backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
-                                    }}>
-                                        {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
-                                    </span>
 
 
 
-                                    <div class="progress skill-bar ">
-                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
-                                        </div>
+                                <div className="d-flex">
+                                    <div>
+                                        <span className="d-block status-label" style={{
+                                            backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
+                                        }}>
+                                            {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
+                                        </span>
                                     </div>
-                                    <span class="skill" style={{ width: `${process.progress}%` }}><span class="info_valume">{process.progress}%</span></span>
+
+
+                                    <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
 
                                 </div>
+
+
+                                <div class="progress skill-bar ">
+                                    <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
+                                    </div>
+                                </div>
+
+
+
+
                                 <div class="d-flex align-items-center">
                                     <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#addTask">
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
@@ -1074,8 +1107,8 @@ export default () => {
                                                                     }
                                                                     {
                                                                         task.members.length > 3 &&
-                                                                        <div className="extra-images-cus">
-                                                                            +{task.members.length - 3}
+                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${ proxy + task.members[3].avatar })` }}>
+                                                                            <span>+{task.members.length - 3}</span>
                                                                         </div>
                                                                     }
                                                                 </td>
@@ -1237,12 +1270,12 @@ export default () => {
                                             <div class="form-group col-lg-12">
                                                 <label><b>{lang["taskstatus"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_status} </span>
-                                                </div>
+                                            </div>
                                             <div class="form-group col-lg-12">
                                                 <label><b>{lang["description"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_description} </span>
-                                            
-                                             
+
+
 
                                             </div>
 
@@ -1270,56 +1303,54 @@ export default () => {
 
                             <div class="table_section padding_infor_info">
 
-                                <div class="row column1">
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30">
-
-                                            <div class="couter_icon">
-                                                <div class="icon">
-                                                    <img src="/images/icon/table.png" />
-                                                </div>
-                                            </div>
-                                            <div class="counter_no">
-                                                <div>
-                                                    <p class="total_no">1</p>
-                                                    <p class="head_couter">Table</p>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30">
-                                            <div class="couter_icon">
-                                                <div class="icon">
-                                                    <img src="/images/icon/api.png" />
-                                                </div>
-                                            </div>
-                                            <div class="counter_no">
-                                                <div>
-                                                    <p class="total_no">1</p>
-                                                    <p class="head_couter">API</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30">
-                                            <div class="couter_icon">
-                                                <div class="icon">
-                                                    <img src="/images/icon/page.png" />
-                                                </div>
-                                            </div>
-                                            <div class="counter_no">
-                                                <div>
-                                                    <p class="total_no">1</p>
-                                                    <p class="head_couter">UI</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
+                            <div class="row column1">
+                        <div class="col-md-6 col-lg-4">
+                           <div class="full counter_section margin_bottom_30 box-table">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-table yellow_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">1</p>
+                                    <p class="head_couter">Tables</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                           <div class="full counter_section margin_bottom_30 box-api">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-cog blue1_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">1</p>
+                                    <p class="head_couter">API</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                           <div class="full counter_section margin_bottom_30 box-ui " >
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-newspaper-o green_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">1</p>
+                                    <p class="head_couter">UI</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                       
+                     </div>
                                 <div class="row column1">
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">

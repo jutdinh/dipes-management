@@ -540,9 +540,9 @@ export default (props) => {
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
-                                                                <h4>{item.fullname}</h4>
-                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
-                                                                <p><strong>{lang["permission"]}: </strong>
+                                                            <p><strong>{item.fullname}</strong></p>
+                                                                <p><b>{lang["username"]}:</b> {item.username} </p>
+                                                                <p><b>{lang["permission"]}: </b>
                                                                     {item.role === "ad" ? "Administator" :
                                                                         item.role === "pm" ? "Operator" :
                                                                             item.role === "pd" ? "Normal" :
@@ -593,8 +593,8 @@ export default (props) => {
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
-                                                                <h4>{item.fullname}</h4>
-                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
+                                                            <p><strong>{item.fullname}</strong></p>
+                                                                <p><strong>{lang["username"]}: </strong>{item.username} </p>
                                                                 <p><strong>{lang["permission"]}: </strong>
                                                                     {item.role === "ad" ? "Quản trị viên" :
                                                                         item.role === "pm" ? "Quản lý dự án" :
@@ -644,8 +644,8 @@ export default (props) => {
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
-                                                                <h4>{item.fullname}</h4>
-                                                                <p><strong>{lang["username"]}: {item.username} </strong></p>
+                                                            <p><strong>{item.fullname}</strong></p>
+                                                                <p><strong>{lang["username"]}: </strong>{item.username} </p>
                                                                 <p><strong>{lang["permission"]}: </strong>
                                                                     {item.role === "ad" ? "Adminstrator" :
                                                                         item.role === "pm" ? "Operator" :

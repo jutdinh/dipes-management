@@ -60,7 +60,10 @@
     line-height: 36px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
     border-radius: 50%;  /* Tạo hình tròn */
     text-align: center;  /* Căn giữa văn bản theo chiều ngang */
-    background-color: #8884d8;  /* Màu nền, thay đổi theo ý thích */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
     color: white;  /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;  /* Đậm văn bản */
     margin-left: 10px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
@@ -69,6 +72,7 @@
 .circle-image-cus {
     border-radius: 100%;
     width: 36px;
+    padding: 0px 2px;
 
 }
 .circle-image-member{
@@ -190,7 +194,7 @@
 } */
 
 .progress-cus{
-    padding-bottom: 65px;
+    padding-bottom: 5px;
 }
 .member-cus .msg_list_main ul li {
     padding-left: 0px;
@@ -223,7 +227,8 @@ h5 {
     text-transform: uppercase;
     margin: 0;
     line-height: normal;
-    color: #4dd591;
+    /* color: #4dd591; */
+    color: #434360;
 }
 #sidebar h4 {
     background: #274452;
@@ -238,7 +243,8 @@ h5 {
 .page_title h4 {
 
     font-size: 18px;
-    color: #434360;
+    /* color: #434360; */
+     color: #4dd591;
     line-height: normal;
     font-weight: 700;
     text-transform: uppercase;
@@ -257,11 +263,6 @@ h5 {
 
 }
 
-.custom-buttonadd {
-    border-radius: 50%;
-    /* Adjust the value as needed */
-    margin-right: 10px;
-}
 
 
 
@@ -384,14 +385,22 @@ h5 {
 .option h5 {
     margin-bottom: 10px;
 }
-
+.box-table{
+    background-color: #FFF2CC;
+}
+.box-api{
+    background-color: #dae8fc;
+}
+.box-ui{
+    background-color: #d5e8d4;
+}
 
 .custom-buttonadd {
     border-radius: 50%;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    margin-right: 10px;
+    margin: 0px 0px 6px 0px; 
 }
 
 .add-option:hover {
@@ -592,7 +601,8 @@ h5 {
     background: #e9ecef;
     border-radius: 0;
     height: 15px;
-    margin-top: 19px;
+    margin-top: 3px;
+    margin-bottom: 13px;
     border-radius: 10px;
 }
 .dash_blog{
@@ -603,7 +613,7 @@ h5 {
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 485px;
+    min-height: 560px;
    
 }
 .padding_infor_info-logs {
@@ -641,7 +651,8 @@ h5 {
 .padding_infor_info h3, 
 .padding_infor_info p, 
 .padding_infor_info span.status-label {
-    margin-bottom: 1px; /* thay đổi giá trị này để điều chỉnh khoảng cách */
+    margin-bottom: 1px; 
+    font-size: 14px;
 }
 .align-items-flex-end {
     align-items: flex-end;
