@@ -623,11 +623,11 @@ export default () => {
                                                                 {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                             </span>
 
-                                                            <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
+                                                            {/* <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
                                                             <div class="progress skill-bar ">
                                                                 <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
                                                             <div class="bottom_list">
                                                                 <div class="right_button">
                                                                     <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>

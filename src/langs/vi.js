@@ -43,7 +43,8 @@ export default {
     //description
     "description": "Mô tả",
 
-
+"project.info":"Thông tin dự án",
+"project.deploy":"Thông tin website triển khai",
     //Project
     "projects": "Dự án",
     "projects.title": "Quản lý dự án",

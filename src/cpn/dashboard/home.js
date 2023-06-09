@@ -89,7 +89,7 @@ export default () => {
                     </div>
                 </div>
                 <div class="row column1">
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-6">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -104,7 +104,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-6">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -119,7 +119,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    {/* <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -148,7 +148,7 @@ export default () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 {/* <div class="row column1 social_media_section">
                     <div class="col-md-6 col-lg-3">
@@ -238,7 +238,7 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <LineChart width={250} height={300} data={data}>
+                                <LineChart width={500} height={300} data={data}>
                                     <Line type="monotone" dataKey="uv" stroke="#8884d8" />
                                     <CartesianGrid stroke="#ccc" />
                                     <XAxis dataKey="name" />

@@ -622,7 +622,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
-                                    <h5>Thông tin dự án</h5>
+                                    <h5>{lang["project.info"]}</h5>
                                 </div>
                                 <div>
                                     <i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i>
@@ -698,7 +698,7 @@ export default () => {
                                                 </table>
 
                                                 <div className="d-flex justify-content-between align-items-center">
-                                                    <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} kết quả</p>
+                                                    <p>{lang["show"]} {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
                                                     <nav aria-label="Page navigation example">
                                                         <ul className="pagination mb-0">
                                                             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
@@ -1028,7 +1028,7 @@ export default () => {
                                                     </tbody>
                                                 </table>
                                                 <div className="d-flex justify-content-between align-items-center">
-                                                    <p>Hiển thị {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} của {tasks.length} kết quả</p>
+                                                    <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
                                                     <nav aria-label="Page navigation example">
                                                         <ul className="pagination mb-0">
                                                             <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
@@ -1173,7 +1173,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Thông tin website</h5>
+                                    <h5>{lang["project.deploy"]}</h5>
 
                                 </div>
 
@@ -1235,7 +1235,7 @@ export default () => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách bảng </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1269,7 +1269,7 @@ export default () => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách API </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1303,7 +1303,7 @@ export default () => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách UI </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

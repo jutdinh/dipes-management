@@ -50,6 +50,8 @@ export default {
     "pause": "Pause",
     //description
     "description": "Description",
+    "project.info":"Project Information",
+    "project.deploy":"Deployment website information",
     //Project
     "projects": "Projects",
     "projects.title": "Projects",
