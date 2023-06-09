@@ -175,7 +175,7 @@ export default () => {
                 }
             })
     }, [])
-console.log(process)
+    console.log(process)
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -443,13 +443,11 @@ console.log(process)
     const [deleteTask, setDelelteTask] = useState(false);
 
     const handleConfirmTask = (taskid) => {
+        const newTaskApproveStatus = !taskid.task_approve;
         const requestBody = {
             project_id: project.project_id,
             task_id: taskid.task_id,
-            task_approve: true
-
-
-
+            task_approve: newTaskApproveStatus
         };
         console.log(requestBody)
         fetch(`${proxy}/tasks/task/approve`, {
@@ -1021,7 +1019,7 @@ console.log(process)
                                     </span>
 
 
-                                  
+
                                     <div class="progress skill-bar ">
                                         <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                         </div>
@@ -1091,14 +1089,14 @@ console.log(process)
                                                                 <td style={{ textAlign: "center" }}>
 
 
-                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
+                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                     {
                                                                         ["pm"].indexOf(auth.role) != -1 ?
-                                                                        <i class="fa fa-check-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)}></i>
-                                                                        :null
+                                                                            <i class="fa fa-check-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                            : null
                                                                     }
-                                                                   
-                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)}></i>
+
+                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
 
                                                                 </td>
 
@@ -1227,12 +1225,18 @@ console.log(process)
                                         <div class="row">
 
                                             <div class="form-group col-lg-12">
-                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                <input type="text" class="form-control" value={taskDetail.task_name} readOnly />
-                                                <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
-                                                <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
-                                                <label>{lang["description"]} <span className='red_star'>*</span></label>
-                                                <textarea rows={6} class="form-control" value={taskDetail.task_description} readOnly />
+                                                <label><b>{lang["taskname"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_name} </span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>{lang["taskstatus"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_status} </span>
+                                                </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>{lang["description"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_description} </span>
+                                            
+                                             
 
                                             </div>
 

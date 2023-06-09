@@ -93,7 +93,9 @@ export default {
     "task_priority": "Priority",
     "taskmember": "Members",
     "p.description": "Description of the task",
-
+    "updatestatus":"Status updates",
+    "viewdetail":"View detail",
+    "delete": "Delete",
 
 "duty":"Duty",
 "confirm":"Confirm",
@@ -126,8 +128,8 @@ export default {
     "users.desc": "Users management",
     //Group user
     "administrator": "Administrator",
-    "projectmanager": "Project manager",
-    "implementation": "Implementation Staff",
+    "projectmanager": "Operator",
+    "implementation": "Normal",
     "monitor": "Monitor Staff",
     //list
     "username": "Username",

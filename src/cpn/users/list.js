@@ -13,10 +13,10 @@ export default (props) => {
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [isDataAdded, setIsDataAdded] = useState(false);
     const roles = [
-        { id: 0, label: "Quản trị viên ( Administrator )", value: "ad" },
-        { id: 1, label: "Quản lý dự án ( Project manager )", value: "pm" },
-        { id: 2, label: "Người triển khai ( Implementation Staff )", value: "pd" },
-        { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
+        { id: 0, label: "Administrator", value: "ad" },
+        { id: 1, label: "Operator", value: "pm" },
+        { id: 2, label: "Normal", value: "pd" },
+        // { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
 
     const [user, setUser] = useState({});
@@ -543,10 +543,10 @@ export default (props) => {
                                                                 <h4>{item.fullname}</h4>
                                                                 <p><strong>{lang["username"]}: {item.username} </strong></p>
                                                                 <p><strong>{lang["permission"]}: </strong>
-                                                                    {item.role === "ad" ? "Quản trị viên" :
-                                                                        item.role === "pm" ? "Quản lý dự án" :
-                                                                            item.role === "pd" ? "Người triển khai" :
-                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                    {item.role === "ad" ? "Administator" :
+                                                                        item.role === "pm" ? "Operator" :
+                                                                            item.role === "pd" ? "Normal" :
+                                                                              
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
@@ -647,10 +647,10 @@ export default (props) => {
                                                                 <h4>{item.fullname}</h4>
                                                                 <p><strong>{lang["username"]}: {item.username} </strong></p>
                                                                 <p><strong>{lang["permission"]}: </strong>
-                                                                    {item.role === "ad" ? "Quản trị viên" :
-                                                                        item.role === "pm" ? "Quản lý dự án" :
-                                                                            item.role === "pd" ? "Người triển khai" :
-                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                    {item.role === "ad" ? "Adminstrator" :
+                                                                        item.role === "pm" ? "Operator" :
+                                                                            item.role === "pd" ? "Normal" :
+                                                                             
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
@@ -689,7 +689,7 @@ export default (props) => {
                                             ))}
                                         </div>
                                     )}
-                                    {projectFollowers.length > 0 && (
+                                    {/* {projectFollowers.length > 0 && (
                                         <div class="row group">
                                             <h4 class="col-lg-12">{lang["monitor"]}</h4>
                                             {projectFollowers.map((item) => (
@@ -700,10 +700,10 @@ export default (props) => {
                                                                 <h4>{item.fullname}</h4>
                                                                 <p><strong>Tài khoản: {item.username} </strong></p>
                                                                 <p><strong>Quyền: </strong>
-                                                                    {item.role === "ad" ? "Quản trị viên" :
-                                                                        item.role === "pm" ? "Quản lý dự án" :
-                                                                            item.role === "pd" ? "Người triển khai" :
-                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                {item.role === "ad" ? "Adminstrator" :
+                                                                        item.role === "pm" ? "Operator" :
+                                                                            item.role === "pd" ? "Normal" :
+                                                                             
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
@@ -735,7 +735,7 @@ export default (props) => {
                                                 </div>
                                             ))}
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>

@@ -91,6 +91,11 @@ export default {
     "task_priority": "Mức độ ưu tiên",
     "taskmember": "Thành viên",
     "p.description": "Mô tả yêu cầu",
+    "updatestatus":"Cập nhật trạng thái",
+    "viewdetail":"Xem chi tiết",
+    "delete": "Xóa",
+
+
     //Managers
     "editmanager": "Chỉnh sửa quản lý dự án",
     //Members
@@ -115,8 +120,8 @@ export default {
     "users.title": "Quản lý người dùng",
     //Group user
     "administrator": "Quản trị viên",
-    "projectmanager": "Quản lý dự án",
-    "implementation": "Người triển khai",
+    "projectmanager": "Vận hành",
+    "implementation": "Người dùng",
     "monitor": "Người theo dõi dự án",
     //list user
     "username": "Tên đăng nhập",
@@ -194,6 +199,6 @@ export default {
 
 
 "supervisor":"Giám sát",
-"deployers": "Triển khai"
+"deployers": "Triển khai",
 
 }
