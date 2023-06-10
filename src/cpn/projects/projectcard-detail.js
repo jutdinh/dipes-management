@@ -15,6 +15,11 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [manager, setManager] = useState("")
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
+    const [showFull, setShowFull] = useState(false);
+
+
+    // ...
+
     console.log(selectedMemberTask)
     // Page 
 
@@ -731,8 +736,33 @@ export default () => {
                                     </div>
                                 </div>
 
+                                {/* <p class="font-weight-bold">{lang["description"]}: </p>
+                                <div style={{
+                                    width: showFull ? "auto" : "100%",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: showFull ? "normal" : "nowrap"
+                                }}>
+                                    {projectdetail.project_description}
+                                </div>
+                                <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
+
+
                                 <p class="font-weight-bold">{lang["description"]}: </p>
-                                <p class="mb-2">{projectdetail.project_description}</p>
+                                <div style={{ display: "flex", width: "100%", overflow: "hidden" }}>
+                                    <div style={{
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap"
+                                    }}>
+                                        <p class="mb2">{projectdetail.project_description}</p>
+                                    </div>
+                                    <div style={{ minWidth: "80px" }}>
+                                        <a href="#" data-toggle="modal" data-target="#viewDescription"><b>Xem thêm</b></a>
+                                    </div>
+                                </div>
+
+
 
 
                                 <p class="font-weight-bold">{lang["projectmanager"]}: </p>
@@ -1039,10 +1069,6 @@ export default () => {
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
-
-
-
-
                                 <div className="d-flex">
                                     <div>
                                         <span className="d-block status-label" style={{
@@ -1051,21 +1077,13 @@ export default () => {
                                             {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
                                         </span>
                                     </div>
-
-
                                     <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
 
                                 </div>
-
-
                                 <div class="progress skill-bar ">
                                     <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                     </div>
                                 </div>
-
-
-
-
                                 <div class="d-flex align-items-center">
                                     <p class="font-weight-bold">{lang["tasklist"]}: </p>
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
@@ -1091,8 +1109,18 @@ export default () => {
                                                         {currentMembersTask.map((task, index) => (
                                                             <tr key={task.id}>
                                                                 <td scope="row">{index + 1}</td>
-                                                                <td>{task.task_name}</td>
-                                                                <td >
+                                                                <td style={{ maxWidth: "100px" }}>
+                                                                    <div style={{
+                                                                        width: "100%",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                        whiteSpace: "nowrap"
+                                                                    }}>
+                                                                        {task.task_name}
+                                                                    </div>
+                                                                </td>
+
+                                                                <td style={{ width: "170px" }} >
                                                                     {
                                                                         task.members && task.members.length > 0 ?
                                                                             task.members.slice(0, 3).map(member => (
@@ -1101,13 +1129,12 @@ export default () => {
                                                                                     src={proxy + member.avatar}
                                                                                     alt={member.username}
                                                                                 />
-
                                                                             )) :
                                                                             <p>{lang["projectempty"]} </p>
                                                                     }
                                                                     {
                                                                         task.members.length > 3 &&
-                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${ proxy + task.members[3].avatar })` }}>
+                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + task.members[3].avatar})` }}>
                                                                             <span>+{task.members.length - 3}</span>
                                                                         </div>
                                                                     }
@@ -1289,68 +1316,92 @@ export default () => {
                             </div>
                         </div>
                     </div>
+                    {/* View Description Project */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="viewDescription">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["description"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+
+                                                <span className="d-block" style={{ textAlign: "justify" }}>
+                                                    {projectdetail.project_description}
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                {/* Website info */}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
+                                </div>
+                            </div>
+                            <div class="table_section padding_infor_info">
+                                <div class="row column1">
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-table">
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-table yellow_color"></i>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">Tables</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-api">
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-cog blue1_color"></i>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">API</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-ui " >
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-newspaper-o green_color"></i>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">1</p>
+                                                    <p class="head_couter">UI</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
-
-                            </div>
-
-                            <div class="table_section padding_infor_info">
-
-                            <div class="row column1">
-                        <div class="col-md-6 col-lg-4">
-                           <div class="full counter_section margin_bottom_30 box-table">
-                              <div class="couter_icon">
-                                 <div> 
-                                    <i class="fa fa-table yellow_color"></i>
-                                 </div>
-                              </div>
-                              <div class="counter_no">
-                                 <div>
-                                    <p class="total_no">1</p>
-                                    <p class="head_couter">Tables</p>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                           <div class="full counter_section margin_bottom_30 box-api">
-                              <div class="couter_icon">
-                                 <div> 
-                                    <i class="fa fa-cog blue1_color"></i>
-                                 </div>
-                              </div>
-                              <div class="counter_no">
-                                 <div>
-                                    <p class="total_no">1</p>
-                                    <p class="head_couter">API</p>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                           <div class="full counter_section margin_bottom_30 box-ui " >
-                              <div class="couter_icon">
-                                 <div> 
-                                    <i class="fa fa-newspaper-o green_color"></i>
-                                 </div>
-                              </div>
-                              <div class="counter_no">
-                                 <div>
-                                    <p class="total_no">1</p>
-                                    <p class="head_couter">UI</p>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                       
-                     </div>
                                 <div class="row column1">
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">

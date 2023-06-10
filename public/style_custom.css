@@ -51,24 +51,52 @@
     background-color: #8884d8;  /* Màu nền, thay đổi theo ý thích */
     color: white;  /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;  /* Đậm văn bản */
-    margin-left: 10px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+    /* margin-left: 10px;  */
+    margin-left: 1px; 
 }
 .extra-images-cus {
     display: inline-block; 
-    width: 36px;  /* Thay đổi kích thước này để phù hợp */
-    height: 36px;  /* Thay đổi kích thước này để phù hợp */
+    width: 35px;  /* Thay đổi kích thước này để phù hợp */
+    height: 35px;  /* Thay đổi kích thước này để phù hợp */
     line-height: 36px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 50%;  /* Tạo hình tròn */
+    border-radius: 100%;  /* Tạo hình tròn */
     text-align: center;  /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-
+    max-width: 100%;
     color: white;  /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;  /* Đậm văn bản */
-    margin-left: 10px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+
+  
+    padding: 0px 2px;
+}
+.ellipsis {
+    width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+.bottom_list {
+    float: left;
+    width: 100%;
+    border-top: solid #ddd 1px;
+    margin-top: 3px;
+    padding: 10px 0px 0px 0px;
 }
 
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    padding-top: 1.25rem;
+    padding-right: 1.25rem;
+    padding-bottom: 10px;
+    padding-left: 1.25rem;
+}
 .circle-image-cus {
     border-radius: 100%;
     width: 36px;
@@ -315,9 +343,7 @@ h5 {
 }
 
 
-.profile_contacts {
-    padding-bottom: 15px;
-}
+
 
 .custom-button {
     border-radius: 20px;
@@ -559,6 +585,7 @@ h5 {
     justify-content: start;
     align-items: center;
     gap: 3px;
+    padding-bottom: 5px;
 }
 
 .dash_head {
@@ -601,8 +628,8 @@ h5 {
     background: #e9ecef;
     border-radius: 0;
     height: 15px;
-    margin-top: 3px;
-    margin-bottom: 13px;
+    margin-top: 5px;
+    margin-bottom: 3px;
     border-radius: 10px;
 }
 .dash_blog{
