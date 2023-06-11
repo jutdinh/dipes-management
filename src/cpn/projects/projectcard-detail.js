@@ -1,7 +1,7 @@
 
 import { useParams } from "react-router-dom";
 import Header from "../common/header"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 
@@ -18,8 +18,9 @@ export default () => {
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
     const [showFull, setShowFull] = useState(false);
 
+    const [showViewMore, setShowViewMore] = useState(false);
 
-    // ...
+
 
     console.log(selectedMemberTask)
     // Page 
@@ -282,7 +283,7 @@ export default () => {
 
 
     };
-    const submitUpdateProject = (e) => {
+    const submitUpdateProject = async (e) => {
         e.preventDefault();
         const { project_name, project_status } = project;
         const errors = {};
@@ -296,41 +297,42 @@ export default () => {
             setErrorMessagesedit(errors);
             return;
         }
-        fetch(`${proxy}/projects/update`, {
+        const response = await fetch(`${proxy}/projects/update`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
             },
             body: JSON.stringify({ project: { ...project, project_status: parseInt(project.project_status) } }),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
+        });
 
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
+        const resp = await response.json();
+        const { success, content, data, status } = resp;
 
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                    });
-                }
+        if (success) {
+            Swal.fire({
+                title: "Thành công!",
+                text: content,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(function () {
+                window.location.reload();
             });
+        } else {
+            Swal.fire({
+                title: "Thất bại!",
+                text: content,
+                icon: "error",
+                showConfirmButton: false,
+                timer: 2000,
+            }).then(function () { });
+        }
+
+        // call addMember after submitUpdateProject has completed
+        addMember(e);
     };
+
     const submitUpdateManager = async (e) => {
         e.preventDefault();
         const requestBody = {
@@ -682,6 +684,22 @@ export default () => {
 
     const paginateTask = (pageNumber) => setCurrentPageTask(pageNumber);
     const totalPagesTask = Math.ceil(tasks.length / rowsPerPageTask);
+
+
+    useEffect(() => {
+        if (projectdetail.project_description?.length > 100) {
+            setShowViewMore(true);
+        } else {
+            setShowViewMore(false);
+        }
+    }, [projectdetail.project_description]);
+
+    const tablesManager = (project) => {
+        // setSelectedProject(project);
+        // console.log(project)
+        // window.location.href = `projects/tables/${project.project_id}`;
+          window.location.href = `tables`;
+    };
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -747,18 +765,19 @@ export default () => {
                                     {projectdetail.project_description}
                                 </div>
                                 <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
-                                <p class="font-weight-bold">{lang["description"]}: </p>
-                                <div style={{ display: "flex", width: "100%", overflow: "hidden" }}>
-                                    <div style={{
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        flex: 1
-                                    }}>
-                                        <p class="mb2">{projectdetail.project_description}</p>
-                                    </div>
-                                    <div style={{ minWidth: "85px", paddingTop: "2px" }}>
-                                        <a href="#" data-toggle="modal" data-target="#viewDescription"><b>...Xem thêm</b></a>
+                                <div>
+                                    <p className="font-weight-bold">{lang["description"]}: </p>
+                                    <div className="description-container">
+                                        <div className="description-text">
+                                            <p className="mb2"> {projectdetail.project_description}</p>
+                                        </div>
+                                        {showViewMore && (
+                                            <div className="view-more-link">
+                                                <a href="#" data-toggle="modal" data-target="#viewDescription">
+                                                    <b> ...Xem thêm</b>
+                                                </a>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <p class="font-weight-bold">{lang["projectmanager"]}: </p>
@@ -791,7 +810,7 @@ export default () => {
                                                             <tr key={member.username}>
                                                                 <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                                                 <td><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
-                                                                <td>{member.fullname}</td>
+                                                                <td class="align-center">{member.fullname}</td>
                                                                 <td>
                                                                     {
                                                                         member.permission === "supervisor" ? lang["supervisor"] :
@@ -799,9 +818,9 @@ export default () => {
                                                                                 "Khác"
                                                                     }
                                                                 </td>
-                                                                {/* <td>
-                                                                    <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)}></img>
-                                                                </td> */}
+                                                                <td class="align-center">
+                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
+                                                                </td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -843,7 +862,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    {/* add member */}
+                    {/* Update member */}
                     <div class={`modal show`} id="editMember">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -1046,6 +1065,106 @@ export default () => {
                                                     (e) => { setProject({ ...project, project_description: e.target.value }) }
                                                 } placeholder={lang["p.projectdescripton"]} />
                                             </div>
+
+                                            <div className="form-group col-lg-12">
+                                                <label>Thành viên dự án</label>
+                                                <div class="options-container">
+                                                    <div class="option">
+                                                        <h5>Giám sát</h5>
+                                                        {
+
+                                                            selectedUsers.map(user => {
+                                                                if (user.username === manager) {
+                                                                    return null;
+                                                                }
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option">
+                                                        <h5>Triển Khai</h5>
+                                                        {
+                                                            selectedImple.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            {showAdminPopup && (
+                                                <div class="user-popup4">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                            onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {showImplementationPopup && (
+                                                <div class="user-popup2">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                            onChange={() => handleImpleCheck(user, 'deployer')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                         </div>
                                     </form>
                                 </div>
@@ -1096,9 +1215,9 @@ export default () => {
                                                             <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["task"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
-                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["taskstatus"]}</th>
-                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["confirm"]}</th>
-                                                            <th class="font-weight-bold" scope="col" style={{ textAlign: "center" }}>{lang["log.action"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
+                                                            <th class="font-weight-bold" scope="col" >{lang["confirm"]}</th>
+                                                            <th class="font-weight-bold" scope="col" >{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1135,7 +1254,7 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td style={{ textAlign: "center" }}><span className="status-label" style={{
+                                                                <td class="align-center"><span className="status-label" style={{
                                                                     backgroundColor: (statusTaskView.find((s) => s.value === task.task_status) || {}).color
                                                                 }}>
                                                                     {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}
@@ -1143,7 +1262,7 @@ export default () => {
                                                                 <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
-                                                                <td style={{ textAlign: "center" }}>
+                                                                <td class="align-center">
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                     {
                                                                         ["pm"].indexOf(auth.role) != -1 ?
@@ -1391,7 +1510,7 @@ export default () => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách bảng </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

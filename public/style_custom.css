@@ -38,8 +38,28 @@
 .circle-image {
     border-radius: 100%;
     width: 48px;
-
-
+}
+.description-container {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .description-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .view-more-link {
+    min-width: 85px;
+    padding-top: 2px;
+  }
+  
+.align-center{
+    text-align: center;
 }
 .btn-header{
     padding: 5px 3px 0px 6px;

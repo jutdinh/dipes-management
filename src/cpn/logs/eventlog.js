@@ -11,7 +11,10 @@ export default () => {
     const [logs, setLogs] = useState([]);
 
     const [view, setView] = useState([])
-    const [filter, setFilter] = useState([]);
+    const [filter, setFilter] = useState({ type: 'info' });
+
+
+
     const [showModal, setShowModal] = useState(false);
     console.log(filter)
     let langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
@@ -82,17 +85,11 @@ export default () => {
                     const { success, content, data, status } = resp;
                     console.log(resp)
                     if (success) {
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
+                        
                             setView(data)
                             // window.location.reload();
                             setShowModal(false);
-                        });
+                        
                     } else {
                         Swal.fire({
                             title: "Thất bại!",
@@ -192,11 +189,11 @@ export default () => {
                                                         <tr>
                                                             <th scope="col">{lang["log.no"]}</th>
 
-                                                            <th scope="col" style={{ textAlign: "center" }}>{lang["log.type"]}</th>
+                                                            <th scope="col" class="align-center">{lang["log.type"]}</th>
                                                             <th scope="col">{lang["log.listtitle"]}</th>
                                                             <th scope="col">{lang["description"]}</th>
                                                             <th scope="col">{lang["log.dayupdate"]}</th>
-                                                            <th scope="col" style={{ textAlign: "center" }}>{lang["log.action"]}</th>
+                                                            <th scope="col" class="align-center">{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -208,7 +205,7 @@ export default () => {
                                                                 <tr key={log.id}>
                                                                     <td scope="row">{index + 1}</td>
 
-                                                                    <td style={{ textAlign: "center" }}>
+                                                                    <td class="align-center">
                                                                         {/* Kiểm tra xem có tìm thấy sự kiện không, nếu có thì hiển thị nhãn và icon */}
                                                                         {event && <>
 
@@ -218,7 +215,7 @@ export default () => {
                                                                     <td>{log.event_title}</td>
                                                                     <td>{log.event_description}</td>
                                                                     <td>{log.create_at}</td>
-                                                                    <td style={{ textAlign: "center" }}>
+                                                                    <td class="align-center">
                                                                         <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
 
                                                                     </td>
