@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import Header from "../common/header"
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum } from '../enum/status';
+import { StatusEnum, StatusTask } from '../enum/status';
+
 import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
@@ -29,11 +30,19 @@ export default () => {
     ]
     // page
 
-    const status = [
+    const statusProject = [
         StatusEnum.INITIALIZATION,
         StatusEnum.IMPLEMENT,
+        StatusEnum.DEPLOY,
         StatusEnum.COMPLETE,
         StatusEnum.PAUSE
+
+    ]
+    const statusTaskView = [
+        StatusTask.INITIALIZATION,
+        StatusTask.IMPLEMENT,
+        StatusTask.COMPLETE,
+        StatusTask.PAUSE
 
     ]
     // const status = [
@@ -684,25 +693,22 @@ export default () => {
                     </div>
                 </div>
                 <div class="row">
+                    {/* Detail */}
                     <div class="col-md-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["project.info"]}</h5>
                                 </div>
-
                                 <div>
-                                    <i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i>
+                                    <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
+                                        <i class="fa fa-edit size pointer" ></i>
+                                    </button>
                                 </div>
-
                             </div>
-
                             <div class="table_section padding_infor_info">
-
                                 {/* <p class="font-weight-bold">{lang["projectname"]}:</p>
                                 <p class="mb-2">{projectdetail.project_name}</p>
-
-
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <p class="font-weight-bold">{lang["projectcode"]}:</p>
@@ -715,14 +721,10 @@ export default () => {
                                         ))}
                                     </div>
                                 </div>
-
                                 <p class="font-weight-bold">{lang["description"]}: </p>
                                 <p class="mb-2">{projectdetail.project_description}</p> */}
-
                                 <p class="font-weight-bold">{lang["projectname"]}:</p>
                                 <p class="mb-2">{projectdetail.project_name}</p>
-
-
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <p class="font-weight-bold">{lang["projectcode"]}:</p>
@@ -735,7 +737,6 @@ export default () => {
                                         ))}
                                     </div>
                                 </div>
-
                                 {/* <p class="font-weight-bold">{lang["description"]}: </p>
                                 <div style={{
                                     width: showFull ? "auto" : "100%",
@@ -746,25 +747,20 @@ export default () => {
                                     {projectdetail.project_description}
                                 </div>
                                 <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
-
-
                                 <p class="font-weight-bold">{lang["description"]}: </p>
                                 <div style={{ display: "flex", width: "100%", overflow: "hidden" }}>
                                     <div style={{
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap"
+                                        whiteSpace: "nowrap",
+                                        flex: 1
                                     }}>
                                         <p class="mb2">{projectdetail.project_description}</p>
                                     </div>
-                                    <div style={{ minWidth: "80px" }}>
-                                        <a href="#" data-toggle="modal" data-target="#viewDescription"><b>Xem thêm</b></a>
+                                    <div style={{ minWidth: "85px", paddingTop: "2px" }}>
+                                        <a href="#" data-toggle="modal" data-target="#viewDescription"><b>...Xem thêm</b></a>
                                     </div>
                                 </div>
-
-
-
-
                                 <p class="font-weight-bold">{lang["projectmanager"]}: </p>
                                 <div class="profile_contacts">
                                     <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
@@ -776,7 +772,6 @@ export default () => {
                                         <i class="fa fa-edit"></i>
                                     </button> */}
                                 </div>
-
                                 <div class="table-responsive">
                                     {
                                         sortedMembers && sortedMembers.length > 0 ? (
@@ -848,6 +843,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+                    {/* add member */}
                     <div class={`modal show`} id="editMember">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -1036,9 +1032,9 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
-                                                    {status.map((status, index) => {
+                                                    {statusProject.map((status, index) => {
                                                         return (
-                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                            <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
                                                         );
                                                     })}
                                                 </select>
@@ -1071,14 +1067,14 @@ export default () => {
                             <div class="table_section padding_infor_info">
                                 <div className="d-flex">
                                     <div>
-                                        <span className="d-block status-label" style={{
-                                            backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
+                                        <span className="status-label d-block" style={{
+                                            backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
+                                            whiteSpace: "nowrap"
                                         }}>
-                                            {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
+                                            {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
                                         </span>
                                     </div>
                                     <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
-
                                 </div>
                                 <div class="progress skill-bar ">
                                     <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
@@ -1139,33 +1135,23 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-
                                                                 <td style={{ textAlign: "center" }}><span className="status-label" style={{
-                                                                    backgroundColor: (status.find((s) => s.value === task.task_status) || {}).color
+                                                                    backgroundColor: (statusTaskView.find((s) => s.value === task.task_status) || {}).color
                                                                 }}>
-                                                                    {(status.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
+                                                                    {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}
                                                                 </span></td>
-
-
-
                                                                 <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
-
                                                                 <td style={{ textAlign: "center" }}>
-
-
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                     {
                                                                         ["pm"].indexOf(auth.role) != -1 ?
                                                                             <i class="fa fa-check-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
                                                                             : null
                                                                     }
-
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
-
                                                                 </td>
-
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -1202,7 +1188,6 @@ export default () => {
                                         )
                                     }
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -1514,7 +1499,6 @@ export default () => {
 
                 </div>
             </div >
-
         </div >
     )
 }

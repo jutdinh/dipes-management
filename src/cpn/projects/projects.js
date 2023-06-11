@@ -341,7 +341,6 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
-
                             {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
@@ -609,28 +608,36 @@ export default () => {
                                                                             <p>{lang["projectempty"]} </p>
                                                                         </div>
                                                                 }
+                                                                {/* {
+                                                                    item.members.length > 2 &&
+                                                                    <div className="img-responsive circle-image extra-images">
+                                                                        +{item.members.length - 2}
+                                                                    </div>
+                                                                } */
+                                                                }
                                                                 {
                                                                     item.members.length > 2 &&
-                                                                    <div className="extra-images">
-                                                                        +{item.members.length - 2}
+                                                                    <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[3].avatar})` }}>
+                                                                        <span> +{item.members.length - 2}</span>
                                                                     </div>
                                                                 }
                                                             </div>
-
-
-
-                                                            <span className="status-label" style={{
-                                                                backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
-                                                            }}>
-                                                                {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                            </span>
-
-                                                            <div class="progress skill-bar ">
-                                                                <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
-                                                                
-                                                               
+                                                            <div className="d-flex position-relative">
+                                                                <div>
+                                                                    <span className="d-block status-label" style={{
+                                                                        backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                                    }}>
+                                                                        {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                                    </span>
+                                                                    
                                                                 </div>
+                                                                <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
                                                             </div>
+                                                            <div class="progress skill-bar mt-3">
+                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                        </div>
+                                                                    </div>
+
                                                             {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
                                                             <div class="bottom_list">
                                                                 <div class="right_button">

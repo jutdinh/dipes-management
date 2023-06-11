@@ -119,9 +119,9 @@ export default {
     //User
     "users.title": "Quản lý người dùng",
     //Group user
-    "administrator": "Quản trị viên",
-    "uprojectmanager": "Vận hành",
-    "implementation": "Người dùng",
+    "administrator": " Quản trị viên",
+    "uprojectmanager": " Vận hành",
+    "normal": " Người dùng",
     "monitor": "Người theo dõi dự án",
     //list user
     "username": "Tên đăng nhập",

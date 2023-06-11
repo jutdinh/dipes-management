@@ -41,6 +41,38 @@
 
 
 }
+.btn-header{
+    padding: 5px 3px 0px 6px;
+}
+.circle-image-project {
+    border-radius: 100%;
+    width: 44px;
+    display: inline-block; 
+    line-height: 44px; 
+    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; 
+     margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+
+  
+    padding: 0px 2px;
+}
+.extra-images-cus-p {
+    display: inline-block; 
+    width: 48px;  /* Thay đổi kích thước này để phù hợp */
+    height: 48px;  /* Thay đổi kích thước này để phù hợp */
+    line-height: 48px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 100%;  /* Tạo hình tròn */
+    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+   
+    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;  /* Đậm văn bản */
+  
+}
 .extra-images {
     display: inline-block; 
     width: 48px;  /* Thay đổi kích thước này để phù hợp */
@@ -65,6 +97,24 @@
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
+    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;  /* Đậm văn bản */
+    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+
+  
+    padding: 0px 2px;
+}
+.extra-images-cus-p {
+    display: inline-block; 
+    width: 48px;  /* Thay đổi kích thước này để phù hợp */
+    height: 48px;  /* Thay đổi kích thước này để phù hợp */
+    line-height: 48px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 100%;  /* Tạo hình tròn */
+    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+   
     color: white;  /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;  /* Đậm văn bản */
     margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
@@ -422,7 +472,7 @@ h5 {
 }
 
 .custom-buttonadd {
-    border-radius: 50%;
+    border-radius: 100%;
     border: none;
     padding: 5px 10px;
     cursor: pointer;

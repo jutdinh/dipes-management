@@ -127,9 +127,9 @@ export default {
     "users.title": "Users",
     "users.desc": "Users management",
     //Group user
-    "administrator": "Administrator",
-    "uprojectmanager": "Operator",
-    "implementation": "Normal",
+    "administrator": " Administrator",
+    "uprojectmanager": " Operator",
+    "normal": " Normal",
     "monitor": "Monitor Staff",
     //list
     "username": "Username",

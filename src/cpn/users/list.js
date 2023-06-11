@@ -534,18 +534,18 @@ export default (props) => {
                                 <div class="container-fluid">
                                     {admins.length > 0 && (
                                         <div class="row group">
-                                            <h5 class="col-lg-12">{lang["administrator"]}</h5>
+                                            <h5 class="col-lg-12 mb-1">{lang["administrator"]}</h5>
                                             {admins.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                             <p><strong>{item.fullname}</strong></p>
-                                                                <p><b>{lang["username"]}:</b> {item.username} </p>
-                                                                <p><b>{lang["permission"]}: </b>
-                                                                    {item.role === "ad" ? "Administator" :
-                                                                        item.role === "pm" ? "Operator" :
-                                                                            item.role === "pd" ? "Normal" :
+                                                                <p>{lang["username"]}: {item.username} </p>
+                                                                <p>{lang["permission"]}:
+                                                                     { item.role === "ad" ? lang["administrator"] :
+                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                            item.role === "pd" ? lang["normal"] :
                                                                               
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
@@ -587,19 +587,19 @@ export default (props) => {
                                     )}
                                     {projectManagers.length > 0 && (
                                         <div class="row group">
-                                            <h5 class="col-lg-12">{lang["projectmanager"]}</h5>
+                                            <h5 class="col-lg-12 mb-1">{lang["uprojectmanager"]}</h5>
                                             {projectManagers.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                             <p><strong>{item.fullname}</strong></p>
-                                                                <p><strong>{lang["username"]}: </strong>{item.username} </p>
-                                                                <p><strong>{lang["permission"]}: </strong>
-                                                                    {item.role === "ad" ? "Quản trị viên" :
-                                                                        item.role === "pm" ? "Quản lý dự án" :
-                                                                            item.role === "pd" ? "Người triển khai" :
-                                                                                item.role === "ps" ? "Người theo dõi dự án" :
+                                                                <p>{lang["username"]}:{item.username} </p>
+                                                                <p>{lang["permission"]}:
+                                                                     { item.role === "ad" ? lang["administrator"] :
+                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                            item.role === "pd" ? lang["normal"] :
+                                                                              
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
@@ -638,19 +638,19 @@ export default (props) => {
                                     )}
                                     {implementers.length > 0 && (
                                         <div class="row group">
-                                            <h5 class="col-lg-12">{lang["implementation"]}</h5>
+                                            <h5 class="col-lg-12 mb-1">{lang["normal"]}</h5>
                                             {implementers.map((item) => (
                                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
                                                     <div class="contact_blog">
                                                         <div class="contact_inner">
                                                             <div class="left-cus">
                                                             <p><strong>{item.fullname}</strong></p>
-                                                                <p><strong>{lang["username"]}: </strong>{item.username} </p>
-                                                                <p><strong>{lang["permission"]}: </strong>
-                                                                    {item.role === "ad" ? "Adminstrator" :
-                                                                        item.role === "pm" ? "Operator" :
-                                                                            item.role === "pd" ? "Normal" :
-                                                                             
+                                                                <p>{lang["username"]}: {item.username} </p>
+                                                                <p>{lang["permission"]}:
+                                                                     { item.role === "ad" ? lang["administrator"] :
+                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                            item.role === "pd" ? lang["normal"] :
+                                                                              
                                                                                     item.role}</p>
                                                                 <ul class="list-unstyled">
                                                                     <li><i class="fa fa-envelope-o"></i> {item.email}</li>
