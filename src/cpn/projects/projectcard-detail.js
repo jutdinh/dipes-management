@@ -197,7 +197,7 @@ export default () => {
                 }
             })
     }, [])
-    // console.log(process)
+    
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -764,7 +764,7 @@ export default () => {
 
     const tablesManager = (project) => {
         
-        window.location.href = `/projects/tables/${project_id}`;
+        window.location.href = `/projects/${versions[0]?.version_id}/tables`;
       
         // window.location.href = `tables`;
     };

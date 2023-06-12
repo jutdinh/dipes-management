@@ -22,6 +22,14 @@
     vertical-align: bottom;
     border-bottom: 0.5px solid #dee2e6;
 }
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
 .footer-custom {
     position: absolute;
     bottom: 0;
@@ -797,6 +805,9 @@ h5 {
 }
 .size {
     font-size: 18px;  
+}
+.size-bg {
+    font-size: 25px;  
 }
 .size-log {
     font-size: 22px;  
