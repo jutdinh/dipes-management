@@ -22,7 +22,7 @@ export default () => {
 
 
 
-    console.log(selectedMemberTask)
+    // console.log(selectedMemberTask)
     // Page 
 
     const sortOptions = [
@@ -135,10 +135,10 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    console.log("a", combinedArray)
-    console.log("admin", selectedUsers)
-    console.log("imple", selectedImple)
-    console.log("monitor", selectedMonitor)
+    // console.log("a", combinedArray)
+    // console.log("admin", selectedUsers)
+    // console.log("imple", selectedImple)
+    // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -197,7 +197,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(process)
+    // console.log(process)
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -267,7 +267,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        // window.location.reload();
+                        window.location.reload();
                         setShowModal(false);
                     });
                 } else {
@@ -440,6 +440,63 @@ export default () => {
 
     }, [projectmember]);
 
+    const [updateTaskinfo, setUpdateTask] = useState({});
+
+    const getIdTask = (taskid) => {
+        setUpdateTask(taskid);
+    }
+
+    useEffect(() => {
+        console.log(updateTaskinfo);
+    }, [updateTaskinfo]);
+
+
+
+    const updateTask = (e) => {
+        e.preventDefault();
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: updateTaskinfo.task_id,
+            task_name: updateTaskinfo.task_name,
+            task_description: updateTaskinfo.task_description,
+            task_priority: updateTaskinfo.task_priority,
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/info`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+                        window.location.reload();
+                        setShowModal(false);
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+            })
+
+
+    };
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
@@ -685,6 +742,17 @@ export default () => {
     const paginateTask = (pageNumber) => setCurrentPageTask(pageNumber);
     const totalPagesTask = Math.ceil(tasks.length / rowsPerPageTask);
 
+    // Page detail task
+    const [currentViewDetailTask, setCurrentViewDetailTask] = useState(1);
+    const rowsPerViewDetailTask = 5;
+
+    const indexOfLastMemberViewDetailTask = currentViewDetailTask * rowsPerViewDetailTask;
+    const indexOfFirstMemberViewDetailTask = indexOfLastMemberViewDetailTask - rowsPerViewDetailTask;
+    const currentMembersViewDetailTask = taskDetail.history?.slice(indexOfFirstMemberViewDetailTask, indexOfLastMemberViewDetailTask);
+
+    const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
+    const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
+
 
     useEffect(() => {
         if (projectdetail.project_description?.length > 100) {
@@ -695,11 +763,12 @@ export default () => {
     }, [projectdetail.project_description]);
 
     const tablesManager = (project) => {
-        // setSelectedProject(project);
-        // console.log(project)
-        // window.location.href = `projects/tables/${project.project_id}`;
-          window.location.href = `tables`;
+        
+        window.location.href = `/projects/tables/${project_id}`;
+      
+        // window.location.href = `tables`;
     };
+    
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -809,9 +878,9 @@ export default () => {
                                                         {currentMembers.map((member, index) => (
                                                             <tr key={member.username}>
                                                                 <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
-                                                                <td class="align-center">{member.fullname}</td>
-                                                                <td>
+                                                                <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                <td>{member.fullname}</td>
+                                                                <td style={{ minWidth: "80px" }}>
                                                                     {
                                                                         member.permission === "supervisor" ? lang["supervisor"] :
                                                                             member.permission === "deployer" ? lang["deployers"] :
@@ -969,9 +1038,9 @@ export default () => {
                                                                             class="user-checkbox"
                                                                             type="checkbox"
                                                                             checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                            onChange={() => handleImpleCheck(user, 'deployers')}
+                                                                            onChange={() => handleImpleCheck(user, 'deployer')}
                                                                         />
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployers')}>
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
                                                                             <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                         </span>
                                                                     </div>
@@ -1061,51 +1130,52 @@ export default () => {
                                             </div>
                                             <div class="form-group col-lg-12 ">
                                                 <label>{lang["projectdescripton"]} </label>
-                                                <textarea rows="5" type="text" class="form-control" value={project.project_description} onChange={
+                                                <textarea rows="10" type="text" class="form-control" value={project.project_description} onChange={
                                                     (e) => { setProject({ ...project, project_description: e.target.value }) }
                                                 } placeholder={lang["p.projectdescripton"]} />
                                             </div>
-
                                             <div className="form-group col-lg-12">
                                                 <label>Thành viên dự án</label>
                                                 <div class="options-container">
-                                                    <div class="option">
+                                                    <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                         <h5>Giám sát</h5>
-                                                        {
-
-                                                            selectedUsers.map(user => {
-                                                                if (user.username === manager) {
-                                                                    return null;
-                                                                }
-                                                                const userData = users.find(u => u.username === user.username);
-                                                                return (
-                                                                    <div key={user.username}>
-                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        }
-                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
-                                                            <i class="fa fa-plus"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="option">
-                                                        <h5>Triển Khai</h5>
-                                                        {
-                                                            selectedImple.map(user => {
-                                                                const userData = users.find(u => u.username === user.username);
-                                                                return (
-                                                                    <div key={user.username}>
-                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        }
+                                                        <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                            {
+                                                                selectedUsers.map(user => {
+                                                                    if (user.username === manager) {
+                                                                        return null;
+                                                                    }
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
                                                         <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </div>
-
+                                                    <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                        <h5>Triển Khai</h5>
+                                                        <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                            {
+                                                                selectedImple.map(user => {
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {showAdminPopup && (
@@ -1216,8 +1286,8 @@ export default () => {
                                                             <th class="font-weight-bold" scope="col">{lang["task"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
                                                             <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
-                                                            <th class="font-weight-bold" scope="col" >{lang["confirm"]}</th>
-                                                            <th class="font-weight-bold" scope="col" >{lang["log.action"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1234,7 +1304,6 @@ export default () => {
                                                                         {task.task_name}
                                                                     </div>
                                                                 </td>
-
                                                                 <td style={{ width: "170px" }} >
                                                                     {
                                                                         task.members && task.members.length > 0 ?
@@ -1254,7 +1323,7 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center"><span className="status-label" style={{
+                                                                <td class="align-center" ><span className="status-label" style={{
                                                                     backgroundColor: (statusTaskView.find((s) => s.value === task.task_status) || {}).color
                                                                 }}>
                                                                     {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}
@@ -1262,13 +1331,17 @@ export default () => {
                                                                 <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
-                                                                <td class="align-center">
+                                                                <td class="align-center" style={{ minWidth: "130px" }}>
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                                     {
                                                                         ["pm"].indexOf(auth.role) != -1 ?
-                                                                            <i class="fa fa-check-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                            task.task_approve
+                                                                                ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
                                                                             : null
                                                                     }
+                                                                    {/* fa-times-circle-o */}
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
                                                                 </td>
                                                             </tr>
@@ -1382,6 +1455,108 @@ export default () => {
                             </div>
                         </div>
                     </div>
+                    {/* Update Progress */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="editTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["edittask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={updateTaskinfo.task_name} onChange={
+                                                    (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {statusPriority.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                        );
+                                                    })}
+                                                </select>
+
+                                            </div>
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {statusTaskView.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
+                                                        );
+                                                    })}
+                                                </select>
+
+                                            </div>
+
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectdescripton"]}</label>
+                                                <textarea rows="4" type="text" class="form-control" value={updateTaskinfo.task_description} onChange={
+                                                    (e) => { setUpdateTask({ ...updateTaskinfo, task_description: e.target.value }) }
+                                                } placeholder={lang["p.description"]} />
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>Thành viên</b></label>
+                                                <span className="d-block"> {
+                                                    updateTaskinfo.members && updateTaskinfo.members.length > 0 ?
+                                                        updateTaskinfo.members.slice(0, 3).map(member => (
+                                                            <img
+                                                                class="img-responsive circle-image-cus"
+                                                                src={proxy + member.avatar}
+                                                                alt={member.username}
+                                                            />
+                                                        )) :
+                                                        <p>{lang["projectempty"]} </p>
+                                                }
+                                                    {
+                                                        updateTaskinfo.members?.length > 3 &&
+                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + updateTaskinfo.members[3].avatar})` }}>
+                                                            <span>+{updateTaskinfo.members.length - 3}</span>
+                                                        </div>
+                                                    }</span>
+                                            </div>
+                                            {/* <div class="form-group col-lg-12">
+                                                <label>Quản lý</label>
+                                                <div class="user-checkbox-container">
+                                                    {updateTaskinfo.members?.map((user, index) => (
+                                                        <div key={index} class="user-checkbox-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                value={JSON.stringify(user)}
+                                                                onChange={(e) => {
+                                                                    let selectedUser = JSON.parse(e.target.value);
+                                                                    let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                    if (alreadySelected) {
+                                                                        setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                    } else {
+                                                                        setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <label>{user.fullname}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={updateTask} class="btn btn-success ">{lang["btn.update"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {/* View Task */}
                     <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
                         <div class="modal-dialog modal-dialog-center">
@@ -1398,15 +1573,138 @@ export default () => {
                                                 <label><b>{lang["taskname"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_name} </span>
                                             </div>
-                                            <div class="form-group col-lg-12">
+                                            <div class="form-group col-lg-4">
                                                 <label><b>{lang["taskstatus"]}</b></label>
-                                                <span className="d-block"> {taskDetail.task_status} </span>
+
+                                                <div>
+                                                    <span className="status-label" style={{
+                                                        backgroundColor: (statusTaskView.find((s) => s.value === taskDetail.task_status) || {}).color,
+                                                        whiteSpace: "nowrap"
+                                                    }}>
+                                                        {lang[`${(statusTaskView.find((s) => s.value === taskDetail.task_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>Ngày tạo</b></label>
+                                                <span className="d-block"> {taskDetail.create_at} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>Người tạo</b></label>
+                                                <span className="d-block"> {taskDetail.create_by?.fullname} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>Mức độ ưu tiên</b></label>
+                                                <span className="d-block"> {taskDetail.task_priority} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>Xác nhận</b></label>
+                                                <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                    {getStatusLabel(task.task_approve ? 1 : 0)}
+                                                </td>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>Thành viên</b></label>
+                                                <span className="d-block"> {
+                                                    taskDetail.members && taskDetail.members.length > 0 ?
+                                                        taskDetail.members.slice(0, 3).map(member => (
+                                                            <img
+                                                                class="img-responsive circle-image-cus"
+                                                                src={proxy + member.avatar}
+                                                                alt={member.username}
+                                                            />
+                                                        )) :
+                                                        <p>{lang["projectempty"]} </p>
+                                                }
+                                                    {
+                                                        taskDetail.members?.length > 3 &&
+                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + taskDetail.members[3].avatar})` }}>
+                                                            <span>+{taskDetail.members.length - 3}</span>
+                                                        </div>
+                                                    }</span>
                                             </div>
                                             <div class="form-group col-lg-12">
                                                 <label><b>{lang["description"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_description} </span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>Lịch sử</b></label>
+                                                <div class="table-responsive">
+                                                    {
+                                                        currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
+                                                            <>
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị cũ</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị mới</th>
+                                                                            <th class="font-weight-bold" scope="col">Thời gian thay đổi</th>
+                                                                            <th class="font-weight-bold" scope="col">Người thay đổi</th>
 
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {currentMembersViewDetailTask.map((task, index) => (
+                                                                            <tr key={task.id}>
+                                                                                <td scope="row">{index + 1}</td>
+                                                                                <td scope="row">
+                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                        task.modified_what === "info" ? lang["log.information"] :
+                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                task.modified_what}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Đã duyệt" :
+                                                                                        task.old_value === "false" ? "Chờ duyệt" :
+                                                                                            task.old_value}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Chờ duyệt" :
+                                                                                        task.old_value === "false" ? "Đã duyệt" :
+                                                                                            task.old_value}</td>
+                                                                                <td scope="row">{task.modified_at}</td>
+                                                                                <td scope="row">
+                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                    {task.modified_by?.fullname}</td>
 
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                                {/* <div className="d-flex justify-content-between align-items-center">
+                                                                    <p>{lang["show"]} {indexOfFirstMemberViewDetailTask + 1}-{Math.min(indexOfLastMemberViewDetailTask, taskDetail.history?.length)} {lang["of"]} {taskDetail.history?.length} {lang["results"]}</p>
+                                                                    <nav aria-label="Page navigation example">
+                                                                        <ul className="pagination mb-0">
+                                                                            <li className={`page-item ${currentViewDetailTask === 1 ? 'disabled' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateViewDetailTask(currentViewDetailTask - 1)}>
+                                                                                    &laquo;
+                                                                                </button>
+                                                                            </li>
+                                                                            {Array(totalPagesTask).fill().map((_, index) => (
+                                                                                <li className={`page-item ${currentViewDetailTask === index + 1 ? 'active' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginateViewDetailTask(index + 1)}>
+                                                                                        {index + 1}
+                                                                                    </button>
+                                                                                </li>
+                                                                            ))}
+                                                                            <li className={`page-item ${currentViewDetailTask === totalViewDetailTask ? 'disabled' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateViewDetailTask(currentViewDetailTask + 1)}>
+                                                                                    &raquo;
+                                                                                </button>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </nav>
+                                                                </div> */}
+                                                            </>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>Chưa có lịch sử</p>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
 
                                             </div>
 
@@ -1609,13 +1907,10 @@ export default () => {
                                             </tbody>
                                         </table>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div >
         </div >

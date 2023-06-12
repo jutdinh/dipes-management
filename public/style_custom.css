@@ -62,7 +62,7 @@
     text-align: center;
 }
 .btn-header{
-    padding: 5px 3px 0px 6px;
+    padding: 3px 3px 1px 4px;
 }
 .circle-image-project {
     border-radius: 100%;
@@ -508,8 +508,14 @@ h5 {
 .icon-delete{
     color:#c13a38
 }
+.icon-edit{
+    color:#386fc1
+}
 .icon-check{
     color:#ec840c
+}
+.icon-close{
+    color:#a11189
 }
 .status-label {
     display: inline-block;
@@ -599,11 +605,21 @@ h5 {
 
 
 .user-popup-content {
+  
     padding: 5px;
     max-height: 10em; 
     overflow-y: auto; 
     border-bottom: 1px solid #999595;
     
+}
+/* Đối với WebKit (Chrome, Safari) */
+.div-to-scroll::-webkit-scrollbar {
+    width: 5px;  /* Chiều rộng của thanh cuộn */
+   min-height: 140px;
+}
+.user-list-content {
+    max-height: 200px; /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
+    overflow-y: auto; /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
 }
 
 
@@ -880,4 +896,11 @@ h5 {
 .table-hover tr:hover {
     background-color: #f0eaea;
   }
-  
+
+  .user-popup-content {
+    max-height: 200px; /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
+    overflow-y: auto; /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
+}
+
+
+

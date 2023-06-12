@@ -78,7 +78,7 @@ export default {
     "projectrole": "Managers",
     "p.projectrole": "Choose a manager",
     "projectdescripton": "Project description",
-    "p.projectdescripton": "Enter a project description",
+    "p.projectdescripton": "Enter project description",
     "projectmember": "Project members",
 
     //update project 
@@ -88,7 +88,7 @@ export default {
     "detailtask": "Task Detail",
     "addtask": "Add Task",
     "taskname": "Task name",
-    "p.taskname": "Enter a task name",
+    "p.taskname": "Enter task name",
     "taskstatus": "Status",
     "task_priority": "Priority",
     "taskmember": "Members",
@@ -96,6 +96,8 @@ export default {
     "updatestatus":"Status updates",
     "viewdetail":"View detail",
     "delete": "Delete",
+    "edit": "Edit",
+    "edittask":"Edit task",
 
 "duty":"Duty",
 "confirm":"Confirm",

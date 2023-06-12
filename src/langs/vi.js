@@ -94,6 +94,8 @@ export default {
     "updatestatus":"Cập nhật trạng thái",
     "viewdetail":"Xem chi tiết",
     "delete": "Xóa",
+    "edit":"Chỉnh sửa",
+    "edittask":"Chỉnh sửa yêu cầu",
 
 
     //Managers

@@ -424,40 +424,48 @@ export default () => {
                                                         <i class="fa fa-plus"></i>
                                                     </button>
                                                 </div> */}
-                                                <div class="option">
-                                                    <h5>{lang["supervisor"]}</h5>
-                                                    {
-                                                        selectedImple.map(user => {
-                                                            const userData = users.find(u => u.username === user.username);
 
-                                                            return (
-                                                                <div key={user.username}>
-                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
+                                                <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                <h5>{lang["supervisor"]}</h5>
+                                                    <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                        {
+                                                            selectedUsers.map(user => {
+                                                                if (user.username === manager) {
+                                                                    return null;
+                                                                }
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
                                                 </div>
-                                                <div class="option">
-                                                    <h5>{lang["deployers"]}</h5>
-                                                    {
-                                                        selectedMonitor.map(user => {
-                                                            const userData = users.find(u => u.username === user.username);
 
-                                                            return (
-                                                                <div key={user.username}>
-                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
-                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-                                                </div>
+                                                <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                <h5>{lang["deployers"]}</h5>
+                                                        <div class="div-to-scroll"  style={{ overflowY: 'auto', maxHeight: '105px', minWidth:"50px", paddingRight: '15px' }}>
+                                                            {
+                                                                selectedImple.map(user => {
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                
                                             </div>
                                         </div>
                                         {/* {showAdminPopup && (
@@ -629,14 +637,14 @@ export default () => {
                                                                     }}>
                                                                         {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
                                                                     </span>
-                                                                    
+
                                                                 </div>
                                                                 <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
                                                             </div>
                                                             <div class="progress skill-bar mt-3">
-                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
-                                                                        </div>
-                                                                    </div>
+                                                                <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                </div>
+                                                            </div>
 
                                                             {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
                                                             <div class="bottom_list">

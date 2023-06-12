@@ -30,7 +30,7 @@ export default () => {
 
                     }
                 } else {
-                    window.location = "/404-not-found"
+                    // window.location = "/404-not-found"
                 }
             })
     }, [])
@@ -51,7 +51,7 @@ export default () => {
                         // console.log(data)
                     }
                 } else {
-                    window.location = "/404-not-found"
+                    // window.location = "/404-not-found"
                 }
             })
     }, [])
