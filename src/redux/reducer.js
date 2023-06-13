@@ -4,11 +4,15 @@ import Langs from '../langs';
 import { config, functions } from './configs';
 import { socket } from './configs/socket';
 
+import DatabaseBranch from './router/db';
+
 const initState = {
     ...config,
     functions,
     auth: {},
     // socket,
+    tempFields: [],    
+    tempCounter: 0,
     proxy,
     lang: Langs[ localStorage.getItem("lang") ? localStorage.getItem("lang"): "Vi" ]
 }
@@ -21,6 +25,10 @@ export default ( state = initState, action ) => {
         // case "default":
         //     return defaultBranch(state, action);
         //     break;
+        case "db":
+            return DatabaseBranch(state, action);
+            break;
+            
         default:
             return defaultBranch(state, action);
             break;

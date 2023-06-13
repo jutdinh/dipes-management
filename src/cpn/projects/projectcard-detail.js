@@ -20,7 +20,7 @@ export default () => {
 
     const [showViewMore, setShowViewMore] = useState(false);
 
-
+    
 
     // console.log(selectedMemberTask)
     // Page 
@@ -198,6 +198,34 @@ export default () => {
             })
     }, [])
     
+
+const [tables, setTables] = useState({});
+
+useEffect(() => {
+    
+        fetch(`${proxy}/db/tables/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                       setTables(data);
+                       console.log(data)
+                    }
+                } else {
+                    console.log("data")
+                    // window.location = "/404-not-found"
+                }
+            })
+    
+}, [versions]);
+
+
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -277,6 +305,9 @@ export default () => {
                         icon: "error",
                         showConfirmButton: false,
                         timer: 2000,
+                    }).then(function () {
+                        window.location.reload();
+
                     });
                 }
             })
@@ -763,12 +794,63 @@ export default () => {
     }, [projectdetail.project_description]);
 
     const tablesManager = (project) => {
-        
+
         window.location.href = `/projects/${versions[0]?.version_id}/tables`;
-      
+
         // window.location.href = `tables`;
     };
-    
+    const handleSelectChange = async (e) => {
+        const newTaskStatus = parseInt(e.target.value, 10);
+        const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
+        console.log(taskId);
+        updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
+    }
+
+    const updateStatusTask = (taskInfo) => {
+
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: taskInfo.task_id,
+            task_status: taskInfo.newTaskStatus
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/status`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(function () {
+                        // Không cần reload trang
+                    });
+                }
+            });
+
+
+    }
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -887,9 +969,12 @@ export default () => {
                                                                                 "Khác"
                                                                     }
                                                                 </td>
-                                                                <td class="align-center">
-                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
-                                                                </td>
+                                                                {
+                                                                    ["pm"].indexOf(auth.role) != -1 &&
+                                                                    <td class="align-center">
+                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
+                                                                    </td>
+                                                                }
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -1323,26 +1408,56 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center" ><span className="status-label" style={{
-                                                                    backgroundColor: (statusTaskView.find((s) => s.value === task.task_status) || {}).color
-                                                                }}>
-                                                                    {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                                </span></td>
+                                                                <td class="align-center"style={{ width: "230px" }} >
+
+                                                                    {/* {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]} */}
+
+                                                                    {/* <select className="form-control" value={task.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
+                                                                        <option value="">Chọn</option>
+                                                                        {statusTaskView.map((status, index) => {
+                                                                            return (
+                                                                                <option key={index} value={status.value}>  {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}</option>
+                                                                            );
+                                                                        })}
+                                                                    </select> */}
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={task.task_status}
+                                                                        onChange={handleSelectChange}
+                                                                        disabled={task.task_approve}
+                                                                    >
+
+                                                                        {statusTaskView.map((status, index) => {
+                                                                            return (
+                                                                                <option key={index} value={status.value} data-taskid={task.task_id}>
+                                                                                    {lang[status.label]}
+                                                                                </option>
+                                                                            );
+                                                                        })}
+                                                                    </select>
+
+                                                                </td>
                                                                 <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
-                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+
                                                                     {
-                                                                        ["pm"].indexOf(auth.role) != -1 ?
-                                                                            task.task_approve
-                                                                                ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                            : null
+                                                                        ["pm"].indexOf(auth.role) != -1 &&
+                                                                        <>
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                                                                            {task.task_approve
+                                                                                ? (task.task_status !== StatusTask.NOT_APPROVED
+                                                                                    ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                                : (task.task_status === StatusTask.COMPLETE.value
+                                                                                    ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            }
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
+                                                                        </>
                                                                     }
-                                                                    {/* fa-times-circle-o */}
-                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
                                                                 </td>
                                                             </tr>
                                                         ))}
@@ -1473,7 +1588,7 @@ export default () => {
                                                 } placeholder={lang["p.taskname"]} />
                                             </div>
 
-                                            <div class="form-group col-lg-6 ">
+                                            {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
                                                     <option value="">Chọn</option>
@@ -1484,7 +1599,7 @@ export default () => {
                                                     })}
                                                 </select>
 
-                                            </div>
+                                            </div> */}
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
@@ -1766,7 +1881,7 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">1</p>
+                                                    <p class="total_no">{tables.tables?.length}</p>
                                                     <p class="head_couter">Tables</p>
                                                 </div>
                                             </div>

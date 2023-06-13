@@ -15,3 +15,9 @@ export const StatusTask = Object.freeze({
     COMPLETE: { id: 2, label: "complete", value: 3, color: "#ff8028" },
     PAUSE: { id: 3, label: "pause", value: 4, color: "#FF0000" }
 });
+
+export const StatusAprove = Object.freeze({
+    APROVE: { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
+    NOTAPROVE: { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
+});
+
