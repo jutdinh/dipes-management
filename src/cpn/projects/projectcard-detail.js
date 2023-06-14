@@ -1929,7 +1929,7 @@ useEffect(() => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách bảng </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1963,7 +1963,7 @@ useEffect(() => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách API </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

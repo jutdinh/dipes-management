@@ -7,6 +7,7 @@ import { ValidTypeEnum } from '../enum/type';
 
 import Swal from 'sweetalert2';
 import { Tables } from ".";
+import { data } from "jquery";
 
 
 const types = [
@@ -24,7 +25,11 @@ const types = [
     ValidTypeEnum.PHONE,
     ValidTypeEnum.TEXT
 ]
+const typenull = [
+    { value: true, label: "NULL" },
+    { value: false, label: "NOT NULL" }
 
+]
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -47,6 +52,7 @@ export default () => {
 
         setModalTemp({
             field_name: '',
+            DATATYPE: ''
         });
         setShowModal(false);
 
@@ -57,23 +63,28 @@ export default () => {
             setPrimaryKey([...primaryKey, tempCounter])
         }
 
+        if (isOnforenkey) {
+            setForeignKeys([...foreignKeys, { ...foreignKey, index: tempCounter }])
+        }
+
         setIsOn(false)
+        setIsOnforenkey(false)
 
         dispatch({
             branch: "db",
             type: "addField",
             payload: {
-                field: {  ...modalTemp, index: tempCounter }
+                field: { ...modalTemp, index: tempCounter }
             }
         })
         setModalTemp({
             field_name: '',
-          
-
+            DATATYPE: 'INT'
         });
 
         console.log(tempFields)
         console.log(primaryKey)
+
     };
 
     const goBack = () => {
@@ -102,7 +113,37 @@ export default () => {
             })
     }, [])
 
+    const [fields, setFields] = useState([]);
+    const [selectedTableId, setSelectedTableId] = useState(null);
+    // Chọn bảng
+    const handleSelectTable = async (event) => {
+        const tableId = event.target.value;
+        setSelectedTableId(tableId);
+        // Fetch fields for the selected table
+        fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data } = resp;
 
+                if (success) {
+                    if (data) {
+
+                        setFields(data);
+                        console.log(data)
+                    }
+                } else {
+                    // Xử lý lỗi ở đây
+                    // window.location = "/404-not-found"
+                }
+            });
+    };
+
+
+    // console.log(table)
     const addTable = (e) => {
         e.preventDefault();
         // console.log( table )
@@ -141,13 +182,13 @@ export default () => {
     };
 
     const addField = (tableId) => {
-        const fieldRequestBody = {            
+        const fieldRequestBody = {
             table_id: tableId,
             fields: [
                 ...tempFields
             ],
         };
-         console.log("field", fieldRequestBody)
+        console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -160,11 +201,10 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                console.log( data )
+                console.log(data)
                 if (success) {
-                    const fieldId = data.id;
-                    const tableId = data.table_id;
-                    // addKey(fieldId, tableId);
+
+                    addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
                     Swal.fire({
@@ -178,12 +218,24 @@ export default () => {
             });
     };
 
-    const addKey = (fieldId, tableId) => {
+    const addKey = ({ data, tableId }) => {
+        const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
+        const primaryKeyid = matchingItem.map(item => item.id)
+
+        for (let i = 0; i < foreignKeys.length; i++) {
+            for (let j = 0; j < data.length; j++) {
+                if (foreignKeys[i].index === data[j].index) {
+                    foreignKeys[i].field_id = data[j].id
+                }
+            }
+
+        }
+
+
         const KeyRequestBody = {
             table_id: tableId,
-            primary_key: primaryKey,
-            foreign_keys: foreignKey
-
+            primary_key: primaryKeyid,
+            foreign_keys: foreignKeys
         };
         console.log("KLey", KeyRequestBody)
 
@@ -198,6 +250,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+
                 if (success) {
                     Swal.fire({
                         title: "Thành công!",
@@ -206,7 +259,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-
+                        window.location.href = `/projects/${version_id}/tables/field`;
                     });
                 } else {
                     Swal.fire({
@@ -230,19 +283,12 @@ export default () => {
     };
     //forenkey
     const [isOnforenkey, setIsOnforenkey] = useState(false);
-    const [foreignKey, setForeignKeys] = useState([]);
-
-    const tableId = 9; // Giả sử table_id là 9
-    const refFieldId = 12; // Giả sử ref_field_id là 12
+    const [foreignKey, setForeignKey] = useState({ field_id: null, table_id: null, ref_field_id: null });
+    const [foreignKeys, setForeignKeys] = useState([]);
 
     const handleClickForenkey = () => {
-        //  if (isOnforenkey) {
-        //      setForeignKeys([]);
-        //  } else {
-        //      const newForeignKey = { field_id: fieldId, table_id: tableId, ref_field_id: refFieldId };
-        //      setForeignKeys(newForeignKey);
-        //  }
-        //  setIsOnforenkey(!isOnforenkey);
+        setIsOnforenkey(!isOnforenkey);
+
     };
 
 
@@ -405,6 +451,13 @@ export default () => {
             }
         });
     }
+
+    const selectedType = types.find(type => type.name === modalTemp.value);
+
+
+
+
+
     const [currentPageTable, setCurrentPageTable] = useState(1);
     const rowsPerPageTable = 7;
 
@@ -416,8 +469,8 @@ export default () => {
     const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
 
     // console.log("p key", primaryKey)
-    // console.log("f key", foreignKey)
-
+    console.log("f key", foreignKey)
+    // console.log(tables)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -454,7 +507,7 @@ export default () => {
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => { console.log(tempCounter) }} data-toggle="modal" data-target="#addField">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -482,7 +535,7 @@ export default () => {
                                                                 {tempFields.map((field, index) => (
                                                                     <tr key={field.id}>
                                                                         <td scope="row">{index + 1}</td>
-                                                                        <td></td>
+                                                                        <td class="align-center"> {primaryKey.includes(field.index) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",
@@ -496,20 +549,16 @@ export default () => {
                                                                         <td>{field.DATATYPE}</td>
                                                                         <td></td>
                                                                         <td>{users.fullname}</td>
-
                                                                         <td>{field.create_at.toString()}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <span>{field.index}</span>
-                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit"   onClick={() => getIdTable(field)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
-                                                                    
-                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(field)} title={lang["delete"]}></i> */}
+                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(field)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
+            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(field)} title={lang["delete"]}></i> */}
                                                                         </td>
-
                                                                     </tr>
                                                                 ))}
+
                                                             </tbody>
                                                         </table>
-
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
@@ -556,7 +605,6 @@ export default () => {
                                             <label>Trạng thái khóa <span className='red_star'>*</span></label>
                                         </div>
                                         <div class="form-group col-lg-6"></div>
-
                                         <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">Khóa chính </label>
                                             <i
@@ -573,35 +621,67 @@ export default () => {
                                                 onClick={handleClickForenkey}
                                             ></i>
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div className={`form-group col-lg-6`}>
                                             <label>Tên bảng <span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
-                                                value={fieldTemp.type}>
+                                                onChange={(e) => {
+                                                    handleSelectTable(e);
+                                                    setForeignKey({ ...foreignKey, table_id: e.target.value })
+                                                }}
+                                                disabled={!isOnforenkey}>
+                                                <option value="">Chọn bảng</option>
                                                 {tables.tables?.map((table, index) => {
                                                     return (
-                                                        <option key={index} value={table.table_name} >
+                                                        <option key={index} value={table.id}>
                                                             {table.table_name}
                                                         </option>
                                                     );
                                                 })}
                                             </select>
-
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
-                                            <select className="form-control" >
-                                                <option value={1}>Option</option>
+                                            <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
+                                                console.log(e.target.value);
+                                                setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                            }}
+                                            > <option value="">Chọn trường</option>
+                                                {
+                                                    fields.filter(field => {
+                                                        const selectedTableIdAsNumber = Number(selectedTableId);
+                                                        const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
+                                                        return selectedTable?.primary_key.includes(field.id);
+                                                    }).map((field, index) => {
+                                                        return (
+                                                            <option key={index} value={field.id}>
+                                                                {field.field_name}
+                                                            </option>
+                                                        );
+                                                    })
+                                                }
                                             </select>
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>Yêu cầu dữ liệu <span className='red_star'>*</span></label>
-                                            <select className="form-control" >
-                                                <option value={1}>Null</option>
-                                                <option value={2}>Not Null</option>
+                                            <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value })}>
+
+                                                {typenull.map((item, index) => {
+                                                    return (
+                                                        <option key={index} value={item.value} >
+                                                            {item.label}
+                                                        </option>
+                                                    );
+                                                })}
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-12">
+
+
+
+
+
+
+                                        {/* <div class={`form-group col-lg-12`}>
                                             <label>Kiểu dữ liệu <span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
@@ -609,21 +689,77 @@ export default () => {
                                                 onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}>
                                                 {types.map((type, index) => {
                                                     return (
-                                                        <option key={index} value={type.value} >
-                                                            {type.label}
+                                                        <option key={index} value={type.name} >
+                                                            {type.name}
                                                         </option>
                                                     );
                                                 })}
                                             </select>
-                                        </div>
+                                        </div> */}
+                                       <div className="form-group col-lg-12">
+    <label>Kiểu dữ liệu <span className='red_star'>*</span></label>
+    <select
+        className="form-control"
+        value={modalTemp.DATATYPE}
+        onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}
+    >
+        {types.map((type, index) => {
+            return (
+                <option key={index} value={type.name}>
+                    {type.name}
+                </option>
+            );
+        })}
+    </select>
+</div>
+
+{(() => {
+    const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
+    return selectedType && selectedType.props.map((prop, index) => {
+        let inputType = prop.type;
+        let isBoolType = prop.type === "bool";
+        return (
+            <div key={index} className="form-group col-lg-12">
+                <label>{prop.label} <span className='red_star'>*</span></label>
+                { isBoolType 
+                    ? <select 
+                        className="form-control"
+                        onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
+                      >
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                      </select>
+                    : <input 
+                        className="form-control"
+                        type={inputType} 
+                        value={inputType === "int" ? `Giá trị từ ${selectedType.limit.min} đến ${selectedType.limit.max}` : modalTemp[prop.name]} 
+                        onChange={(e) => {
+                            if (inputType === "int") {
+                                const value = parseInt(e.target.value, 10);
+                                if (value < selectedType.limit.min || value > selectedType.limit.max) {
+                                    alert(`Giá trị phải nằm trong khoảng từ ${selectedType.limit.min} đến ${selectedType.limit.max}`);
+                                    return;
+                                }
+                            }
+                            setModalTemp({ ...modalTemp, [prop.name]: e.target.value });
+                        }}
+                      />
+                }
+            </div>
+        );
+    })
+})()}
+
+
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo <span className='red_star'>*</span></label>
-                                            <input class="form-control" type="text" value={"Nguyễn Văn A"} readOnly />
+                                            <input class="form-control" type="text" value={users.fullname} readOnly />
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label>Thời gian <span className='red_star'>*</span></label>
-                                            <input class="form-control" type="text" value={"2023-06-12"} readOnly />
+                                            <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly />
                                         </div>
+
                                     </div>
                                 </form>
                             </div>
