@@ -318,7 +318,7 @@ export default () => {
                                             </>
                                         ) : (
                                             <div class="list_cont ">
-                                                <p>Chưa có thành viên</p>
+                                                <p>Chưa có bảng</p>
                                             </div>
                                         )
                                     }

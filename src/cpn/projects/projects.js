@@ -408,8 +408,8 @@ export default () => {
                                         <div className="form-group col-lg-12">
                                             <label>{lang["projectmember"]}</label>
                                             <div class="options-container">
-                                                {/* <div class="option">
-                                                    <h5>{lang["projectmanager"]}</h5>
+                                                <div class="option">
+                                                <h5>{lang["supervisor"]}</h5>
                                                     {
                                                         selectedUsers.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -423,9 +423,9 @@ export default () => {
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
-                                                </div> */}
+                                                </div>
 
-                                                <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                {/* <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                 <h5>{lang["supervisor"]}</h5>
                                                     <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
                                                         {
@@ -445,7 +445,7 @@ export default () => {
                                                     <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
                                                         <i class="fa fa-plus"></i>
                                                     </button>
-                                                </div>
+                                                </div> */}
 
                                                 <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                 <h5>{lang["deployers"]}</h5>
@@ -468,7 +468,7 @@ export default () => {
                                                 
                                             </div>
                                         </div>
-                                        {/* {showAdminPopup && (
+                                        {showAdminPopup && (
                                             <div class="user-popup">
                                                 <div class="user-popup-content">
                                                     {users && users.map(user => {
@@ -495,7 +495,7 @@ export default () => {
                                                     <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                                 </div>
                                             </div>
-                                        )} */}
+                                        )}
                                         {showImplementationPopup && (
                                             <div class="user-popup2">
                                                 <div class="user-popup-content">
