@@ -799,6 +799,12 @@ useEffect(() => {
 
         // window.location.href = `tables`;
     };
+    const apisManager = (project) => {
+
+        window.location.href = `/projects/${versions[0]?.version_id}/apis`;
+
+        // window.location.href = `tables`;
+    };
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
@@ -1923,7 +1929,7 @@ useEffect(() => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách bảng </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1957,7 +1963,7 @@ useEffect(() => {
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách API </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

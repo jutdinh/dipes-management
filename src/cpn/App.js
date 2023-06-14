@@ -13,9 +13,11 @@ import { Login, SignUp, SignOut } from './auth';
 import { Settings } from './settings';
 import { Projects, ProjectsCard, ProjectDetail } from './projects';
 import { ListUser, Profile } from './users';
-import { Tasks } from './tasks'; 
+import { Tasks } from './tasks';
 import { Logs } from './logs';
 import { Tables, Field } from './tables';
+import { Apis, CreateApi } from './api';
+import createApi from './api/create-api';
 function App() {
 
   const dispatch = useDispatch()
@@ -27,12 +29,10 @@ function App() {
     const stringifiedUser = localStorage.getItem("user");
     const user = JSON.parse(stringifiedUser)
 
-
     if (specialURLs.indexOf(url) === -1) {
       if (!_token) {
         window.location = '/login'
       }
-
       if (user) {
         dispatch({
           branch: "default",
@@ -44,7 +44,6 @@ function App() {
 
       }
     }
-
   }, [])
 
 
@@ -52,7 +51,6 @@ function App() {
   return (
 
     <Router>
-
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -64,6 +62,8 @@ function App() {
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />
         <Route path="/projects/:version_id/tables/field" element={<Navigation Child={Field} />} />
+        <Route path="/projects/:version_id/apis" element={<Navigation Child={Apis} />} />
+        <Route path="/projects/:version_id/apis/create" element={<Navigation Child={createApi} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />
@@ -71,7 +71,6 @@ function App() {
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
-
 
   );
 }

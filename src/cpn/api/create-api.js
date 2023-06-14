@@ -28,55 +28,37 @@ const types = [
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
-    const stringifiedUser = localStorage.getItem("user");
-    const users = JSON.parse(stringifiedUser)
-
-
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
 
     const [fieldTemp, setFieldTemp] = useState({});
-    const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value  });
+    const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
-    const { tempFields, tempCounter } = useSelector( state => state ); // const tempFields = useSelector( state => state.tempFields );
+    const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
 
     const dispatch = useDispatch();
 
     const handleCloseModal = () => {
-        
-        setModalTemp({
-            field_name: '',
-            DATATYPE: '',
-            
-        });
-        setShowModal(false);
-       
-    };
-    const handleSubmitModal = () => {
         setFieldTemp(modalTemp)
-        if(  isOn ){
-            setPrimaryKey([ ...primaryKey, tempCounter ])
+        if (isOn) {
+            setPrimaryKey([...primaryKey, tempCounter])
         }
 
-        setIsOn( false )
-     
+        setIsOn(false)
         dispatch({
             branch: "db",
             type: "addField",
             payload: {
-                field: modalTemp 
+                field: modalTemp
             }
         })
-        setModalTemp({
-            field_name: '',
-            DATATYPE: '',
-            
-        });
-        
+
+        setShowModal(false);
         console.log(tempFields)
         console.log(primaryKey)
     };
+
 
     const goBack = () => {
         window.history.back();
@@ -93,7 +75,6 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
                         setTables(data);
@@ -116,135 +97,135 @@ export default () => {
         };
         //console.log("body",tableRequestBody)
         fetch(`${proxy}/db/tables/table`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${_token}`,
-          },
-          body: JSON.stringify(tableRequestBody),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(tableRequestBody),
         })
-          .then((res) => res.json())
-          .then((resp) => {
-            const { success, content, data, status } = resp;
-            if (success) {
-                // console.log(data)
-                const tableId = data.table.id; // Lấy id bảng vừa tạo
-                addField(tableId);
-            } else {
-                Swal.fire({
-                    title: "Thất bại!",
-                    text: content,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
-                });
-            }
-        });
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    // console.log(data)
+                    const tableId = data.table.id; // Lấy id bảng vừa tạo
+                    addField(tableId);
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+            });
     };
-      
+
     const addField = (tableId) => {
         const fieldRequestBody = {
-          table_id: tableId,
-          fields: [
-            fieldTemp
-          ],
+            table_id: tableId,
+            fields: [
+                fieldTemp
+            ],
         };
         // console.log("field", fieldRequestBody)
-      
+
         fetch(`${proxy}/db/fields/fields`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${_token}`,
-          },
-          body: JSON.stringify(fieldRequestBody),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(fieldRequestBody),
         })
-          .then((res) => res.json())
-          .then((resp) => {
-            const { success, content, data, status } = resp;
-            if (success) {
-                const fieldId = data.id;
-                const tableId = data.table_id;
-               addKey(fieldId,tableId);
-               handleClickPrimary(fieldId);
-            } else {
-                Swal.fire({
-                    title: "Thất bại!",
-                    text: content,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
-                });
-            }
-          });
-      };
-      
-      const addKey = (fieldId,tableId) => {
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    const fieldId = data.id;
+                    const tableId = data.table_id;
+                    addKey(fieldId, tableId);
+                    handleClickPrimary(fieldId);
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+            });
+    };
+
+    const addKey = (fieldId, tableId) => {
         const KeyRequestBody = {
-          table_id: tableId,
-          primary_key: primaryKey,
-          foreign_keys: foreignKey
-          
+            table_id: tableId,
+            primary_key: primaryKey,
+            foreign_keys: foreignKey
+
         };
         console.log("KLey", KeyRequestBody)
-      
+
         fetch(`${proxy}/db/tables/table/keys`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${_token}`,
-          },
-          body: JSON.stringify(KeyRequestBody),
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(KeyRequestBody),
         })
-          .then((res) => res.json())
-          .then((resp) => {
-            const { success, content, data, status } = resp;
-            if (success) {
-                Swal.fire({
-                    title: "Thành công!",
-                    text: content,
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500,
-                }).then(function () {
-                  
-                });
-            } else {
-                Swal.fire({
-                    title: "Thất bại!",
-                    text: content,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
-                });
-            }
-          });
-      };
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+            });
+    };
 
 
- //primary
- const [isOn, setIsOn] = useState(false);
- const [primaryKey, setPrimaryKey] = useState([]); 
- 
- const handleClickPrimary = () => {
-     setIsOn(!isOn);
- };
- //forenkey
- const [isOnforenkey, setIsOnforenkey] = useState(false);
- const [foreignKey, setForeignKeys] = useState([]);
+    //primary
+    const [isOn, setIsOn] = useState(false);
+    const [primaryKey, setPrimaryKey] = useState([]);
 
- const tableId = 9; // Giả sử table_id là 9
- const refFieldId = 12; // Giả sử ref_field_id là 12
+    const handleClickPrimary = () => {
+        setIsOn(!isOn);
+    };
+    //forenkey
+    const [isOnforenkey, setIsOnforenkey] = useState(false);
+    const [foreignKey, setForeignKeys] = useState([]);
 
- const handleClickForenkey = () => {
-    //  if (isOnforenkey) {
-    //      setForeignKeys([]);
-    //  } else {
-    //      const newForeignKey = { field_id: fieldId, table_id: tableId, ref_field_id: refFieldId };
-    //      setForeignKeys(newForeignKey);
-    //  }
-    //  setIsOnforenkey(!isOnforenkey);
- };
+    const tableId = 9; // Giả sử table_id là 9
+    const refFieldId = 12; // Giả sử ref_field_id là 12
+
+    const handleClickForenkey = () => {
+        //  if (isOnforenkey) {
+        //      setForeignKeys([]);
+        //  } else {
+        //      const newForeignKey = { field_id: fieldId, table_id: tableId, ref_field_id: refFieldId };
+        //      setForeignKeys(newForeignKey);
+        //  }
+        //  setIsOnforenkey(!isOnforenkey);
+    };
 
 
     const [tableUpdate, setUpdateTable] = useState([]);
@@ -436,90 +417,83 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Tạo bảng mới</h5>
+                                    <h5>Tạo mới apis </h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-4">
-                                        <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">Tên api <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value = {table.field_name}
-                                            onChange = {(e) => setTable({ ...table, table_name: e.target.value })}
-                                            placeholder = ""
+                                            value={table.field_name}
+                                            onChange={(e) => setTable({ ...table, table_name: e.target.value })}
+                                            placeholder=""
                                         />
                                     </div>
 
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => { console.log( tempCounter ) }} data-toggle="modal" data-target="#addField">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => { console.log(tempCounter) }} data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
 
                                         <div class="table-responsive">
-                                    {
-                                        tempFields && tempFields.length > 0 ? (
-                                            <>
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                            <th class="font-weight-bold" scope="col">Khóa</th>
-                                                            <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                            <th class="font-weight-bold" scope="col">Kiểu dữ liệu</th>
-                                                            <th class="font-weight-bold" scope="col">Null</th>
-                                                            <th class="font-weight-bold" scope="col">Người tạo</th>
-                                                            <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
-                                                     
-                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        
-                                                        {  tempFields.map((field, index) => (
-                                                            <tr key={field.id}>
-                                                                <td scope="row">{index + 1}</td>
-                                                                <td></td>
-                                                                <td style={{ maxWidth: "100px" }}>
-                                                                    <div style={{
-                                                                        width: "100%",
-                                                                        overflow: "hidden",
-                                                                        textOverflow: "ellipsis",
-                                                                        whiteSpace: "nowrap"
-                                                                    }}>
-                                                                        {field.field_name}
-                                                                    </div>
-                                                                </td>
-                                                                <td>{field.DATATYPE}</td>
-                                                                <td></td>
-                                                                <td>{users.fullname}</td>
-                                                           
-                                                                <td>{ field.create_at.toString() }</td>
-                                                                <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                    <span>{ field.index }</span>
-                                                                    {/* <i class="fa fa-edit size pointer icon-margin icon-edit"   onClick={() => getIdTable(field)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
+                                            {
+                                                tempFields && tempFields.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                    <th class="font-weight-bold" scope="col">Người tạo</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+
+                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                                {tempFields.map((field, index) => (
+                                                                    <tr key={field.id}>
+                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {field.field_name}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td>{field.create_at.toString()}</td>
+                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                            <span>{field.index}</span>
+                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit"   onClick={() => getIdTable(field)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
                                                                     
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(field)} title={lang["delete"]}></i> */}
-                                                                </td>
-                                                                
-                                                            </tr>
-                                                                )) }
-                                                    </tbody>
-                                                </table>
-                                                
-                                            </>
-                                        ) : (
-                                            <div class="list_cont ">
-                                                <p>Chưa có thành viên</p>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                                        
+                                                                        </td>
+
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có thành viên</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+
                                         <div className="button-container mt-4">
 
                                             <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.update"]}</button>
@@ -562,7 +536,7 @@ export default () => {
                                             <i
                                                 className={`fa fa-toggle-${isOn ? 'on icon-toggle' : 'off'} fa-2x`}
                                                 aria-hidden="true"
-                                                onClick={handleClickPrimary} 
+                                                onClick={handleClickPrimary}
                                             ></i>
                                         </div>
                                         <div class="form-group col-lg-12 d-flex align-items-center ml-4">
@@ -628,7 +602,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitModal} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
