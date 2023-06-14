@@ -41,7 +41,24 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
 
     const [fieldTemp, setFieldTemp] = useState({});
-    const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
+    // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
+    const defaultValues = {
+        field_name: '',
+        DATATYPE: 'INT',
+        NULL: false,
+        LENGTH: 255,
+        AUTO_INCREMENT: true,
+        MIN: '',
+        MAX: '',
+        FORMAT: '',
+        DECIMAL_PLACE: '',
+        DEFAULT: '',
+        DEFAULT_TRUE: '',
+        DEFAULT_FALSE: ''
+    };
+
+    const [modalTemp, setModalTemp] = useState(defaultValues);
+
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
@@ -78,8 +95,7 @@ export default () => {
             }
         })
         setModalTemp({
-            field_name: '',
-            DATATYPE: 'INT'
+            defaultValues
         });
 
         console.log(tempFields)
@@ -90,7 +106,12 @@ export default () => {
     const goBack = () => {
         window.history.back();
     };
-
+    const [fieldTempUpdate, setFieldTempupdate] = useState([]);
+    const getIdFieldTemp = (fieldId) => {
+        setFieldTempupdate(fieldId);
+       
+    }
+    console.log(fieldTempUpdate)
 
     useEffect(() => {
 
@@ -142,7 +163,7 @@ export default () => {
             });
     };
 
-
+    console.log(tempFields)
     // console.log(table)
     const addTable = (e) => {
         e.preventDefault();
@@ -551,8 +572,8 @@ export default () => {
                                                                         <td>{users.fullname}</td>
                                                                         <td>{field.create_at.toString()}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(field)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
-            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(field)} title={lang["delete"]}></i> */}
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit"  onClick={() => getIdFieldTemp(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete"  title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}
@@ -580,7 +601,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                {/*add table */}
+                {/*add field */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addField">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
@@ -676,11 +697,6 @@ export default () => {
                                             </select>
                                         </div>
 
-
-
-
-
-
                                         {/* <div class={`form-group col-lg-12`}>
                                             <label>Kiểu dữ liệu <span className='red_star'>*</span></label>
                                             <select
@@ -696,59 +712,200 @@ export default () => {
                                                 })}
                                             </select>
                                         </div> */}
-                                       <div className="form-group col-lg-12">
-    <label>Kiểu dữ liệu <span className='red_star'>*</span></label>
-    <select
-        className="form-control"
-        value={modalTemp.DATATYPE}
-        onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}
-    >
-        {types.map((type, index) => {
-            return (
-                <option key={index} value={type.name}>
-                    {type.name}
-                </option>
-            );
-        })}
-    </select>
-</div>
 
-{(() => {
-    const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
-    return selectedType && selectedType.props.map((prop, index) => {
-        let inputType = prop.type;
-        let isBoolType = prop.type === "bool";
-        return (
-            <div key={index} className="form-group col-lg-12">
-                <label>{prop.label} <span className='red_star'>*</span></label>
-                { isBoolType 
-                    ? <select 
-                        className="form-control"
-                        onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
-                      >
-                        <option value="true">True</option>
-                        <option value="false">False</option>
-                      </select>
-                    : <input 
-                        className="form-control"
-                        type={inputType} 
-                        value={inputType === "int" ? `Giá trị từ ${selectedType.limit.min} đến ${selectedType.limit.max}` : modalTemp[prop.name]} 
-                        onChange={(e) => {
-                            if (inputType === "int") {
-                                const value = parseInt(e.target.value, 10);
-                                if (value < selectedType.limit.min || value > selectedType.limit.max) {
-                                    alert(`Giá trị phải nằm trong khoảng từ ${selectedType.limit.min} đến ${selectedType.limit.max}`);
-                                    return;
-                                }
-                            }
-                            setModalTemp({ ...modalTemp, [prop.name]: e.target.value });
-                        }}
-                      />
-                }
-            </div>
-        );
-    })
-})()}
+                                        <div class={`form-group col-lg-12`}>
+                                            <select
+                                                className="form-control"
+                                                value={modalTemp.DATATYPE}
+                                                onChange={(e) => {
+                                                    const selectedDataType = e.target.value;
+                                                    const selectedType = types.find((type) => type.name === selectedDataType);
+
+                                                    if (selectedType) {
+                                                        setModalTemp(prevModalTemp => {
+                                                            const updateValues = {
+                                                                DATATYPE: selectedDataType
+                                                            };
+
+                                                            // Nếu có giới hạn, gán giá trị min, max tương ứng
+                                                            if (selectedType.limit) {
+                                                                const { min, max } = selectedType.limit;
+                                                                updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.MIN;
+                                                                updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.MAX;
+                                                            }
+
+                                                            // Nếu là kiểu date, gán định dạng ngày
+                                                            if (selectedType.type === 'date' || selectedType.type === 'datetime') {
+                                                                updateValues.FORMAT = selectedType.format;
+                                                            }
+
+                                                            return {
+                                                                ...prevModalTemp,
+                                                                ...updateValues
+                                                            };
+                                                        });
+                                                    } else {
+                                                        setModalTemp(prevModalTemp => ({
+                                                            ...prevModalTemp,
+                                                            DATATYPE: selectedDataType,
+                                                        }));
+                                                    }
+                                                }}
+                                            >
+                                                <option value="">Chọn kiểu dữ liệu</option>
+                                                {types.map((type, index) => (
+                                                    <option key={index} value={type.name}>
+                                                        {type.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+
+                                        {/* {(() => {
+                                            const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
+                                            return selectedType && selectedType.props.map((prop, index) => {
+                                                let inputType = prop.type;
+                                                let isBoolType = prop.type === "bool";
+                                                let defaultValue = modalTemp[prop.name];
+                                                if (prop.name === 'MIN') defaultValue = selectedType.limit.min;
+                                                if (prop.name === 'MAX') defaultValue = selectedType.limit.max;
+                                                return (
+                                                    <div key={index} className="form-group col-lg-12">
+                                                        <label>{prop.label} <span className='red_star'>*</span></label>
+                                                        {isBoolType
+                                                            ? <select
+                                                                className="form-control"
+                                                                onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
+                                                            >
+                                                                <option value="true">True</option>
+                                                                <option value="false">False</option>
+                                                            </select>
+                                                            : <input
+                                                                className="form-control"
+                                                                type={inputType}
+                                                                value={defaultValue}
+                                                                onChange={(e) => {
+                                                                    
+                                                                    setModalTemp({ ...modalTemp, [prop.name]: e.target.value });
+                                                                }}
+                                                            />
+                                                        }
+                                                    </div>
+                                                );
+                                            })
+                                        })()} */}
+                                        {/* {(() => {
+                                            const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
+                                            return selectedType && selectedType.props.map((prop, index) => {
+                                                if (selectedType.format && index === 0) return null;  // Add this line to skip first input if format is present
+
+                                                let inputType = prop.type;
+                                                let isBoolType = prop.type === "bool";
+                                                let defaultValue = modalTemp[prop.name];
+                                                if (inputType === "int") {
+                                                    
+                                                    if (prop.name === 'MIN') defaultValue = selectedType.limit.min;
+                                                    if (prop.name === 'MAX') defaultValue = selectedType.limit.max;
+                                                }
+                                                return (
+                                                    <div key={index} className="form-group col-lg-12">
+                                                        <label>{prop.label} <span className='red_star'>*</span></label>
+                                                        {isBoolType
+                                                            ? <select
+                                                                className="form-control"
+                                                                onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
+                                                            >
+                                                                <option value="true">True</option>
+                                                                <option value="false">False</option>
+                                                            </select>
+                                                            : <input
+                                                            className="form-control"
+                                                            type={inputType === "int" ? "number" : inputType}
+                                                            defaultValue={defaultValue} // Sử dụng defaultValue thay vì value
+                                                            onChange={(e) => {
+                                                              setModalTemp((prevModalTemp) => ({
+                                                                ...prevModalTemp,
+                                                                [prop.name]: e.target.value,
+                                                              }));
+                                                            }}
+                                                          />
+                                                          
+                                                            
+                                                        }
+                                                    </div>
+                                                );
+                                            }).filter(Boolean).concat(
+                                                selectedType && selectedType.format && !['PHONE', 'EMAIL'].includes(selectedType.name) ? (
+                                                    <div className="form-group col-lg-12">
+                                                        <label>Định dạng <span className='red_star'>*</span></label>
+                                                        <input
+                                                            className="form-control"
+                                                            type="text"
+                                                            value={selectedType.format}
+                                                            onChange={(e) => {
+                                                                setModalTemp({ ...modalTemp, format: e.target.value });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ) : []
+                                            )
+                                        })()} */}
+                                        {types.map((type) => {
+                                            if (type.name !== modalTemp.DATATYPE) return null;
+
+                                            return (
+                                                <div key={type.id}>
+                                                    {type.props.map((prop, index) => {
+                                                        let inputType = prop.type;
+                                                        let isBoolType = prop.type === "bool";
+                                                        let defaultValue = modalTemp[prop.name];
+
+                                                        if (inputType === "int") {
+                                                            if (prop.name === 'MIN') defaultValue = type.limit.min;
+                                                            if (prop.name === 'MAX') defaultValue = type.limit.max;
+                                                        }
+
+                                                        return (
+                                                            <div key={index} className="form-group col-lg-12">
+                                                                <label>{prop.label} <span className='red_star'>*</span></label>
+                                                                {isBoolType ? (
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                        onChange={(e) => {
+                                                                            setModalTemp((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                [prop.name]: e.target.value === "true",
+                                                                            }));
+                                                                        }}
+                                                                    >
+                                                                        
+                                                                        <option value="true">True</option>
+                                                                        <option value="false">False</option>
+                                                                    </select>
+                                                                ) : (
+                                                                    <input
+                                                                        className="form-control"
+                                                                        type={inputType === "int" ? "number" : inputType}
+                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                        onChange={(e) => {
+                                                                            setModalTemp((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                [prop.name]: e.target.value,
+                                                                            }));
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+
+
+                                                </div>
+                                            );
+                                        })}
+
 
 
                                         <div class="form-group col-lg-6">
@@ -770,6 +927,332 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/* Edit Field */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="editFieldTemp">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Tạo mới trường</h4>
+                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-lg-12">
+                                            <label>Tên trường <span className='red_star'>*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={modalTemp.field_name}
+                                                onChange={(e) => setModalTemp({ ...modalTemp, field_name: e.target.value })}
+                                                placeholder=""
+                                            />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Trạng thái khóa <span className='red_star'>*</span></label>
+                                        </div>
+                                        <div class="form-group col-lg-6"></div>
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                            <label class="mr-2">Khóa chính </label>
+                                            <i
+                                                className={`fa fa-toggle-${isOn ? 'on icon-toggle' : 'off'} fa-2x`}
+                                                aria-hidden="true"
+                                                onClick={handleClickPrimary}
+                                            ></i>
+                                        </div>
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                            <label class="mr-2">Khóa ngoại </label>
+                                            <i
+                                                className={`fa fa-toggle-${isOnforenkey ? 'on icon-toggle' : 'off'} fa-2x`}
+                                                aria-hidden="true"
+                                                onClick={handleClickForenkey}
+                                            ></i>
+                                        </div>
+                                        <div className={`form-group col-lg-6`}>
+                                            <label>Tên bảng <span className='red_star'>*</span></label>
+                                            <select
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    handleSelectTable(e);
+                                                    setForeignKey({ ...foreignKey, table_id: e.target.value })
+                                                }}
+                                                disabled={!isOnforenkey}>
+                                                <option value="">Chọn bảng</option>
+                                                {tables.tables?.map((table, index) => {
+                                                    return (
+                                                        <option key={index} value={table.id}>
+                                                            {table.table_name}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div>
+                                        <div className={`form-group col-lg-6`}>
+                                            <label>Tên trường <span className='red_star'>*</span></label>
+                                            <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
+                                                console.log(e.target.value);
+                                                setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                            }}
+                                            > <option value="">Chọn trường</option>
+                                                {
+                                                    fields.filter(field => {
+                                                        const selectedTableIdAsNumber = Number(selectedTableId);
+                                                        const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
+                                                        return selectedTable?.primary_key.includes(field.id);
+                                                    }).map((field, index) => {
+                                                        return (
+                                                            <option key={index} value={field.id}>
+                                                                {field.field_name}
+                                                            </option>
+                                                        );
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label>Yêu cầu dữ liệu <span className='red_star'>*</span></label>
+                                            <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value })}>
+
+                                                {typenull.map((item, index) => {
+                                                    return (
+                                                        <option key={index} value={item.value} >
+                                                            {item.label}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div>
+
+                                        {/* <div class={`form-group col-lg-12`}>
+                                            <label>Kiểu dữ liệu <span className='red_star'>*</span></label>
+                                            <select
+                                                className="form-control"
+                                                value={modalTemp.DATATYPE}
+                                                onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}>
+                                                {types.map((type, index) => {
+                                                    return (
+                                                        <option key={index} value={type.name} >
+                                                            {type.name}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div> */}
+
+                                        <div class={`form-group col-lg-12`}>
+                                            <select
+                                                className="form-control"
+                                                value={modalTemp.DATATYPE}
+                                                onChange={(e) => {
+                                                    const selectedDataType = e.target.value;
+                                                    const selectedType = types.find((type) => type.name === selectedDataType);
+
+                                                    if (selectedType) {
+                                                        setModalTemp(prevModalTemp => {
+                                                            const updateValues = {
+                                                                DATATYPE: selectedDataType
+                                                            };
+
+                                                            // Nếu có giới hạn, gán giá trị min, max tương ứng
+                                                            if (selectedType.limit) {
+                                                                const { min, max } = selectedType.limit;
+                                                                updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.MIN;
+                                                                updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.MAX;
+                                                            }
+
+                                                            // Nếu là kiểu date, gán định dạng ngày
+                                                            if (selectedType.type === 'date' || selectedType.type === 'datetime') {
+                                                                updateValues.FORMAT = selectedType.format;
+                                                            }
+
+                                                            return {
+                                                                ...prevModalTemp,
+                                                                ...updateValues
+                                                            };
+                                                        });
+                                                    } else {
+                                                        setModalTemp(prevModalTemp => ({
+                                                            ...prevModalTemp,
+                                                            DATATYPE: selectedDataType,
+                                                        }));
+                                                    }
+                                                }}
+                                            >
+                                                <option value="">Chọn kiểu dữ liệu</option>
+                                                {types.map((type, index) => (
+                                                    <option key={index} value={type.name}>
+                                                        {type.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+
+                                        {/* {(() => {
+                                            const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
+                                            return selectedType && selectedType.props.map((prop, index) => {
+                                                let inputType = prop.type;
+                                                let isBoolType = prop.type === "bool";
+                                                let defaultValue = modalTemp[prop.name];
+                                                if (prop.name === 'MIN') defaultValue = selectedType.limit.min;
+                                                if (prop.name === 'MAX') defaultValue = selectedType.limit.max;
+                                                return (
+                                                    <div key={index} className="form-group col-lg-12">
+                                                        <label>{prop.label} <span className='red_star'>*</span></label>
+                                                        {isBoolType
+                                                            ? <select
+                                                                className="form-control"
+                                                                onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
+                                                            >
+                                                                <option value="true">True</option>
+                                                                <option value="false">False</option>
+                                                            </select>
+                                                            : <input
+                                                                className="form-control"
+                                                                type={inputType}
+                                                                value={defaultValue}
+                                                                onChange={(e) => {
+                                                                    
+                                                                    setModalTemp({ ...modalTemp, [prop.name]: e.target.value });
+                                                                }}
+                                                            />
+                                                        }
+                                                    </div>
+                                                );
+                                            })
+                                        })()} */}
+                                        {/* {(() => {
+                                            const selectedType = types.find(type => type.name === modalTemp.DATATYPE);
+                                            return selectedType && selectedType.props.map((prop, index) => {
+                                                if (selectedType.format && index === 0) return null;  // Add this line to skip first input if format is present
+
+                                                let inputType = prop.type;
+                                                let isBoolType = prop.type === "bool";
+                                                let defaultValue = modalTemp[prop.name];
+                                                if (inputType === "int") {
+                                                    
+                                                    if (prop.name === 'MIN') defaultValue = selectedType.limit.min;
+                                                    if (prop.name === 'MAX') defaultValue = selectedType.limit.max;
+                                                }
+                                                return (
+                                                    <div key={index} className="form-group col-lg-12">
+                                                        <label>{prop.label} <span className='red_star'>*</span></label>
+                                                        {isBoolType
+                                                            ? <select
+                                                                className="form-control"
+                                                                onChange={(e) => setModalTemp({ ...modalTemp, [prop.name]: e.target.value === "true" })}
+                                                            >
+                                                                <option value="true">True</option>
+                                                                <option value="false">False</option>
+                                                            </select>
+                                                            : <input
+                                                            className="form-control"
+                                                            type={inputType === "int" ? "number" : inputType}
+                                                            defaultValue={defaultValue} // Sử dụng defaultValue thay vì value
+                                                            onChange={(e) => {
+                                                              setModalTemp((prevModalTemp) => ({
+                                                                ...prevModalTemp,
+                                                                [prop.name]: e.target.value,
+                                                              }));
+                                                            }}
+                                                          />
+                                                          
+                                                            
+                                                        }
+                                                    </div>
+                                                );
+                                            }).filter(Boolean).concat(
+                                                selectedType && selectedType.format && !['PHONE', 'EMAIL'].includes(selectedType.name) ? (
+                                                    <div className="form-group col-lg-12">
+                                                        <label>Định dạng <span className='red_star'>*</span></label>
+                                                        <input
+                                                            className="form-control"
+                                                            type="text"
+                                                            value={selectedType.format}
+                                                            onChange={(e) => {
+                                                                setModalTemp({ ...modalTemp, format: e.target.value });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ) : []
+                                            )
+                                        })()} */}
+                                        {types.map((type) => {
+                                            if (type.name !== modalTemp.DATATYPE) return null;
+
+                                            return (
+                                                <div key={type.id}>
+                                                    {type.props.map((prop, index) => {
+                                                        let inputType = prop.type;
+                                                        let isBoolType = prop.type === "bool";
+                                                        let defaultValue = modalTemp[prop.name];
+
+                                                        if (inputType === "int") {
+                                                            if (prop.name === 'MIN') defaultValue = type.limit.min;
+                                                            if (prop.name === 'MAX') defaultValue = type.limit.max;
+                                                        }
+
+                                                        return (
+                                                            <div key={index} className="form-group col-lg-12">
+                                                                <label>{prop.label} <span className='red_star'>*</span></label>
+                                                                {isBoolType ? (
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                        onChange={(e) => {
+                                                                            setModalTemp((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                [prop.name]: e.target.value === "true",
+                                                                            }));
+                                                                        }}
+                                                                    >
+                                                                        <option value="true">True</option>
+                                                                        <option value="false">False</option>
+                                                                    </select>
+                                                                ) : (
+                                                                    <input
+                                                                        className="form-control"
+                                                                        type={inputType === "int" ? "number" : inputType}
+                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                        onChange={(e) => {
+                                                                            setModalTemp((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                [prop.name]: e.target.value,
+                                                                            }));
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+
+
+                                                </div>
+                                            );
+                                        })}
+
+
+
+                                        <div class="form-group col-lg-6">
+                                            <label>Người tạo <span className='red_star'>*</span></label>
+                                            <input class="form-control" type="text" value={users.fullname} readOnly />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Thời gian <span className='red_star'>*</span></label>
+                                            <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly />
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleSubmitModal} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Edit table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="editTable">
                     <div class="modal-dialog modal-dialog-center">

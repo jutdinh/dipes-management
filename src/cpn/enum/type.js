@@ -27,7 +27,7 @@ export const ValidTypeEnum = Object.freeze({
    
     BIGINT: { id: 3, name: "BIG INT", type: "int",  limit: {
         min: -9223372036854776000,
-        max: -9223372036854775999
+        max: 9223372036854775999
     }, props: [{ name: "AUTO_INCREMENT", label: "Tự động tăng", type: "bool" }, { name: "PATTERN", friend: "AUTO_INCREMENT", type: "text", label: "Định dạng" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "MAX", label: "Giá trị tối đa", type: "int" }] },
     
     BIGINT_UNSIGNED: { id: 4, name: "BIG INT UNSIGNED", type: "int",  limit: {
@@ -43,7 +43,7 @@ export const ValidTypeEnum = Object.freeze({
     DECIMAL: {
         id: 6, name: "DECIMAL", type: "floating-point", limit: {
             min: -9223372036854776000,
-            max: -9223372036854775999
+            max: 9223372036854775999
         },
         props: [{ name: "MAX", label: "Giá trị tối đa", type: "int" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "DELIMITER", label: "Số chữ số thập phân", type: "int" }]
     }, /* dec(5,2) ~ 999.99 */
