@@ -1,5 +1,6 @@
 
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +32,7 @@ const typenull = [
 
 ]
 export default () => {
+   
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
@@ -38,7 +40,7 @@ export default () => {
 
     const { project_id, version_id, table_id } = useParams();
     const [showModal, setShowModal] = useState(false);
-
+    let navigate = useNavigate();
     const [fieldTemp, setFieldTemp] = useState({});
     // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
     const defaultValues = {
@@ -183,13 +185,16 @@ export default () => {
             ...fieldData
         });
     }
-
+console.log(fieldTempUpdate)
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
+      
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        console.log(fieldId)
-
+        // const table_id_temp = getfield[0]?.table_id; // Lấy table_id từ trường
+        // const table_temp = tables.tables?.find(table => table.id === table_id_temp);
+        // setUpdateTable(table_temp);
     }
+  
     const deleteFieldTemp = (fieldId) => {
         Swal.fire({
             title: 'Xác nhận xóa',
@@ -266,6 +271,12 @@ export default () => {
                 }
             })
     }, [])
+//lấy table 
+
+    const table_id_temp = getfield[0]?.table_id; // Lấy table_id từ trường
+    const table_temp = tables.tables?.find(table => table.id === table_id_temp);
+
+    
     const [fields, setFields] = useState([]);
     const [selectedTableId, setSelectedTableId] = useState(null);
     // Chọn bảng
@@ -291,133 +302,7 @@ export default () => {
     };
 
 
-    // console.log(table)
-    const addTable = (e) => {
-        e.preventDefault();
-        // console.log( table )
-        const tableRequestBody = {
-            version_id: version_id,
-            table: {
-                table_name: table.table_name
-            }
-        };
-        //console.log("body",tableRequestBody)
-        fetch(`${proxy}/db/tables/table`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(tableRequestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                if (success) {
-                    // console.log(data)
-                    const tableId = data.table.id; // Lấy id bảng vừa tạo
-                    addField(tableId);
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            });
-    };
-
-    const addField = (tableId) => {
-        const fieldRequestBody = {
-            table_id: tableId,
-            fields: [
-                ...tempFields
-            ],
-        };
-        console.log("field", fieldRequestBody)
-
-        fetch(`${proxy}/db/fields/fields`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(fieldRequestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                console.log(data)
-                if (success) {
-
-                    addKey({ tableId, data });
-                    // handleClickPrimary(fieldId);
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            });
-    };
-
-    const addKey = ({ data, tableId }) => {
-        const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
-        const primaryKeyid = matchingItem.map(item => item.id)
-
-        for (let i = 0; i < foreignKeys.length; i++) {
-            for (let j = 0; j < data.length; j++) {
-                if (foreignKeys[i].index === data[j].index) {
-                    foreignKeys[i].field_id = data[j].id
-                }
-            }
-        }
-
-        const KeyRequestBody = {
-            table_id: tableId,
-            primary_key: primaryKeyid,
-            foreign_keys: foreignKeys
-        };
-        console.log("KLey", KeyRequestBody)
-
-        fetch(`${proxy}/db/tables/table/keys`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(KeyRequestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.href = `/projects/${version_id}/tables/field`;
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            });
-    };
+   
 
     //primary
     const [isOn, setIsOn] = useState(false);
@@ -437,53 +322,9 @@ export default () => {
     };
 
     const [tableUpdate, setUpdateTable] = useState([]);
-    const getIdTable = (tableid) => {
-        setUpdateTable(tableid);
-    }
-    const handleSubmit = (e) => {
-        // Gửi temporaryData lên server để thêm dữ liệu vào cơ sở dữ liệu
-        e.preventDefault();
-        const requestBody = {
-            table_id: tableUpdate.id,
-            table_name: tableUpdate.table_name,
+  
 
-        };
-        console.log(requestBody)
-        fetch(`${proxy}/db/tables/table`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(requestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            })
-        // Sau khi thành công, có thể xóa bảng tạm thời
-        setFieldTemp([]);
-    };
+
 
     useEffect(() => {
         console.log(tableUpdate);
@@ -532,68 +373,7 @@ export default () => {
 
 
     };
-    const handleDeleteTask = (tableid) => {
-        const requestBody = {
-            table_id: parseInt(tableid.id)
-        };
-        Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa bảng này?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`${proxy}/db/tables/table`, {
-                    method: 'DELETE',
-                    headers: {
-                        "content-type": "application/json",
-                        Authorization: `${_token}`,
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                    .then(res => res.json())
-                    .then((resp) => {
-                        const { success, content, data, status } = resp;
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                            return;
-                        }
-                        if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
-                        }
-                    });
-            }
-        });
-    }
+   
 
 
     const [currentPageTable, setCurrentPageTable] = useState(1);
@@ -609,7 +389,7 @@ export default () => {
 
     // console.log("p key", primaryKey)
     // console.log("f key", foreignKeys)
-    console.log(getfield)
+    console.log(table_temp)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -637,8 +417,8 @@ export default () => {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value={table.field_name}
-                                            onChange={(e) => setTable({ ...table, table_name: e.target.value })}
+                                            defaultValue={table_temp?.table_name}
+                                            onChange={(e) => setUpdateTable({ ...table_temp, table_name: e.target.value })}
                                             placeholder=""
                                         />
                                     </div>
@@ -672,8 +452,8 @@ export default () => {
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
                                                                         <td scope="row">{index + 1}</td>
-                                                                        <td class="align-center"> {primaryKey.includes(field.index) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
-                                                                            {foreignKeys.some((fk) => fk.index === field.index) && (
+                                                                        <td class="align-center"> {table_temp?.primary_key?.includes(field.id) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
+                                                                            {table_temp?.primary_key?.some((fk) => fk.index === field.id) && (
                                                                                 <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />
                                                                             )}
                                                                         </td>
@@ -738,11 +518,11 @@ export default () => {
                                             }
                                         </div>
                                         {
-                                            tempFields && tempFields.length > 0 ? (
+                                            currentTable && currentTable.length > 0 ? (
                                                 <div className="button-container mt-4">
 
-                                                    <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                                    <button type="button" onClick={updateTable} class="btn btn-success ">{lang["btn.update"]}</button>
+                                                    <button type="button" onClick={() => navigate(-1)} class="btn btn-danger ">{lang["btn.close"]}</button>
                                                 </div>) : null}
                                     </div>
                                 </div>
@@ -750,7 +530,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                {/*add field */}
+                {/* addd */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addField">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
@@ -988,8 +768,8 @@ export default () => {
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                value={modalTemp.field_name}
-                                                onChange={(e) => setModalTemp({ ...modalTemp, field_name: e.target.value })}
+                                                value={fieldTempUpdate.field_name}
+                                                onChange={(e) => setFieldTempupdate({ ...fieldTempUpdate, field_name: e.target.value })}
 
 
                                                 placeholder=""
@@ -1062,7 +842,7 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>Yêu cầu dữ liệu <span className='red_star'>*</span></label>
-                                            <select className="form-control" value={modalTemp.NULL} onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
+                                            <select className="form-control" value={fieldTempUpdate.NULL} onChange={(e) => setFieldTempupdate({ ...fieldTempUpdate, NULL: e.target.value == "true" ? true : false })}>
 
                                                 {typenull.map((item, index) => {
                                                     return (
@@ -1077,7 +857,7 @@ export default () => {
                                         <div class={`form-group col-lg-12`}>
                                             <select
                                                 className="form-control"
-                                                value={modalTemp.DATATYPE}
+                                                value={fieldTempUpdate.props?.DATATYPE}
                                                 // onChange={(e) => {
                                                 //     const selectedDataType = e.target.value;
                                                 //     const selectedType = types.find((type) => type.name === selectedDataType);
@@ -1112,7 +892,7 @@ export default () => {
                                                 //         }));
                                                 //     }
                                                 // }}
-                                                onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}
+                                                onChange={(e) => setFieldTempupdate({ ...fieldTempUpdate, DATATYPE: e.target.value })}
                                             >
 
                                                 {types.map((type, index) => (
@@ -1124,18 +904,18 @@ export default () => {
                                         </div>
 
                                         {types.map((type) => {
-                                            if (type.name !== modalTemp.DATATYPE) return null;
+                                            if (type.name !== fieldTempUpdate.props?.DATATYPE) return null;
 
                                             return (
                                                 <div key={type.id}>
                                                     {type.props.map((prop, index) => {
                                                         let inputType = prop.type;
                                                         let isBoolType = prop.type === "bool";
-                                                        let defaultValue = modalTemp[prop.name];
+                                                        let defaultValue = fieldTempUpdate.props?.[prop.name];
 
                                                         if (inputType === "int") {
-                                                            if (prop.name === 'MIN') defaultValue = modalTemp.MIN;
-                                                            if (prop.name === 'MAX') defaultValue = modalTemp.MAX;
+                                                            if (prop.name === 'MIN') defaultValue = fieldTempUpdate.props?.MIN;
+                                                            if (prop.name === 'MAX') defaultValue = fieldTempUpdate.props?.MAX;
                                                         }
 
                                                         return (
@@ -1146,7 +926,7 @@ export default () => {
                                                                         className="form-control"
                                                                         value={defaultValue}  // Sử dụng defaultValue thay vì value
                                                                         onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
+                                                                            setFieldTempupdate((prevModalTemp) => ({
                                                                                 ...prevModalTemp,
                                                                                 [prop.name]: e.target.value === "true",
                                                                             }));
@@ -1161,7 +941,7 @@ export default () => {
                                                                         type={inputType === "int" ? "number" : inputType}
                                                                         value={defaultValue}  // Sử dụng defaultValue thay vì value
                                                                         onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
+                                                                            setFieldTempupdate((prevModalTemp) => ({
                                                                                 ...prevModalTemp,
                                                                                 [prop.name]: e.target.value,
                                                                             }));
