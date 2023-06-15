@@ -35,8 +35,8 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
-  
-    const { project_id, version_id } = useParams();
+
+    const { project_id, version_id, table_id } = useParams();
     const [showModal, setShowModal] = useState(false);
 
     const [fieldTemp, setFieldTemp] = useState({});
@@ -59,7 +59,8 @@ export default () => {
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
     const [table, setTable] = useState({});
-    const [tables, setTables] = useState({});
+    const [tables, setTables] = useState([]);
+
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
 
     const dispatch = useDispatch();
@@ -84,7 +85,7 @@ export default () => {
 
     };
     const handleSubmitModal = () => {
-     
+
         setFieldTemp(modalTemp)
         if (isOn) {
             setPrimaryKey([...primaryKey, tempCounter])
@@ -116,9 +117,9 @@ export default () => {
     };
 
     const handleUpdatetModal = () => {
-// Kiểm tra xem trường `field_name` có rỗng không
+        // Kiểm tra xem trường `field_name` có rỗng không
 
-       
+
         // setFieldTemp(modalTemp)
         if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
             const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
@@ -175,7 +176,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    console.log(fieldTempUpdate)
+
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -223,9 +224,30 @@ export default () => {
         });
     }
 
-
+    const [getfield, setGetAllfield] = useState([]);
     useEffect(() => {
 
+        fetch(`${proxy}/db/tables/table/${table_id}/fields`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                console.log("data", data)
+                if (success) {
+                    if (data) {
+                        setGetAllfield(data);
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+
+
+    useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
                 Authorization: _token
@@ -234,7 +256,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
+                console.log("data", data)
                 if (success) {
                     if (data) {
                         setTables(data);
@@ -244,14 +266,12 @@ export default () => {
                 }
             })
     }, [])
-
     const [fields, setFields] = useState([]);
     const [selectedTableId, setSelectedTableId] = useState(null);
     // Chọn bảng
     const handleSelectTable = async (event) => {
         const tableId = event.target.value;
         setSelectedTableId(tableId);
-        // Fetch fields for the selected table
         fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
@@ -261,10 +281,8 @@ export default () => {
             .then(resp => {
                 const { success, data } = resp;
                 if (success) {
-                    if (data) {
                         setFields(data);
                         console.log(data)
-                    }
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
@@ -272,7 +290,7 @@ export default () => {
             });
     };
 
-    console.log(tempFields)
+
     // console.log(table)
     const addTable = (e) => {
         e.preventDefault();
@@ -583,14 +601,15 @@ export default () => {
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
-    const currentTable = tempFields?.slice(indexOfFirstTable, indexOfLastTable);
-
+    const currentTable = getfield.slice(indexOfFirstTable, indexOfLastTable);
+    
+      
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
-    const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
+    const totalPagesTable = Math.ceil(getfield.length / rowsPerPageTable);
 
     // console.log("p key", primaryKey)
     // console.log("f key", foreignKeys)
-    // console.log(tables)
+    console.log(getfield)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -608,7 +627,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Tạo bảng mới</h5>
+                                    <h5>Chỉnh sửa bảng</h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -623,7 +642,7 @@ export default () => {
                                             placeholder=""
                                         />
                                     </div>
-                                    
+
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường </p>
@@ -668,7 +687,7 @@ export default () => {
                                                                                 {field.field_name}
                                                                             </div>
                                                                         </td>
-                                                                        <td>{field.DATATYPE}</td>
+                                                                        <td>{field.props.DATATYPE}</td>
                                                                         <td> {field.NULL ? (
                                                                             <span>Không cần dữ liệu</span>
                                                                         ) : (
@@ -687,29 +706,29 @@ export default () => {
                                                             </tbody>
                                                         </table>
                                                         <div className="d-flex justify-content-between align-items-center">
-                                                    <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tempFields?.length)} {lang["of"]} {tempFields?.length} {lang["results"]}</p>
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul className="pagination mb-0">
-                                                            <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li>
-                                                            {Array(totalPagesTable).fill().map((_, index) => (
-                                                                <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateTable(index + 1)}>
-                                                                        {index + 1}
-                                                                    </button>
-                                                                </li>
-                                                            ))}
-                                                            <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+                                                            <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, getfield.length)} {lang["of"]} {getfield.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesTable).fill().map((_, index) => (
+                                                                        <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
@@ -1006,7 +1025,7 @@ export default () => {
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
                                                 }}
                                                 disabled={!isOnforenkey}>
-                                             
+
                                                 {tables.tables?.map((table, index) => {
                                                     return (
                                                         <option key={index} value={table.id}>
@@ -1014,18 +1033,18 @@ export default () => {
                                                         </option>
                                                     );
                                                 })}
-                                                
+
                                             </select>
                                         </div>
                                         <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
-                                            
-                                            <select className="form-control" 
-                                             value={foreignKeys.ref_field_id}
-                                            disabled={!isOnforenkey} onChange={(e) => {
-                                                setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
-                                            }}
-                                            > 
+
+                                            <select className="form-control"
+                                                value={foreignKeys.ref_field_id}
+                                                disabled={!isOnforenkey} onChange={(e) => {
+                                                    setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                }}
+                                            >
                                                 {
                                                     fields.filter(field => {
                                                         const selectedTableIdAsNumber = Number(selectedTableId);

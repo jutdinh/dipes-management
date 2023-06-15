@@ -15,7 +15,7 @@ import { Projects, ProjectsCard, ProjectDetail } from './projects';
 import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
-import { Tables, Field } from './tables';
+import { Tables, Field, UpdateField } from './tables';
 import { Apis, CreateApi } from './api';
 import createApi from './api/create-api';
 function App() {
@@ -62,6 +62,7 @@ function App() {
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />
         <Route path="/projects/:version_id/tables/field" element={<Navigation Child={Field} />} />
+        <Route path="/projects/:version_id/table/:table_id" element={<Navigation Child={UpdateField} />} />
         <Route path="/projects/:version_id/apis" element={<Navigation Child={Apis} />} />
         <Route path="/projects/:version_id/apis/create" element={<Navigation Child={createApi} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />

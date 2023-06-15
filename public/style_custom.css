@@ -81,11 +81,27 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; 
-     margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
 
-  
+    position: relative;
     padding: 0px 2px;
+    color: #000;
+    font-weight: 600;
 }
+
+
+.circle-image-project::before{
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+}
+
 .extra-images-cus-p {
     display: inline-block; 
     width: 48px;  /* Thay đổi kích thước này để phù hợp */
@@ -505,6 +521,11 @@ h5 {
     padding: 5px 10px;
     cursor: pointer;
     margin: 0px 0px 6px 0px; 
+}
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    /* Các thuộc tính khác cho giao diện bị ảnh hưởng khi disabled */
 }
 
 .add-option:hover {

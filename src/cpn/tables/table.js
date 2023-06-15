@@ -10,7 +10,7 @@ import { Tables } from ".";
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
-    const { project_id , version_id} = useParams();
+    const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     const handleCloseModal = () => {
         setShowModal(false);
@@ -30,7 +30,7 @@ export default () => {
 
                 if (success) {
                     if (data) {
-                       setTables(data);
+                        setTables(data);
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -46,7 +46,7 @@ export default () => {
                 table_name: table.table_name
             }
         }
-        
+
         console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "POST",
@@ -85,18 +85,19 @@ export default () => {
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
         setUpdateTable(tableid);
-       
+
     }
     useEffect(() => {
         console.log(tableUpdate);
+        
     }, [tableUpdate]);
-
+console.log(tableUpdate.id)
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
-            
+
         };
         console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
@@ -134,7 +135,7 @@ export default () => {
 
 
     };
-    const handleDeleteTask = (tableid) => {
+    const handleDeleteTable = (tableid) => {
         const requestBody = {
             table_id: parseInt(tableid.id)
         };
@@ -205,12 +206,14 @@ export default () => {
 
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
-    const tablesManager = (project) => {
-        
+    const openPageAddTable = (project) => {
         window.location.href = `/projects/${version_id}/tables/field`;
-      
-        // window.location.href = `tables`;
     };
+
+    const openPageUpdateTable = (tableid) => {
+        window.location.href = `/projects/${version_id}/table/${tableid.id}`;
+    };
+   
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -221,7 +224,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-              
+
                 {/* List table */}
                 <div class="row">
                     <div class="col-md-12">
@@ -234,158 +237,159 @@ export default () => {
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-4">
-                                                {/* <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
+                                        {/* <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
                                                 <input type="text" class="form-control" 
                                                  placeholder="" /> */}
-                                            </div>
-                                      
+                                    </div>
+
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             {/* <p class="font-weight-bold">Danh sách bảng </p> */}
                                             {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTable">
                                                 <i class="fa fa-plus"></i>
                                             </button> */}
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => openPageAddTable()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                         <div class="table-responsive">
-                                    {
-                                        currentTable && currentTable.length > 0 ? (
-                                            <>
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                            <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                            <th class="font-weight-bold" scope="col">Người tạo</th>
-                                                            <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
-                                                     
-                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {currentTable.map((table, index) => (
-                                                            <tr key={table.id}>
-                                                                <td scope="row">{index + 1}</td>
-                                                                <td style={{ maxWidth: "100px" }}>
-                                                                    <div style={{
-                                                                        width: "100%",
-                                                                        overflow: "hidden",
-                                                                        textOverflow: "ellipsis",
-                                                                        whiteSpace: "nowrap"
-                                                                    }}>
-                                                                        {table.table_name}
-                                                                    </div>
-                                                                </td>
-                                                                <td>{table.create_by.fullname}</td>
-                                                                <td>{table.create_at}</td>
-                                                                <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                    
-                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit"   onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i>
-                                                                    
-                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(table)} title={lang["delete"]}></i>
-                                                                </td>
-                                                                
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                                <div className="d-flex justify-content-between align-items-center">
-                                                    <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul className="pagination mb-0">
-                                                            <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li>
-                                                            {Array(totalPagesTable).fill().map((_, index) => (
-                                                                <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateTable(index + 1)}>
-                                                                        {index + 1}
-                                                                    </button>
-                                                                </li>
-                                                            ))}
-                                                            <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div class="list_cont ">
-                                                <p>Chưa có bảng</p>
-                                            </div>
-                                        )
-                                    }
+                                            {
+                                                currentTable && currentTable.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                    <th class="font-weight-bold" scope="col">Người tạo</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+
+                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {currentTable.map((table, index) => (
+                                                                    <tr key={table.id}>
+                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {table.table_name}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_at}</td>
+                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                      
+                                                                        {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() =>   openPageUpdateTable(table)}  title={lang["edit"]}></i>
+
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTable(table)} title={lang["delete"]}></i>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                        <div className="d-flex justify-content-between align-items-center">
+                                                            <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesTable).fill().map((_, index) => (
+                                                                        <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có bảng</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                         </div>
+                        </div>
                     </div>
-                </div>
-            </div>
                 </div>
                 {/*add table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addTable">
-                        <div class="modal-dialog modal-dialog-center">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Thêm bảng</h4>
-                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label>Tên bảng <span className='red_star'>*</span></label>
-                                                <input type="text" class="form-control" value={table.task_name} onChange={
-                                                    (e) => { setTable({ ...table, table_name: e.target.value }) }
-                                                } placeholder="" />
-                                            </div>
-
-                                           
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Thêm bảng</h4>
+                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-lg-12">
+                                            <label>Tên bảng <span className='red_star'>*</span></label>
+                                            <input type="text" class="form-control" value={table.task_name} onChange={
+                                                (e) => { setTable({ ...table, table_name: e.target.value }) }
+                                            } placeholder="" />
                                         </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.create"]}</button>
-                                    {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
-                                </div>
+
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.create"]}</button>
+                                {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
                             </div>
                         </div>
+                    </div>
                 </div>
                 {/* Edit table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="editTable">
-                        <div class="modal-dialog modal-dialog-center">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Chỉnh sửa bảng</h4>
-                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label>Tên bảng <span className='red_star'>*</span></label>
-                                                <input type="text" class="form-control" value={tableUpdate.table_name} onChange={
-                                                    (e) => { setUpdateTable({ ...tableUpdate, table_name: e.target.value }) }
-                                                } placeholder="" />
-                                            </div>
-
-                                           
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Chỉnh sửa bảng</h4>
+                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-lg-12">
+                                            <label>Tên bảng <span className='red_star'>*</span></label>
+                                            <input type="text" class="form-control" value={tableUpdate.table_name} onChange={
+                                                (e) => { setUpdateTable({ ...tableUpdate, table_name: e.target.value }) }
+                                            } placeholder="" />
                                         </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" onClick={updateTable} class="btn btn-success ">{lang["btn.update"]}</button>
-                                    {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
-                                </div>
+
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={updateTable} class="btn btn-success ">{lang["btn.update"]}</button>
+                                {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
                             </div>
                         </div>
+                    </div>
                 </div>
             </div >
         </div >

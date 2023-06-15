@@ -409,7 +409,7 @@ export default () => {
                                             <label>{lang["projectmember"]}</label>
                                             <div class="options-container">
                                                 <div class="option">
-                                                <h5>{lang["supervisor"]}</h5>
+                                                      <h5>{lang["supervisor"]}</h5>
                                                     {
                                                         selectedUsers.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -479,9 +479,9 @@ export default () => {
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
-                                                                        onChange={() => handleAdminCheck(user, 'mgr')}
+                                                                        onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'mgr')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -507,9 +507,9 @@ export default () => {
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                        onChange={() => handleImpleCheck(user, 'supervisor')}
+                                                                        onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
                                                                 </div>
@@ -524,7 +524,7 @@ export default () => {
                                                 </div>
                                             </div>
                                         )}
-                                        {showMonitorPopup && (
+                                        {/* {showMonitorPopup && (
                                             <div class="user-popup3">
                                                 <div class="user-popup-content">
                                                     {users && users.map(user => {
@@ -551,7 +551,7 @@ export default () => {
                                                     <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </form>
                             </div>
@@ -625,7 +625,7 @@ export default () => {
                                                                 }
                                                                 {
                                                                     item.members.length > 2 &&
-                                                                    <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[3].avatar})` }}>
+                                                                    <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
                                                                         <span> +{item.members.length - 2}</span>
                                                                     </div>
                                                                 }

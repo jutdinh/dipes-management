@@ -853,10 +853,16 @@ useEffect(() => {
                     });
                 }
             });
-
-
     }
+    const [currentPageTable, setCurrentPageTable] = useState(1);
+    const rowsPerPageTable = 7;
 
+    const indexOfLastTable = currentPageTable * rowsPerPageTable;
+    const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
+    const currentTable = tables.tables?.slice(indexOfFirstTable, indexOfLastTable);
+
+    const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
+    const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1245,7 +1251,7 @@ useEffect(() => {
                                                                 })
                                                             }
                                                         </div>
-                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </div>
@@ -1933,32 +1939,71 @@ useEffect(() => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên bảng</th>
-                                                    <th>Ngày tạo</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Bảng 1</td>
-                                                    <td>06/06/2023 11:12</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Bảng 2</td>
-                                                    <td>06/06/2023 11:14</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Bảng 3</td>
-                                                    <td>06/06/2023 11:16</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive">
+                                            {
+                                                currentTable && currentTable.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {currentTable.map((table, index) => (
+                                                                    <tr key={table.id}>
+                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {table.table_name}
+                                                                            </div>
+                                                                        </td>
+                                                                        
+                                                                        <td>{table.create_at}</td>
+                                                                    
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                        <div className="d-flex justify-content-between align-items-center">
+                                                            <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesTable).fill().map((_, index) => (
+                                                                        <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có bảng</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
