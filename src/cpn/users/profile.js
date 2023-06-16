@@ -104,6 +104,7 @@ export default (props) => {
                 ...editUser
             }
         };
+        console.log(requestBody)
         fetch(`${proxy}/auth/self/info`, {
             method: 'PUT',
             headers: {
@@ -111,12 +112,15 @@ export default (props) => {
                 Authorization: `${_token}`,
             },
             body: JSON.stringify(requestBody)
+
         })
             .then(res => res.json())
             .then((resp) => {
                 const { success, content } = resp;
                 console.log(resp)
                 if (success) {
+                    const stringifiedUser = JSON.stringify( requestBody.account )
+                    localStorage.setItem("user", stringifiedUser)
                     Swal.fire({
                         title: "Thành công!",
                         text: content,
@@ -124,7 +128,7 @@ export default (props) => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        window.location.reload();
+                         window.location.reload();
                     });
                 } else {
                     Swal.fire({

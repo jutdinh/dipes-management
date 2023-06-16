@@ -53,7 +53,10 @@
     width: 100%;
     overflow: hidden;
   }
-  
+.view-more-link a {
+    color: blue;
+}
+
   .description-text {
     flex: 1;
     overflow: hidden;

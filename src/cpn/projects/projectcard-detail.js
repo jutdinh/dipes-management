@@ -855,7 +855,7 @@ useEffect(() => {
             });
     }
     const [currentPageTable, setCurrentPageTable] = useState(1);
-    const rowsPerPageTable = 7;
+    const rowsPerPageTable = 3;
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
@@ -928,7 +928,7 @@ useEffect(() => {
                                     {projectdetail.project_description}
                                 </div>
                                 <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
-                                <div>
+                               <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
                                         <div className="description-text">
@@ -941,6 +941,7 @@ useEffect(() => {
                                                 </a>
                                             </div>
                                         )}
+
                                     </div>
                                 </div>
                                 <p class="font-weight-bold">{lang["projectmanager"]}: </p>
