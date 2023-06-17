@@ -286,7 +286,7 @@ export default () => {
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                       
                                                                         {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}
-                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() =>   openPageUpdateTable(table)}  title={lang["edit"]}></i> */}
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() =>   openPageUpdateTable(table)}  title={lang["edit"]}></i>
 
                                                                             <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTable(table)} title={lang["delete"]}></i>
                                                                         </td>

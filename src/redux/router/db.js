@@ -14,6 +14,11 @@ export default (state, action) => {
         case "updateFields":
             return updateFields(state, action);
             break;
+        case "resetTempFields":
+            return {
+                ...state,
+                tempFields: []
+            }
         default:
             return state;
     }
