@@ -16,8 +16,9 @@ import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
 import { Tables, Field, UpdateField } from './tables';
-import { Apis, CreateApi } from './api';
-import createApi from './api/create-api';
+import { Apis, CreateApi, ShowField,StatisticalField} from './api';
+
+
 function App() {
 
   const dispatch = useDispatch()
@@ -64,7 +65,9 @@ function App() {
         <Route path="/projects/:version_id/tables/field" element={<Navigation Child={Field} />} />
         <Route path="/projects/:version_id/table/:table_id" element={<Navigation Child={UpdateField} />} />
         <Route path="/projects/:version_id/apis" element={<Navigation Child={Apis} />} />
-        <Route path="/projects/:version_id/apis/create" element={<Navigation Child={createApi} />} />
+        <Route path="/projects/:version_id/apis/create" element={<Navigation Child={CreateApi} />} />
+        <Route path="/projects/:version_id/apis/create/fieldshow" element={<Navigation Child={ShowField} />} />
+        <Route path="/projects/:version_id/apis/create/fieldstatis" element={<Navigation Child={StatisticalField} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />

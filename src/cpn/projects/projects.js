@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import responseMessages from "../enum/response-code";
 import Swal from 'sweetalert2';
 import { Header } from '../common';
 export default () => {
@@ -11,6 +11,26 @@ export default () => {
     const [showMonitorPopup, setShowMonitorPopup] = useState(false);
     const [manager, setManager] = useState("")
     const [selectedProject, setSelectedProject] = useState(null);
+    const [apiResponse, setApiResponse] = useState(null);
+    const showApiResponseMessage = (status) => {
+        const message = responseMessages[status];
+
+        const title = message?.type || "Unknown error";
+        const description = message?.description || "Unknown error";
+        const icon = message?.type === "Informations" ? "success" : "error";
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+                setShowModal(false);
+            }
+        });
+    };
 
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
@@ -157,9 +177,10 @@ export default () => {
                 } else {
                     window.location = "/404-not-found"
                 }
-            })
-    }, [])
 
+            })
+
+    }, [])
 
     const [users, setUsers] = useState([]);
 
@@ -238,18 +259,9 @@ export default () => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
-                            window.location.reload();
-                            setShowModal(false);
-                        });
+                        showApiResponseMessage(status);
                     } else {
-                        throw new Error(content);
+                        showApiResponseMessage(status);
                     }
                 }
             })
@@ -409,7 +421,7 @@ export default () => {
                                             <label>{lang["projectmember"]}</label>
                                             <div class="options-container">
                                                 <div class="option">
-                                                      <h5>{lang["supervisor"]}</h5>
+                                                    <h5>{lang["supervisor"]}</h5>
                                                     {
                                                         selectedUsers.map(user => {
                                                             const userData = users.find(u => u.username === user.username);
@@ -448,24 +460,24 @@ export default () => {
                                                 </div> */}
 
                                                 <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <h5>{lang["deployers"]}</h5>
-                                                        <div class="div-to-scroll"  style={{ overflowY: 'auto', maxHeight: '105px', minWidth:"50px", paddingRight: '15px' }}>
-                                                            {
-                                                                selectedImple.map(user => {
-                                                                    const userData = users.find(u => u.username === user.username);
-                                                                    return (
-                                                                        <div key={user.username}>
-                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                        </div>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </div>
-                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
-                                                            <i class="fa fa-plus"></i>
-                                                        </button>
+                                                    <h5>{lang["deployers"]}</h5>
+                                                    <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                        {
+                                                            selectedImple.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
                                                     </div>
-                                                
+                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+
                                             </div>
                                         </div>
                                         {showAdminPopup && (

@@ -203,4 +203,9 @@ export default {
 "supervisor":"Giám sát",
 "deployers": "Triển khai",
 
+
+
+"btn.cancel":"Hủy",
+"btn.addfield":"Thêm mới trường"
+
 }

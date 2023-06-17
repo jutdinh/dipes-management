@@ -92,7 +92,7 @@ export default () => {
 
     const handleDelete = () => {
 
-    
+
         dispatch({
             branch: "db",
             type: "resetTempFields",
@@ -147,20 +147,24 @@ export default () => {
         setPrimaryKey(newPrimaryKey);
 
 
-        let newForeignKeys = [...getTableFields.foreign_keys];
-        const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
+        // let newForeignKeys = [...getTableFields.foreign_keys];
+        // const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
+
+        // if (isOnforenkey) {
+        //     if (currentForeignKeyIndex === -1) { // nếu không tìm thấy khóa ngoại trong mảng
+        //         newForeignKeys.push(fieldTempUpdate); // thêm khóa ngoại mới
+        //     }
+        // } else {
+        //     if (currentForeignKeyIndex !== -1) { // nếu tìm thấy khóa ngoại trong mảng
+        //         newForeignKeys.splice(currentForeignKeyIndex, 1); // xóa khóa ngoại khỏi mảng
+        //     }
+        // }
+        // setForeignKeys(newForeignKeys);
 
         if (isOnforenkey) {
-            if (currentForeignKeyIndex === -1) { // nếu không tìm thấy khóa ngoại trong mảng
-                newForeignKeys.push(fieldTempUpdate); // thêm khóa ngoại mới
-            }
-        } else {
-            if (currentForeignKeyIndex !== -1) { // nếu tìm thấy khóa ngoại trong mảng
-                newForeignKeys.splice(currentForeignKeyIndex, 1); // xóa khóa ngoại khỏi mảng
-            }
+            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
+            setForeignKeys([...updatedForeignKeys, { ...foreignKey, field_id: fieldTempUpdate.id }])
         }
-        setForeignKeys(newForeignKeys);
-
 
         // dispatch({
         //     branch: "db",
@@ -233,7 +237,7 @@ export default () => {
         console.log(primaryKey)
     };
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
-    
+
     useEffect(() => {
         if (primaryKey.includes(fieldTempUpdate.id)) {
             setIsOn(true);
@@ -327,6 +331,70 @@ export default () => {
         // setUpdateTable(table_temp);
     }
 
+    const deleteField = (fieldId) => {
+        const requestBody = {
+            table_id: fieldId.table_id,
+            field_ids: [fieldId.id]
+        };
+        console.log(requestBody)
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/db/tables/table/fields`, {
+                    method: 'DELETE',
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(res => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        if (status === "0x52404") {
+                            Swal.fire({
+                                title: "Cảnh báo!",
+                                text: content,
+                                icon: "warning",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                // window.location.reload();
+                            });
+                            return;
+                        }
+                        if (success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: content,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(function () {
+                                // Không cần reload trang
+                            });
+                        }
+                    });
+            }
+        });
+    }
     const deleteFieldTemp = (fieldId) => {
         Swal.fire({
             title: 'Xác nhận xóa',
@@ -362,7 +430,7 @@ export default () => {
     }
 
     const [getTableFields, setTableFields] = useState({});
-   
+
     useEffect(() => {
 
         fetch(`${proxy}/db/tables/table/${table_id}`, {
@@ -596,6 +664,7 @@ export default () => {
                         timer: 1500,
                     }).then(function () {
                         // window.location.href = `/projects/${version_id}/tables/field`;
+                        window.location.reload();
                     });
                 } else {
                     Swal.fire({
@@ -814,7 +883,7 @@ export default () => {
                                                                         <td>{field.create_at.toString()}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdFieldTemp(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteField(field)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}
@@ -958,8 +1027,8 @@ export default () => {
                                                 currentTable && currentTable.length > 0 ? (
                                                     <div className="button-container mt-4">
 
-                                                        <button type="button" onClick={addField} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                        <button type="button" onClick={handleDelete} class="btn btn-danger ">{lang["btn.close"]}</button>
+                                                        <button type="button" onClick={addField} class="btn btn-success ">{lang["btn.addfield"]}</button>
+                                                        <button type="button" onClick={handleDelete} class="btn btn-danger ">{lang["btn.cancel"]}</button>
                                                     </div>) : null}
                                         </div>
                                     ) : null

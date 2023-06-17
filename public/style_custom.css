@@ -805,6 +805,18 @@ h5 {
 .align-items-flex-end {
     align-items: flex-end;
 }
+.checkbox-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.checkbox-item {
+    margin-right: 1px;
+}
+
+
+
 
 
 .modal-body {

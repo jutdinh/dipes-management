@@ -10,6 +10,7 @@ import { Tables } from ".";
 import { data } from "jquery";
 
 
+
 const types = [
     ValidTypeEnum.INT,
     ValidTypeEnum.INT_UNSIGNED,
@@ -83,8 +84,41 @@ export default () => {
         setShowModal(false);
 
     };
-    const handleSubmitModal = () => {
 
+    const [errors, setErrors] = useState({});
+
+    const validate = () => {
+        let temp = {};
+      
+        temp.field_name = modalTemp.field_name ? "" : "Trường này không được để trống.";
+        temp.DATATYPE = modalTemp.DATATYPE ? "" : "Trường này không được để trống.";
+      
+        if (isOnforenkey) {
+          if (!foreignKey.table_id) {
+            temp.table_id = "Bạn phải chọn bảng.";
+          } else {
+            temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+          }
+      
+          if (!foreignKey.ref_field_id) {
+            temp.ref_field_id = "Bạn phải chọn trường.";
+          } else {
+            temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+          }
+        }
+      
+        setErrors({
+          ...temp
+        });
+      
+        return Object.values(temp).every(x => x === "");
+      }
+      
+
+
+
+    const handleSubmitModal = () => {
+        if (validate()) {
         setFieldTemp(modalTemp)
         if (isOn) {
             setPrimaryKey([...primaryKey, tempCounter])
@@ -112,7 +146,7 @@ export default () => {
         setModalTemp({
             field_name: '',
             DATATYPE: '',
-            NULL: false,
+            NULL: true,
             LENGTH: 255,
             AUTO_INCREMENT: true,
             MIN: '',
@@ -126,6 +160,8 @@ export default () => {
 
         console.log(tempFields)
         console.log(primaryKey)
+       
+    }
 
     };
 
@@ -420,8 +456,14 @@ export default () => {
     const [primaryKey, setPrimaryKey] = useState([]);
 
     const handleClickPrimary = () => {
-        setIsOn(!isOn);
-    };
+        if (isOn) {
+          setIsOn(false);
+          setIsOnforenkey(true); // Ẩn toggle Khóa ngoại
+        } else {
+          setIsOn(true);
+          setIsOnforenkey(false); // Ẩn toggle Khóa chính
+        }
+      };
 
     //forenkey
     const [isOnforenkey, setIsOnforenkey] = useState(false);
@@ -429,8 +471,14 @@ export default () => {
     const [foreignKeys, setForeignKeys] = useState([]);
 
     const handleClickForenkey = () => {
-        setIsOnforenkey(!isOnforenkey);
-    };
+        if (isOnforenkey) {
+          setIsOnforenkey(false);
+          setIsOn(true); // Ẩn toggle Khóa chính
+        } else {
+          setIsOnforenkey(true);
+          setIsOn(false); // Ẩn toggle Khóa ngoại
+        }
+      };
 
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
@@ -775,6 +823,7 @@ export default () => {
                                                 onChange={(e) => setModalTemp({ ...modalTemp, field_name: e.target.value })}
                                                 placeholder=""
                                             />
+                                            {errors.field_name && <p className="text-danger">{errors.field_name}</p>}
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label>Trạng thái khóa <span className='red_star'>*</span></label>
@@ -803,6 +852,9 @@ export default () => {
                                                 onChange={(e) => {
                                                     handleSelectTable(e);
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
+                                                    if (e.target.value !== "") {
+                                                        setErrors({ ...errors, table_id: "" }); // Xóa thông báo lỗi
+                                                      }
                                                 }}
                                                 disabled={!isOnforenkey}>
                                                 <option value="">Chọn bảng</option>
@@ -814,12 +866,16 @@ export default () => {
                                                     );
                                                 })}
                                             </select>
+                                            {errors.table_id && <p className="text-danger">{errors.table_id}</p>}
                                         </div>
                                         <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
                                             <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
                                                 console.log(e.target.value);
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                if (e.target.value !== "") {
+                                                    setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
+                                                  }
                                             }}
                                             > <option value="">Chọn trường</option>
                                                 {
@@ -836,11 +892,13 @@ export default () => {
                                                     })
                                                 }
                                             </select>
+                                            {errors.ref_field_id && <p className="text-danger">{errors.ref_field_id}</p>}
+                                            
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>Yêu cầu dữ liệu </label>
                                             <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
-                                                <option value={false}>Chọn</option>
+                                                
                                                 {typenull.map((item, index) => {
                                                     return (
                                                         <option key={index} value={item.value} >
@@ -850,8 +908,6 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-
-
 
                                         <div class={`form-group col-lg-12`}>
                                             <label> Chọn kiểu dữ liệu</label>
@@ -901,6 +957,7 @@ export default () => {
                                                     </option>
                                                 ))}
                                             </select>
+                                            {errors.DATATYPE && <p className="text-danger">{errors.DATATYPE}</p>}
                                         </div>
                                         {types.map((type) => {
                                             if (type.name !== modalTemp.DATATYPE) return null;
@@ -916,7 +973,6 @@ export default () => {
                                                             if (prop.name === 'MIN') defaultValue = type.limit.min;
                                                             if (prop.name === 'MAX') defaultValue = type.limit.max;
                                                         }
-
                                                         return (
                                                             <div key={index} className="form-group col-lg-12">
                                                                 <label>{prop.label} </label>
@@ -931,7 +987,6 @@ export default () => {
                                                                             }));
                                                                         }}
                                                                     >
-
                                                                         <option value="true">True</option>
                                                                         <option value="false">False</option>
                                                                     </select>
@@ -951,14 +1006,9 @@ export default () => {
                                                             </div>
                                                         );
                                                     })}
-
-
                                                 </div>
                                             );
                                         })}
-
-
-
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo </label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
@@ -967,12 +1017,11 @@ export default () => {
                                             <label>Thời gian</label>
                                             <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly />
                                         </div>
-
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitModal} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitModal} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1204,7 +1253,6 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
                 {/* Edit table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="editTable">
                     <div class="modal-dialog modal-dialog-center">

@@ -45,18 +45,7 @@ export default () => {
 
     // console.log("p key", primaryKey)
     // console.log("f key", foreignKey)
-    const fieldShow = (project) => {
 
-        window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
-
-        // window.location.href = `tables`;
-    };
-    const fieldStatistical = (project) => {
-
-        window.location.href = `/projects/${version_id}/apis/create/fieldstatis`;
-
-        // window.location.href = `tables`;
-    };
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -132,7 +121,7 @@ export default () => {
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường hiển thị </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => fieldShow()}>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -147,7 +136,7 @@ export default () => {
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường thống kê</p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => fieldStatistical()}>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

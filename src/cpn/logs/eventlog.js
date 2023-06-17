@@ -85,11 +85,11 @@ export default () => {
                     const { success, content, data, status } = resp;
                     console.log(resp)
                     if (success) {
-                        
-                            setView(data)
-                            // window.location.reload();
-                            setShowModal(false);
-                        
+
+                        setView(data)
+                        // window.location.reload();
+                        setShowModal(false);
+
                     } else {
                         Swal.fire({
                             title: "Thất bại!",
@@ -135,8 +135,8 @@ export default () => {
                                             <div className="col-lg-3">
                                                 <label>{lang["log.type"]}:</label>
                                                 <select className="form-control" value={filter.type} onChange={(e) => { setFilter({ ...filter, type: e.target.value }) }}>
-                                                   
-                                                   
+
+
                                                     <option value="info">{lang["log.information"]}</option>
                                                     <option value="warn">{lang["log.warning"]}</option>
                                                     <option value="error">{lang["log.error"]}</option>
@@ -232,24 +232,45 @@ export default () => {
                                                     <nav aria-label="Page navigation example">
                                                         <ul className="pagination mb-0">
                                                             <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(1)}>
+                                                                    &#8810; 
+                                                                </button>
+                                                            </li>
+                                                            <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
                                                                 <button className="page-link" onClick={() => paginateLogs(currentPageLogs - 1)}>
                                                                     &laquo;
                                                                 </button>
                                                             </li>
-                                                            {Array(totalPagesLogs).fill().map((_, index) => (
-                                                                <li className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateLogs(index + 1)}>
-                                                                        {index + 1}
-                                                                    </button>
-                                                                </li>
-                                                            ))}
+                                                            {currentPageLogs > 3 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            {Array(totalPagesLogs).fill().map((_, index) => {
+                                                                if (
+                                                                    index + 1 === currentPageLogs ||
+                                                                    (index + 1 >= currentPageLogs - 5 && index + 1 <= currentPageLogs + 5)
+                                                                ) {
+                                                                    return (
+                                                                        <li className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateLogs(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    )
+                                                                }
+                                                            })}
+                                                            {currentPageLogs < totalPagesLogs - 2 && <li className="page-item"><span className="page-link">...</span></li>}
                                                             <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
                                                                 <button className="page-link" onClick={() => paginateLogs(currentPageLogs + 1)}>
-                                                                    &raquo;
+                                                                    &raquo; 
+                                                                </button>
+                                                            </li>
+                                                            <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(totalPagesLogs)}>
+                                                                    &#8811; 
                                                                 </button>
                                                             </li>
                                                         </ul>
                                                     </nav>
+
+
                                                 </div>
                                             </>
                                         ) : (

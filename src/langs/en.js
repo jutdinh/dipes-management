@@ -210,7 +210,9 @@ export default {
 
 //
 "supervisor":"Supervisor",
-"deployers": "Deployers"
+"deployers": "Deployers",
+"btn.cancel":"Cancel",
+"btn.addfield":"Add new field"
 }
 
 
