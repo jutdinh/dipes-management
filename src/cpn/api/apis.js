@@ -11,7 +11,29 @@ export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
-    
+
+    const [apis, setApis] = useState([]);
+    useEffect(() => {
+        fetch(`${proxy}/apis/v/2`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        setApis(data.apis);
+
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+    console.log(apis)
     // const [currentPageTable, setCurrentPageTable] = useState(1);
     // const rowsPerPageTable = 7;
 
@@ -66,8 +88,26 @@ export default () => {
                                             </button>
                                         </div>
                                         <div class="table-responsive">
-
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Display Name</th>
+                                                      
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {apis.map((api, index) => (
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>{api.api_name}</td>
+                                                          
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

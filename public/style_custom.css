@@ -817,7 +817,27 @@ h5 {
 
 
 
+/* TableList.css */
 
+.outerBox {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .innerBox {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+
+    width: calc(50% - 10px);
+    margin-bottom: 5px;
+  }
+  
 
 .modal-body {
     position: relative;
