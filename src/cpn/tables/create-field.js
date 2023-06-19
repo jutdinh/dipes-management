@@ -113,8 +113,21 @@ export default () => {
       
         return Object.values(temp).every(x => x === "");
       }
-      
 
+      const [errorTable, setErrorTable] = useState({});
+      const validateTablename = () => {
+        let temp = {};
+      
+        temp.table_name = table.table_name ? "" : "Trường này không được để trống.";
+       
+      
+      
+        setErrorTable({
+          ...temp
+        });
+      
+        return Object.values(temp).every(x => x === "");
+      }
 
 
     const handleSubmitModal = () => {
@@ -326,39 +339,43 @@ export default () => {
     // console.log(table)
     const addTable = (e) => {
         e.preventDefault();
-        // console.log( table )
-        const tableRequestBody = {
-            version_id: version_id,
-            table: {
-                table_name: table.table_name
-            }
-        };
-        //console.log("body",tableRequestBody)
-        fetch(`${proxy}/db/tables/table`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(tableRequestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                if (success) {
-                    // console.log(data)
-                    const tableId = data.table.id; // Lấy id bảng vừa tạo
-                    addField(tableId);
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+        if(validateTablename()){
+          
+            // console.log( table )
+            const tableRequestBody = {
+                version_id: version_id,
+                table: {
+                    table_name: table.table_name
                 }
-            });
+            };
+            //console.log("body",tableRequestBody)
+            fetch(`${proxy}/db/tables/table`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${_token}`,
+                },
+                body: JSON.stringify(tableRequestBody),
+            })
+                .then((res) => res.json())
+                .then((resp) => {
+                    const { success, content, data, status } = resp;
+                    if (success) {
+                        // console.log(data)
+                        const tableId = data.table.id; // Lấy id bảng vừa tạo
+                        addField(tableId);
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại!",
+                            text: content,
+                            icon: "error",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+                });
+        }
+       
     };
 
     const addField = (tableId) => {
@@ -680,10 +697,11 @@ export default () => {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value={table.field_name}
+                                            value={table.table_name}
                                             onChange={(e) => setTable({ ...table, table_name: e.target.value })}
                                             placeholder=""
                                         />
+                                         {errorTable.table_name && <p className="text-danger">{errorTable.table_name}</p>}
                                     </div>
 
                                     <div class="col-md-12 col-lg-12">

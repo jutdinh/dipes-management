@@ -608,7 +608,6 @@ export default () => {
                 const { success, content, data, status } = resp;
                 if (success) {
                     console.log(data)
-
                     updateKey(data);
                 } else {
                     Swal.fire({
@@ -759,6 +758,7 @@ export default () => {
                         timer: 1500,
                     }).then(function () {
                         // window.location.href = `/projects/${version_id}/tables/field`;
+                        window.location.reload();
                     });
                 } else {
                     Swal.fire({

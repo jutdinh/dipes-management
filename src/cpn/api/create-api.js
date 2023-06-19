@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { ready } from "jquery";
 
-import ReactSelect from "react-select";
+
 
 
 export default () => {
@@ -675,7 +675,7 @@ export default () => {
                                                         <input
                                                             type="checkbox"
                                                             value={field.id}
-                                                            checked={selectedFieldsModal2[tableId]?.includes(field.id) || false}
+                                                            checked={selectedFieldsModal2[tableId]?.includes(field.id) ?? false}
                                                             onChange={(e) => {
                                                                 const checked = e.target.checked;
                                                                 setSelectedFieldsModal2(prevState => {
@@ -693,6 +693,7 @@ export default () => {
                                                                     return newFields;
                                                                 });
                                                             }}
+                                                          
                                                         />
                                                         Tên trường: {field.field_name}
                                                     </label>
