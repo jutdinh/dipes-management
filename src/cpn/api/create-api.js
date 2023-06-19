@@ -33,6 +33,8 @@ export default () => {
         params: [],
         fields: [],
         body: [],
+        calculates: [{ "displayname": "Thành tiền", "formular_alias": "TT1", "formula": "fomula1 + fomula2 + fomula3" }],
+        statistical: [],
         api_scope: "public"
     };
 
@@ -185,7 +187,39 @@ export default () => {
     //     }));
 
     // }, [selectedTables]);
-    console.log(selectedTables)
+    console.log("Table Selected", selectedTables)
+    // const handleChange = (e) => {
+    //     const selectedTableName = e.target.value;
+    //     const selectedTableData = allTable.find(
+    //         (table) => table.table_name === selectedTableName
+    //     );
+
+    //     setSelectedTables((prevSelectedTables) => [
+    //         ...prevSelectedTables,
+    //         selectedTableData,
+    //     ]);
+
+    //     // Filter tables that are linked to the selected table
+    //     const linkedTables = allTable.filter(
+    //         (table) =>
+    //             (selectedTableData.foreign_keys.some(
+    //                 (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
+    //             ) ||
+    //                 table.foreign_keys.some(
+    //                     (fk) => fk.table_id === selectedTableData.id || fk.ref_table_id === selectedTableData.id
+    //                 )) &&
+    //             !selectedTables.some((selectedTable) => selectedTable.id === table.id)
+    //     );
+
+    //     setPossibleTables(linkedTables);
+    // };
+    // selectedTables.forEach(table => {
+    //     console.log(`Khóa chính của bảng ${table.table_name}: ${table.primary_key}`);
+
+    //     table.foreign_keys.forEach((fk, index) => {
+    //         console.log(`Khóa ngoại ${index+1} của bảng ${table.table_name}: ${fk}`);
+    //     });
+    // });
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
@@ -197,29 +231,24 @@ export default () => {
             selectedTableData,
         ]);
 
-        // Filter tables that are linked to the selected table
+        // After updating selectedTables, we need to find the linked tables
+        const updatedSelectedTables = [...selectedTables, selectedTableData];
         const linkedTables = allTable.filter(
-            (table) =>
-                (selectedTableData.foreign_keys.some(
-                    (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-                ) ||
-                    table.foreign_keys.some(
-                        (fk) => fk.table_id === selectedTableData.id || fk.ref_table_id === selectedTableData.id
-                    )) &&
-                !selectedTables.some((selectedTable) => selectedTable.id === table.id)
+            (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+                updatedSelectedTables.some(
+                    (selectedTable) => (selectedTable.foreign_keys.some(
+                        (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
+                    ) || selectedTable.primary_key === table.id ||
+                        table.foreign_keys.some(
+                            (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
+                        ) || table.primary_key === selectedTable.id)
+                )
         );
 
         setPossibleTables(linkedTables);
     };
-    selectedTables.forEach(table => {
-        console.log(`Khóa chính của bảng ${table.table_name}: ${table.primary_key}`);
-        
-        table.foreign_keys.forEach((fk, index) => {
-            console.log(`Khóa ngoại ${index+1} của bảng ${table.table_name}: ${fk}`);
-        });
-    });
-    
-    console.log(allTable)
+
+    console.log("All table", allTable)
     //xóa bảng đã chọn 
     const handleDeleteAll = () => {
         setSelectedTables([]);
@@ -248,6 +277,7 @@ export default () => {
             });
 
     }, [modalTemp.tables]);
+
 
     console.log(tables)
 
@@ -286,7 +316,7 @@ export default () => {
     }, [modalTemp.tables]);
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-
+    console.log(selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
 
@@ -312,6 +342,54 @@ export default () => {
 
 
     console.log(selectedFields)
+    ///delete selected table 
+    //////////////////// 
+
+    const [display_name, setDisplayname] = useState("");
+    const [fomula, setFomula] = useState("");
+    const [calculated, setCalculated] = useState([]);
+    const [calculates, setCalculates] = useState([]);
+    console.log("calustasud", calculates)
+
+    const generateInitials = (name) => {
+        // Chuyển tên về dạng chữ hoa và lấy chữ cái đầu của mỗi từ
+        return name.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
+    }
+
+    const generateUniqueFormularAlias = (name, index = 0) => {
+        let alias = generateInitials(name);
+        if (index > 0) {
+            alias += index;
+        }
+        if (calculated.find(calc => calc.fomular_alias === alias)) {
+            return generateUniqueFormularAlias(name, index + 1);
+        }
+        return alias;
+    }
+
+    const handleSubmitFieldCalculates = (event) => {
+        event.preventDefault();
+        const newCalculate = {
+            display_name,
+            fomular_alias: generateUniqueFormularAlias(display_name),
+            fomula,
+        };
+    
+        // Cập nhật modalTemp
+        setModalTemp(prev => ({
+            ...prev,
+            calculates: [...prev.calculates, newCalculate]
+        }));
+        setCalculates([...calculates, newCalculate])
+        setDisplayname("");
+        setFomula("");
+    };
+    
+
+
+
+
+
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
@@ -427,26 +505,36 @@ export default () => {
                                         </div>
                                         <div class="table-responsive">
                                             {
-                                                <>
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold" scope="col">Tên trường</th>
 
-                                                                <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {tables.map((table, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{table.table_name}</td>
+                                                tables && tables.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                    <th class="font-weight-bold" scope="col">Người tạo</th>
+                                                                    <th class="font-weight-bold" scope="col">Thời gian</th>
+
                                                                 </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </>
+                                                            </thead>
+                                                            <tbody>
+                                                                {tables.map((table, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{table.table_name}</td>
+                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_at}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có dữ liệu bảng</p>
+                                                    </div>
+                                                )
                                             }
                                         </div>
                                     </div>
@@ -460,35 +548,41 @@ export default () => {
                                         </div>
                                         <div class="table-responsive">
                                             {
-                                                <>
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                    const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                    return (
-                                                                        <tr key={`${tableId}-${fieldId}`}>
-                                                                            <td>{index + 1}</td>
-                                                                            <td>{fieldInfo?.field_name}</td>
-                                                                            <td>{tableInfo.table_name}</td>
-                                                                            <td>
-                                                                                {/* Action buttons here */}
-                                                                            </td>
-                                                                        </tr>
-                                                                    )
-                                                                })
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </>
+                                                tableFields && tableFields.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
+                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
+                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
+                                                                        return (
+                                                                            <tr key={`${tableId}-${fieldId}`}>
+                                                                                <td>{index + 1}</td>
+                                                                                <td>{fieldInfo?.field_name}</td>
+                                                                                <td>{tableInfo.table_name}</td>
+                                                                                <td>
+                                                                                    {/* Action buttons here */}
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                    })
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có dữ liệu trường</p>
+                                                    </div>
+                                                )
                                             }
                                         </div>
                                     </div>
@@ -501,11 +595,12 @@ export default () => {
                                             </button>
                                         </div>
                                         <div class="table-responsive">
+
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th class="font-weight-bold">STT</th>
-                                                        <th class="font-weight-bold">Tên hiển thị</th>
+                                                        <th class="font-weight-bold">Tên trường hiển thị</th>
                                                         <th class="font-weight-bold">Bí danh</th>
                                                         <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
                                                     </tr>
@@ -520,6 +615,49 @@ export default () => {
                                                     ))}
                                                 </tbody>
                                             </table>
+
+
+
+                                        </div>
+                                    </div>
+                                    {/* Chọn trường tính toán */}
+                                    <div class="col-md-12 col-lg-12">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">Danh sách các trường tính toán </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="table-responsive">
+                                            {calculates && calculates.length > 0 ? (
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">STT</th>
+                                                            <th class="font-weight-bold">Tên trường tính toán</th>
+                                                            <th class="font-weight-bold">Bí danh</th>
+                                                            <th class="font-weight-bold">Phép tính</th>
+                                                           
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {calculates.map((calculates, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{calculates.display_name}</td>
+                                                                        <td>{calculates.fomular_alias}</td>
+                                                                        <td>{calculates.fomula}</td>
+                                                                    </tr>
+                                                                ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Chưa có dữ liệu trường hiển thị</p>
+                                                </div>
+                                            )
+                                            }
+
                                         </div>
                                     </div>
                                     {/* Chọn trường thống kê */}
@@ -534,7 +672,7 @@ export default () => {
                                         </div>
                                         <div className="button-container mt-4">
                                             <button type="button" onClick={handleSubmitModal} class="btn btn-success ">{lang["btn.update"]}</button>
-                                            <button type="button" onClick={addApi} class="btn btn-success ">submitapi</button>
+
                                             <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                             </button>
                                         </div>
@@ -686,8 +824,8 @@ export default () => {
                                                                         if (!newFields[tableId]) newFields[tableId] = [];
                                                                         newFields[tableId].push({
                                                                             id: field.id,
-                                                                            display_name: field.field_name,
-                                                                            fomular: field.fomular_alias
+                                                                            display_name: field.fomular_alias,
+
                                                                         });
                                                                     } else {
                                                                         newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
@@ -717,6 +855,46 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitShow} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/*add Field calculates */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldCalculates">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Thêm trường tính toán</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className={`form-group col-lg-12`}>
+                                        <label>Tên trường <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value={display_name}
+                                            onChange={(e) => setDisplayname(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className={`form-group col-lg-12`}>
+                                        <label>Công thức <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value={fomula}
+                                            onChange={(e) => setFomula(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
