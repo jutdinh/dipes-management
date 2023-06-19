@@ -305,7 +305,7 @@ export default () => {
                                                                         </button>
                                                                     </li>
                                                                     {Array(totalPagesTable).fill().map((_, index) => (
-                                                                        <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                        <li key={index} className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
                                                                             <button className="page-link" onClick={() => paginateTable(index + 1)}>
                                                                                 {index + 1}
                                                                             </button>

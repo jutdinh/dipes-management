@@ -248,7 +248,7 @@ export default () => {
                                                                     (index + 1 >= currentPageLogs - 5 && index + 1 <= currentPageLogs + 5)
                                                                 ) {
                                                                     return (
-                                                                        <li className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
+                                                                        <li key={index} className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
                                                                             <button className="page-link" onClick={() => paginateLogs(index + 1)}>
                                                                                 {index + 1}
                                                                             </button>
