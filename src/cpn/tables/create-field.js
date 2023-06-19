@@ -179,10 +179,7 @@ export default () => {
     };
 
     const handleUpdatetModal = () => {
-        // Kiểm tra xem trường `field_name` có rỗng không
-
-
-        // setFieldTemp(modalTemp)
+      
         if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
             const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
             setPrimaryKey(newPrimaryKey);
@@ -193,11 +190,20 @@ export default () => {
             setPrimaryKey(uniquePrimaryKey)
         }
 
-
         if (isOnforenkey) {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
-            setForeignKeys([...updatedForeignKeys, { ...foreignKey, index: fieldTempUpdate.index }])
+            updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index });
+            setForeignKeys(updatedForeignKeys);
+        } else {
+            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
+            setForeignKeys(updatedForeignKeys);
         }
+        
+        
+        
+
+        
+
 
         dispatch({
             branch: "db",
@@ -208,7 +214,7 @@ export default () => {
             }
         })
 
-        setIsOn(!isOn);
+        
         setModalTemp((prevModalTemp) => ({
             ...prevModalTemp,
             ...defaultValues,
@@ -454,7 +460,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        window.location.href = `/projects/${version_id}/tables/field`;
+                        // window.location.href = `/projects/${version_id}/tables/field`;
                     });
                 } else {
                     Swal.fire({
@@ -500,6 +506,12 @@ export default () => {
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
         setUpdateTable(tableid);
+    }
+    const autoType = (field_id) =>{
+        const field = fields.find( f => f.id == field_id );
+        setModalTemp({
+            ...modalTemp, ...field.props
+        });        
     }
     const handleSubmit = (e) => {
         // Gửi temporaryData lên server để thêm dữ liệu vào cơ sở dữ liệu
@@ -593,6 +605,7 @@ export default () => {
 
 
     };
+
     const handleDeleteTask = (tableid) => {
         const requestBody = {
             table_id: parseInt(tableid.id)
@@ -667,8 +680,8 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    // console.log("p key", primaryKey)
-    // console.log("f key", foreignKeys)
+        console.log("p key", primaryKey)
+        console.log("f key", foreignKeys)
     // console.log(tables)
     return (
         <div class="midde_cont">
@@ -680,7 +693,6 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
                 {/* List table */}
                 <div class="row">
                     <div class="col-md-12">
@@ -893,7 +905,8 @@ export default () => {
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                 if (e.target.value !== "") {
                                                     setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
-                                                  }
+                                                }
+                                                autoType(e.target.value) // ? type
                                             }}
                                             > <option value="">Chọn trường</option>
                                                 {
@@ -904,6 +917,7 @@ export default () => {
                                                     }).map((field, index) => {
                                                         return (
                                                             <option key={index} value={field.id}>
+
                                                                 {field.field_name}
                                                             </option>
                                                         );

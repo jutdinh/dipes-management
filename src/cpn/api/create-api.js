@@ -58,7 +58,7 @@ export default () => {
             addApi();
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
-    
+
     const addApi = () => {
         const requestBody = {
             version_id: parseInt(version_id),
@@ -211,7 +211,14 @@ export default () => {
 
         setPossibleTables(linkedTables);
     };
-
+    selectedTables.forEach(table => {
+        console.log(`Khóa chính của bảng ${table.table_name}: ${table.primary_key}`);
+        
+        table.foreign_keys.forEach((fk, index) => {
+            console.log(`Khóa ngoại ${index+1} của bảng ${table.table_name}: ${fk}`);
+        });
+    });
+    
     console.log(allTable)
     //xóa bảng đã chọn 
     const handleDeleteAll = () => {
@@ -410,8 +417,7 @@ export default () => {
                                         </div>
 
                                     </div>
-
-
+                                    {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các bảng </p>
@@ -432,7 +438,6 @@ export default () => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-
                                                             {tables.map((table, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
@@ -441,12 +446,11 @@ export default () => {
                                                             ))}
                                                         </tbody>
                                                     </table>
-
                                                 </>
                                             }
                                         </div>
                                     </div>
-
+                                    {/* Chọn đối số */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường đối số </p>
@@ -488,6 +492,7 @@ export default () => {
                                             }
                                         </div>
                                     </div>
+                                    {/* Chọn trường hiện thị */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường hiển thị </p>
@@ -496,7 +501,7 @@ export default () => {
                                             </button>
                                         </div>
                                         <div class="table-responsive">
-                                        <table class="table table-striped">
+                                            <table class="table table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th class="font-weight-bold">STT</th>
@@ -508,7 +513,7 @@ export default () => {
                                                 <tbody>
                                                     {Object.values(selectedFieldsModal2).flat().map((field, index) => (
                                                         <tr key={index}>
-                                                            <td>{index+1}</td>
+                                                            <td>{index + 1}</td>
                                                             <td>{field.display_name}</td>
                                                             <td>{field.fomular}</td>
                                                         </tr>
@@ -516,11 +521,8 @@ export default () => {
                                                 </tbody>
                                             </table>
                                         </div>
-
-
-
                                     </div>
-
+                                    {/* Chọn trường thống kê */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường thống kê</p>
@@ -528,18 +530,14 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-
                                         <div class="table-responsive">
-
                                         </div>
                                         <div className="button-container mt-4">
-
                                             <button type="button" onClick={handleSubmitModal} class="btn btn-success ">{lang["btn.update"]}</button>
                                             <button type="button" onClick={addApi} class="btn btn-success ">submitapi</button>
                                             <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                             </button>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -697,7 +695,7 @@ export default () => {
                                                                     return newFields;
                                                                 });
                                                             }}
-                                                          
+
                                                         />
                                                         Tên trường: {field.field_name}
                                                     </label>

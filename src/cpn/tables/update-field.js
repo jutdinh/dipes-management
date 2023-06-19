@@ -133,9 +133,7 @@ export default () => {
     };
 
     const handleUpdatetModal = () => {
-        // Kiểm tra xem trường `field_name` có rỗng không
-
-        // setFieldTemp(modalTemp)
+  
         let newPrimaryKey = [...getTableFields.primary_key];
         if (isOn) {
             if (!newPrimaryKey.includes(fieldTempUpdate.id)) {
@@ -146,7 +144,21 @@ export default () => {
         }
         setPrimaryKey(newPrimaryKey);
 
-        setTableFields({...getTableFields, primary_key: newPrimaryKey })
+        setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
+
+
+
+        // let newForeignKeys = [...getTableFields.foreign_keys];
+        // if (isOnforenkey) {
+        //     if (!newForeignKeys.includes(fieldTempUpdate.id)) {
+        //         newForeignKeys.push(fieldTempUpdate.id);
+        //     }
+        // } else {
+        //     newForeignKeys = newForeignKeys.filter(index => index !== fieldTempUpdate.id);
+        // }
+        // setForeignKeys(newForeignKeys);
+
+        // setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
 
         // let newForeignKeys = [...getTableFields.foreign_keys];
         // const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
@@ -161,21 +173,21 @@ export default () => {
         //     }
         // }
         // setForeignKeys(newForeignKeys);
-
         if (isOnforenkey) {
+            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
+            updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
+            setForeignKeys(updatedForeignKeys);
+            setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
+        } else {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
-            setForeignKeys([...updatedForeignKeys, { ...foreignKey, field_id: fieldTempUpdate.id }])
-            setTableFields({...foreignKeys, foreign_keys: foreignKeys})
+            setForeignKeys(updatedForeignKeys);
+            setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
         }
+        
 
-        // dispatch({
-        //     branch: "db",
-        //     type: "updateField",
-        //     payload: {
-        //         field: { ...modalTemp }
+        
 
-        //     }
-        // })
+       
 
         const newfIELDS = getTableFields.fields.map(field => {
             if (field.id == fieldTempUpdate.id) {
@@ -235,8 +247,7 @@ export default () => {
             DEFAULT_FALSE: ''
         });
 
-        console.log(tempFields)
-        console.log(primaryKey)
+       
     };
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
 
@@ -306,6 +317,7 @@ export default () => {
             ...fieldData
         });
     }
+
     // console.log(fieldTempUpdate)
     const getIdFieldTemp = (fieldId) => {
         // console.log(fieldId)
@@ -326,11 +338,6 @@ export default () => {
         } else {
 
         }
-
-        // load data vào modalTemp khi mở form chỉnh sửa
-        // const table_id_temp = getfield[0]?.table_id; // Lấy table_id từ trường
-        // const table_temp = tables.tables?.find(table => table.id === table_id_temp);
-        // setUpdateTable(table_temp);
     }
 
     const deleteField = (fieldId) => {
@@ -410,6 +417,7 @@ export default () => {
             if (result.isConfirmed) {
                 const tempFieldsUpdate = tempFields.filter((field) => field.index !== fieldId.index);
                 const newPrimaryKey = primaryKey.filter(index => index !== fieldId.index);
+
                 setPrimaryKey(newPrimaryKey);
 
                 dispatch({
@@ -419,7 +427,6 @@ export default () => {
                         tempFieldsUpdate
                     }
                 })
-
                 Swal.fire({
                     title: 'Thành công!',
                     text: 'Trường đã được xóa thành công.',
@@ -434,7 +441,6 @@ export default () => {
     const [getTableFields, setTableFields] = useState({});
 
     useEffect(() => {
-
         fetch(`${proxy}/db/tables/table/${table_id}`, {
             headers: {
                 Authorization: _token
@@ -456,7 +462,6 @@ export default () => {
             })
     }, [])
 
-
     console.log(getTableFields)
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
@@ -477,11 +482,6 @@ export default () => {
                 }
             })
     }, [])
-    //lấy table 
-
-    // const table_id_temp = getfield[0]?.table_id; // Lấy table_id từ trường
-    // const table_temp = tables.tables?.find(table => table.id === table_id_temp);
-
 
     const [fields, setFields] = useState([]);
     const [selectedTableId, setSelectedTableId] = useState(null);
@@ -510,7 +510,6 @@ export default () => {
     console.log(selectedTableId)
     const selectDefaultTable = (tableId) => {
         setSelectedTableId(tableId);
-
         fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
@@ -533,6 +532,7 @@ export default () => {
     const [isOn, setIsOn] = useState(false);
     const [primaryKey, setPrimaryKey] = useState([]);
 
+
     const handleClickPrimary = () => {
         setIsOn(!isOn);
     };
@@ -545,7 +545,12 @@ export default () => {
     const handleClickForenkey = () => {
         setIsOnforenkey(!isOnforenkey);
     };
-
+    const autoType = (field_id) => {
+        const field = fields.find(f => f.id == field_id);
+        setModalTemp({
+            ...modalTemp, ...field.props
+        });
+    }
     const [tableUpdate, setUpdateTable] = useState([]);
     useEffect(() => {
         console.log(tableUpdate);
@@ -556,7 +561,6 @@ export default () => {
         const requestBody = {
             table_id: getTableFields.id,
             table_name: getTableFields.table_name,
-
         };
         console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
@@ -582,12 +586,9 @@ export default () => {
                     });
                 }
             })
-
-
     };
 
     const updateFields = () => {
-
         const hashedFields = getTableFields.fields.map(field => {
             return {
                 ...field, ...field.props
@@ -623,8 +624,6 @@ export default () => {
                     });
                 }
             })
-
-
     };
 
     const updateKey = ({ data, tableId }) => {
@@ -638,7 +637,6 @@ export default () => {
         //         }
         //     }
         // }
-
         const KeyRequestBody = {
             table_id: getTableFields.id,
             primary_key: primaryKey,
@@ -667,7 +665,7 @@ export default () => {
                         timer: 1500,
                     }).then(function () {
                         // window.location.href = `/projects/${version_id}/tables/field`;
-                        window.location.reload();
+                        // window.location.reload();
                     });
                 } else {
                     Swal.fire({
@@ -705,7 +703,6 @@ export default () => {
                 const { success, content, data, status } = resp;
                 console.log(data)
                 if (success) {
-
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
@@ -797,10 +794,14 @@ export default () => {
 
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
+
+
     console.log(tempFields)
     console.log(primaryKey)
     console.log(foreignKeys)
-    console.log("FK",getTableFields.foreign_keys)
+    console.log("FK", getTableFields.foreign_keys)
+
+    console.log(fieldTempUpdate)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1108,6 +1109,7 @@ export default () => {
                                             <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
                                                 console.log(e.target.value);
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                autoType(e.target.value) // ? type
                                             }}
                                             > <option value="">Chọn trường</option>
                                                 {
@@ -1342,12 +1344,11 @@ export default () => {
                                         </div>
                                         <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
-
-
                                             <select className="form-control"
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                    autoType(e.target.value) // ? type
                                                 }}
                                             >
                                                 {
@@ -1358,14 +1359,18 @@ export default () => {
                                                     }).map((field, index) => {
 
                                                         return (
-                                                            <option>CHọn</option>
+                                                            <option>Chọn</option>
 
                                                         );
                                                     })
                                                 }
                                                 {fields && fields.length > 0 && (
 
-                                                    fields.map((field, index) => {
+                                                    fields.filter(field => {
+                                                        const selectedTableIdAsNumber = Number(selectedTableId);
+                                                        const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
+                                                        return selectedTable?.primary_key.includes(field.id);
+                                                    }).map((field, index) => {
                                                         const field_id = fieldTempUpdate.id;
 
                                                         const foreignKeys = getTableFields.foreign_keys;
@@ -1389,9 +1394,32 @@ export default () => {
                                             </select>
 
                                         </div>
+                                        {/* <div className={`form-group col-lg-6`}>
+                                            <label>Tên trường <span className='red_star'>*</span></label>
+                                            <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
+                                                console.log(e.target.value);
+                                                setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                autoType(e.target.value) // ? type
+                                            }}
+                                            > <option value="">Chọn trường</option>
+                                                {
+                                                    fields.filter(field => {
+                                                        const selectedTableIdAsNumber = Number(selectedTableId);
+                                                        const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
+                                                        return selectedTable?.primary_key.includes(field.id);
+                                                    }).map((field, index) => {
+                                                        return (
+                                                            <option key={index} value={field.id}>
+                                                                {field.field_name}
+                                                            </option>
+                                                        );
+                                                    })
+                                                }
+                                            </select>
+                                        </div> */}
                                         <div class="form-group col-lg-12">
                                             <label>Yêu cầu dữ liệu <span className='red_star'>*</span></label>
-                                            <select className="form-control" value={fieldTempUpdate.NULL} onChange={(e) => setFieldTempupdate({ ...fieldTempUpdate, props: { ...fieldTempUpdate.props, NULL: e.target.value == "true" ? true : false } })}>
+                                            <select className="form-control" value={fieldTempUpdate.props?.NULL} onChange={(e) => setFieldTempupdate({ ...fieldTempUpdate, props: { ...fieldTempUpdate.props, NULL: e.target.value == "true" ? true : false } })}>
 
                                                 {typenull.map((item, index) => {
                                                     return (
