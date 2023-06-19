@@ -475,10 +475,10 @@ export default () => {
     const handleClickPrimary = () => {
         if (isOn) {
           setIsOn(false);
-          setIsOnforenkey(true); // Ẩn toggle Khóa ngoại
+        
         } else {
           setIsOn(true);
-          setIsOnforenkey(false); // Ẩn toggle Khóa chính
+         
         }
       };
 
@@ -490,10 +490,10 @@ export default () => {
     const handleClickForenkey = () => {
         if (isOnforenkey) {
           setIsOnforenkey(false);
-          setIsOn(true); // Ẩn toggle Khóa chính
+         
         } else {
           setIsOnforenkey(true);
-          setIsOn(false); // Ẩn toggle Khóa ngoại
+          
         }
       };
 

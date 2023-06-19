@@ -14,7 +14,7 @@ export default () => {
 
     const [apis, setApis] = useState([]);
     useEffect(() => {
-        fetch(`${proxy}/apis/v/2`, {
+        fetch(`${proxy}/apis/v/${version_id}`, {
             headers: {
                 Authorization: _token
             }
@@ -91,8 +91,13 @@ export default () => {
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th>STT</th>
-                                                        <th>Display Name</th>
+                                                        <th class="font-weight-bold">STT</th>
+                                                        <th class="font-weight-bold">Phương thức </th>
+                                                        <th class="font-weight-bold">Tên API</th>
+                                                        <th class="font-weight-bold">Phạm vi</th>
+                                                        <th class="font-weight-bold">Người tạo</th>
+                                                        <th class="font-weight-bold">Thời gian tạo</th>
+                                                        <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                       
                                                     </tr>
                                                 </thead>
@@ -100,8 +105,11 @@ export default () => {
                                                     {apis.map((api, index) => (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
+                                                            <td>{api.api_method}</td>
                                                             <td>{api.api_name}</td>
-                                                          
+                                                            <td>{api.api_scope}</td>
+                                                            <td>{api.create_by.fullname}</td>
+                                                            <td>{api.create_at}</td>                                                          
                                                         </tr>
                                                     ))}
                                                 </tbody>

@@ -49,7 +49,7 @@ export default () => {
         field_name: '',
         DATATYPE: '',
         NULL: 'false',
-        LENGTH: 255,
+        LENGTH: 65535,
         AUTO_INCREMENT: true,
         MIN: '',
         MAX: '',
@@ -146,6 +146,7 @@ export default () => {
         }
         setPrimaryKey(newPrimaryKey);
 
+        setTableFields({...getTableFields, primary_key: newPrimaryKey })
 
         // let newForeignKeys = [...getTableFields.foreign_keys];
         // const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
@@ -164,6 +165,7 @@ export default () => {
         if (isOnforenkey) {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
             setForeignKeys([...updatedForeignKeys, { ...foreignKey, field_id: fieldTempUpdate.id }])
+            setTableFields({...foreignKeys, foreign_keys: foreignKeys})
         }
 
         // dispatch({
@@ -445,6 +447,8 @@ export default () => {
                 if (success) {
                     if (data) {
                         setTableFields(data);
+                        setPrimaryKey(data.primary_key)
+                        setForeignKeys(data.foreign_keys)
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -796,6 +800,7 @@ export default () => {
     console.log(tempFields)
     console.log(primaryKey)
     console.log(foreignKeys)
+    console.log("FK",getTableFields.foreign_keys)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

@@ -52,6 +52,13 @@ export default () => {
         })
 
     }
+    useEffect(() => {
+        // Kiểm tra điều kiện dữ liệu sẵn sàng
+        if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
+            addApi();
+        }
+    }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
+    
     const addApi = () => {
         const requestBody = {
             version_id: parseInt(version_id),
@@ -79,7 +86,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        // window.location.reload();
+                        window.location.reload();
                         setShowModal(false);
                     });
                 } else {
@@ -475,16 +482,12 @@ export default () => {
                                                                     )
                                                                 })
                                                             })}
-
                                                         </tbody>
                                                     </table>
-
-
                                                 </>
                                             }
                                         </div>
                                     </div>
-
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các trường hiển thị </p>
@@ -492,20 +495,20 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-
                                         <div class="table-responsive">
-                                            <table class="table">
+                                        <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th>ID</th>
-                                                        <th>Display Name</th>
-                                                        <th>Formula</th>
+                                                        <th class="font-weight-bold">STT</th>
+                                                        <th class="font-weight-bold">Tên hiển thị</th>
+                                                        <th class="font-weight-bold">Bí danh</th>
+                                                        <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {Object.values(selectedFieldsModal2).flat().map((field, index) => (
                                                         <tr key={index}>
-                                                            <td>{field.id}</td>
+                                                            <td>{index+1}</td>
                                                             <td>{field.display_name}</td>
                                                             <td>{field.fomular}</td>
                                                         </tr>
@@ -605,7 +608,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-success" onClick={handleSubmitTables} > {lang["btn.create"]}</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" onClick={handleSubmitTables} > {lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -640,7 +643,7 @@ export default () => {
                                     ))}
                                     <div class="form-group col-md-12">
                                         <label>Người tạo <span className='red_star'>*</span></label>
-                                        <input class="form-control" type="text" value={"Nguyễn Văn A"} readOnly></input>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Ngày tạo <span className='red_star'>*</span></label>
@@ -675,7 +678,8 @@ export default () => {
                                                         <input
                                                             type="checkbox"
                                                             value={field.id}
-                                                            checked={selectedFieldsModal2[tableId]?.includes(field.id) ?? false}
+                                                            checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
+
                                                             onChange={(e) => {
                                                                 const checked = e.target.checked;
                                                                 setSelectedFieldsModal2(prevState => {
@@ -705,7 +709,7 @@ export default () => {
 
                                     <div class="form-group col-md-12">
                                         <label>Người tạo <span className='red_star'>*</span></label>
-                                        <input class="form-control" type="text" value={"Nguyễn Văn A"} readOnly></input>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Ngày tạo <span className='red_star'>*</span></label>
@@ -714,7 +718,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitShow} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitShow} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>

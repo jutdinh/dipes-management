@@ -25,12 +25,12 @@ export const ValidTypeEnum = Object.freeze({
         max: 4294967295
     }, props: [{ name: "AUTO_INCREMENT", label: "Tự động tăng", type: "bool" }, { name: "PATTERN", friend: "AUTO_INCREMENT", type: "text", label: "Định dạng" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "MAX", label: "Giá trị tối đa", type: "int" }] },
    
-    BIGINT: { id: 3, name: "BIG INT", type: "int",  limit: {
+    BIGINT: { id: 3, name: "BIGINT", type: "int",  limit: {
         min: -9223372036854776000,
         max: 9223372036854775999
     }, props: [{ name: "AUTO_INCREMENT", label: "Tự động tăng", type: "bool" }, { name: "PATTERN", friend: "AUTO_INCREMENT", type: "text", label: "Định dạng" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "MAX", label: "Giá trị tối đa", type: "int" }] },
     
-    BIGINT_UNSIGNED: { id: 4, name: "BIG INT UNSIGNED", type: "int",  limit: {
+    BIGINT_UNSIGNED: { id: 4, name: "BIGINT UNSIGNED", type: "int",  limit: {
         min: 0,
         max: 18446744073709552000
     }, props: [{ name: "AUTO_INCREMENT", label: "Tự động tăng", type: "bool" }, { name: "PATTERN", friend: "AUTO_INCREMENT", type: "text", label: "Định dạng" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "MAX", label: "Giá trị tối đa", type: "int" }] },
