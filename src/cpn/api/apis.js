@@ -34,15 +34,99 @@ export default () => {
             })
     }, [])
     console.log(apis)
-    // const [currentPageTable, setCurrentPageTable] = useState(1);
-    // const rowsPerPageTable = 7;
 
-    // const indexOfLastTable = currentPageTable * rowsPerPageTable;
-    // const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
-    // const currentTable = tables.tables?.slice(indexOfFirstTable, indexOfLastTable);
+    const handleDeleteApi = (apiid) => {
+console.log(apiid)
+        const requestBody = {
+            version_id: version_id,
+            api_id: apiid.api_id
+        };
+        console.log(requestBody)
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa api này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/apis/api`, {
+                    method: 'DELETE',
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(res => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        if (status === "0x52404") {
+                            Swal.fire({
+                                title: "Cảnh báo!",
+                                text: content,
+                                icon: "warning",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                            return;
+                        }
+                        if (success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: content,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(function () {
+                                // Không cần reload trang
+                            });
+                        }
+                    });
+            }
+        });
+    }
 
-    // const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
-    // const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const [currentPageApi, setCurrentPageApi] = useState(1);
+    const rowsPerPageApi = 7;
+
+    const indexOfLastApi = currentPageApi * rowsPerPageApi;
+    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
+    const currentApi = apis.slice(indexOfFirstApi, indexOfLastApi);
+
+    const paginateApi= (pageNumber) => setCurrentPageApi(pageNumber);
+    const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
+
     const apisManager = (project) => {
 
         window.location.href = `/projects/${version_id}/apis/create`;
@@ -88,32 +172,72 @@ export default () => {
                                             </button>
                                         </div>
                                         <div class="table-responsive">
-                                            <table class="table table-striped">
+                                            {
+                                                currentApi && currentApi.length > 0 ? (
+                                                    <table class="table table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th class="font-weight-bold">STT</th>
                                                         <th class="font-weight-bold">Phương thức </th>
                                                         <th class="font-weight-bold">Tên API</th>
                                                         <th class="font-weight-bold">Phạm vi</th>
+                                                        <th class="font-weight-bold">Trạng thái</th>
                                                         <th class="font-weight-bold">Người tạo</th>
                                                         <th class="font-weight-bold">Thời gian tạo</th>
                                                         <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                      
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {apis.map((api, index) => (
+                                                    {currentApi.map((api, index) => (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
                                                             <td>{api.api_method}</td>
                                                             <td>{api.api_name}</td>
                                                             <td>{api.api_scope}</td>
+                                                            <td>{api.status ? "On" : "Off"}</td>
                                                             <td>{api.create_by.fullname}</td>
-                                                            <td>{api.create_at}</td>                                                          
+                                                            <td>{api.create_at}</td>
+                                                            <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}
+                                                                {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() =>   openPageUpdateTable(table)}  title={lang["edit"]}></i> */}
+                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(api)} title={lang["delete"]}></i>
+                                                            </td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
                                             </table>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có api</p>
+                                                    </div>
+                                                )
+                                            }
+                                            
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesApi).fill().map((_, index) => (
+                                                                        <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
                                         </div>
 
                                     </div>

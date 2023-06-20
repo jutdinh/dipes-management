@@ -20,7 +20,7 @@ export default () => {
 
     const [showViewMore, setShowViewMore] = useState(false);
 
-    
+
 
     // console.log(selectedMemberTask)
     // Page 
@@ -197,12 +197,12 @@ export default () => {
                 }
             })
     }, [])
-    
 
-const [tables, setTables] = useState({});
 
-useEffect(() => {
-    
+    const [tables, setTables] = useState({});
+
+    useEffect(() => {
+
         fetch(`${proxy}/db/tables/v/${versions[0]?.version_id}`, {
             headers: {
                 Authorization: _token
@@ -214,16 +214,42 @@ useEffect(() => {
 
                 if (success) {
                     if (data) {
-                       setTables(data);
-                       console.log(data)
+                        setTables(data);
+                        console.log(data)
                     }
                 } else {
                     console.log("data")
                     // window.location = "/404-not-found"
                 }
             })
-    
-}, [versions]);
+
+    }, [versions]);
+
+    const [apis, setApis] = useState([]);
+
+    useEffect(() => {
+
+        fetch(`${proxy}/apis/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        setApis(data.apis);
+                        //    console.log(data)
+                    }
+                } else {
+
+                    // window.location = "/404-not-found"
+                }
+            })
+
+    }, [versions]);
 
 
     useEffect(() => {
@@ -863,6 +889,16 @@ useEffect(() => {
 
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
+
+    const [currentPageApi, setCurrentPageApi] = useState(1);
+    const rowsPerPageApi = 3;
+
+    const indexOfLastApi = currentPageApi * rowsPerPageApi;
+    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
+    const currentApi = apis.slice(indexOfFirstApi, indexOfLastApi);
+
+    const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
+    const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -928,7 +964,7 @@ useEffect(() => {
                                     {projectdetail.project_description}
                                 </div>
                                 <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
-                               <div>
+                                <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
                                         <div className="description-text">
@@ -1421,7 +1457,7 @@ useEffect(() => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center"style={{ width: "230px" }} >
+                                                                <td class="align-center" style={{ width: "230px" }} >
 
                                                                     {/* {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]} */}
 
@@ -1894,7 +1930,7 @@ useEffect(() => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">{tables.tables?.length}</p>
+                                                    <p class="total_no">{tables.tables?.length || 0}</p>
                                                     <p class="head_couter">Tables</p>
                                                 </div>
                                             </div>
@@ -1909,7 +1945,7 @@ useEffect(() => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">1</p>
+                                                    <p class="total_no">{apis.length || 0}</p>
                                                     <p class="head_couter">API</p>
                                                 </div>
                                             </div>
@@ -1966,13 +2002,14 @@ useEffect(() => {
                                                                                 {table.table_name}
                                                                             </div>
                                                                         </td>
-                                                                        
+
                                                                         <td>{table.create_at}</td>
-                                                                    
+
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
                                                         </table>
+                                                        
                                                         <div className="d-flex justify-content-between align-items-center">
                                                             <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">
@@ -2010,36 +2047,75 @@ useEffect(() => {
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách API </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
-                                            
+
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên API</th>
-                                                    <th>Ngày tạo</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>API 1</td>
-                                                    <td>06/06/2023 11:16</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>API 2</td>
-                                                    <td>06/06/2023 11:17</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>API 3</td>
-                                                    <td>j06/06/2023 11:18</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive">
+                                            {
+                                                currentApi && currentApi.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">Tên api</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {currentApi.map((api, index) => (
+                                                                    <tr key={api.id}>
+                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {api.api_name}
+                                                                            </div>
+                                                                        </td>
+
+                                                                        <td>{api.create_at}</td>
+
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                        <div className="d-flex justify-content-between align-items-center">
+                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesApi).fill().map((_, index) => (
+                                                                        <li className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có bảng</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">

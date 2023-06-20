@@ -1,3 +1,8 @@
+@media (min-width: 2560px) {
+    .modal-dialog {
+        max-width: 50%; 
+    }
+}
 @media (min-width: 1920px) {
     .modal-dialog {
         max-width: 50%; 
@@ -5,6 +10,11 @@
 }
 
 @media (min-width: 1366) {
+    .modal-dialog {
+        max-width: 50%; 
+    }
+}
+@media (min-width: 1080px) {
     .modal-dialog {
         max-width: 50%; 
     }

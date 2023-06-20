@@ -12,6 +12,7 @@
     border: none;
     border-radius: 0;
 }
+
 .table-hover-custom tbody tr:hover,
 .table-hover-custom tbody tr:focus {
     background-color: #ddd !important;
@@ -22,6 +23,7 @@
     vertical-align: bottom;
     border-bottom: 0.5px solid #dee2e6;
 }
+
 .button-container {
     display: flex;
     justify-content: flex-end;
@@ -47,44 +49,82 @@
     border-radius: 100%;
     width: 48px;
 }
+
 .description-container {
     display: flex;
     align-items: flex-start;
     width: 100%;
     overflow: hidden;
-  }
+}
+
+
+
+/* CSS */
+
+.container-field {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+.table-wrapper {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    width: calc(50% - 10px);
+    max-height: 120px; 
+    overflow-y: auto;
+}
+
+.table-label {
+    display: block;
+    border-bottom: 1px solid #ced4da;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+
+
+
+
 .view-more-link a {
     color: blue;
 }
 
-  .description-text {
+.description-text {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
-  .view-more-link {
+}
+
+.view-more-link {
     min-width: 85px;
     padding-top: 2px;
-  }
-  
-.align-center{
+}
+
+.align-center {
     text-align: center;
 }
-.btn-header{
+
+.btn-header {
     padding: 3px 3px 1px 4px;
 }
+
 .circle-image-project {
     border-radius: 100%;
     width: 44px;
-    display: inline-block; 
-    line-height: 44px; 
-    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    display: inline-block;
+    line-height: 44px;
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover; 
-    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+    background-size: cover;
+    margin-left: 2px;
+    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
 
     position: relative;
     padding: 0px 2px;
@@ -93,7 +133,7 @@
 }
 
 
-.circle-image-project::before{
+.circle-image-project::before {
     content: "";
     display: block;
     position: absolute;
@@ -106,76 +146,111 @@
 }
 
 .extra-images-cus-p {
-    display: inline-block; 
-    width: 48px;  /* Thay đổi kích thước này để phù hợp */
-    height: 48px;  /* Thay đổi kích thước này để phù hợp */
-    line-height: 48px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 100%;  /* Tạo hình tròn */
-    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    display: inline-block;
+    width: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    height: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    line-height: 48px;
+    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 100%;
+    /* Tạo hình tròn */
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-   
-    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;  /* Đậm văn bản */
-  
+
+    color: white;
+    /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;
+    /* Đậm văn bản */
+
 }
+
 .extra-images {
-    display: inline-block; 
-    width: 48px;  /* Thay đổi kích thước này để phù hợp */
-    height: 48px;  /* Thay đổi kích thước này để phù hợp */
-    line-height: 48px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 50%;  /* Tạo hình tròn */
-    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
-    background-color: #8884d8;  /* Màu nền, thay đổi theo ý thích */
-    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;  /* Đậm văn bản */
+    display: inline-block;
+    width: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    height: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    line-height: 48px;
+    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 50%;
+    /* Tạo hình tròn */
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
+    background-color: #8884d8;
+    /* Màu nền, thay đổi theo ý thích */
+    color: white;
+    /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;
+    /* Đậm văn bản */
     /* margin-left: 10px;  */
-    margin-left: 1px; 
+    margin-left: 1px;
 }
+
 .extra-images-cus {
-    display: inline-block; 
-    width: 35px;  /* Thay đổi kích thước này để phù hợp */
-    height: 35px;  /* Thay đổi kích thước này để phù hợp */
-    line-height: 36px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 100%;  /* Tạo hình tròn */
-    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    display: inline-block;
+    width: 35px;
+    /* Thay đổi kích thước này để phù hợp */
+    height: 35px;
+    /* Thay đổi kích thước này để phù hợp */
+    line-height: 36px;
+    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 100%;
+    /* Tạo hình tròn */
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
-    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;  /* Đậm văn bản */
-    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+    color: white;
+    /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;
+    /* Đậm văn bản */
+    margin-left: 2px;
+    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
 
-  
+
     padding: 0px 2px;
 }
+
 .extra-images-cus-p {
-    display: inline-block; 
-    width: 48px;  /* Thay đổi kích thước này để phù hợp */
-    height: 48px;  /* Thay đổi kích thước này để phù hợp */
-    line-height: 48px;  /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 100%;  /* Tạo hình tròn */
-    text-align: center;  /* Căn giữa văn bản theo chiều ngang */
+    display: inline-block;
+    width: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    height: 48px;
+    /* Thay đổi kích thước này để phù hợp */
+    line-height: 48px;
+    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+    border-radius: 100%;
+    /* Tạo hình tròn */
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-   
-    color: white;  /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;  /* Đậm văn bản */
-    margin-left: 2px;  /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
 
-  
+    color: white;
+    /* Màu của văn bản, thay đổi theo ý thích */
+    font-weight: bold;
+    /* Đậm văn bản */
+    margin-left: 2px;
+    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+
+
     padding: 0px 2px;
 }
+
 .ellipsis {
     width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
+}
+
 .bottom_list {
     float: left;
     width: 100%;
@@ -194,13 +269,15 @@
     padding-bottom: 10px;
     padding-left: 1.25rem;
 }
+
 .circle-image-cus {
     border-radius: 100%;
     width: 36px;
     padding: 0px 2px;
 
 }
-.circle-image-member{
+
+.circle-image-member {
     width: 80px;
 }
 
@@ -211,10 +288,11 @@
 .language-custom {
     color: white;
 }
+
 .custom-pagination-btn {
     margin-right: 5px;
-  }
-  
+}
+
 
 .navbar-item .active {
     background-color: #4CAF50;
@@ -236,9 +314,11 @@
 .right_button button:last-child {
     margin-right: 0;
 }
+
 .icon-margin {
     margin-right: 10px;
 }
+
 .user-checkbox-container {
     display: flex;
     flex-wrap: wrap;
@@ -249,12 +329,16 @@
     box-sizing: border-box;
     padding: 0 10px;
 }
+
 .user-checkbox-container {
     display: flex;
     flex-wrap: wrap;
-    max-height: 150px;  /* Adjust as needed */
-    overflow-y: auto;  /* Will cause scroll bar to appear when needed */
-    border: 1px solid #ddd; /* Add border for the box */
+    max-height: 150px;
+    /* Adjust as needed */
+    overflow-y: auto;
+    /* Will cause scroll bar to appear when needed */
+    border: 1px solid #ddd;
+    /* Add border for the box */
     padding: 10px;
     border-radius: 4px;
 }
@@ -277,6 +361,7 @@
     margin-left: 0;
     transform: none;
 }
+
 /* .col, .col-1, .col-10, .col-11, .col-12, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-auto, .col-lg, .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-auto, .col-md, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-auto, .col-sm, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-auto, .col-xl, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-auto {
     position: relative;
     width: 100%;
@@ -285,15 +370,20 @@
     padding-left: 2px;
 } */
 .table {
-    border: 1px solid #686565; 
+    border: 1px solid #686565;
 }
-.table td, .table th ,table tr {
-    border: 1px solid #dee2e6; 
+
+.table td,
+.table th,
+table tr {
+    border: 1px solid #dee2e6;
     border-collapse: collapse;
 }
-.price_table table th{
+
+.price_table table th {
     font-weight: bold;
 }
+
 .price_table table th,
 .price_table table td {
     border: 1px solid #ced4da;
@@ -304,9 +394,9 @@
 }
 
 .modal-dialog {
-   
+
     margin-top: 4.7rem;
-   
+
 
     height: 100%;
     /* Chiều cao của modal bằng chiều cao của viewport */
@@ -318,9 +408,10 @@
     padding: 0px 100px;
 } */
 
-.progress-cus{
+.progress-cus {
     padding-bottom: 5px;
 }
+
 .member-cus .msg_list_main ul li {
     padding-left: 0px;
     padding-right: 0px;
@@ -334,6 +425,7 @@
     display: flex;
     position: relative;
 }
+
 .page_title {
     background: #fff;
 
@@ -346,6 +438,7 @@
     align-items: center;
     padding: 18px 25px 1px;
 }
+
 h5 {
     font-size: 16px;
     font-weight: 700;
@@ -355,6 +448,7 @@ h5 {
     /* color: #4dd591; */
     color: #434360;
 }
+
 #sidebar h4 {
     background: #274452;
     margin: 0;
@@ -365,11 +459,12 @@ h5 {
     border-bottom: solid #0066cc 1px;
     /* border-top: solid #0066cc 1px; */
 }
+
 .page_title h4 {
 
     font-size: 18px;
     /* color: #434360; */
-     color: #4dd591;
+    color: #4dd591;
     line-height: normal;
     font-weight: 700;
     text-transform: uppercase;
@@ -487,6 +582,7 @@ h5 {
 .icon-hover:hover .scaled-hover-target {
     transform: scale(1.1);
 }
+
 /* CSS cho 3 khối */
 .options-container {
     display: flex;
@@ -508,13 +604,16 @@ h5 {
 .option h5 {
     margin-bottom: 10px;
 }
-.box-table{
+
+.box-table {
     background-color: #FFF2CC;
 }
-.box-api{
+
+.box-api {
     background-color: #dae8fc;
 }
-.box-ui{
+
+.box-ui {
     background-color: #d5e8d4;
 }
 
@@ -523,8 +622,9 @@ h5 {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    margin: 0px 0px 6px 0px; 
+    margin: 0px 0px 6px 0px;
 }
+
 .disabled {
     pointer-events: none;
     opacity: 0.5;
@@ -534,30 +634,37 @@ h5 {
 .add-option:hover {
     background-color: #0056b3;
 }
-.icon-view{
-    color:#34a83e
+
+.icon-view {
+    color: #34a83e
 }
-.icon-delete{
-    color:#c13a38
+
+.icon-delete {
+    color: #c13a38
 }
-.icon-edit{
-    color:#386fc1
+
+.icon-edit {
+    color: #386fc1
 }
-.icon-check{
-    color:#ec840c
+
+.icon-check {
+    color: #ec840c
 }
-.icon-close{
-    color:#a11189
+
+.icon-close {
+    color: #a11189
 }
-.icon-toggle{
-    color:#6b9ae0
+
+.icon-toggle {
+    color: #6b9ae0
 }
+
 .status-label {
     display: inline-block;
     padding: 5.25px 10.5px;
     color: rgb(255, 255, 255);
     border-radius: 0.25rem;
-   
+
 }
 
 
@@ -619,6 +726,7 @@ h5 {
     display: flex;
     flex-direction: column;
 }
+
 .user-popup4 {
     position: fixed;
     font-size: 14px;
@@ -640,33 +748,39 @@ h5 {
 
 
 .user-popup-content {
-  
+
     padding: 5px;
-    max-height: 10em; 
-    overflow-y: auto; 
+    max-height: 10em;
+    overflow-y: auto;
     border-bottom: 1px solid #999595;
-    
+
 }
+
 /* Đối với WebKit (Chrome, Safari) */
 .div-to-scroll::-webkit-scrollbar {
-    width: 5px;  /* Chiều rộng của thanh cuộn */
-   min-height: 140px;
+    width: 5px;
+    /* Chiều rộng của thanh cuộn */
+    min-height: 140px;
 }
+
 .user-list-content {
-    max-height: 200px; /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
-    overflow-y: auto; /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
+    max-height: 200px;
+    /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
+    overflow-y: auto;
+    /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
 }
 
 
 .user-popup-actions {
     display: flex;
-    justify-content:space-around;
+    justify-content: space-around;
     padding-top: 5px;
 }
 
 .margin_bottom_30 {
     margin-bottom: 15px;
 }
+
 .user-item {
     display: flex;
     align-items: center;
@@ -693,12 +807,12 @@ h5 {
 .container-custom {
     display: flex;
     justify-content: space-between;
-  }
-  
-  .container-custom p:first-child {
+}
+
+.container-custom p:first-child {
     margin-right: 30px;
-  }
-  
+}
+
 
 
 .profile_contacts {
@@ -714,7 +828,7 @@ h5 {
     font-weight: normal;
     height: auto;
     border-radius: 5px 5px 0 0;
- 
+
     background-size: cover;
     background-color: white;
     position: relative;
@@ -727,12 +841,14 @@ h5 {
     right: 0;
     bottom: -10px;
 }
-.breadcrumb{
+
+.breadcrumb {
     font-size: 14px;
     font-family: "UTM Avo", sans-serif !important;
     line-height: normal;
     font-weight: 300;
 }
+
 .plus_green_bt a {
     background: #bff3de;
     color: #fff;
@@ -745,6 +861,7 @@ h5 {
     font-size: 28px;
     font-weight: 500;
 }
+
 .progress.skill-bar {
     background: #e9ecef;
     border-radius: 0;
@@ -753,58 +870,69 @@ h5 {
     margin-bottom: 3px;
     border-radius: 10px;
 }
-.dash_blog{
+
+.dash_blog {
     min-height: 280px;
     height: calc(100% - 16px);
 }
+
 .padding_infor_info {
     padding: 10px 35px;
     float: left;
     width: 100%;
     min-height: 560px;
-   
+
 }
+
 .padding_infor_info-logs {
     padding: 10px 35px;
     float: left;
     width: 100%;
     min-height: 125px;
 }
+
 .icon::before {
     content: "";
     display: inline-block;
-    width: 20px; /* Adjust width as needed */
-    height: 20px; /* Adjust height as needed */
+    width: 20px;
+    /* Adjust width as needed */
+    height: 20px;
+    /* Adjust height as needed */
     background: url('path-to-your-image.jpg') no-repeat center center;
-    background-size: contain; /* This will make sure the image fits into the space */
-  }
-  
+    background-size: contain;
+    /* This will make sure the image fits into the space */
+}
+
 .padding_infor_info-cus {
     padding: 10px 35px;
     float: left;
     width: 100%;
     min-height: 435px;
-   
+
 }
+
 .end-page-cus {
-    
+
     min-height: 435px;
-   
+
 }
 
 
-.btn-log{
+.btn-log {
     padding: 5.25px 18px;
 }
-.padding_infor_info h3, 
-.padding_infor_info p, 
+
+.padding_infor_info h3,
+.padding_infor_info p,
 .padding_infor_info span.status-label {
-    margin-bottom: 1px; 
+    margin-bottom: 1px;
     font-size: 14px;
 }
+
 .align-items-flex-end {
     align-items: flex-end;
 }
+
 .checkbox-group {
     display: flex;
     flex-direction: row;
@@ -827,17 +955,17 @@ h5 {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-  
-  .innerBox {
+}
+
+.innerBox {
     border: 1px solid #ced4da;
     border-radius: 5px;
     padding: 10px;
 
     width: calc(50% - 10px);
     margin-bottom: 5px;
-  }
-  
+}
+
 
 .modal-body {
     position: relative;
@@ -848,6 +976,7 @@ h5 {
     padding-left: 45px;
     padding-right: 45px;
 }
+
 /* .span-hover:hover{
     background-color: #f3eded !important;
     color: #050505;
@@ -855,108 +984,121 @@ h5 {
     margin-left: -15px;
 } */
 
-.col-md-6{
+.col-md-6 {
     position: relative;
     width: 100%;
     min-height: 1px;
     padding-right: 10px;
     padding-left: 10px;
 }
+
 .size {
-    font-size: 18px;  
+    font-size: 18px;
 }
+
 .size-bg {
-    font-size: 25px;  
+    font-size: 25px;
 }
+
 .size-log {
-    font-size: 22px;  
+    font-size: 22px;
 }
-.table td, .table th {
+
+.table td,
+.table th {
     padding: 0.5rem;
     vertical-align: middle;
     border-top: 1px solid #dee2e6;
 }
+
 .msg_list {
-    max-height: 400px; /* Chiều cao của mỗi dòng là 100px */
+    max-height: 400px;
+    /* Chiều cao của mỗi dòng là 100px */
     overflow-y: auto;
-  }
-  
+}
+
 .msg_list li {
-  position: relative;  /* Bắt buộc cho 'position: absolute' hoạt động trong .close-button */
+    position: relative;
+    /* Bắt buộc cho 'position: absolute' hoạt động trong .close-button */
 
 }
 
 .close-button {
     position: absolute;
     right: 0;
-    top: 1em;  /* Chuyển hình ảnh xuống 10% */
+    top: 1em;
+    /* Chuyển hình ảnh xuống 10% */
     transform: translateY(-50%);
     opacity: 0;
     padding-top: 15px;
-    padding-right:15px;
+    padding-right: 15px;
     transition: opacity 0.2s ease-in-out;
 
-   
-  }
 
-.close-button .abc{
+}
+
+.close-button .abc {
     width: 18px;
     border-radius: 100%;
 
 }
 
-.error-login{
+.error-login {
     border-top: none;
     border-left: none;
     border-right: none;
 
     width: 395px;
     float: right;
-    
+
     line-height: normal;
     font-weight: 300;
     transition: ease all 0.5s;
 }
 
 
-  .msg_list_main ul li > span img {
+.msg_list_main ul li>span img {
     width: 70px;
     border-radius: 100%;
-}  
+}
 
 
 
-  .msg_list li:hover .close-button {
-    opacity: 1;    /* Dấu X sẽ nhìn thấy khi di chuột qua li */
-  }
-    
-.dash_blog_inner .list_cont p{
+.msg_list li:hover .close-button {
+    opacity: 1;
+    /* Dấu X sẽ nhìn thấy khi di chuột qua li */
+}
+
+.dash_blog_inner .list_cont p {
     font-size: 14px;
 }
+
 .dash_blog-cus {
     min-height: 650px;
     background: #fff;
     border-radius: 5px;
-     box-shadow:none; 
+    box-shadow: none;
     float: left;
     width: 100%;
     margin-bottom: 15px;
 }
+
 .dash_blog-cus-log {
-   
+
     background: #fff;
     border-radius: 5px;
-     box-shadow:none; 
+    box-shadow: none;
     float: left;
     width: 100%;
     margin-bottom: 15px;
 }
+
 .msg_list_main ul li {
     padding: 22px 40px;
     border-bottom: solid #eee 1px;
     line-height: normal;
     font-size: 14px;
-     border-left: solid 5px #ffffff;
+    border-left: solid 5px #ffffff;
     float: left;
     width: 100%;
     display: flex;
@@ -965,12 +1107,11 @@ h5 {
 
 .table-hover tr:hover {
     background-color: #f0eaea;
-  }
-
-  .user-popup-content {
-    max-height: 200px; /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
-    overflow-y: auto; /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
 }
 
-
-
+.user-popup-content {
+    max-height: 200px;
+    /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
+    overflow-y: auto;
+    /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
+}
