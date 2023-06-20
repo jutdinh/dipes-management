@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ValidTypeEnum } from '../enum/type';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import { ready } from "jquery";
+import { error, ready } from "jquery";
 
 
 
@@ -40,18 +40,38 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
 
+
+
+    const [errorApi, setErrorApi] = useState({});
+    const validateApiname = () => {
+        let temp = {};
+
+        temp.api_name = modalTemp.api_name ? "" : "Trường này không được để trống.";
+        temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
+
+
+        setErrorApi({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
+
     const handleSubmitModal = () => {
-        setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
+        if (validateApiname()) {
+            setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
 
 
-        dispatch({
-            branch: "api",
-            type: "addFieldParam",
-            payload: {
-                field: { ...modalTemp }
+            dispatch({
+                branch: "api",
+                type: "addFieldParam",
+                payload: {
+                    field: { ...modalTemp }
 
-            }
-        })
+                }
+            })
+        }
+
 
     }
     useEffect(() => {
@@ -130,6 +150,16 @@ export default () => {
         setModalTemp(prevModalTemp => ({
             ...prevModalTemp,
             fields: allSelectedFields2,
+        }));
+    };
+    const handleSubmitBody = () => {
+        // Tạo một mảng mới bao gồm tất cả fieldId đã chọn từ tất cả bảng
+        const allSelectedFieldBody = Object.values(selectedFieldsBody).flat();
+
+        // Cập nhật modalTemp
+        setModalTemp(prevModalTemp => ({
+            ...prevModalTemp,
+            body: allSelectedFieldBody,
         }));
     };
     const [getAllField, setAllField] = useState([]);
@@ -313,6 +343,30 @@ export default () => {
 
     }, [modalTemp.tables]);
 
+    // luu truong body 
+    const [selectedFieldsBody, setSelectedFieldsBody] = useState({});
+    const handleCheckboxChangeBody = (tableId, fieldId, isChecked) => {
+        // Sao chép state hiện tại
+        const updatedSelections = { ...selectedFieldsBody };
+
+        // Nếu không có mảng cho tableId này, tạo mới
+        if (!updatedSelections[tableId]) {
+            updatedSelections[tableId] = [];
+        }
+
+        if (isChecked) {
+            // Nếu checkbox được chọn, thêm fieldId vào mảng
+            updatedSelections[tableId].push(fieldId);
+        } else {
+            // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
+            updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+        }
+
+        setSelectedFieldsBody(updatedSelections);
+
+    };
+
+
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
@@ -376,42 +430,75 @@ export default () => {
         }
     };
 
+    const [errorCaculates, setErrorCaculates] = useState({});
+    const validateCaculates = () => {
+        let temp = {};
+
+        temp.display_name = display_name ? "" : "Trường này không được để trống.";
+        temp.fomular = fomular ? "" : "Trường này không được để trống.";
+
+
+        setErrorCaculates({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
     const handleSubmitFieldCalculates = async (event) => {
         event.preventDefault();
-        const fomular_alias = await generateUniqueFormularAlias(display_name);
-        const newCalculate = { display_name, fomular_alias, fomular };
+        if (validateCaculates()) {
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+            const newCalculate = { display_name, fomular_alias, fomular };
 
 
-        // Cập nhật modalTemp
-        setModalTemp(prev => ({
-            ...prev,
-            calculates: [...prev.calculates, newCalculate]
-        }));
-        setCalculates([...calculates, newCalculate])
-        setDisplayname("");
-        setFomular("");
+            // Cập nhật modalTemp
+            setModalTemp(prev => ({
+                ...prev,
+                calculates: [...prev.calculates, newCalculate]
+            }));
+            setCalculates([...calculates, newCalculate])
+            setDisplayname("");
+            setFomular("");
+        }
+
     };
 
+    const [errorStatistical, setErrorStatistical] = useState({});
+    const validateStatistical = () => {
+        let temp = {};
 
+        temp.display_name = display_name ? "" : "Trường này không được để trống.";
+        temp.fomular = fomular ? "" : "Trường này không được để trống.";
+        temp.field = field ? "" : "Trường này không được bỏ trống.";
+
+        setErrorStatistical({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
 
     const [field, setField] = useState("");
 
     const [statistical, setStatistical] = useState([]);
 
     const handleSubmitFieldStatistical = async (event) => {
+
         event.preventDefault();
+        if (validateStatistical()) {
+            const newStatistical = { display_name, field, fomular };
 
-        const newStatistical = { display_name, field, fomular };
+            // Cập nhật modalTemp
+            setModalTemp(prev => ({
+                ...prev,
+                statistic: [...prev.statistic, newStatistical]
+            }));
+            setStatistical([...statistical, newStatistical])
+            setDisplayname("");
+            setField("");
+            setFomular("");
+        }
 
-        // Cập nhật modalTemp
-        setModalTemp(prev => ({
-            ...prev,
-            statistic: [...prev.statistic, newStatistical]
-        }));
-        setStatistical([...statistical, newStatistical])
-        setDisplayname("");
-        setField("");
-        setFomular("");
     };
     console.log(modalTemp)
 
@@ -445,7 +532,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Tạo mới apis </h5>
+                                    <h5>Tạo mới api</h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -455,9 +542,11 @@ export default () => {
                                         <input
                                             type="text"
                                             className="form-control"
+                                            value={modalTemp.api_name}
                                             onChange={(e) => setModalTemp({ ...modalTemp, api_name: e.target.value })}
                                             placeholder=""
                                         />
+                                        {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-7"></div>
                                     <div class="form-group col-lg-4">
@@ -521,9 +610,10 @@ export default () => {
                                         </div>
                                     </div>
                                     {/* Chọn các bảng */}
-                                    <div class="col-md-12 col-lg-12">
+                                    <div class="col-md-12 col-lg-12 bordered">
                                         <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">Danh sách các bảng </p>
+                                            <p class="font-weight-bold">Danh sách các bảng <span className='red_star'> *</span> </p>
+                                            {errorApi.api_name && <p className="text-danger">{(errorApi.api_name)}</p>}
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -565,238 +655,266 @@ export default () => {
                                     {/* {
                                         tables && tables.length > 0 ? (
                                             <> */}
-                                    {/* Chọn body */}
-                                    {modalTemp.api_method === "post" && (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">Danh sách các trường dữ liệu </p>
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <div class="table-responsive">
-                                                {
-                                                    Object.keys(selectedFields).length > 0 ? (
-                                                        <>
-                                                            <table class="table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                        <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                        <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                        return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                            const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                            return (
-                                                                                <tr key={`${tableId}-${fieldId}`}>
-                                                                                    <td>{index + 1}</td>
-                                                                                    <td>{fieldInfo?.field_name}</td>
-                                                                                    <td>{tableInfo.table_name}</td>
-                                                                                    <td>
-                                                                                        {/* Action buttons here */}
-                                                                                    </td>
-                                                                                </tr>
-                                                                            )
-                                                                        })
-                                                                    })}
-                                                                </tbody>
-                                                            </table>
-                                                        </>
-                                                    ) : (
-                                                        <div class="list_cont ">
-                                                            <p>Chưa có dữ liệu trường đối số</p>
+                                    {
+                                        tables && tables.length > 0 ? (
+                                            <>
+                                                {/* Chọn body */}
+                                                {modalTemp.api_method === "post" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường dữ liệu </p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldBody">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
                                                         </div>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    )}
-                                    {/* Chọn đối số */}
-                                    {modalTemp.api_method === "get" && (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">Danh sách các trường đối số </p>
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <div class="table-responsive">
-                                                {
-                                                    Object.keys(selectedFields).length > 0 ? (
-                                                        <>
-                                                            <table class="table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                        <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                        <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                        return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                            const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                            return (
-                                                                                <tr key={`${tableId}-${fieldId}`}>
-                                                                                    <td>{index + 1}</td>
-                                                                                    <td>{fieldInfo?.field_name}</td>
-                                                                                    <td>{tableInfo.table_name}</td>
-                                                                                    <td>
-                                                                                        {/* Action buttons here */}
-                                                                                    </td>
-                                                                                </tr>
-                                                                            )
-                                                                        })
-                                                                    })}
-                                                                </tbody>
-                                                            </table>
-                                                        </>
-                                                    ) : (
-                                                        <div class="list_cont ">
-                                                            <p>Chưa có dữ liệu trường đối số</p>
-                                                        </div>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    )}
-                                    {/* Chọn trường hiện thị */}
-                                    {modalTemp.api_method === "get" && (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">Danh sách các trường hiển thị </p>
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <div class="table-responsive">
-                                                {
-                                                    modalTemp.fields && modalTemp.fields.length > 0 ? (
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold">STT</th>
-                                                                    <th class="font-weight-bold">Tên trường hiển thị</th>
-                                                                    <th class="font-weight-bold">Bí danh</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["log.action"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {Object.values(selectedFieldsModal2).flat().map((field, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>{index + 1}</td>
-                                                                        <td>{field.display_name}</td>
-                                                                        <td>{field.fomular_alias}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    ) : (
-                                                        <div class="list_cont ">
-                                                            <p>Chưa có dữ liệu trường hiển thị</p>
-                                                        </div>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    )}
-                                    {/* Chọn trường tính toán */}
-                                    {modalTemp.api_method === "get" && (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">Danh sách các trường tính toán </p>
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <div class="table-responsive">
-                                                {calculates && calculates.length > 0 ? (
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên trường tính toán</th>
-                                                                <th class="font-weight-bold">Bí danh</th>
-                                                                <th class="font-weight-bold">Phép tính</th>
+                                                        <div class="table-responsive">
+                                                            {
+                                                                modalTemp && modalTemp.body.length > 0 ? (
+                                                                    <>
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
 
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {calculates.map((calculates, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{calculates.display_name}</td>
-                                                                    <td>{calculates.fomular_alias}</td>
-                                                                    <td>{calculates.fomula}</td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu trường tính toán</p>
-                                                    </div>
-                                                )
-                                                }
-                                            </div>
-                                        </div>
-                                    )}
-                                    {/* Chọn trường thống kê */}
-                                    {modalTemp.api_method === "get" && (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">Danh sách các trường thống kê</p>
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <div class="table-responsive">
-                                                {statistical && statistical.length > 0 ? (
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên trường thống kê</th>
-                                                                <th class="font-weight-bold">Bí danh</th>
-                                                                <th class="font-weight-bold">Phép tính</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
+                                                                                    return selectedFieldsBody[tableId]?.map((fieldId, index) => {
+                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
+                                                                                        return (
+                                                                                            <tr key={`${tableId}-${fieldId}`}>
+                                                                                                <td>{index + 1}</td>
+                                                                                                <td>{fieldInfo?.field_name}</td>
+                                                                                                <td>{tableInfo.table_name}</td>
 
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {statistical.map((statistic, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{statistic.display_name}</td>
-                                                                    <td>{statistic.field}</td>
-                                                                    <td>{statistic.fomular}</td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu trường tính toán</p>
+                                                                                            </tr>
+                                                                                        )
+                                                                                    })
+                                                                                })}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>Chưa có dữ liệu trường dữ liệu</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
                                                     </div>
-                                                )
-                                                }
+                                                )}
+
+                                                {/* Chọn đối số */}
+                                                {modalTemp.api_method === "get" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường đối số </p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {
+                                                                modalTemp && modalTemp.params.length > 0 ? (
+                                                                    <>
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
+                                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
+                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
+                                                                                        return (
+                                                                                            <tr key={`${tableId}-${fieldId}`}>
+                                                                                                <td>{index + 1}</td>
+                                                                                                <td>{fieldInfo?.field_name}</td>
+                                                                                                <td>{tableInfo.table_name}</td>
+
+                                                                                            </tr>
+                                                                                        )
+                                                                                    })
+                                                                                })}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>Chưa có dữ liệu trường đối số</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Chọn trường hiện thị */}
+                                                {modalTemp.api_method === "get" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường hiển thị </p><span className='red_star'>*</span>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {
+                                                                modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                                    <table class="table table-striped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="font-weight-bold">STT</th>
+                                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
+                                                                                <th class="font-weight-bold">Bí danh</th>
+
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {modalTemp.fields.map((field, index) => (
+                                                                                <tr key={index}>
+                                                                                    <td>{index + 1}</td>
+                                                                                    <td>{field.display_name}</td>
+                                                                                    <td>{field.fomular_alias}</td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            null
+                                        )
+                                    }
+                                    {
+                                        modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                            <>
+                                                {/* Chọn trường tính toán */}
+                                                {modalTemp.api_method === "get" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường tính toán </p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {calculates && calculates.length > 0 ? (
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold">STT</th>
+                                                                            <th class="font-weight-bold">Tên trường tính toán</th>
+                                                                            <th class="font-weight-bold">Bí danh</th>
+                                                                            <th class="font-weight-bold">Phép tính</th>
+
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {calculates.map((calculates, index) => (
+                                                                            <tr key={index}>
+                                                                                <td>{index + 1}</td>
+                                                                                <td>{calculates.display_name}</td>
+                                                                                <td>{calculates.fomular_alias}</td>
+                                                                                <td>{calculates.fomula}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>Chưa có dữ liệu trường tính toán</p>
+                                                                </div>
+                                                            )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {/* Chọn trường thống kê */}
+                                                {modalTemp.api_method === "get" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường thống kê</p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {statistical && statistical.length > 0 ? (
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold">STT</th>
+                                                                            <th class="font-weight-bold">Tên trường thống kê</th>
+                                                                            <th class="font-weight-bold">Bí danh</th>
+                                                                            <th class="font-weight-bold">Phép tính</th>
+
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {statistical.map((statistic, index) => (
+                                                                            <tr key={index}>
+                                                                                <td>{index + 1}</td>
+                                                                                <td>{statistic.display_name}</td>
+                                                                                <td>{statistic.field}</td>
+                                                                                <td>{statistic.fomular}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>Chưa có dữ liệu trường tính toán</p>
+                                                                </div>
+                                                            )
+                                                            }
+                                                        </div>
+
+
+                                                    </div>
+
+                                                )}
+                                            </>
+                                        ) : (
+                                            null
+                                        )
+                                    }
+                                    {
+                                        modalTemp.fields && modalTemp.fields.length > 0 || modalTemp.body && modalTemp.body.length > 0 ? (
+                                            <div className="container">
+                                                <div className="mt-2 d-flex justify-content-end ml-auto">
+                                                    <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
+                                                    <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                                    </button>
+                                                </div>
+
                                             </div>
-                                            <div className="button-container mt-4">
-                                                <button type="button" onClick={handleSubmitModal} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                                        ) : (
+                                            null
+                                        )
+                                    }
+
                                     {/* </>
                                         ) : (
                                             null
                                         )
                                     } */}
+
                                 </div>
                             </div>
                         </div>
@@ -966,6 +1084,52 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/*add Field Body */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldBody">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Thêm trường dữ liệu</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="container-field">
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className={`form-group table-wrapper`}>
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                    <div key={fieldIndex}>
+                                                        <label>
+                                                            <input className="mr-1 "
+                                                                type="checkbox"
+                                                                checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
+                                                                onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
+                                                            />
+                                                            {field.field_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Người tạo </label>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Ngày tạo </label>
+                                        <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleSubmitBody} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {/*add Field calculates */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldCalculates">
                     <div class="modal-dialog modal-dialog-center">
@@ -985,6 +1149,39 @@ export default () => {
                                             onChange={(e) => setDisplayname(e.target.value)}
                                             required
                                         />
+                                        {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Danh sách trường hiển thị</label>
+                                        <div class="table-responsive">
+                                            {
+                                                modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="font-weight-bold">STT</th>
+                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
+                                                                <th class="font-weight-bold">Bí danh</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{field.display_name}</td>
+                                                                    <td>{field.fomular_alias}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
                                         <label>Công thức <span className='red_star'>*</span></label>
@@ -995,6 +1192,7 @@ export default () => {
                                             onChange={(e) => setFomular(e.target.value)}
                                             required
                                         />
+                                        {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Người tạo </label>
@@ -1007,7 +1205,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1032,7 +1230,9 @@ export default () => {
                                             onChange={(e) => setDisplayname(e.target.value)}
                                             required
                                         />
+                                        {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                     </div>
+
                                     {/* <div className={`form-group col-lg-12`}>
                                         <label>Chọn trường <span className='red_star'>*</span></label>
                                         <select className="form-control" onChange={(e) => setField(e.target.value)}>
@@ -1043,9 +1243,42 @@ export default () => {
                                             ))}
                                         </select>
                                     </div> */}
+                                    <div class="form-group col-md-12">
+                                        <label>Danh sách trường hiển thị</label>
+                                        <div class="table-responsive">
+                                            {
+                                                modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="font-weight-bold">STT</th>
+                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
+                                                                <th class="font-weight-bold">Bí danh</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{field.display_name}</td>
+                                                                    <td>{field.fomular_alias}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                     <div className={`form-group col-lg-12`}>
                                         <label>Chọn trường <span className='red_star'>*</span></label>
-                                        <select className="form-control" onChange={(e) => setField(e.target.value)}>
+                                        <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
+                                            <option value="">Chọn trường</option>
                                             {Object.values(selectedFieldsModal2).flat().map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
                                                     {field.fomular_alias}
@@ -1057,6 +1290,7 @@ export default () => {
                                                 </option>
                                             ))}
                                         </select>
+                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
 
                                     <div className={`form-group col-lg-12`}>
@@ -1072,6 +1306,7 @@ export default () => {
                                             <option value="AVERAGE">AVERAGE</option>
                                             <option value="COUNT">COUNT</option>
                                         </select>
+                                        {errorStatistical.fomular && <p className="text-danger">{errorStatistical.fomular}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Người tạo </label>
@@ -1084,7 +1319,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>

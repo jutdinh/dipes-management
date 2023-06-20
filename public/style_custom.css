@@ -765,7 +765,7 @@ h5 {
 
 .user-list-content {
     max-height: 200px;
-    /* Giới hạn chiều cao, tùy chỉnh số này cho phù hợp */
+
     overflow-y: auto;
     /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
 }
@@ -814,6 +814,14 @@ h5 {
 }
 
 
+.bordered {
+    border: 1px solid #ced4da;
+    padding: 10px 15px; 
+    margin-bottom: 5px;
+    margin-left: 10px;
+    border-radius: 0.25rem;
+    
+}
 
 .profile_contacts {
     display: flex;
