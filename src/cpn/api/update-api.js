@@ -78,7 +78,7 @@ export default () => {
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
-            addApi();
+            updateApi();
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
 
@@ -166,7 +166,7 @@ export default () => {
             });
     };
 
-    const addApi = () => {
+    const updateApi = () => {
         const requestBody = {
             version_id: parseInt(version_id),
             api: {
@@ -175,7 +175,7 @@ export default () => {
         }
         // console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
@@ -247,28 +247,7 @@ export default () => {
             body: allSelectedFieldBody,
         }));
     };
-    // const [getAllField, setAllField] = useState([]);
-    // useEffect(() => {
-    //     fetch(`${proxy}/db/tables/table/27/fields`, {
-    //         headers: {
-    //             Authorization: _token
-    //         }
-    //     })
-    //         .then(res => res.json())
-    //         .then(resp => {
-    //             const { success, data, status, content } = resp;
-
-    //             if (success) {
-    //                 if (data) {
-    //                     setAllField(data)
-    //                 }
-    //             } else {
-    //                 // window.location = "/404-not-found"
-    //             }
-    //         })
-    // }, [])
-
-    // console.log(getAllField)
+   
 
 
 
@@ -298,48 +277,7 @@ export default () => {
 
 
     const [selectedTables, setSelectedTables] = useState([]);
-    // lưu id bảng được chọn
-    // useEffect(() => {
-    //     // get IDs from selected tables and set them into modalTemp.tables
-    //     setModalTemp(prev => ({
-    //         ...prev,
-    //         tables: selectedTables.map(table => table.id),
-    //     }));
-
-    // }, [selectedTables]);
-    // console.log("Table Selected", selectedTables)
-    // const handleChange = (e) => {
-    //     const selectedTableName = e.target.value;
-    //     const selectedTableData = allTable.find(
-    //         (table) => table.table_name === selectedTableName
-    //     );
-
-    //     setSelectedTables((prevSelectedTables) => [
-    //         ...prevSelectedTables,
-    //         selectedTableData,
-    //     ]);
-
-    //     // Filter tables that are linked to the selected table
-    //     const linkedTables = allTable.filter(
-    //         (table) =>
-    //             (selectedTableData.foreign_keys.some(
-    //                 (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-    //             ) ||
-    //                 table.foreign_keys.some(
-    //                     (fk) => fk.table_id === selectedTableData.id || fk.ref_table_id === selectedTableData.id
-    //                 )) &&
-    //             !selectedTables.some((selectedTable) => selectedTable.id === table.id)
-    //     );
-
-    //     setPossibleTables(linkedTables);
-    // };
-    // selectedTables.forEach(table => {
-    //     console.log(`Khóa chính của bảng ${table.table_name}: ${table.primary_key}`);
-
-    //     table.foreign_keys.forEach((fk, index) => {
-    //         console.log(`Khóa ngoại ${index+1} của bảng ${table.table_name}: ${fk}`);
-    //     });
-    // });
+    
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
