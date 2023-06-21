@@ -21,7 +21,7 @@ export default () => {
 
     const dispatch = useDispatch();
 
-    const { project_id, version_id } = useParams();
+    const { project_id, version_id, api_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
@@ -81,6 +81,47 @@ export default () => {
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
 
+    const [allApi, setAllApi] = useState([]);
+
+    useEffect(() => {
+        fetch(`${proxy}/apis/v/${version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        console.log(data.apis)
+                        const filteredAPI = data.apis.find(api => api.api_id === api_id);
+                        setAllApi(filteredAPI);
+                        setModalTemp(filteredAPI)
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [api_id])
+    console.log(modalTemp)
+    console.log(allApi)
+   
+    const copyToClipboard = async () => {
+        const newFields = allApi.fields.map(field => field.fomular_alias);
+        const dataToCopy = { 'fomular_alias': newFields };
+        const jsonString = JSON.stringify(dataToCopy);
+
+        if (navigator.clipboard) {
+            try {
+                await navigator.clipboard.writeText(jsonString);
+                console.log('Data copied to clipboard');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+    }
     const addApi = () => {
         const requestBody = {
             version_id: parseInt(version_id),
@@ -162,28 +203,32 @@ export default () => {
             body: allSelectedFieldBody,
         }));
     };
-    const [getAllField, setAllField] = useState([]);
-    useEffect(() => {
-        fetch(`${proxy}/db/tables/table/27/fields`, {
-            headers: {
-                Authorization: _token
-            }
-        })
-            .then(res => res.json())
-            .then(resp => {
-                const { success, data, status, content } = resp;
+    // const [getAllField, setAllField] = useState([]);
+    // useEffect(() => {
+    //     fetch(`${proxy}/db/tables/table/27/fields`, {
+    //         headers: {
+    //             Authorization: _token
+    //         }
+    //     })
+    //         .then(res => res.json())
+    //         .then(resp => {
+    //             const { success, data, status, content } = resp;
 
-                if (success) {
-                    if (data) {
-                        setAllField(data)
-                    }
-                } else {
-                    // window.location = "/404-not-found"
-                }
-            })
-    }, [])
+    //             if (success) {
+    //                 if (data) {
+    //                     setAllField(data)
+    //                 }
+    //             } else {
+    //                 // window.location = "/404-not-found"
+    //             }
+    //         })
+    // }, [])
 
     // console.log(getAllField)
+
+
+
+
     const [allTable, setAllTable] = useState([]);
     const [possibleTables, setPossibleTables] = useState([]);
     useEffect(() => {
@@ -206,6 +251,7 @@ export default () => {
                 }
             })
     }, [])
+
 
     const [selectedTables, setSelectedTables] = useState([]);
     // lưu id bảng được chọn
@@ -388,7 +434,7 @@ export default () => {
         }
         setSelectedFields(updatedSelections);
     };
-    console.log("trường hiển thị:", selectedFieldsModal2)
+    console.log("trường hiển đối số:", selectedFields)
 
     //console.log(selectedFields)
     //delete selected table 
@@ -522,10 +568,20 @@ export default () => {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Tạo mới api </h5>
-                                    
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Chỉnh sửa Api</h5>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#editProject">
+                                        {/* <i class="fa fa-navicon size pointer" ></i> */}
+                                        Json
+                                    </button>
+
+                                    <button onClick={copyToClipboard}>
+                                        Copy Data
+                                    </button>
+
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -572,7 +628,7 @@ export default () => {
                                                 <input
                                                     type="radio"
                                                     checked={modalTemp.api_method === "get"}
-                                          
+
                                                     onChange={() => {
                                                         const updatedModalTemp = {
                                                             ...modalTemp,
@@ -583,7 +639,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -604,7 +660,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -626,7 +682,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -647,7 +703,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -705,56 +761,8 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
-                                              {/* Chọn đối số */}
-                                              {(modalTemp.api_method === "get" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
-                                                    <div class="col-md-12 col-lg-12 bordered">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường đối số </p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            {
-                                                                modalTemp && modalTemp.params.length > 0 ? (
-                                                                    <>
-                                                                        <table class="table table-striped">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
-
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                                        return (
-                                                                                            <tr key={`${tableId}-${fieldId}`}>
-                                                                                                <td>{index + 1}</td>
-                                                                                                <td>{fieldInfo?.field_name}</td>
-                                                                                                <td>{tableInfo.table_name}</td>
-
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
-                                                                                })}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </>
-                                                                ) : (
-                                                                    <div class="list_cont ">
-                                                                        <p>Chưa có dữ liệu trường đối số</p>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                )}
                                                 {/* Chọn body */}
-                                                {(modalTemp.api_method === "post" || modalTemp.api_method === "put") && (
+                                                {modalTemp.api_method === "post" || modalTemp.api_method === "put" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường dữ liệu </p>
@@ -802,7 +810,54 @@ export default () => {
                                                     </div>
                                                 )}
 
-                                              
+                                                {/* Chọn đối số */}
+                                                {modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put" && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">Danh sách các trường đối số </p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {
+                                                                modalTemp && modalTemp.params.length > 0 ? (
+                                                                    <>
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
+                                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
+                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
+                                                                                        return (
+                                                                                            <tr key={`${tableId}-${fieldId}`}>
+                                                                                                <td>{index + 1}</td>
+                                                                                                <td>{fieldInfo?.field_name}</td>
+                                                                                                <td>{tableInfo.table_name}</td>
+
+                                                                                            </tr>
+                                                                                        )
+                                                                                    })
+                                                                                })}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>Chưa có dữ liệu trường đối số</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
 
                                                 {/* Chọn trường hiện thị */}
                                                 {modalTemp.api_method === "get" && (
@@ -942,7 +997,8 @@ export default () => {
                                             null
                                         )
                                     }
-                                   
+                                    {
+                                        modalTemp.fields && modalTemp.fields.length > 0 || modalTemp.body && modalTemp.body.length > 0 ? (
                                             <div className="container">
                                                 <div className="mt-2 d-flex justify-content-end ml-auto">
                                                     <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
@@ -951,7 +1007,10 @@ export default () => {
                                                 </div>
 
                                             </div>
-                                      
+                                        ) : (
+                                            null
+                                        )
+                                    }
 
                                     {/* </>
                                         ) : (

@@ -19,6 +19,7 @@ export default () => {
     const [showFull, setShowFull] = useState(false);
 
     const [showViewMore, setShowViewMore] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
 
 
@@ -967,25 +968,31 @@ export default () => {
                                 <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
-                                        <div className="description-text">
-                                            <p className="mb2"> {projectdetail.project_description}</p>
+
+                                        <div style={{
+                                            width: "100%",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap"
+                                        }}>
+                                            {projectdetail.project_description}
                                         </div>
                                         {showViewMore && (
                                             <div className="view-more-link">
                                                 <a href="#" data-toggle="modal" data-target="#viewDescription">
-                                                    <b> ...Xem thêm</b>
+                                                    <b>Xem thêm</b>
                                                 </a>
                                             </div>
                                         )}
 
                                     </div>
                                 </div>
-                                <p class="font-weight-bold">{lang["projectmanager"]}: </p>
+                                <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
                                 <div class="profile_contacts">
                                     <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
                                     {projectdetail.manager?.fullname}
                                 </div>
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-1">
                                     <p class="font-weight-bold">{lang["projectmember"]}: </p>
                                     {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
                                         <i class="fa fa-edit"></i>
@@ -1591,20 +1598,24 @@ export default () => {
                                                 <div class="user-checkbox-container">
                                                     {projectdetail.members?.map((user, index) => (
                                                         <div key={index} class="user-checkbox-item">
-                                                            <input
-                                                                type="checkbox"
-                                                                value={JSON.stringify(user)}
-                                                                onChange={(e) => {
-                                                                    let selectedUser = JSON.parse(e.target.value);
-                                                                    let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
-                                                                    if (alreadySelected) {
-                                                                        setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
-                                                                    } else {
-                                                                        setSelectedMemberTask([...selectedMemberTask, selectedUser]);
-                                                                    }
-                                                                }}
-                                                            />
-                                                            <label>{user.fullname}</label>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox" class="mr-1"
+                                                                    value={JSON.stringify(user)}
+                                                                    onChange={(e) => {
+                                                                        let selectedUser = JSON.parse(e.target.value);
+                                                                        let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                        if (alreadySelected) {
+                                                                            setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                        } else {
+                                                                            setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {user.fullname}
+                                                            </label>
+
+
                                                         </div>
                                                     ))}
                                                 </div>
@@ -1620,6 +1631,7 @@ export default () => {
                         </div>
                     </div>
                     {/* Update Progress */}
+
                     <div class={`modal ${showModal ? 'show' : ''}`} id="editTask">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -1649,8 +1661,8 @@ export default () => {
                                                 </select>
 
                                             </div> */}
-                                            <div class="form-group col-lg-6 ">
-                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                            {/* <div class="form-group col-lg-6 ">
+                                                <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
                                                     <option value="">Chọn</option>
                                                     {statusTaskView.map((status, index) => {
@@ -1660,7 +1672,7 @@ export default () => {
                                                     })}
                                                 </select>
 
-                                            </div>
+                                            </div> */}
 
                                             <div class="form-group col-lg-12">
                                                 <label>{lang["projectdescripton"]}</label>
@@ -1763,9 +1775,10 @@ export default () => {
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>Xác nhận</b></label>
-                                                <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
-                                                    {getStatusLabel(task.task_approve ? 1 : 0)}
+                                                <td class="font-weight-bold" style={{ color: getStatusColor(taskDetail.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                    {getStatusLabel(taskDetail.task_approve ? 1 : 0)}
                                                 </td>
+
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>Thành viên</b></label>
@@ -1794,7 +1807,7 @@ export default () => {
                                             <div class="form-group col-lg-12">
                                                 <label><b>Lịch sử</b></label>
                                                 <div class="table-responsive">
-                                                    {
+                                                    {/* {
                                                         currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
                                                             <>
                                                                 <table class="table table-striped">
@@ -1837,30 +1850,74 @@ export default () => {
                                                                         ))}
                                                                     </tbody>
                                                                 </table>
-                                                                {/* <div className="d-flex justify-content-between align-items-center">
+                                                                <div className="d-flex justify-content-between align-items-center">
                                                                     <p>{lang["show"]} {indexOfFirstMemberViewDetailTask + 1}-{Math.min(indexOfLastMemberViewDetailTask, taskDetail.history?.length)} {lang["of"]} {taskDetail.history?.length} {lang["results"]}</p>
                                                                     <nav aria-label="Page navigation example">
                                                                         <ul className="pagination mb-0">
                                                                             <li className={`page-item ${currentViewDetailTask === 1 ? 'disabled' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateViewDetailTask(currentViewDetailTask - 1)}>
-                                                                                    &laquo;
-                                                                                </button>
+                                                                                <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(currentViewDetailTask - 1); }}>&laquo;</button>
                                                                             </li>
                                                                             {Array(totalPagesTask).fill().map((_, index) => (
                                                                                 <li className={`page-item ${currentViewDetailTask === index + 1 ? 'active' : ''}`}>
-                                                                                    <button className="page-link" onClick={() => paginateViewDetailTask(index + 1)}>
-                                                                                        {index + 1}
-                                                                                    </button>
+                                                                                    <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(index + 1); }}>{index + 1}</button>
                                                                                 </li>
                                                                             ))}
                                                                             <li className={`page-item ${currentViewDetailTask === totalViewDetailTask ? 'disabled' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateViewDetailTask(currentViewDetailTask + 1)}>
-                                                                                    &raquo;
-                                                                                </button>
+                                                                                <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(currentViewDetailTask + 1); }}>&raquo;</button>
                                                                             </li>
                                                                         </ul>
                                                                     </nav>
-                                                                </div> */}
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>Chưa có lịch sử</p>
+                                                            </div>
+                                                        )
+                                                    } */}
+                                                    {
+                                                        taskDetail.history && taskDetail.history.length > 0 ? (
+                                                            <>
+                                                                <table class="table table-striped table-rounded table-scrollable ">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị cũ</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị mới</th>
+                                                                            <th class="font-weight-bold" scope="col">Thời gian thay đổi</th>
+                                                                            <th class="font-weight-bold" scope="col">Người thay đổi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {taskDetail.history.reverse().map((task, index) => (
+                                                                            <tr key={task.id}>
+                                                                                <td scope="row">{index + 1}</td>
+                                                                                <td scope="row">
+                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                        task.modified_what === "info" ? lang["log.information"] :
+                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                task.modified_what}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Đã duyệt" :
+                                                                                        task.old_value === "false" ? "Chờ duyệt" :
+                                                                                            task.old_value}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Chờ duyệt" :
+                                                                                        task.old_value === "false" ? "Đã duyệt" :
+                                                                                            task.old_value}
+                                                                                </td>
+                                                                                <td scope="row">{task.modified_at}</td>
+                                                                                <td scope="row">
+                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                    {task.modified_by?.fullname}
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
                                                             </>
                                                         ) : (
                                                             <div class="list_cont ">
@@ -2009,7 +2066,7 @@ export default () => {
                                                                 ))}
                                                             </tbody>
                                                         </table>
-                                                        
+
                                                         <div className="d-flex justify-content-between align-items-center">
                                                             <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">

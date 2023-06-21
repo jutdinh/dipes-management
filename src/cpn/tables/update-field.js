@@ -819,7 +819,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Chỉnh sửa bảng</h5>
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Chỉnh sửa bảng</h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -1140,9 +1140,6 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-
-
-
                                         <div class={`form-group col-lg-12`}>
                                             <label> Chọn kiểu dữ liệu</label>
                                             <select
@@ -1192,6 +1189,7 @@ export default () => {
                                                 ))}
                                             </select>
                                         </div>
+                                        <div class="form-group col-lg-12 ml-2">
                                         {types.map((type) => {
                                             if (type.name !== modalTemp.DATATYPE) return null;
 
@@ -1246,9 +1244,7 @@ export default () => {
                                                 </div>
                                             );
                                         })}
-
-
-
+                                        </div>
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo </label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
@@ -1444,7 +1440,7 @@ export default () => {
                                                 ))}
                                             </select>
                                         </div>
-
+                                        <div class="form-group col-lg-12 ml-2">
                                         {types.map((type) => {
                                             if (type.name !== fieldTempUpdate.props?.DATATYPE) return null;
 
@@ -1495,6 +1491,7 @@ export default () => {
                                                 </div>
                                             );
                                         })}
+                                        </div>
 
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo <span className='red_star'>*</span></label>

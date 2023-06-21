@@ -4,7 +4,7 @@ import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
-
+import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { Tables } from ".";
 export default () => {
@@ -12,6 +12,7 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
+    let navigate = useNavigate();
     const handleCloseModal = () => {
         setShowModal(false);
     };
@@ -220,6 +221,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
+                            {/* <h4><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-4"></i></a>Quản lý bảng</h4> */}
                             <h4>Quản lý bảng</h4>
                         </div>
                     </div>

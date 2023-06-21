@@ -345,7 +345,7 @@ export default () => {
     // console.log(table)
     const addTable = (e) => {
         e.preventDefault();
-        if(validateTablename()){
+        if(validateTablename() && primaryKey.length !== 0){
           
             // console.log( table )
             const tableRequestBody = {
@@ -381,44 +381,56 @@ export default () => {
                     }
                 });
         }
+        else {
+            Swal.fire({
+                title: "Thất bại!",
+                text: "Bảng phải có khóa chính",
+                icon: "error",
+                showConfirmButton: false,
+                timer: 2000,
+            });
+        }
        
     };
 
     const addField = (tableId) => {
-        const fieldRequestBody = {
-            table_id: tableId,
-            fields: [
-                ...tempFields
-            ],
-        };
-        console.log("field", fieldRequestBody)
-
-        fetch(`${proxy}/db/fields/fields`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(fieldRequestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                console.log(data)
-                if (success) {
-
-                    addKey({ tableId, data });
-                    // handleClickPrimary(fieldId);
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            });
+        if(primaryKey.length !== 0){
+            const fieldRequestBody = {
+                table_id: tableId,
+                fields: [
+                    ...tempFields
+                ],
+            };
+            console.log("field", fieldRequestBody)
+    
+            fetch(`${proxy}/db/fields/fields`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${_token}`,
+                },
+                body: JSON.stringify(fieldRequestBody),
+            })
+                .then((res) => res.json())
+                .then((resp) => {
+                    const { success, content, data, status } = resp;
+                    console.log(data)
+                    if (success) {
+    
+                        addKey({ tableId, data });
+                        // handleClickPrimary(fieldId);
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại!",
+                            text: content,
+                            icon: "error",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+                });
+        }
+        
     };
 
     const addKey = ({ data, tableId }) => {
@@ -699,7 +711,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5>Tạo bảng mới</h5>
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Tạo bảng mới</h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -991,7 +1003,8 @@ export default () => {
                                             </select>
                                             {errors.DATATYPE && <p className="text-danger">{errors.DATATYPE}</p>}
                                         </div>
-                                        {types.map((type) => {
+                                        <div class="form-group col-lg-12 ml-2">
+                                             {types.map((type) => {
                                             if (type.name !== modalTemp.DATATYPE) return null;
 
                                             return (
@@ -1041,6 +1054,9 @@ export default () => {
                                                 </div>
                                             );
                                         })}
+                                        </div>
+                                       
+                                           
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo </label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
@@ -1209,7 +1225,7 @@ export default () => {
                                                 ))}
                                             </select>
                                         </div>
-
+                                        <div class="form-group col-lg-12 ml-2">
                                         {types.map((type) => {
                                             if (type.name !== modalTemp.DATATYPE) return null;
 
@@ -1263,6 +1279,7 @@ export default () => {
                                                 </div>
                                             );
                                         })}
+                                        </div>
 
 
 
