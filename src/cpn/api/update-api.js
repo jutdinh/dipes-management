@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
 
+import clipboardCopy from 'clipboard-copy';
 
 
 
@@ -95,7 +96,7 @@ export default () => {
 
                 if (success) {
                     if (data) {
-                        console.log(data.apis)
+
                         const filteredAPI = data.apis.find(api => api.api_id === api_id);
                         setAllApi(filteredAPI);
                         setModalTemp(filteredAPI)
@@ -105,23 +106,66 @@ export default () => {
                 }
             })
     }, [api_id])
-    console.log(modalTemp)
+    console.log(modalTemp.tables)
     console.log(allApi)
-   
-    const copyToClipboard = async () => {
-        const newFields = allApi.fields.map(field => field.fomular_alias);
-        const dataToCopy = { 'fomular_alias': newFields };
-        const jsonString = JSON.stringify(dataToCopy);
 
-        if (navigator.clipboard) {
-            try {
-                await navigator.clipboard.writeText(jsonString);
-                console.log('Data copied to clipboard');
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
+
+    const [data, setData] = useState(null);
+
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            const fieldsData = [];
+
+            for (let tableId of modalTemp.tables) {
+
+                const response = await fetch(`${proxy}/db/tables/table/${tableId}`, {
+                    headers: {
+                        Authorization: _token
+                    }
+                });
+                const tableData = await response.json();
+                console.log(tableData)
+                console.log(modalTemp.tables)
+                console.log(modalTemp.body)
+                const filteredFields = Array.isArray(tableData.data.fields) && modalTemp?.body
+                    ? tableData.data.fields.filter(field => modalTemp.body.includes(field.id))
+                    : [];
+
+
+                console.log(filteredFields)
+                fieldsData.push(...filteredFields);
             }
+
+            setData(fieldsData);
+        };
+
+        if (modalTemp.tables) {
+            fetchData();
         }
-    }
+    }, [modalTemp]);
+
+    console.log(data)
+
+
+    const copyToClipboard = () => {
+        const jsonData = data.reduce((acc, field) => {
+            acc[field.fomular_alias] = '';
+            return acc;
+        }, {});
+
+        const jsonString = JSON.stringify(jsonData);
+
+        clipboardCopy(jsonString)
+            .then(() => {
+                console.log('Đã sao chép dữ liệu vào clipboard.');
+            })
+            .catch((error) => {
+                console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
+            });
+    };
+
     const addApi = () => {
         const requestBody = {
             version_id: parseInt(version_id),
@@ -357,7 +401,7 @@ export default () => {
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
-    console.log(tableFields)
+    // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -413,10 +457,10 @@ export default () => {
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-    console.log("FieldShow", selectedFieldsModal2)
+    // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
-    console.log("FieldParams", selectedFields)
+    // console.log("FieldParams", selectedFields)
 
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         // Sao chép state hiện tại
@@ -434,7 +478,7 @@ export default () => {
         }
         setSelectedFields(updatedSelections);
     };
-    console.log("trường hiển đối số:", selectedFields)
+    // console.log("trường hiển đối số:", selectedFields)
 
     //console.log(selectedFields)
     //delete selected table 
@@ -443,7 +487,7 @@ export default () => {
     const [fomular, setFomular] = useState("");
 
     const [calculates, setCalculates] = useState([]);
-    console.log("calustasud", calculates)
+    // console.log("calustasud", calculates)
     const [aliasCalculates, setaliasCalculates] = useState([]);
 
     const generateUniqueFormularAlias = async (display_name) => {
@@ -538,7 +582,7 @@ export default () => {
         }
 
     };
-    console.log(modalTemp)
+    // console.log(modalTemp)
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
@@ -549,11 +593,21 @@ export default () => {
         // window.location.href = `tables`;
     };
 
-
+    const findTableAndFieldInfo = (fieldId) => {
+        for (const [tableId, tableInfo] of Object.entries(tableFields)) {
+          const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+          
+          if (fieldInfo) {
+            return { tableId, fieldInfo };
+          }
+        }
+        
+        return { tableId: null, fieldInfo: null };
+      };
     // console.log(modalTemp)
     // console.log(tempFieldParam)
-    console.log(calculates)
-    console.log(selectedFieldsModal2)
+    // console.log(calculates)
+    // console.log(selectedFieldsModal2)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -573,14 +627,15 @@ export default () => {
                                     <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Chỉnh sửa Api</h5>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#editProject">
-                                        {/* <i class="fa fa-navicon size pointer" ></i> */}
-                                        Json
-                                    </button>
+                                    {["post", "put"].includes(allApi.api_method) && (
+                                        <button type="button" className="btn btn-primary" onClick={copyToClipboard}>
+                                            Json
+                                        </button>
+                                    )}
 
-                                    <button onClick={copyToClipboard}>
-                                        Copy Data
-                                    </button>
+                                    
+
+
 
                                 </div>
                             </div>
@@ -784,18 +839,26 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                                    return selectedFieldsBody[tableId]?.map((fieldId, index) => {
-                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                                        return (
-                                                                                            <tr key={`${tableId}-${fieldId}`}>
-                                                                                                <td>{index + 1}</td>
-                                                                                                <td>{fieldInfo?.field_name}</td>
-                                                                                                <td>{tableInfo.table_name}</td>
+                                                                            {modalTemp.body.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.field_name}</td>
+                                                                                            <td>{tableInfo.table_name}</td>
+                                                                                        </tr>
+                                                                                    );
                                                                                 })}
                                                                             </tbody>
                                                                         </table>
@@ -833,18 +896,26 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                                        return (
-                                                                                            <tr key={`${tableId}-${fieldId}`}>
-                                                                                                <td>{index + 1}</td>
-                                                                                                <td>{fieldInfo?.field_name}</td>
-                                                                                                <td>{tableInfo.table_name}</td>
+                                                                            {modalTemp.params.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.field_name}</td>
+                                                                                            <td>{tableInfo.table_name}</td>
+                                                                                        </tr>
+                                                                                    );
                                                                                 })}
                                                                             </tbody>
                                                                         </table>
@@ -885,7 +956,7 @@ export default () => {
                                                                                 <tr key={index}>
                                                                                     <td>{index + 1}</td>
                                                                                     <td>{field.display_name}</td>
-                                                                                    <td>{field.fomular_alias}</td>
+                                                                                    <td>{field.fomular}</td>
                                                                                 </tr>
                                                                             ))}
                                                                         </tbody>

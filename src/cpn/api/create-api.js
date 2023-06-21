@@ -389,6 +389,13 @@ export default () => {
         setSelectedFields(updatedSelections);
     };
     console.log("trường hiển thị:", selectedFieldsModal2)
+    const getFieldDetails = (tableId, fieldId) => {
+        const tableInfo = tableFields[tableId];
+        const fieldInfo = tableInfo?.fields.find(field => field.id === fieldId);
+        const fieldName = fieldInfo?.field_name;
+        const tableName = tableInfo?.table_name;
+        return { fieldName, tableName };
+    };
 
     //console.log(selectedFields)
     //delete selected table 
@@ -503,7 +510,18 @@ export default () => {
         // window.location.href = `tables`;
     };
 
-
+    const findTableAndFieldInfo = (fieldId) => {
+        for (const [tableId, tableInfo] of Object.entries(tableFields)) {
+          const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+          
+          if (fieldInfo) {
+            return { tableId, fieldInfo };
+          }
+        }
+        
+        return { tableId: null, fieldInfo: null };
+      };
+      
     // console.log(modalTemp)
     // console.log(tempFieldParam)
     console.log(calculates)
@@ -525,7 +543,7 @@ export default () => {
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
                                     <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Tạo mới api </h5>
-                                    
+
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -572,7 +590,7 @@ export default () => {
                                                 <input
                                                     type="radio"
                                                     checked={modalTemp.api_method === "get"}
-                                          
+
                                                     onChange={() => {
                                                         const updatedModalTemp = {
                                                             ...modalTemp,
@@ -583,7 +601,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -604,7 +622,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -626,7 +644,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -647,7 +665,7 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-                                                           
+
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -705,8 +723,8 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
-                                              {/* Chọn đối số */}
-                                              {(modalTemp.api_method === "get" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
+                                                {/* Chọn đối số */}
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường đối số </p>
@@ -728,19 +746,35 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                                    return selectedFields[tableId]?.map((fieldId, index) => {
-                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                                        return (
-                                                                                            <tr key={`${tableId}-${fieldId}`}>
-                                                                                                <td>{index + 1}</td>
-                                                                                                <td>{fieldInfo?.field_name}</td>
-                                                                                                <td>{tableInfo.table_name}</td>
+                                                                                {modalTemp.params.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.field_name}</td>
+                                                                                            <td>{tableInfo.table_name}</td>
+                                                                                        </tr>
+                                                                                    );
                                                                                 })}
+
+                                                                                {/* {modalTemp.params.map((params, index) => (
+                                                                                    <tr key={index}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{statistic}</td>
+
+                                                                                    </tr>
+                                                                                ))} */}
                                                                             </tbody>
                                                                         </table>
                                                                     </>
@@ -776,18 +810,26 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {Object.entries(tableFields).map(([tableId, tableInfo]) => {
-                                                                                    return selectedFieldsBody[tableId]?.map((fieldId, index) => {
-                                                                                        const fieldInfo = tableInfo.fields.find(field => field.id === fieldId);
-                                                                                        return (
-                                                                                            <tr key={`${tableId}-${fieldId}`}>
-                                                                                                <td>{index + 1}</td>
-                                                                                                <td>{fieldInfo?.field_name}</td>
-                                                                                                <td>{tableInfo.table_name}</td>
+                                                                            {modalTemp.body.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.field_name}</td>
+                                                                                            <td>{tableInfo.table_name}</td>
+                                                                                        </tr>
+                                                                                    );
                                                                                 })}
                                                                             </tbody>
                                                                         </table>
@@ -802,7 +844,7 @@ export default () => {
                                                     </div>
                                                 )}
 
-                                              
+
 
                                                 {/* Chọn trường hiện thị */}
                                                 {modalTemp.api_method === "get" && (
@@ -942,16 +984,16 @@ export default () => {
                                             null
                                         )
                                     }
-                                   
-                                            <div className="container">
-                                                <div className="mt-2 d-flex justify-content-end ml-auto">
-                                                    <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
-                                                    <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                                    </button>
-                                                </div>
 
-                                            </div>
-                                      
+                                    <div className="container">
+                                        <div className="mt-2 d-flex justify-content-end ml-auto">
+                                            <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
+                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                            </button>
+                                        </div>
+
+                                    </div>
+
 
                                     {/* </>
                                         ) : (
@@ -1029,7 +1071,7 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
+                                        {/* {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
@@ -1041,11 +1083,47 @@ export default () => {
                                                                 onChange={e => handleCheckboxChange(tableId, field.id, e.target.checked)}
                                                             />
                                                             {field.field_name}
+                                                            {field.props.DATATYPE}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                                
+                                            </div>
+                                        ))} */}
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className="form-group table-wrapper">
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                    <div key={fieldIndex}>
+                                                        <label>
+                                                            <input
+                                                                className="mr-1"
+                                                                type="checkbox"
+                                                                checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                onChange={e => {
+                                                                    if (modalTemp.api_method === "put" && (field.props.DATATYPE === "DATE" || field.props.DATATYPE === "DATETIME")) {
+                                                                        // Display error message
+                                                                        Swal.fire({
+                                                                            title: "Lỗi!",
+                                                                            text: "Không thể chọn trường có kiểu dữ liệu DATE hoặc DATETIME",
+                                                                            icon: "error",
+                                                                            showConfirmButton: false,
+                                                                            timer: 2000,
+                                                                        });
+                                                                    } else {
+                                                                        handleCheckboxChange(tableId, field.id, e.target.checked);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            {field.field_name}
+                                                            {/* {field.props.DATATYPE} */}
                                                         </label>
                                                     </div>
                                                 ))}
                                             </div>
                                         ))}
+
+
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Người tạo </label>
@@ -1139,7 +1217,7 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
+                                        {/* {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
@@ -1149,6 +1227,36 @@ export default () => {
                                                                 type="checkbox"
                                                                 checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
                                                                 onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
+                                                            />
+                                                            {field.field_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))} */}
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className="form-group table-wrapper">
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                    <div key={fieldIndex}>
+                                                        <label>
+                                                            <input
+                                                                className="mr-1"
+                                                                type="checkbox"
+                                                                checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
+                                                                onChange={e => {
+                                                                    if (!field.props.NULL) {
+                                                                        handleCheckboxChangeBody(tableId, field.id, e.target.checked);
+                                                                    } else {
+                                                                        Swal.fire({
+                                                                            title: "Thất bại!",
+                                                                            text: "Không thể chọn trường này.",
+                                                                            icon: "error",
+                                                                            showConfirmButton: false,
+                                                                            timer: 2000,
+                                                                        });
+                                                                    }
+                                                                }}
                                                             />
                                                             {field.field_name}
                                                         </label>
