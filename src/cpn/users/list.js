@@ -273,7 +273,6 @@ export default (props) => {
                     }
                 })
                 setProfile( newProfiles )
-
                 // close modal
                 // console.log(resp)
                 if (success) {
@@ -288,12 +287,12 @@ export default (props) => {
                     });
                 } else {
                     Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
+                        title: "Error!",
+                        text: "Image is not selected",
                         icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
+                        confirmButtonText: "OK",
+                        showCloseButton:true,
+                      }).then(function () {
                         // Không cần reload trang
                     });
                 }
@@ -306,22 +305,21 @@ export default (props) => {
                 title: "Thất bại!",
                 text: "Không có quyền thực hiện thao tác",
                 icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
+                // showConfirmButton: false,
+                
             }).then(function () {
-                //  window.location.reload();
+                 window.location.reload();
                 $('.modal-backdrop').remove()
             });
             setShowModal(false);
-
             return;
-
         } else {
             setEditUser(editUser)
-            setShowModal(true); // 
+            setShowModal(true); 
         }
     }
-    // 
+
+
     const admins = profiles.filter(profile => profile.role === 'ad');
     const projectManagers = profiles.filter(profile => profile.role === 'pm');
     const implementers = profiles.filter(profile => profile.role === 'pd');

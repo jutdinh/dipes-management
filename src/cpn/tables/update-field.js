@@ -591,7 +591,7 @@ export default () => {
     const updateFields = () => {
         const hashedFields = getTableFields.fields.map(field => {
             return {
-                ...field, ...field.props
+               ...field.props, ...field
             }
         })
 
@@ -1030,7 +1030,7 @@ export default () => {
                                                 }
                                             </div>
                                             {
-                                                currentTable && currentTable.length > 0 ? (
+                                                currentFields && currentFields.length > 0 ? (
                                                     <div className="button-container mt-4">
 
                                                         <button type="button" onClick={addField} class="btn btn-success ">{lang["btn.addfield"]}</button>
