@@ -164,7 +164,7 @@ export default () => {
             });
     };
     const copyURL = () => {
-       
+
 
         clipboardCopy(allApi.url)
             .then(() => {
@@ -182,7 +182,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-         console.log(requestBody)
+        console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "PUT",
             headers: {
@@ -258,11 +258,11 @@ export default () => {
     };
 
 
-console.log(modalTemp.tables)
+    // console.log(modalTemp.tables)
 
 
     const [allTable, setAllTable] = useState([]);
-    console.log(allTable)
+    // console.log(allTable)
     const [possibleTables, setPossibleTables] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
@@ -303,8 +303,8 @@ console.log(modalTemp.tables)
         ]);
 
         // After updating selectedTables, we need to find the linked tables
-       const updatedSelectedTables = [...selectedTables, selectedTableData];
-    setPossibleTables(findLinkedTables(updatedSelectedTables));
+        const updatedSelectedTables = [...selectedTables, selectedTableData];
+        setPossibleTables(findLinkedTables(updatedSelectedTables));
         const linkedTables = allTable.filter(
             (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
@@ -322,17 +322,17 @@ console.log(modalTemp.tables)
 
     const findLinkedTables = (selectedTables) => {
         return allTable.filter(
-            (table) => 
+            (table) =>
                 !selectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 selectedTables.some(
-                    (selectedTable) => 
-                        (selectedTable.foreign_keys.some(
-                            (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-                        ) || 
+                    (selectedTable) =>
+                    (selectedTable.foreign_keys.some(
+                        (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
+                    ) ||
                         selectedTable.primary_key === table.id ||
                         table.foreign_keys.some(
                             (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
-                        ) || 
+                        ) ||
                         table.primary_key === selectedTable.id)
                 )
         );
@@ -347,18 +347,18 @@ console.log(modalTemp.tables)
             setPossibleTables(findLinkedTables(selectedTables));
         }
     }, [selectedTables, isResetting]);
-    
- 
+
+
     const [initialTables, setInitialTables] = useState([]);
 
     useEffect(() => {
         setInitialTables(allTable);
     }, [allTable]);
-    
+
     const handleDeleteAll = () => {
         setSelectedTables([]);
         setPossibleTables(initialTables);
-    
+
         setModalTemp(prevState => ({
             ...prevState,
             params: [],
@@ -372,7 +372,7 @@ console.log(modalTemp.tables)
 
 
 
-    
+
     //  hiển thị các tường của bảngđược chọn
     const [tables, setTables] = useState([]);
 
@@ -458,7 +458,8 @@ console.log(modalTemp.tables)
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-    // console.log("FieldShow", selectedFieldsModal2)
+    console.log("FieldShow", selectedFieldsModal2)
+    console.log(modalTemp.fields)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
     // console.log("FieldParams", selectedFields)
@@ -632,9 +633,9 @@ console.log(modalTemp.tables)
                                             Json
                                         </button>
                                     )}
-                                     <button type="button" className="btn btn-primary" onClick={copyURL}>
-                                            Url
-                                     </button>
+                                    <button type="button" className="btn btn-primary" onClick={copyURL}>
+                                        Url
+                                    </button>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -828,17 +829,14 @@ console.log(modalTemp.tables)
                                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                                                     <th class="font-weight-bold" scope="col">Tên trường</th>
                                                                                     <th class="font-weight-bold" scope="col">Tên bảng</th>
-
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
                                                                                 {modalTemp.body.map((fieldId, index) => {
                                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
-
                                                                                     if (!tableId || !fieldInfo) {
                                                                                         return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
                                                                                     }
-
                                                                                     const tableInfo = tableFields[tableId];
 
                                                                                     if (!tableInfo) {
@@ -865,9 +863,8 @@ console.log(modalTemp.tables)
                                                         </div>
                                                     </div>
                                                 )}
-
                                                 {/* Chọn đối số */}
-                                                {modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put" || modalTemp.api_method === "delete" && (
+                                               
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường đối số </p>
@@ -876,8 +873,8 @@ console.log(modalTemp.tables)
                                                             </button>
                                                         </div>
                                                         <div class="table-responsive">
-                                                            {
-                                                                modalTemp && modalTemp.params.length > 0 ? (
+                                                            
+                                                               
                                                                     <>
                                                                         <table class="table table-striped">
                                                                             <thead>
@@ -913,15 +910,11 @@ console.log(modalTemp.tables)
                                                                             </tbody>
                                                                         </table>
                                                                     </>
-                                                                ) : (
-                                                                    <div class="list_cont ">
-                                                                        <p>Chưa có dữ liệu trường đối số</p>
-                                                                    </div>
-                                                                )
-                                                            }
+                                                               
+                                                            
                                                         </div>
                                                     </div>
-                                                )}
+                                                
 
                                                 {/* Chọn trường hiện thị */}
                                                 {modalTemp.api_method === "get" && (
@@ -945,13 +938,28 @@ console.log(modalTemp.tables)
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            {modalTemp.fields.map((field, index) => (
-                                                                                <tr key={index}>
-                                                                                    <td>{index + 1}</td>
-                                                                                    <td>{field.display_name}</td>
-                                                                                    <td>{field.fomular_alias}</td>
-                                                                                </tr>
-                                                                            ))}
+                                                                            
+                                                                             {modalTemp.fields.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
+
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.display_name}</td>
+                                                                                            <td>{fieldInfo.fomular_alias}</td>
+                                                                                        </tr>
+                                                                                    );
+                                                                                })}
                                                                         </tbody>
                                                                     </table>
                                                                 ) : (
@@ -1061,11 +1069,11 @@ console.log(modalTemp.tables)
                                             null
                                         )
                                     }
-                                                <div className="mt-2 d-flex justify-content-end ml-auto">
-                                                    <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
-                                                    <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                                    </button>
-                                                </div>
+                                    <div className="mt-2 d-flex justify-content-end ml-auto">
+                                        <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
+                                        <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                        </button>
+                                    </div>
                                     {/* </>
                                         ) : (
                                             null
@@ -1074,7 +1082,7 @@ console.log(modalTemp.tables)
 
                                 </div>
                             </div>
-                             
+
                         </div>
                     </div>
                 </div>
@@ -1324,7 +1332,7 @@ console.log(modalTemp.tables)
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                            {modalTemp.fields.map((field, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
                                                                     <td>{field.display_name}</td>
@@ -1416,7 +1424,7 @@ console.log(modalTemp.tables)
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                            {modalTemp.fields.map((field, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
                                                                     <td>{field.display_name}</td>

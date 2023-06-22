@@ -216,9 +216,9 @@ export default () => {
                                                                 <th class="font-weight-bold">Tên API</th>
                                                                 <th class="font-weight-bold">Phương thức </th>
                                                                 <th class="font-weight-bold">Phạm vi</th>
-                                                                <th class="font-weight-bold align-center">Trạng thái</th>
                                                                 <th class="font-weight-bold">Người tạo</th>
                                                                 <th class="font-weight-bold">Thời gian tạo</th>
+                                                                <th class="font-weight-bold align-center">Trạng thái</th>
                                                                 <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                             </tr>
                                                         </thead>
@@ -230,13 +230,16 @@ export default () => {
                                                                     <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
 
                                                                     <td>{api.api_scope}</td>
-                                                                    <td class="align-center">
-                                                                        {api.status ?
-                                                                            <i className="fa fa-check-circle-o size" style={{ color: "green" }} title={"On"}></i> :
-                                                                            <i className="fa fa-check-circle-o size" style={{ pointerEvents: "none", opacity: 0.6 }} title={"Off"}></i>}
-                                                                    </td>
+                                                                   
+
                                                                     <td>{api.create_by.fullname}</td>
                                                                     <td>{api.create_at}</td>
+                                                                    <td class="align-center">
+                                                                        <select  className="form-control" onChange={() => handleUpdateStatus(api)}>
+                                                                            <option value={true} selected={api.status}>On</option>
+                                                                            <option value={false} selected={!api.status}>Off</option>
+                                                                        </select>
+                                                                    </td>
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
                                                                         {api.status ?
                                                                             <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
