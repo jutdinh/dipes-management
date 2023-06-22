@@ -300,23 +300,24 @@ export default (props) => {
     }
     const handleUpdateUser = (editUser) => {
         console.log("Thông tin người dùng:", editUser.role);
-        if (editUser.role === users.role) {
-            Swal.fire({
-                title: "Thất bại!",
-                text: "Không có quyền thực hiện thao tác",
-                icon: "error",
-                // showConfirmButton: false,
+        setEditUser(editUser)
+        // if (editUser.role === users.role) {
+        //     Swal.fire({
+        //         title: "Thất bại!",
+        //         text: "Không có quyền thực hiện thao tác",
+        //         icon: "error",
+        //         // showConfirmButton: false,
                 
-            }).then(function () {
-                 window.location.reload();
-                $('.modal-backdrop').remove()
-            });
-            setShowModal(false);
-            return;
-        } else {
-            setEditUser(editUser)
-            setShowModal(true); 
-        }
+        //     }).then(function () {
+        //          window.location.reload();
+        //         $('.modal-backdrop').remove()
+        //     });
+        //     setShowModal(false);
+        //     return;
+        // } else {
+        //     setEditUser(editUser)
+        //     setShowModal(true); 
+        // }
     }
 
 
@@ -468,8 +469,6 @@ export default (props) => {
                                                         } placeholder={lang["p.fullname"]} />
                                                         {errorMessagesedit.username && <span class="error-message">{errorMessagesedit.fullname}</span>}
                                                     </div>
-
-
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="email">{lang["email"]}<span class="red_star ml-1">*</span></label>
                                                         <input type="email" class="form-control" value={editUser.email} onChange={

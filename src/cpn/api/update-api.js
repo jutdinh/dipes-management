@@ -163,6 +163,17 @@ export default () => {
                 console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
             });
     };
+    const copyURL = () => {
+       
+
+        clipboardCopy(allApi.url)
+            .then(() => {
+                console.log('Đã sao chép dữ liệu vào clipboard.');
+            })
+            .catch((error) => {
+                console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
+            });
+    };
 
     const updateApi = () => {
         const requestBody = {
@@ -573,10 +584,13 @@ export default () => {
                                 </div>
                                 <div>
                                     {["post", "put"].includes(allApi.api_method) && (
-                                        <button type="button" className="btn btn-primary" onClick={copyToClipboard}>
+                                        <button type="button" className="btn btn-primary mr-2" onClick={copyToClipboard}>
                                             Json
                                         </button>
                                     )}
+                                     <button type="button" className="btn btn-primary" onClick={copyURL}>
+                                            Url
+                                     </button>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -593,7 +607,7 @@ export default () => {
                                         {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-7"></div>
-                                    <div class="form-group col-lg-4">
+                                    {/* <div class="form-group col-lg-4">
                                         <label class="font-weight-bold">Phạm vi <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">
                                             <div class="checkbox-item">
@@ -613,7 +627,7 @@ export default () => {
                                                 <label class="ml-1">PRIVATE</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div class="form-group col-lg-8"></div>
                                     <div class="form-group col-lg-5">
                                         <label class="font-weight-bold">Phương thức <span className='red_star'>*</span></label>
