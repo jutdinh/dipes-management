@@ -182,7 +182,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        // console.log(requestBody)
+         console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "PUT",
             headers: {
@@ -202,7 +202,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        window.location.reload();
+                        // window.location.reload();
                         setShowModal(false);
                     });
                 } else {
@@ -258,10 +258,11 @@ export default () => {
     };
 
 
-
+console.log(modalTemp.tables)
 
 
     const [allTable, setAllTable] = useState([]);
+    console.log(allTable)
     const [possibleTables, setPossibleTables] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
@@ -302,8 +303,8 @@ export default () => {
         ]);
 
         // After updating selectedTables, we need to find the linked tables
-        const updatedSelectedTables = [...selectedTables, selectedTableData];
-        console.log(updatedSelectedTables)
+       const updatedSelectedTables = [...selectedTables, selectedTableData];
+    setPossibleTables(findLinkedTables(updatedSelectedTables));
         const linkedTables = allTable.filter(
             (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
@@ -319,16 +320,59 @@ export default () => {
         setPossibleTables(linkedTables);
     };
 
-    // console.log("All table", allTable)
-    //xóa bảng đã chọn 
+    const findLinkedTables = (selectedTables) => {
+        return allTable.filter(
+            (table) => 
+                !selectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+                selectedTables.some(
+                    (selectedTable) => 
+                        (selectedTable.foreign_keys.some(
+                            (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
+                        ) || 
+                        selectedTable.primary_key === table.id ||
+                        table.foreign_keys.some(
+                            (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
+                        ) || 
+                        table.primary_key === selectedTable.id)
+                )
+        );
+    };
+    const [isResetting, setIsResetting] = useState(false);
+
+    useEffect(() => {
+        if (isResetting) {
+            setPossibleTables(allTable);
+            setIsResetting(false);
+        } else {
+            setPossibleTables(findLinkedTables(selectedTables));
+        }
+    }, [selectedTables, isResetting]);
+    
+ 
+    const [initialTables, setInitialTables] = useState([]);
+
+    useEffect(() => {
+        setInitialTables(allTable);
+    }, [allTable]);
+    
     const handleDeleteAll = () => {
         setSelectedTables([]);
-        setPossibleTables(allTable)
+        setPossibleTables(initialTables);
+    
         setModalTemp(prevState => ({
             ...prevState,
-            params: []
+            params: [],
+            body: [],
+            fields: [],
+            tables: [],
+            calculates: [],
+            statistic: [],
         }));
     }
+
+
+
+    
     //  hiển thị các tường của bảngđược chọn
     const [tables, setTables] = useState([]);
 
@@ -1017,14 +1061,11 @@ export default () => {
                                             null
                                         )
                                     }
-                                 
                                                 <div className="mt-2 d-flex justify-content-end ml-auto">
                                                     <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
                                                     <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                                     </button>
                                                 </div>
-
-
                                     {/* </>
                                         ) : (
                                             null
