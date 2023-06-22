@@ -110,8 +110,8 @@ export default () => {
     console.log(allApi)
 
 
-    const [data, setData] = useState(null);
 
+    const [data, setData] = useState(null);
 
     useEffect(() => {
 
@@ -119,7 +119,6 @@ export default () => {
             const fieldsData = [];
 
             for (let tableId of modalTemp.tables) {
-
                 const response = await fetch(`${proxy}/db/tables/table/${tableId}`, {
                     headers: {
                         Authorization: _token
@@ -132,7 +131,6 @@ export default () => {
                 const filteredFields = Array.isArray(tableData.data.fields) && modalTemp?.body
                     ? tableData.data.fields.filter(field => modalTemp.body.includes(field.id))
                     : [];
-
 
                 console.log(filteredFields)
                 fieldsData.push(...filteredFields);
@@ -277,6 +275,8 @@ export default () => {
 
 
     const [selectedTables, setSelectedTables] = useState([]);
+    //luu id bảng được chọn
+    
     
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
@@ -286,7 +286,7 @@ export default () => {
 
         setSelectedTables((prevSelectedTables) => [
             ...prevSelectedTables,
-            selectedTableData,
+            selectedTables,
         ]);
 
         // After updating selectedTables, we need to find the linked tables
@@ -336,6 +336,13 @@ export default () => {
 
     }, [modalTemp.tables]);
 
+    useEffect(() => {
+  
+        setSelectedTables(tables);
+
+    }, [tables]);
+    console.log(tables)
+    console.log(selectedTables)
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
@@ -570,11 +577,6 @@ export default () => {
                                             Json
                                         </button>
                                     )}
-
-                                    
-
-
-
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -611,7 +613,6 @@ export default () => {
                                                 <label class="ml-1">PRIVATE</label>
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="form-group col-lg-8"></div>
                                     <div class="form-group col-lg-5">
@@ -653,7 +654,6 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -675,7 +675,6 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -696,7 +695,6 @@ export default () => {
                                                             body: [],
                                                             calculates: [],
                                                             statistic: []
-
                                                         };
                                                         setModalTemp(updatedModalTemp);
                                                     }}
@@ -725,7 +723,6 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">Tên bảng</th>
                                                                     <th class="font-weight-bold" scope="col">Người tạo</th>
                                                                     <th class="font-weight-bold" scope="col">Thời gian</th>
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -812,7 +809,7 @@ export default () => {
                                                 )}
 
                                                 {/* Chọn đối số */}
-                                                {modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put" && (
+                                                {modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put" || modalTemp.api_method === "delete" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường đối số </p>
@@ -872,7 +869,7 @@ export default () => {
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường hiển thị </p><span className='red_star'>*</span>
+                                                            <p class="font-weight-bold">Danh sách các trường hiển thị <span className='red_star'>*</span></p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -894,7 +891,7 @@ export default () => {
                                                                                 <tr key={index}>
                                                                                     <td>{index + 1}</td>
                                                                                     <td>{field.display_name}</td>
-                                                                                    <td>{field.fomular}</td>
+                                                                                    <td>{field.fomular_alias}</td>
                                                                                 </tr>
                                                                             ))}
                                                                         </tbody>
@@ -943,7 +940,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{calculates.display_name}</td>
                                                                                 <td>{calculates.fomular_alias}</td>
-                                                                                <td>{calculates.fomula}</td>
+                                                                                <td>{calculates.fomular}</td>
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>

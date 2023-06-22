@@ -208,6 +208,8 @@ export default () => {
     }, [])
 
     const [selectedTables, setSelectedTables] = useState([]);
+    console.log(selectedTables)
+
     // lưu id bảng được chọn
     // useEffect(() => {
     //     // get IDs from selected tables and set them into modalTemp.tables
@@ -694,7 +696,6 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">Tên bảng</th>
                                                                     <th class="font-weight-bold" scope="col">Người tạo</th>
                                                                     <th class="font-weight-bold" scope="col">Thời gian</th>
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -921,7 +922,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{calculates.display_name}</td>
                                                                                 <td>{calculates.fomular_alias}</td>
-                                                                                <td>{calculates.fomula}</td>
+                                                                                <td>{calculates.fomular}</td>
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
@@ -984,23 +985,16 @@ export default () => {
                                             null
                                         )
                                     }
-
-                                    <div className="container">
                                         <div className="mt-2 d-flex justify-content-end ml-auto">
                                             <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
                                             <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                             </button>
                                         </div>
-
-                                    </div>
-
-
                                     {/* </>
                                         ) : (
                                             null
                                         )
                                     } */}
-
                                 </div>
                             </div>
                         </div>
@@ -1217,7 +1211,7 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                        {/* {modalTemp.tables?.map((tableId, index) => (
+                                        {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
@@ -1233,8 +1227,8 @@ export default () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                        ))} */}
-                                        {modalTemp.tables?.map((tableId, index) => (
+                                        ))}
+                                        {/* {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
@@ -1263,7 +1257,7 @@ export default () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                        ))}
+                                        ))} */}
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Người tạo </label>

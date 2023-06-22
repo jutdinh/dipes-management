@@ -155,7 +155,7 @@ export default () => {
 
 
     const [currentPageApi, setCurrentPageApi] = useState(1);
-    const rowsPerPageApi = 7;
+    const rowsPerPageApi = 11;
 
     const indexOfLastApi = currentPageApi * rowsPerPageApi;
     const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
@@ -216,8 +216,8 @@ export default () => {
                                                         <thead>
                                                             <tr>
                                                                 <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Phương thức </th>
                                                                 <th class="font-weight-bold">Tên API</th>
+                                                                <th class="font-weight-bold">Phương thức </th>
                                                                 <th class="font-weight-bold">Phạm vi</th>
                                                                 <th class="font-weight-bold align-center">Trạng thái</th>
                                                                 <th class="font-weight-bold">Người tạo</th>
@@ -229,8 +229,9 @@ export default () => {
                                                             {currentApi.map((api, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
-                                                                    <td>{api.api_method}</td>
                                                                     <td>{api.api_name}</td>
+                                                                    <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
+
                                                                     <td>{api.api_scope}</td>
                                                                     <td class="align-center">
                                                                         {api.status ?
