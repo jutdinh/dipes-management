@@ -45,7 +45,7 @@ export const ValidTypeEnum = Object.freeze({
             min: -9223372036854776000,
             max: 9223372036854775999
         },
-        props: [{ name: "MAX", label: "Giá trị tối đa", type: "int" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "DELIMITER", label: "Số chữ số thập phân", type: "int" }]
+        props: [{ name: "MAX", label: "Giá trị tối đa", type: "int" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "DECIMAL_PLACE", label: "Số chữ số thập phân", type: "int" }]
     }, /* dec(5,2) ~ 999.99 */
    
     DECIMAL_UNSIGNED: {
@@ -54,7 +54,7 @@ export const ValidTypeEnum = Object.freeze({
             min: 0,
             max: 18446744073709552000
         },
-        props: [{ name: "MAX", label: "Giá trị tối đa", type: "int" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "DELIMITER", label: "Số chữ số thập phân", type: "int" }]
+        props: [{ name: "MAX", label: "Giá trị tối đa", type: "int" }, { name: "MIN", label: "Giá trị tối thiểu", type: "int" }, { name: "DECIMAL_PLACE", label: "Số chữ số thập phân", type: "int" }]
     }, /* dec(5,2) ~ 999.99 */
    
     DATE: { id: 8, name: "DATE", type: "date", format: "dd/MM/yyyy", props: [{ name: "FORMAT", type: "text", label: "Định dạng" }] },

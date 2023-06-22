@@ -514,16 +514,16 @@ export default () => {
 
     const findTableAndFieldInfo = (fieldId) => {
         for (const [tableId, tableInfo] of Object.entries(tableFields)) {
-          const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
-          
-          if (fieldInfo) {
-            return { tableId, fieldInfo };
-          }
+            const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+
+            if (fieldInfo) {
+                return { tableId, fieldInfo };
+            }
         }
-        
+
         return { tableId: null, fieldInfo: null };
-      };
-      
+    };
+
     // console.log(modalTemp)
     // console.log(tempFieldParam)
     console.log(calculates)
@@ -562,7 +562,7 @@ export default () => {
                                         {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-7"></div>
-                                    <div class="form-group col-lg-4">
+                                    {/* <div class="form-group col-lg-4">
                                         <label class="font-weight-bold">Phạm vi <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">
                                             <div class="checkbox-item">
@@ -583,7 +583,7 @@ export default () => {
                                             </div>
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                     <div class="form-group col-lg-8"></div>
                                     <div class="form-group col-lg-5">
                                         <label class="font-weight-bold">Phương thức <span className='red_star'>*</span></label>
@@ -811,7 +811,7 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                            {modalTemp.body.map((fieldId, index) => {
+                                                                                {modalTemp.body.map((fieldId, index) => {
                                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
                                                                                     if (!tableId || !fieldInfo) {
@@ -985,11 +985,11 @@ export default () => {
                                             null
                                         )
                                     }
-                                        <div className="mt-2 d-flex justify-content-end ml-auto">
-                                            <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
-                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                            </button>
-                                        </div>
+                                    <div className="mt-2 d-flex justify-content-end ml-auto">
+                                        <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
+                                        <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                        </button>
+                                    </div>
                                     {/* </>
                                         ) : (
                                             null
@@ -1039,7 +1039,7 @@ export default () => {
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Người tạo</label>
-                                        <input class="form-control" type="text" value={"Nguyễn Văn A"} readOnly></input>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Ngày tạo</label>

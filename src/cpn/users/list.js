@@ -567,7 +567,7 @@ export default (props) => {
                                                                     <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
                                                                 </div>
                                                             </div>
-                                                            {item.username !== auth.username && item.role !== auth.role && (
+                                                            {/* {item.username !== auth.username && item.role !== auth.role && ( */}
                                                                 <div class="bottom_list">
                                                                     <div class="right_button">
                                                                         <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
@@ -578,7 +578,7 @@ export default (props) => {
                                                                         </button>
                                                                     </div>
                                                                 </div>
-                                                            )}
+                                                            {/* )} */}
                                                         </div>
                                                     </div>
                                                 </div>

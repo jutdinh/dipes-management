@@ -144,7 +144,7 @@ export default () => {
         }
     }, [modalTemp]);
 
-    console.log(data)
+    // console.log(data)
 
 
     const copyToClipboard = () => {
@@ -245,7 +245,7 @@ export default () => {
             body: allSelectedFieldBody,
         }));
     };
-   
+
 
 
 
@@ -276,21 +276,23 @@ export default () => {
 
     const [selectedTables, setSelectedTables] = useState([]);
     //luu id bảng được chọn
-    
-    
+    console.log(selectedTables)
+
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
+        console.log(selectedTableName)
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
 
         setSelectedTables((prevSelectedTables) => [
             ...prevSelectedTables,
-            selectedTables,
+            selectedTableData,
         ]);
 
         // After updating selectedTables, we need to find the linked tables
         const updatedSelectedTables = [...selectedTables, selectedTableData];
+        console.log(updatedSelectedTables)
         const linkedTables = allTable.filter(
             (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
@@ -337,12 +339,12 @@ export default () => {
     }, [modalTemp.tables]);
 
     useEffect(() => {
-  
+
         setSelectedTables(tables);
 
     }, [tables]);
     console.log(tables)
-    console.log(selectedTables)
+    console.log(selectedTables[0]?.table_name)
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
@@ -372,7 +374,6 @@ export default () => {
             }
             setTableFields(fieldsByTable);
         }
-
         fetchAllFields();
 
     }, [modalTemp.tables]);
@@ -436,7 +437,6 @@ export default () => {
     const [aliasCalculates, setaliasCalculates] = useState([]);
 
     const generateUniqueFormularAlias = async (display_name) => {
-
         const requestBody = { field_name: display_name };
         const response = await fetch(`${proxy}/apis/make/alias`, {
             method: "POST",
@@ -540,15 +540,15 @@ export default () => {
 
     const findTableAndFieldInfo = (fieldId) => {
         for (const [tableId, tableInfo] of Object.entries(tableFields)) {
-          const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
-          
-          if (fieldInfo) {
-            return { tableId, fieldInfo };
-          }
+            const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+
+            if (fieldInfo) {
+                return { tableId, fieldInfo };
+            }
         }
-        
+
         return { tableId: null, fieldInfo: null };
-      };
+    };
     // console.log(modalTemp)
     // console.log(tempFieldParam)
     // console.log(calculates)
@@ -774,7 +774,7 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                            {modalTemp.body.map((fieldId, index) => {
+                                                                                {modalTemp.body.map((fieldId, index) => {
                                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
                                                                                     if (!tableId || !fieldInfo) {
@@ -831,7 +831,7 @@ export default () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                            {modalTemp.params.map((fieldId, index) => {
+                                                                                {modalTemp.params.map((fieldId, index) => {
                                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
                                                                                     if (!tableId || !fieldInfo) {
@@ -1003,20 +1003,13 @@ export default () => {
                                             null
                                         )
                                     }
-                                    {
-                                        modalTemp.fields && modalTemp.fields.length > 0 || modalTemp.body && modalTemp.body.length > 0 ? (
-                                            <div className="container">
+                                 
                                                 <div className="mt-2 d-flex justify-content-end ml-auto">
                                                     <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
                                                     <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                                     </button>
                                                 </div>
 
-                                            </div>
-                                        ) : (
-                                            null
-                                        )
-                                    }
 
                                     {/* </>
                                         ) : (
@@ -1026,6 +1019,7 @@ export default () => {
 
                                 </div>
                             </div>
+                             
                         </div>
                     </div>
                 </div>
