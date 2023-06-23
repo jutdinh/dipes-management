@@ -230,21 +230,22 @@ export default () => {
                                                                     <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
 
                                                                     <td>{api.api_scope}</td>
-                                                                   
+
 
                                                                     <td>{api.create_by.fullname}</td>
                                                                     <td>{api.create_at}</td>
-                                                                    <td class="align-center">
-                                                                        <select  className="form-control" onChange={() => handleUpdateStatus(api)}>
-                                                                            <option value={true} selected={api.status}>On</option>
-                                                                            <option value={false} selected={!api.status}>Off</option>
+                                                                    <td class="font-weight-bold align-center">
+                                                                        <select className="form-control" onChange={() => handleUpdateStatus(api)}>
+                                                                            <option value={true} selected={api.status} style={{ color: 'green' }}>On</option>
+                                                                            <option value={false} selected={!api.status} style={{ color: 'red' }}>Off</option>
                                                                         </select>
                                                                     </td>
+
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                        {api.status ?
+                                                                        {/* {api.status ?
                                                                             <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
                                                                             : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
-                                                                        }
+                                                                        } */}
                                                                         <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(api)} title={lang["edit"]}></i>
                                                                         <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(api)} title={lang["delete"]}></i>
                                                                     </td>

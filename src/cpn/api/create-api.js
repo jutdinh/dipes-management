@@ -35,7 +35,8 @@ export default () => {
         body: [],
         calculates: [],
         statistic: [],
-        api_scope: "public"
+        api_scope: "public",
+        status: true
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
@@ -487,7 +488,10 @@ export default () => {
 
         event.preventDefault();
         if (validateStatistical()) {
-            const newStatistical = { display_name, field, fomular };
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+ 
+            const newStatistical = { fomular_alias, display_name, field, fomular };
+
 
             // Cập nhật modalTemp
             setModalTemp(prev => ({
@@ -583,7 +587,30 @@ export default () => {
                                             </div>
                                         </div>
 
+                                        
                                     </div> */}
+                                    <div class="form-group col-lg-4">
+                                        <label class="font-weight-bold">Trạng thái <span className='red_star'>*</span></label>
+                                        <div class="checkbox-group">
+                                            <div class="checkbox-item">
+                                                <input
+                                                    type="radio"
+                                                    checked={modalTemp.status === true}
+                                                    onChange={() => setModalTemp({ ...modalTemp, status: true })}
+                                                />
+                                                <label class="ml-1">On</label>
+                                            </div>
+                                            <div class="checkbox-item">
+                                                <input
+                                                    type="radio"
+                                                    checked={modalTemp.status === false}
+                                                    onChange={() => setModalTemp({ ...modalTemp, status: false })}
+                                                />
+                                                <label class="ml-1">Off</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                     <div class="form-group col-lg-8"></div>
                                     <div class="form-group col-lg-5">
                                         <label class="font-weight-bold">Phương thức <span className='red_star'>*</span></label>
@@ -680,7 +707,7 @@ export default () => {
                                     <div class="col-md-12 col-lg-12 bordered">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các bảng <span className='red_star'> *</span> </p>
-                                            {errorApi.api_name && <p className="text-danger">{(errorApi.api_name)}</p>}
+                                            {errorApi.tables && <p className="text-danger">{(errorApi.tables)}</p>}
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -865,17 +892,29 @@ export default () => {
                                                                                 <th class="font-weight-bold">STT</th>
                                                                                 <th class="font-weight-bold">Tên trường hiển thị</th>
                                                                                 <th class="font-weight-bold">Bí danh</th>
+                                                                                <td class="font-weight-bold">Tên bảng</td>
 
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            {modalTemp.fields.map((field, index) => (
-                                                                                <tr key={index}>
-                                                                                    <td>{index + 1}</td>
-                                                                                    <td>{field.display_name}</td>
-                                                                                    <td>{field.fomular_alias}</td>
-                                                                                </tr>
-                                                                            ))}
+                                                                            {modalTemp.fields.map((field, index) => {
+                                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                                if (!tableId || !fieldInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                }
+                                                                                const tableInfo = tableFields[tableId];
+                                                                                if (!tableInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                }
+                                                                                return (
+                                                                                    <tr key={`${tableId}-${field.id}`}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{fieldInfo.field_name}</td>
+                                                                                        <td>{fieldInfo.fomular_alias}</td>
+                                                                                        <td>{tableInfo.table_name}</td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
                                                                         </tbody>
                                                                     </table>
                                                                 ) : (
@@ -1308,17 +1347,29 @@ export default () => {
                                                                 <th class="font-weight-bold">STT</th>
                                                                 <th class="font-weight-bold">Tên trường hiển thị</th>
                                                                 <th class="font-weight-bold">Bí danh</th>
+                                                                <td class="font-weight-bold">Tên bảng</td>
 
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{field.display_name}</td>
-                                                                    <td>{field.fomular_alias}</td>
-                                                                </tr>
-                                                            ))}
+                                                            {modalTemp.fields.map((field, index) => {
+                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                if (!tableId || !fieldInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                }
+                                                                const tableInfo = tableFields[tableId];
+                                                                if (!tableInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                }
+                                                                return (
+                                                                    <tr key={`${tableId}-${field.id}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{fieldInfo.field_name}</td>
+                                                                        <td>{fieldInfo.fomular_alias}</td>
+                                                                        <td>{tableInfo.table_name}</td>
+                                                                    </tr>
+                                                                );
+                                                            })}
                                                         </tbody>
                                                     </table>
                                                 ) : (
@@ -1400,17 +1451,29 @@ export default () => {
                                                                 <th class="font-weight-bold">STT</th>
                                                                 <th class="font-weight-bold">Tên trường hiển thị</th>
                                                                 <th class="font-weight-bold">Bí danh</th>
+                                                                <td class="font-weight-bold">Tên bảng</td>
 
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{field.display_name}</td>
-                                                                    <td>{field.fomular_alias}</td>
-                                                                </tr>
-                                                            ))}
+                                                            {modalTemp.fields.map((field, index) => {
+                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                if (!tableId || !fieldInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                }
+                                                                const tableInfo = tableFields[tableId];
+                                                                if (!tableInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                }
+                                                                return (
+                                                                    <tr key={`${tableId}-${field.id}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{fieldInfo.field_name}</td>
+                                                                        <td>{fieldInfo.fomular_alias}</td>
+                                                                        <td>{tableInfo.table_name}</td>
+                                                                    </tr>
+                                                                );
+                                                            })}
                                                         </tbody>
                                                     </table>
                                                 ) : (

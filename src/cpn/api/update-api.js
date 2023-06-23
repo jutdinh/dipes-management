@@ -202,7 +202,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        // window.location.reload();
+                        window.location.reload();
                         setShowModal(false);
                     });
                 } else {
@@ -402,8 +402,11 @@ export default () => {
     console.log(selectedTables[0]?.table_name)
     // console.log(tables)
 
+
+
+
     const [tableFields, setTableFields] = useState([]);
-    // console.log(tableFields)
+    console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -433,8 +436,39 @@ export default () => {
 
     }, [modalTemp.tables]);
 
+    const findTableAndFieldInfo = (fieldId) => {
+        for (const [tableId, tableInfo] of Object.entries(tableFields)) {
+            const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+
+            if (fieldInfo) {
+                return { tableId, fieldInfo };
+            }
+        }
+
+        return { tableId: null, fieldInfo: null };
+    };
     // luu truong body 
     const [selectedFieldsBody, setSelectedFieldsBody] = useState({});
+    console.log("fieldBODY", selectedFieldsBody)
+    // load dữ liệu checked
+    const initializeCheckboxState = () => {
+        if (modalTemp.body) {
+            let tempBody = {};
+            modalTemp.body.forEach((id) => {
+                const { tableId } = findTableAndFieldInfo(id); // Use your function to get the tableId
+                if (tableId) {
+                    if (!tempBody[tableId]) {
+                        tempBody[tableId] = [];
+                    }
+                    tempBody[tableId].push(id);
+                }
+            });
+            setSelectedFieldsBody(tempBody);
+        }
+    };
+
+
+
     const handleCheckboxChangeBody = (tableId, fieldId, isChecked) => {
         // Sao chép state hiện tại
         const updatedSelections = { ...selectedFieldsBody };
@@ -460,10 +494,49 @@ export default () => {
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
     console.log("FieldShow", selectedFieldsModal2)
     console.log(modalTemp.fields)
+
+
+
+    const initializeCheckboxStateShow = () => {
+        if (modalTemp.fields) {
+            const tempField = modalTemp.fields.reduce((acc, field) => {
+                const { id, display_name, fomular_alias } = field;
+                const tableId = findTableAndFieldInfo(id).tableId;
+                if (tableId) {
+                    if (!acc[tableId]) {
+                        acc[tableId] = [];
+                    }
+                    acc[tableId].push({
+                        id,
+                        display_name,
+                        fomular_alias,
+                    });
+                }
+                return acc;
+            }, {});
+            setSelectedFieldsModal2(tempField);
+        }
+    };
+
+
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
     // console.log("FieldParams", selectedFields)
-
+    const initializeCheckboxStateParam = () => {
+        if (modalTemp.params) {
+            let tempParam = {};
+            modalTemp.params.forEach((id) => {
+                const { tableId } = findTableAndFieldInfo(id); // Use your function to get the tableId
+                if (tableId) {
+                    if (!tempParam[tableId]) {
+                        tempParam[tableId] = [];
+                    }
+                    tempParam[tableId].push(id);
+                }
+            });
+            setSelectedFields(tempParam);
+        }
+    };
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         // Sao chép state hiện tại
         const updatedSelections = { ...selectedFields };
@@ -529,22 +602,171 @@ export default () => {
     }
     const handleSubmitFieldCalculates = async (event) => {
         event.preventDefault();
-        if (validateCaculates()) {
-            const fomular_alias = await generateUniqueFormularAlias(display_name);
-            const newCalculate = { display_name, fomular_alias, fomular };
+
+        const fomular_alias = await generateUniqueFormularAlias(display_name);
+        const newCalculate = { display_name, fomular_alias, fomular };
 
 
-            // Cập nhật modalTemp
-            setModalTemp(prev => ({
-                ...prev,
-                calculates: [...prev.calculates, newCalculate]
-            }));
-            setCalculates([...calculates, newCalculate])
-            setDisplayname("");
-            setFomular("");
-        }
+        // Cập nhật modalTemp
+        setModalTemp(prev => ({
+            ...prev,
+            calculates: [...prev.calculates, newCalculate]
+        }));
+        setCalculates([...calculates, newCalculate])
+        setDisplayname("");
+        setFomular("");
+
 
     };
+    //Cập nhật trường tính toán
+    const [calculatesUpdate, setCalculatesUpdate] = useState({
+        display_name: "",
+        fomular: "",
+        fomular_alias: ""
+    });
+    const updateFieldCalculates = (cal) => {
+        console.log(cal)
+        setCalculatesUpdate(cal)
+
+
+    }
+
+
+    const submitupdateFieldCalculates = () => {
+        const updatedCalculates = modalTemp.calculates.map(item =>
+            item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
+        );
+        setCalculates(updatedCalculates);
+        setModalTemp(prev => ({
+            ...prev,
+            calculates: updatedCalculates
+        }));
+
+    };
+
+    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
+    useEffect(() => {
+        if (calculatesUpdate.fomular_alias) {
+            submitupdateFieldCalculates();
+        }
+    }, [calculatesUpdate]);
+
+    console.log(calculates)
+
+    console.log(modalTemp.calculates)
+
+    const handleDeleteCalculates = (cal) => {
+        console.log(cal)
+        // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+        // setModalTemp(prev => ({
+        //     ...prev,
+        //     calculates: newCalculates
+        // }));
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newCalculates = modalTemp.calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+                setModalTemp(prev => ({
+                    ...prev,
+                    calculates: newCalculates
+                }));
+
+
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Trường đã được xóa thành công.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                })
+            }
+        });
+
+    }
+    ///Cập nhât trường  thống kê
+    const [statisticalUpdate, setStatisticalUpdate] = useState({
+        display_name: "",
+        field: "",
+        fomular: "",
+        fomular_alias: ""
+    });
+    const updateFieldStatistical = (sta) => {
+        console.log(sta)
+        setStatisticalUpdate(sta)
+
+
+    }
+
+
+    const submitupdateFieldStatistical = () => {
+        const updatedStatistical = modalTemp.statistic.map(item =>
+            item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
+        );
+        
+        
+        setModalTemp(prev => ({
+            ...prev,
+            statistic: updatedStatistical
+        }));
+
+    };
+
+    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
+    useEffect(() => {
+        if (statisticalUpdate.fomular_alias) {
+            submitupdateFieldStatistical();
+        }
+    }, [statisticalUpdate]);
+
+    console.log(statisticalUpdate)
+
+    console.log(modalTemp.statistic)
+    
+    const handleDeleteStatistical = (sta) => {
+        console.log(sta)
+        // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+        // setModalTemp(prev => ({
+        //     ...prev,
+        //     calculates: newCalculates
+        // }));
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: 'rgb(209, 72, 81)',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newCalculates = modalTemp.statistic.filter(item => item.fomular_alias !== sta.fomular_alias);
+                setModalTemp(prev => ({
+                    ...prev,
+                    statistic: newCalculates
+                }));
+
+
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Trường đã được xóa thành công.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                })
+            }
+        });
+
+    }
+
+
+
 
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
@@ -561,15 +783,16 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
 
+
     const [field, setField] = useState("");
-
     const [statistical, setStatistical] = useState([]);
-
     const handleSubmitFieldStatistical = async (event) => {
 
         event.preventDefault();
-        if (validateStatistical()) {
-            const newStatistical = { display_name, field, fomular };
+
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+            console.log(fomular_alias)
+            const newStatistical = { fomular_alias, display_name, field, fomular };
 
             // Cập nhật modalTemp
             setModalTemp(prev => ({
@@ -580,10 +803,10 @@ export default () => {
             setDisplayname("");
             setField("");
             setFomular("");
-        }
+      
 
     };
-    // console.log(modalTemp)
+    console.log(statistical)
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
@@ -594,18 +817,8 @@ export default () => {
         // window.location.href = `tables`;
     };
 
-    const findTableAndFieldInfo = (fieldId) => {
-        for (const [tableId, tableInfo] of Object.entries(tableFields)) {
-            const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
 
-            if (fieldInfo) {
-                return { tableId, fieldInfo };
-            }
-        }
-
-        return { tableId: null, fieldInfo: null };
-    };
-    // console.log(modalTemp)
+    //    console.log(modalTemp.calculates)
     // console.log(tempFieldParam)
     // console.log(calculates)
     // console.log(selectedFieldsModal2)
@@ -630,11 +843,11 @@ export default () => {
                                 <div>
                                     {["post", "put"].includes(allApi.api_method) && (
                                         <button type="button" className="btn btn-primary mr-2" onClick={copyToClipboard}>
-                                            Json
+                                            JSON
                                         </button>
                                     )}
                                     <button type="button" className="btn btn-primary" onClick={copyURL}>
-                                        Url
+                                        Copy URL
                                     </button>
                                 </div>
                             </div>
@@ -766,7 +979,7 @@ export default () => {
                                     <div class="col-md-12 col-lg-12 bordered">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách các bảng <span className='red_star'> *</span> </p>
-                                            {errorApi.api_name && <p className="text-danger">{(errorApi.api_name)}</p>}
+                                            {errorApi.tables && <p className="text-danger">{(errorApi.tables)}</p>}
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -810,12 +1023,66 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
+                                                {/* Chọn đối số */}
+                                                <div class="col-md-12 col-lg-12 bordered">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <p class="font-weight-bold">Danh sách các trường đối số </p>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={initializeCheckboxStateParam} data-toggle="modal" data-target="#addFieldParam">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        {
+                                                            modalTemp.params && modalTemp.params.length > 0 ? (
+                                                                <>
+                                                                    <table class="table table-striped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                <th class="font-weight-bold" scope="col">Tên trường</th>
+                                                                                <th class="font-weight-bold" scope="col">Tên bảng</th>
+
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {modalTemp.params.map((fieldId, index) => {
+                                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
+
+                                                                                if (!tableId || !fieldInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                }
+
+                                                                                const tableInfo = tableFields[tableId];
+
+                                                                                if (!tableInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                }
+
+                                                                                return (
+                                                                                    <tr key={`${tableId}-${fieldId}`}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{fieldInfo.field_name}</td>
+                                                                                        <td>{tableInfo.table_name}</td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>Chưa có dữ liệu trường đối số</p>
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </div>
                                                 {/* Chọn body */}
                                                 {modalTemp.api_method === "post" || modalTemp.api_method === "put" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường dữ liệu </p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldBody">
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={initializeCheckboxState} data-toggle="modal" data-target="#addFieldBody">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -863,65 +1130,13 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {/* Chọn đối số */}
-                                               
-                                                    <div class="col-md-12 col-lg-12 bordered">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường đối số </p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            
-                                                               
-                                                                    <>
-                                                                        <table class="table table-striped">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
-
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                {modalTemp.params.map((fieldId, index) => {
-                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
-
-                                                                                    if (!tableId || !fieldInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
-                                                                                    }
-
-                                                                                    const tableInfo = tableFields[tableId];
-
-                                                                                    if (!tableInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
-                                                                                    }
-
-                                                                                    return (
-                                                                                        <tr key={`${tableId}-${fieldId}`}>
-                                                                                            <td>{index + 1}</td>
-                                                                                            <td>{fieldInfo.field_name}</td>
-                                                                                            <td>{tableInfo.table_name}</td>
-                                                                                        </tr>
-                                                                                    );
-                                                                                })}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </>
-                                                               
-                                                            
-                                                        </div>
-                                                    </div>
-                                                
 
                                                 {/* Chọn trường hiện thị */}
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường hiển thị <span className='red_star'>*</span></p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={initializeCheckboxStateShow} data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -934,32 +1149,29 @@ export default () => {
                                                                                 <th class="font-weight-bold">STT</th>
                                                                                 <th class="font-weight-bold">Tên trường hiển thị</th>
                                                                                 <th class="font-weight-bold">Bí danh</th>
+                                                                                <td class="font-weight-bold">Tên bảng</td>
 
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            
-                                                                             {modalTemp.fields.map((fieldId, index) => {
-                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
-
-                                                                                    if (!tableId || !fieldInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
-                                                                                    }
-
-                                                                                    const tableInfo = tableFields[tableId];
-
-                                                                                    if (!tableInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
-                                                                                    }
-
-                                                                                    return (
-                                                                                        <tr key={`${tableId}-${fieldId}`}>
-                                                                                            <td>{index + 1}</td>
-                                                                                            <td>{fieldInfo.display_name}</td>
-                                                                                            <td>{fieldInfo.fomular_alias}</td>
-                                                                                        </tr>
-                                                                                    );
-                                                                                })}
+                                                                            {modalTemp.fields.map((field, index) => {
+                                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                                if (!tableId || !fieldInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                }
+                                                                                const tableInfo = tableFields[tableId];
+                                                                                if (!tableInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                }
+                                                                                return (
+                                                                                    <tr key={`${tableId}-${field.id}`}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{fieldInfo.field_name}</td>
+                                                                                        <td>{fieldInfo.fomular_alias}</td>
+                                                                                        <td>{tableInfo.table_name}</td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
                                                                         </tbody>
                                                                     </table>
                                                                 ) : (
@@ -989,7 +1201,7 @@ export default () => {
                                                             </button>
                                                         </div>
                                                         <div class="table-responsive">
-                                                            {calculates && calculates.length > 0 ? (
+                                                            {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
@@ -997,16 +1209,22 @@ export default () => {
                                                                             <th class="font-weight-bold">Tên trường tính toán</th>
                                                                             <th class="font-weight-bold">Bí danh</th>
                                                                             <th class="font-weight-bold">Phép tính</th>
+                                                                            <th class="font-weight-bold align-center">Thao tác</th>
 
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        {calculates.map((calculates, index) => (
+                                                                        {modalTemp.calculates.map((calculates, index) => (
                                                                             <tr key={index}>
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{calculates.display_name}</td>
                                                                                 <td>{calculates.fomular_alias}</td>
                                                                                 <td>{calculates.fomular}</td>
+                                                                                <td class="align-center " style={{ minWidth: "130px" }}>
+                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculates)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculates)} title={lang["delete"]}></i>
+                                                                                </td>
+
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
@@ -1030,7 +1248,7 @@ export default () => {
                                                             </button>
                                                         </div>
                                                         <div class="table-responsive">
-                                                            {statistical && statistical.length > 0 ? (
+                                                            {modalTemp.statistic && modalTemp.statistic.length > 0 ? (
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
@@ -1038,16 +1256,20 @@ export default () => {
                                                                             <th class="font-weight-bold">Tên trường thống kê</th>
                                                                             <th class="font-weight-bold">Bí danh</th>
                                                                             <th class="font-weight-bold">Phép tính</th>
-
+                                                                            <th class="font-weight-bold align-center">Thao tác</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        {statistical.map((statistic, index) => (
+                                                                        {modalTemp.statistic.map((statistic, index) => (
                                                                             <tr key={index}>
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
                                                                                 <td>{statistic.fomular}</td>
+                                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editStatistical" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
+                                                                                </td>
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
@@ -1059,10 +1281,7 @@ export default () => {
                                                             )
                                                             }
                                                         </div>
-
-
                                                     </div>
-
                                                 )}
                                             </>
                                         ) : (
@@ -1091,7 +1310,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Chọn bảng</h4>
+                                <h4 class="modal-title">Chinh sửa bảng</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1134,7 +1353,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-success" data-dismiss="modal" onClick={handleSubmitTables}> {lang["btn.create"]}</button>
+                                <button type="button" class="btn btn-success" data-dismiss="modal" onClick={handleSubmitTables}> {lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1145,7 +1364,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường đối số</h4>
+                                <h4 class="modal-title">Chỉnh sửa trường đối số</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1181,7 +1400,7 @@ export default () => {
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitParam} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitParam} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1192,7 +1411,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường hiển thị</h4>
+                                <h4 class="modal-title">Chỉnh sửa trường hiển thị</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1244,7 +1463,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitShow} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitShow} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1260,7 +1479,7 @@ export default () => {
                             </div>
                             <div class="modal-body">
                                 <form>
-                                    <div className="container-field">
+                                    {/* <div className="container-field">
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
@@ -1278,7 +1497,27 @@ export default () => {
                                                 ))}
                                             </div>
                                         ))}
+                                    </div> */}
+                                    <div className="container-field">
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className={`form-group table-wrapper`}>
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                    <div key={fieldIndex}>
+                                                        <label>
+                                                            <input className="mr-1 "
+                                                                type="checkbox"
+                                                                checked={(selectedFieldsBody[tableId] || []).includes(field.id)}
+                                                                onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
+                                                            />
+                                                            {field.field_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
                                     </div>
+
                                     <div class="form-group col-md-12">
                                         <label>Người tạo </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
@@ -1290,7 +1529,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitBody} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitBody} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1301,7 +1540,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường tính toán</h4>
+                                <h4 class="modal-title">Chỉnh sửa trường tính toán</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1317,8 +1556,7 @@ export default () => {
                                         />
                                         {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                     </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Danh sách trường hiển thị</label>
+                                    <div class="form-group  col-md-12">
                                         <div class="table-responsive">
                                             {
                                                 modalTemp.fields && modalTemp.fields.length > 0 ? (
@@ -1328,17 +1566,29 @@ export default () => {
                                                                 <th class="font-weight-bold">STT</th>
                                                                 <th class="font-weight-bold">Tên trường hiển thị</th>
                                                                 <th class="font-weight-bold">Bí danh</th>
+                                                                <td class="font-weight-bold">Tên bảng</td>
 
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {modalTemp.fields.map((field, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{field.display_name}</td>
-                                                                    <td>{field.fomular_alias}</td>
-                                                                </tr>
-                                                            ))}
+                                                            {modalTemp.fields.map((field, index) => {
+                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                if (!tableId || !fieldInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                }
+                                                                const tableInfo = tableFields[tableId];
+                                                                if (!tableInfo) {
+                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                }
+                                                                return (
+                                                                    <tr key={`${tableId}-${field.id}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{fieldInfo.field_name}</td>
+                                                                        <td>{fieldInfo.fomular_alias}</td>
+                                                                        <td>{tableInfo.table_name}</td>
+                                                                    </tr>
+                                                                );
+                                                            })}
                                                         </tbody>
                                                     </table>
                                                 ) : (
@@ -1371,7 +1621,90 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* Edit Field calculates */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="editCalculates">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Chỉnh sửa trường tính toán</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="row">
+                                        <div className="form-group col-lg-12">
+                                            <label>Tên trường <span className='red_star'>*</span></label>
+                                            <input type="text" className="form-control" value={calculatesUpdate.display_name} onChange={
+                                                (e) => { setCalculatesUpdate({ ...calculatesUpdate, display_name: e.target.value }) }
+                                            } placeholder="" />
+                                        </div>
+                                        <div class="form-group  col-md-12">
+                                            <div class="table-responsive">
+                                                {
+                                                    modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold">STT</th>
+                                                                    <th class="font-weight-bold">Tên trường hiển thị</th>
+                                                                    <th class="font-weight-bold">Bí danh</th>
+                                                                    <td class="font-weight-bold">Tên bảng</td>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {modalTemp.fields.map((field, index) => {
+                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                    if (!tableId || !fieldInfo) {
+                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                    }
+                                                                    const tableInfo = tableFields[tableId];
+                                                                    if (!tableInfo) {
+                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                    }
+                                                                    return (
+                                                                        <tr key={`${tableId}-${field.id}`}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{fieldInfo.field_name}</td>
+                                                                            <td>{fieldInfo.fomular_alias}</td>
+                                                                            <td>{tableInfo.table_name}</td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>Chưa có dữ liệu trường hiển thị</p>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={`form-group col-lg-12`}>
+                                            <label>Công thức <span className='red_star'>*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={calculatesUpdate.fomular}
+                                                onChange={
+                                                    (e) => { setCalculatesUpdate({ ...calculatesUpdate, fomular: e.target.value }) }
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={submitupdateFieldCalculates} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1382,7 +1715,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường thống kê </h4>
+                                <h4 class="modal-title">Chỉnh sửa trường thống kê </h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1445,12 +1778,12 @@ export default () => {
                                         <label>Chọn trường <span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
                                             <option value="">Chọn trường</option>
-                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                            {modalTemp.fields.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
                                                     {field.fomular_alias}
                                                 </option>
                                             ))}
-                                            {calculates.map((calculate, index) => (
+                                            {modalTemp.calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
                                                     {calculate.fomular_alias}
                                                 </option>
@@ -1485,8 +1818,112 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* Edit Field statistical */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="editStatistical">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Chỉnh sửa trường tính toán</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="row">
+                                        <div className="form-group col-lg-12">
+                                            <label>Tên trường <span className='red_star'>*</span></label>
+                                            <input type="text" className="form-control" value={statisticalUpdate.display_name} onChange={
+                                                (e) => { setStatisticalUpdate({ ...statisticalUpdate, display_name: e.target.value }) }
+                                            } placeholder="" />
+                                        </div>
+                                        <div class="form-group  col-md-12">
+                                            <div class="table-responsive">
+                                                {
+                                                    modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold">STT</th>
+                                                                    <th class="font-weight-bold">Tên trường hiển thị</th>
+                                                                    <th class="font-weight-bold">Bí danh</th>
+                                                                    <td class="font-weight-bold">Tên bảng</td>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {modalTemp.fields.map((field, index) => {
+                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
+                                                                    if (!tableId || !fieldInfo) {
+                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                    }
+                                                                    const tableInfo = tableFields[tableId];
+                                                                    if (!tableInfo) {
+                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                    }
+                                                                    return (
+                                                                        <tr key={`${tableId}-${field.id}`}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{fieldInfo.field_name}</td>
+                                                                            <td>{fieldInfo.fomular_alias}</td>
+                                                                            <td>{tableInfo.table_name}</td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>Chưa có dữ liệu trường hiển thị</p>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={`form-group col-lg-12`}>
+                                        <label>Chọn trường <span className='red_star'>*</span></label>
+                                        <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>
+                                            <option value="">Chọn trường</option>
+                                            {modalTemp.fields.map((field, index) => (
+                                                <option key={index} value={field.fomular_alias}>
+                                                    {field.fomular_alias}
+                                                </option>
+                                            ))}
+                                            {modalTemp.calculates.map((calculate, index) => (
+                                                <option key={`calculate-${index}`} value={calculate.fomular_alias}>
+                                                    {calculate.fomular_alias}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                    </div>
+
+                                    <div className={`form-group col-lg-12`}>
+                                        <label>Công thức <span className='red_star'>*</span></label>
+                                        <select
+                                            className="form-control"
+                                            value={statisticalUpdate.fomular}
+                                            onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, fomular: e.target.value })}
+                                            required
+                                        >
+                                            <option value="">Chọn công thức</option>
+                                            <option value="SUM">SUM</option>
+                                            <option value="AVERAGE">AVERAGE</option>
+                                            <option value="COUNT">COUNT</option>
+                                        </select>
+                                        {errorStatistical.fomular && <p className="text-danger">{errorStatistical.fomular}</p>}
+                                    </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={submitupdateFieldStatistical} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button"  data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>

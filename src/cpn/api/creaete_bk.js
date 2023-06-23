@@ -801,9 +801,6 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 )}
-
-                                              
-
                                                 {/* Chọn trường hiện thị */}
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
