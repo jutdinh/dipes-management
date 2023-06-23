@@ -832,6 +832,13 @@ export default () => {
 
         // window.location.href = `tables`;
     };
+    const uisManager = (project) => {
+
+        window.location.href = `/projects/${versions[0]?.version_id}/uis`;
+
+        // window.location.href = `tables`;
+    };
+   
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
@@ -866,7 +873,7 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(function () {
-                        window.location.reload();
+                        // window.location.reload();
                     });
                 } else {
                     Swal.fire({
@@ -1594,7 +1601,7 @@ export default () => {
                                                 } placeholder={lang["p.description"]} />
                                             </div>
                                             <div class="form-group col-lg-12">
-                                                <label>Quản lý</label>
+                                                <label>{lang["projectmember"]}</label>
                                                 <div class="user-checkbox-container">
                                                     {projectdetail.members?.map((user, index) => (
                                                         <div key={index} class="user-checkbox-item">
@@ -2174,10 +2181,11 @@ export default () => {
                                             }
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách UI </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto"  onClick={() => uisManager()} data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

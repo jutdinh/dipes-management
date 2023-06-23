@@ -166,7 +166,7 @@ export default () => {
     const copyURL = () => {
 
 
-        clipboardCopy(allApi.url)
+        clipboardCopy(proxy + allApi.url)
             .then(() => {
                 console.log('Đã sao chép dữ liệu vào clipboard.');
             })

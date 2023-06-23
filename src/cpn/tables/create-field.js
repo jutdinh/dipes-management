@@ -71,7 +71,7 @@ export default () => {
             field_name: '',
             DATATYPE: '',
             NULL: false,
-            LENGTH: 255,
+            LENGTH: 65535,
             AUTO_INCREMENT: true,
             MIN: '',
             MAX: '',
