@@ -1455,7 +1455,7 @@ export default () => {
                                                                 <td style={{ width: "170px" }} >
                                                                     {
                                                                         task.members && task.members.length > 0 ?
-                                                                            task.members.slice(0, 3).map(member => (
+                                                                            task.members.slice(0, 2).map(member => (
                                                                                 <img
                                                                                     class="img-responsive circle-image-cus"
                                                                                     src={proxy + member.avatar}
@@ -1465,8 +1465,8 @@ export default () => {
                                                                             <p>{lang["projectempty"]} </p>
                                                                     }
                                                                     {
-                                                                        task.members.length > 3 &&
-                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + task.members[3].avatar})` }}>
+                                                                        task.members.length > 2 &&
+                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
                                                                             <span>+{task.members.length - 3}</span>
                                                                         </div>
                                                                     }

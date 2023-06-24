@@ -263,7 +263,6 @@ export default () => {
             ...prevSelectedTables,
             selectedTableData,
         ]);
-
         // After updating selectedTables, we need to find the linked tables
         const updatedSelectedTables = [...selectedTables, selectedTableData];
         const linkedTables = allTable.filter(
@@ -277,11 +276,9 @@ export default () => {
                         ) || table.primary_key === selectedTable.id)
                 )
         );
-
         setPossibleTables(linkedTables);
     };
 
-    // console.log("All table", allTable)
     //xóa bảng đã chọn 
     const handleDeleteAll = () => {
         setSelectedTables([]);

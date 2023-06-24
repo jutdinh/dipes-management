@@ -137,16 +137,15 @@
 
 .circle-image-project {
     border-radius: 100%;
-    width: 44px;
+    width: 40px;
     display: inline-block;
-    line-height: 44px;
+    line-height: 40px;
     text-align: center;
     /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    margin-left: 2px;
-    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
+ 
 
     position: relative;
     padding: 0px 2px;
@@ -844,7 +843,11 @@ h5 {
     border-radius: 0.25rem;
     
 }
-
+.border-custom{
+    border-radius: 100%;
+    border: 1px solid #ddd;
+    padding: 4px;
+}
 .profile_contacts {
     display: flex;
     justify-content: start;

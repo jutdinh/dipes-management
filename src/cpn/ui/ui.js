@@ -12,9 +12,9 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-    const [apis, setApis] = useState([]);
+    const [uis, setUis] = useState([]);
     useEffect(() => {
-        fetch(`${proxy}/apis/v/${version_id}`, {
+        fetch(`${proxy}/uis/v/${version_id}`, {
             headers: {
                 Authorization: _token
             }
@@ -25,7 +25,7 @@ export default () => {
 
                 if (success) {
                     if (data) {
-                        setApis(data.apis);
+                        setUis(data.uis);
 
                     }
                 } else {
@@ -33,63 +33,61 @@ export default () => {
                 }
             })
     }, [])
-    console.log(apis)
+    console.log(uis)
 
-    const handleGetApi = (apiid) => {
-        console.log("api", apiid)
-    }
+  
 
 
-    const handleUpdateStatus = (apiid) => {
-        console.log("api", apiid)
-        const newStatus = !apiid.status;
-        const requestBody = {
-            version_id: version_id,
-            api: { ...apiid, status: newStatus }
-        };
+    const handleUpdateStatus = (uiid) => {
+        console.log("api", uiid)
+        // const newStatus = !uiid.status;
+        // const requestBody = {
+        //     version_id: version_id,
+        //     api: { ...uiid, status: newStatus }
+        // };
 
-        console.log(requestBody)
-        fetch(`${proxy}/apis/api`, {
-            method: 'PUT',
-            headers: {
-                "content-type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(requestBody)
-        })
-            .then(res => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
-                    });
-                }
-            });
+        // console.log(requestBody)
+        // fetch(`${proxy}/apis/api`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         "content-type": "application/json",
+        //         Authorization: `${_token}`,
+        //     },
+        //     body: JSON.stringify(requestBody)
+        // })
+        //     .then(res => res.json())
+        //     .then((resp) => {
+        //         const { success, content, data, status } = resp;
+        //         if (success) {
+        //             Swal.fire({
+        //                 title: "Thành công!",
+        //                 text: content,
+        //                 icon: "success",
+        //                 showConfirmButton: false,
+        //                 timer: 1500,
+        //             }).then(function () {
+        //                 window.location.reload();
+        //             });
+        //         } else {
+        //             Swal.fire({
+        //                 title: "Thất bại!",
+        //                 text: content,
+        //                 icon: "error",
+        //                 showConfirmButton: false,
+        //                 timer: 2000,
+        //             }).then(function () {
+        //                 // Không cần reload trang
+        //             });
+        //         }
+        //     });
 
 
     }
-    const handleDeleteApi = (apiid) => {
-        console.log(apiid)
+    const handleDeleteApi = (uiid) => {
+        console.log(uiid)
         const requestBody = {
             version_id: version_id,
-            api_id: apiid.api_id
+            ui_id: uiid.id
         };
         console.log(requestBody)
         Swal.fire({
@@ -102,7 +100,7 @@ export default () => {
             confirmButtonColor: 'rgb(209, 72, 81)',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${proxy}/apis/api`, {
+                fetch(`${proxy}/uis/ui`, {
                     method: 'DELETE',
                     headers: {
                         "content-type": "application/json",
@@ -151,15 +149,15 @@ export default () => {
         });
     }
 
-    const [currentPageApi, setCurrentPageApi] = useState(1);
-    const rowsPerPageApi = 11;
+    const [currentPageUi, setCurrentPageUi] = useState(1);
+    const rowsPerPageUi = 11;
 
-    const indexOfLastApi = currentPageApi * rowsPerPageApi;
-    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
-    const currentApi = apis.slice(indexOfFirstApi, indexOfLastApi);
+    const indexOfLastUi = currentPageUi * rowsPerPageUi;
+    const indexOfFirstUi = indexOfLastUi - rowsPerPageUi;
+    const currentUi = uis.slice(indexOfFirstUi, indexOfLastUi);
 
-    const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
-    const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
+    const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
+    const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
 
     const apisManager = (project) => {
         window.location.href = `/projects/${version_id}/uis/create`;
@@ -208,7 +206,7 @@ export default () => {
                                         </div>
                                         <div class="table-responsive">
                                             {
-                                                currentApi && currentApi.length > 0 ? (
+                                                currentUi && currentUi.length > 0 ? (
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -216,36 +214,33 @@ export default () => {
                                                                 <th class="font-weight-bold">Tên UI</th>
                                                                 <th class="font-weight-bold">Người tạo</th>
                                                                 <th class="font-weight-bold">Thời gian tạo</th>
+                                                                <th class="font-weight-bold">Trạng thái</th>
                                                                 <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {currentApi.map((api, index) => (
+                                                            {currentUi.map((ui, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
-                                                                    <td>{api.api_name}</td>
-                                                                    <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
-
-                                                                    <td>{api.api_scope}</td>
+                                                                    <td>{ui.title}</td>
+                                                                    
 
 
-                                                                    <td>{api.create_by.fullname}</td>
-                                                                    <td>{api.create_at}</td>
+                                                                    <td>{ui.create_by.fullname}</td>
+                                                                    <td>{ui.create_at}</td>
                                                                     <td class="font-weight-bold align-center">
-                                                                        <select className="form-control" onChange={() => handleUpdateStatus(api)}>
-                                                                            <option value={true} selected={api.status} style={{ color: 'green' }}>On</option>
-                                                                            <option value={false} selected={!api.status} style={{ color: 'red' }}>Off</option>
+                                                                        <select className="form-control" onChange={() => handleUpdateStatus(ui)}>
+                                                                            <option value={true} selected={ui.status} style={{ color: 'green' }}>On</option>
+                                                                            <option value={false} selected={!ui.status} style={{ color: 'red' }}>Off</option>
                                                                         </select>
                                                                     </td>
-
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                        {/* {api.status ?
-                                                                            <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
-                                                                            : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
-                                                                        } */}
-                                                                        <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(api)} title={lang["edit"]}></i>
-                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(api)} title={lang["delete"]}></i>
+                                                                        
+                                                                        {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
+                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
                                                                     </td>
+                                                                    
+                                                                 
                                                                 </tr>
                                                             ))}
                                                         </tbody>
@@ -258,23 +253,23 @@ export default () => {
                                             }
 
                                             <div className="d-flex justify-content-between align-items-center">
-                                                <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
                                                 <nav aria-label="Page navigation example">
                                                     <ul className="pagination mb-0">
-                                                        <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                        <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
                                                                 &laquo;
                                                             </button>
                                                         </li>
-                                                        {Array(totalPagesApi).fill().map((_, index) => (
-                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                        {Array(totalPagesUi).fill().map((_, index) => (
+                                                            <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateUi(index + 1)}>
                                                                     {index + 1}
                                                                 </button>
                                                             </li>
                                                         ))}
-                                                        <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                        <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
                                                                 &raquo;
                                                             </button>
                                                         </li>
