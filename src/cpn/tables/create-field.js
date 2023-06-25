@@ -89,97 +89,97 @@ export default () => {
 
     const validate = () => {
         let temp = {};
-      
+
         temp.field_name = modalTemp.field_name ? "" : "Trường này không được để trống.";
         temp.DATATYPE = modalTemp.DATATYPE ? "" : "Trường này không được để trống.";
-      
-        if (isOnforenkey) {
-          if (!foreignKey.table_id) {
-            temp.table_id = "Bạn phải chọn bảng.";
-          } else {
-            temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
-          }
-      
-          if (!foreignKey.ref_field_id) {
-            temp.ref_field_id = "Bạn phải chọn trường.";
-          } else {
-            temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
-          }
-        }
-      
-        setErrors({
-          ...temp
-        });
-      
-        return Object.values(temp).every(x => x === "");
-      }
 
-      const [errorTable, setErrorTable] = useState({});
-      const validateTablename = () => {
-        let temp = {};
-      
-        temp.table_name = table.table_name ? "" : "Trường này không được để trống.";
-       
-      
-      
-        setErrorTable({
-          ...temp
+        if (isOnforenkey) {
+            if (!foreignKey.table_id) {
+                temp.table_id = "Bạn phải chọn bảng.";
+            } else {
+                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+            }
+
+            if (!foreignKey.ref_field_id) {
+                temp.ref_field_id = "Bạn phải chọn trường.";
+            } else {
+                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+            }
+        }
+
+        setErrors({
+            ...temp
         });
-      
+
         return Object.values(temp).every(x => x === "");
-      }
+    }
+
+    const [errorTable, setErrorTable] = useState({});
+    const validateTablename = () => {
+        let temp = {};
+
+        temp.table_name = table.table_name ? "" : "Trường này không được để trống.";
+
+
+
+        setErrorTable({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
 
 
     const handleSubmitModal = () => {
         if (validate()) {
-        setFieldTemp(modalTemp)
-        if (isOn) {
-            setPrimaryKey([...primaryKey, tempCounter])
-        }
-
-        if (isOnforenkey) {
-            setForeignKeys([...foreignKeys, { ...foreignKey, index: tempCounter }])
-        }
-
-        setIsOn(false)
-        setIsOnforenkey(false)
-
-        dispatch({
-            branch: "db",
-            type: "addField",
-            payload: {
-                field: { ...modalTemp, index: tempCounter }
-
+            setFieldTemp(modalTemp)
+            if (isOn) {
+                setPrimaryKey([...primaryKey, tempCounter])
             }
-        })
-        setModalTemp((prevModalTemp) => ({
-            ...prevModalTemp,
-            ...defaultValues,
-        }));
-        setModalTemp({
-            field_name: '',
-            DATATYPE: '',
-            NULL: true,
-            LENGTH: 255,
-            AUTO_INCREMENT: true,
-            MIN: '',
-            MAX: '',
-            FORMAT: '',
-            DECIMAL_PLACE: '',
-            DEFAULT: '',
-            DEFAULT_TRUE: '',
-            DEFAULT_FALSE: ''
-        });
 
-        console.log(tempFields)
-        console.log(primaryKey)
-       
-    }
+            if (isOnforenkey) {
+                setForeignKeys([...foreignKeys, { ...foreignKey, index: tempCounter }])
+            }
+
+            setIsOn(false)
+            setIsOnforenkey(false)
+
+            dispatch({
+                branch: "db",
+                type: "addField",
+                payload: {
+                    field: { ...modalTemp, index: tempCounter }
+
+                }
+            })
+            setModalTemp((prevModalTemp) => ({
+                ...prevModalTemp,
+                ...defaultValues,
+            }));
+            setModalTemp({
+                field_name: '',
+                DATATYPE: '',
+                NULL: true,
+                LENGTH: 255,
+                AUTO_INCREMENT: true,
+                MIN: '',
+                MAX: '',
+                FORMAT: '',
+                DECIMAL_PLACE: '',
+                DEFAULT: '',
+                DEFAULT_TRUE: '',
+                DEFAULT_FALSE: ''
+            });
+
+            console.log(tempFields)
+            console.log(primaryKey)
+
+        }
 
     };
 
     const handleUpdatetModal = () => {
-      
+
         if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
             const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
             setPrimaryKey(newPrimaryKey);
@@ -198,11 +198,11 @@ export default () => {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
             setForeignKeys(updatedForeignKeys);
         }
-        
-        
-        
 
-        
+
+
+
+
 
 
         dispatch({
@@ -214,7 +214,7 @@ export default () => {
             }
         })
 
-        
+
         setModalTemp((prevModalTemp) => ({
             ...prevModalTemp,
             ...defaultValues,
@@ -343,58 +343,64 @@ export default () => {
 
     console.log(tempFields)
     // console.log(table)
+    const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
         e.preventDefault();
-        if(validateTablename() && primaryKey.length !== 0){
-          
-            // console.log( table )
-            const tableRequestBody = {
-                version_id: version_id,
-                table: {
-                    table_name: table.table_name
-                }
-            };
-            //console.log("body",tableRequestBody)
-            fetch(`${proxy}/db/tables/table`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `${_token}`,
-                },
-                body: JSON.stringify(tableRequestBody),
-            })
-                .then((res) => res.json())
-                .then((resp) => {
-                    const { success, content, data, status } = resp;
-                    if (success) {
-                        // console.log(data)
-                        const tableId = data.table.id; // Lấy id bảng vừa tạo
-                        addField(tableId);
-                    } else {
-                        Swal.fire({
-                            title: "Thất bại!",
-                            text: content,
-                            icon: "error",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
+        if (!isTableCreated) {
+            if (validateTablename() && primaryKey.length !== 0) {
+
+                // console.log( table )
+                const tableRequestBody = {
+                    version_id: version_id,
+                    table: {
+                        table_name: table.table_name
                     }
+                };
+                //console.log("body",tableRequestBody)
+                fetch(`${proxy}/db/tables/table`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(tableRequestBody),
+                })
+                    .then((res) => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        if (success) {
+                            // console.log(data)
+                            const tableId = data.table.id; // Lấy id bảng vừa tạo
+                            addField(tableId);
+                        } else {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: content,
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        }
+                    });
+            }
+            else {
+                Swal.fire({
+                    title: "Thất bại!",
+                    text: "Bảng phải có khóa chính",
+                    icon: "error",
+                    showConfirmButton: false,
+                    timer: 2000,
                 });
+                return;
+            }
+            setTableCreated(true);
         }
-        else {
-            Swal.fire({
-                title: "Thất bại!",
-                text: "Bảng phải có khóa chính",
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            });
-        }
-       
+
+
     };
 
     const addField = (tableId) => {
-        if(primaryKey.length !== 0){
+        if (primaryKey.length !== 0) {
             const fieldRequestBody = {
                 table_id: tableId,
                 fields: [
@@ -402,7 +408,7 @@ export default () => {
                 ],
             };
             console.log("field", fieldRequestBody)
-    
+
             fetch(`${proxy}/db/fields/fields`, {
                 method: "POST",
                 headers: {
@@ -416,7 +422,7 @@ export default () => {
                     const { success, content, data, status } = resp;
                     console.log(data)
                     if (success) {
-    
+
                         addKey({ tableId, data });
                         // handleClickPrimary(fieldId);
                     } else {
@@ -430,7 +436,7 @@ export default () => {
                     }
                 });
         }
-        
+
     };
 
     const addKey = ({ data, tableId }) => {
@@ -473,7 +479,8 @@ export default () => {
                         timer: 1500,
                     }).then(function () {
                         // window.location.href = `/projects/${version_id}/tables/field`;
-                    });
+                        window.location.reload();
+                    })
                 } else {
                     Swal.fire({
                         title: "Thất bại!",
@@ -492,13 +499,13 @@ export default () => {
 
     const handleClickPrimary = () => {
         if (isOn) {
-          setIsOn(false);
-        
+            setIsOn(false);
+
         } else {
-          setIsOn(true);
-         
+            setIsOn(true);
+
         }
-      };
+    };
 
     //forenkey
     const [isOnforenkey, setIsOnforenkey] = useState(false);
@@ -507,23 +514,23 @@ export default () => {
 
     const handleClickForenkey = () => {
         if (isOnforenkey) {
-          setIsOnforenkey(false);
-         
+            setIsOnforenkey(false);
+
         } else {
-          setIsOnforenkey(true);
-          
+            setIsOnforenkey(true);
+
         }
-      };
+    };
 
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
         setUpdateTable(tableid);
     }
-    const autoType = (field_id) =>{
-        const field = fields.find( f => f.id == field_id );
+    const autoType = (field_id) => {
+        const field = fields.find(f => f.id == field_id);
         setModalTemp({
             ...modalTemp, ...field.props
-        });        
+        });
     }
     const handleSubmit = (e) => {
         // Gửi temporaryData lên server để thêm dữ liệu vào cơ sở dữ liệu
@@ -692,8 +699,8 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-        console.log("p key", primaryKey)
-        console.log("f key", foreignKeys)
+    console.log("p key", primaryKey)
+    console.log("f key", foreignKeys)
     // console.log(tables)
     return (
         <div class="midde_cont">
@@ -714,6 +721,7 @@ export default () => {
                                     <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Tạo bảng mới</h5>
                                 </div>
                             </div>
+
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-4">
@@ -725,7 +733,7 @@ export default () => {
                                             onChange={(e) => setTable({ ...table, table_name: e.target.value })}
                                             placeholder=""
                                         />
-                                         {errorTable.table_name && <p className="text-danger">{errorTable.table_name}</p>}
+                                        {errorTable.table_name && <p className="text-danger">{errorTable.table_name}</p>}
                                     </div>
 
                                     <div class="col-md-12 col-lg-12">
@@ -828,7 +836,7 @@ export default () => {
 
                                                     <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.update"]}</button>
                                                     <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                            </button>
+                                                    </button>
 
                                                 </div>) : null
                                         }
@@ -896,7 +904,7 @@ export default () => {
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, table_id: "" }); // Xóa thông báo lỗi
-                                                      }
+                                                    }
                                                 }}
                                                 disabled={!isOnforenkey}>
                                                 <option value="">Chọn bảng</option>
@@ -937,12 +945,12 @@ export default () => {
                                                 }
                                             </select>
                                             {errors.ref_field_id && <p className="text-danger">{errors.ref_field_id}</p>}
-                                            
+
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>Yêu cầu dữ liệu </label>
                                             <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
-                                                
+
                                                 {typenull.map((item, index) => {
                                                     return (
                                                         <option key={index} value={item.value} >
@@ -1004,59 +1012,59 @@ export default () => {
                                             {errors.DATATYPE && <p className="text-danger">{errors.DATATYPE}</p>}
                                         </div>
                                         <div class="form-group col-lg-12 ml-2">
-                                             {types.map((type) => {
-                                            if (type.name !== modalTemp.DATATYPE) return null;
+                                            {types.map((type) => {
+                                                if (type.name !== modalTemp.DATATYPE) return null;
 
-                                            return (
-                                                <div key={type.id}>
-                                                    {type.props.map((prop, index) => {
-                                                        let inputType = prop.type;
-                                                        let isBoolType = prop.type === "bool";
-                                                        let defaultValue = modalTemp[prop.name];
+                                                return (
+                                                    <div key={type.id}>
+                                                        {type.props.map((prop, index) => {
+                                                            let inputType = prop.type;
+                                                            let isBoolType = prop.type === "bool";
+                                                            let defaultValue = modalTemp[prop.name];
 
-                                                        if (inputType === "int") {
-                                                            if (prop.name === 'MIN') defaultValue = type.limit.min;
-                                                            if (prop.name === 'MAX') defaultValue = type.limit.max;
-                                                        }
-                                                        return (
-                                                            <div key={index} className="form-group col-lg-12">
-                                                                <label>{prop.label} </label>
-                                                                {isBoolType ? (
-                                                                    <select
-                                                                        className="form-control"
-                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
-                                                                        onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
-                                                                                ...prevModalTemp,
-                                                                                [prop.name]: e.target.value === "true",
-                                                                            }));
-                                                                        }}
-                                                                    >
-                                                                        <option value="true">True</option>
-                                                                        <option value="false">False</option>
-                                                                    </select>
-                                                                ) : (
-                                                                    <input
-                                                                        className="form-control"
-                                                                        type={inputType === "int" ? "number" : inputType}
-                                                                        defaultValue={defaultValue}  // Sử dụng defaultValue thay vì value
-                                                                        onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
-                                                                                ...prevModalTemp,
-                                                                                [prop.name]: e.target.value,
-                                                                            }));
-                                                                        }}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            );
-                                        })}
+                                                            if (inputType === "int") {
+                                                                if (prop.name === 'MIN') defaultValue = type.limit.min;
+                                                                if (prop.name === 'MAX') defaultValue = type.limit.max;
+                                                            }
+                                                            return (
+                                                                <div key={index} className="form-group col-lg-12">
+                                                                    <label>{prop.label} </label>
+                                                                    {isBoolType ? (
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            onChange={(e) => {
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: e.target.value === "true",
+                                                                                }));
+                                                                            }}
+                                                                        >
+                                                                            <option value="true">True</option>
+                                                                            <option value="false">False</option>
+                                                                        </select>
+                                                                    ) : (
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type={inputType === "int" ? "number" : inputType}
+                                                                            defaultValue={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            onChange={(e) => {
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: e.target.value,
+                                                                                }));
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                       
-                                           
+
+
                                         <div class="form-group col-lg-6">
                                             <label>Người tạo </label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
@@ -1226,59 +1234,59 @@ export default () => {
                                             </select>
                                         </div>
                                         <div class="form-group col-lg-12 ml-2">
-                                        {types.map((type) => {
-                                            if (type.name !== modalTemp.DATATYPE) return null;
+                                            {types.map((type) => {
+                                                if (type.name !== modalTemp.DATATYPE) return null;
 
-                                            return (
-                                                <div key={type.id}>
-                                                    {type.props.map((prop, index) => {
-                                                        let inputType = prop.type;
-                                                        let isBoolType = prop.type === "bool";
-                                                        let defaultValue = modalTemp[prop.name];
+                                                return (
+                                                    <div key={type.id}>
+                                                        {type.props.map((prop, index) => {
+                                                            let inputType = prop.type;
+                                                            let isBoolType = prop.type === "bool";
+                                                            let defaultValue = modalTemp[prop.name];
 
-                                                        if (inputType === "int") {
-                                                            if (prop.name === 'MIN') defaultValue = modalTemp.MIN;
-                                                            if (prop.name === 'MAX') defaultValue = modalTemp.MAX;
-                                                        }
+                                                            if (inputType === "int") {
+                                                                if (prop.name === 'MIN') defaultValue = modalTemp.MIN;
+                                                                if (prop.name === 'MAX') defaultValue = modalTemp.MAX;
+                                                            }
 
-                                                        return (
-                                                            <div key={index} className="form-group col-lg-12">
-                                                                <label>{prop.label} <span className='red_star'>*</span></label>
-                                                                {isBoolType ? (
-                                                                    <select
-                                                                        className="form-control"
-                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
-                                                                        onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
-                                                                                ...prevModalTemp,
-                                                                                [prop.name]: e.target.value === "true",
-                                                                            }));
-                                                                        }}
-                                                                    >
-                                                                        <option value="true">True</option>
-                                                                        <option value="false">False</option>
-                                                                    </select>
-                                                                ) : (
-                                                                    <input
-                                                                        className="form-control"
-                                                                        type={inputType === "int" ? "number" : inputType}
-                                                                        value={defaultValue}  // Sử dụng defaultValue thay vì value
-                                                                        onChange={(e) => {
-                                                                            setModalTemp((prevModalTemp) => ({
-                                                                                ...prevModalTemp,
-                                                                                [prop.name]: e.target.value,
-                                                                            }));
-                                                                        }}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
+                                                            return (
+                                                                <div key={index} className="form-group col-lg-12">
+                                                                    <label>{prop.label} <span className='red_star'>*</span></label>
+                                                                    {isBoolType ? (
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            onChange={(e) => {
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: e.target.value === "true",
+                                                                                }));
+                                                                            }}
+                                                                        >
+                                                                            <option value="true">True</option>
+                                                                            <option value="false">False</option>
+                                                                        </select>
+                                                                    ) : (
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type={inputType === "int" ? "number" : inputType}
+                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            onChange={(e) => {
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: e.target.value,
+                                                                                }));
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
 
 
-                                                </div>
-                                            );
-                                        })}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
 
 
