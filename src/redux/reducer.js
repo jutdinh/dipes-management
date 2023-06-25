@@ -15,7 +15,8 @@ const initState = {
     tempFields: [],
     tempCounter: 0,
     proxy,
-    lang: Langs[localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi"]
+    lang: Langs[localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi"],
+    database: { tables: [], fields: [], currentTable: {}, currentField: {}, offsets: [], tableOffsets: [], offsetPoints: [] },
 }
 
 export default (state = initState, action) => {

@@ -20,7 +20,7 @@ import { Apis, CreateApi, UpdateAi,StatisticalField} from './api';
 import { UI, CreateUi} from './ui'
 import updateApi from './api/update-api';
 
-
+import "../css/index.scss";
 
 function App() {
 

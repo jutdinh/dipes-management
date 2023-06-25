@@ -1,26 +1,37 @@
 
 import { useParams } from "react-router-dom";
 import Header from "../common/header"
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { Tables } from ".";
+import Diagram from './diagram/digram';
+
+const TABLES = "tables";
+const DIAGRAM = "diagram"
+
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
+
+    const dispatch = useDispatch();
+
     let navigate = useNavigate();
     const handleCloseModal = () => {
         setShowModal(false);
     };
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
+
+    const [ section, setSection ] = useState(DIAGRAM)
+
     useEffect(() => {
 
-        fetch(`${proxy}/db/tables/v/${version_id}`, {
+        fetch(`${proxy}/db/tables/v/${version_id}/tables/fields`, {
             headers: {
                 Authorization: _token
             }
@@ -29,9 +40,16 @@ export default () => {
             .then(resp => {
                 const { success, data, status, content } = resp;
 
-                if (success) {
+                if (success) {                   
+
                     if (data) {
                         setTables(data);
+                        const { tables, fields } = data;
+                        dispatch({
+                            branch: "db",
+                            type: "initializeData",
+                            payload: { tables, fields }
+                        })
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -231,13 +249,19 @@ export default () => {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>Quản lý bảng</h5>
                                 </div>
+
+                                <div class="ml-auto" onClick={ () => { setSection( section === TABLES ? DIAGRAM : TABLES ) } }>
+                                    <i class="fa fa-database pointer" style={{ color: "pink", fontSize: "24px" }}></i>
+                                </div>
+
                             </div>
-                            <div class="table_section padding_infor_info">
-                                <div class="row column1">
+
+                            <div class={`table_section padding_infor_info`}>
+                                <div class={`row column1 ${ section == TABLES ? "": "d-none" }`}>
                                     <div class="form-group col-lg-4">
                                         {/* <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
                                                 <input type="text" class="form-control" 
@@ -331,6 +355,11 @@ export default () => {
                                         </div>
                                     </div>
                                 </div>
+                            
+                                <div class={`row column1 ${ section == DIAGRAM? "": "d-none" }`}>                                    
+                                    <Diagram/>                                    
+                                </div>
+
                             </div>
                         </div>
                     </div>
