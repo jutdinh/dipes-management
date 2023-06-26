@@ -99,8 +99,8 @@ export default {
     "edit": "Edit",
     "edittask":"Edit task",
 
-"duty":"Duty",
-"confirm":"Confirm",
+    "duty":"Duty",
+    "confirm":"Confirm",
 
 
 
@@ -196,6 +196,9 @@ export default {
     "btn.ok": "Filter",
     "btn.clear": "Clear",
     "btn.viewdetail": "View details",
+
+    "btn.export": "Export",
+
     "detaillog":"Log details",
     "log.create_user": "Executor",
     "log.create_at":"Creation date",
@@ -208,11 +211,26 @@ export default {
     "results": "results",
 
 
-//
-"supervisor":"Supervisor",
-"deployers": "Deployers",
-"btn.cancel":"Cancel",
-"btn.addfield":"Add new field"
+    //
+    "supervisor":"Supervisor",
+    "deployers": "Deployers",
+    "btn.cancel":"Cancel",
+    "btn.addfield":"Add new field",
+
+
+    // export options
+
+    "export.title": "Project exporter",
+    "export.type": "Export type",
+
+    "export.types.wholeProjects": "Whole project",
+    "export.types.tablesOnly": "Database only",
+    "export.types.apisOnly": "Apis only",
+    "export.types.uiOnly": "UI Only",
+    
+    "export.version": "Export version",
+    "export.error.invalidData": "Invalid data selection",
+    "export.error.invalidVersionData": "Cannot find any UI from this version!",
 }
 
 

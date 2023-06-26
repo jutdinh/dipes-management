@@ -189,23 +189,38 @@ export default {
     "btn.ok":"Lọc",
     "btn.clear":"Xóa",
     "btn.viewdetail":"Xem chi tiết",
+    "btn.export": "Xuất",
     "detaillog":"Chi tiết lịch sử",
     "log.create_user":"Người thực hiện",
     "log.create_at":"Ngày tạo",
 
-//page
+    //page
 
-"show":"Hiển thị",
-"of": "của",
-"results":"kết quả",
-
-
-"supervisor":"Giám sát",
-"deployers": "Triển khai",
+    "show":"Hiển thị",
+    "of": "của",
+    "results":"kết quả",
 
 
+    "supervisor":"Giám sát",
+    "deployers": "Triển khai",
 
-"btn.cancel":"Hủy",
-"btn.addfield":"Thêm mới trường"
 
+
+    "btn.cancel":"Hủy",
+    "btn.addfield":"Thêm mới trường",
+
+
+    // export oprions
+
+    "export.title": "Xuất dự án",
+    "export.type": "Loại xuất bản",   
+
+    "export.types.wholeProjects": "Toàn bộ dự án",
+    "export.types.tablesOnly": "Cơ sở dữ liệu",
+    "export.types.apisOnly": "API",
+    "export.types.uiOnly": "UI",
+
+    "export.version": "Chọn phiên bản",
+    "export.error.invalidData": "Các trường cần phải được điền dữ liệu trước khi xuất",
+    "export.error.invalidVersionData": "Không tìm thấy UI nào trong Phiên bản này!",
 }

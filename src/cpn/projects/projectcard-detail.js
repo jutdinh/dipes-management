@@ -4,6 +4,9 @@ import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
+import { saveAs } from 'file-saver';
+
+import $ from 'jquery';
 
 import Swal from 'sweetalert2';
 export default () => {
@@ -21,8 +24,8 @@ export default () => {
     const [showViewMore, setShowViewMore] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
+    const [ exporter, setExporter ] = useState({})
+    
     // console.log(selectedMemberTask)
     // Page 
 
@@ -913,6 +916,123 @@ export default () => {
                 }
             });
     }
+
+    const closeModalManually = () => {
+        $("#exportOptions").removeAttr("style")
+        $(".modal-backdrop").remove()
+        $('#exportClickTrigger').click()   
+    }
+
+    const exportTrigger = () => {
+        closeModalManually()
+        setShowModal(false)
+        const { version, type } = exporter
+        if( version != undefined && type != undefined ){
+            const option = exportTypes.find( opt => opt.id == type )
+            const { func } = option;
+            func();
+        }else{
+            Swal.fire({
+                title: "Thất bại!",                
+                icon: "error",
+                showConfirmButton: false,
+                text: lang["export.error.invalidData"],
+                timer: 2000,
+            }).then(function () {
+                // Không cần reload trang
+            });
+        }        
+    }
+
+    const exportWholeProject = () => {
+        const { version } = exporter;
+        fetch(`${ proxy }/versions/d/${ version }/write-ui`,{
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then( (res) => res.json() )
+        .then( (res) => {
+            const { data, success, content } = res;
+            if( success ){
+                window.open(`${ proxy }/versions/d/${ version }/whole`)
+            }else{
+                Swal.fire({
+                    title: "Thất bại!",                
+                    icon: "error",
+                    showConfirmButton: false,
+                    text: lang["export.error.invalidVersionData"],
+                    timer: 2000,
+                })
+            }
+        })       
+    }
+
+    const exportTablesOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find( v => v.version_id == version )
+        fetch(`${ proxy }/versions/d/${ version }/tables`,{
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then( (res) => res.json() )
+        .then( (res) => {
+            const { data, success, content } = res;
+            const { database } = data;
+
+            const jsonData = JSON.stringify({ data: database });
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            saveAs(blob, `${project.project_name}-${ ver.version_name }-database.json`);
+        }) 
+    }
+
+    const exportApisOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find( v => v.version_id == version )
+        fetch(`${ proxy }/versions/d/${ version }/apis`,{
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then( (res) => res.json() )
+        .then( (res) => {
+            const { data, success, content } = res;
+            const { apis } = data;
+
+            const jsonData = JSON.stringify({ data: apis });
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            saveAs(blob, `${project.project_name}-${ ver.version_name }-apis.json`);
+        }) 
+    }
+
+    const exportUIOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find( v => v.version_id == version )
+        fetch(`${ proxy }/versions/d/${ version }/ui`,{
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then( (res) => res.json() )
+        .then( (res) => {
+            const { data, success, content } = res;
+            const { uis } = data;
+
+            const jsonData = JSON.stringify({data: uis});
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            saveAs(blob, `${project.project_name}-${ ver.version_name }-ui.json`);
+        }) 
+    }
+
+    const exportTypes = [
+        { id: 0, label: lang["export.types.wholeProjects"], func: exportWholeProject },
+        { id: 1, label: lang["export.types.tablesOnly"], func: exportTablesOnly },
+        { id: 2, label: lang["export.types.apisOnly"], func: exportApisOnly },
+        { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
+    ]
+
+
     //page table
     const [currentPageTable, setCurrentPageTable] = useState(1);
     const rowsPerPageTable = 3;
@@ -943,6 +1063,12 @@ export default () => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
+
+
+
+
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -2009,14 +2135,60 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="exportOptions">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["export.title"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">                                                    
+                                    <form>
+                                        <div className="row">
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["export.version"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" onChange={(e) => { setExporter({...exporter, version: e.target.value }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {versions.map((ver, index) => {
+                                                        return (
+                                                            <option key={index} value={ver.version_id}>{ver.version_name}</option>
+                                                        );
+                                                    })}
+                                                </select>                                                
+                                            </div>
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["export.type"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" onChange={(e) => { setExporter({...exporter, type: parseInt(e.target.value) }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {exportTypes.map((type, index) => {
+                                                        return (
+                                                            <option key={index} value={type.id}>{type.label}</option>
+                                                        );
+                                                    })}
+                                                </select>                                                
+                                            </div>
+                                        </div>                                        
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={exportTrigger} class="btn btn-success ">{lang["btn.export"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {/* Website info */}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
+                                </div>
+                                <div class="ml-auto pointer" type="button" id = "exportClickTrigger"  data-toggle="modal" data-target="#exportOptions" >
+                                    <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
