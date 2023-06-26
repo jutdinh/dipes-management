@@ -182,9 +182,12 @@ export default () => {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Quản lý giao diện</h5>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="fa fa-newspaper-o icon-ui"></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -247,7 +250,7 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có api</p>
+                                                        <p>Chưa có trang</p>
                                                     </div>
                                                 )
                                             }

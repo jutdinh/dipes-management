@@ -656,6 +656,14 @@ h5 {
     background-color: #0056b3;
 }
 
+.icon-ui{
+    color: #0056b3;
+    font-size: 24px;
+}
+.icon-database{
+    color: #f09393;
+    font-size: 24px;
+}
 .icon-view {
     color: #34a83e
 }

@@ -238,15 +238,8 @@ export default () => {
 
 
 
-
-
-
-
-
-
     //console.log(selectedFields)
     //delete selected table 
-
     const [display_name, setDisplayname] = useState("");
     const [fomular, setFomular] = useState("");
     const [calculates, setCalculates] = useState([]);
@@ -401,7 +394,68 @@ export default () => {
 
     console.log(modalTemp)
     // console.log(tempFieldParam)
-
+    const vietnameseChars = [
+        {
+            base: {
+                base: "a",
+                unicode: [ "ă", "â" ],
+                unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
+            }    
+        },
+        {
+            base: {
+                base: "d",
+                unicode: ["đ"],
+                unicodeWithSound: []
+            }
+        },
+        {
+            base: {
+                base: "e",
+                unicode: [ "ê" ],
+                unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
+            }
+        },
+        {
+            base: {
+                base: "i",
+                unicode: [],
+                unicodeWithSound: [ "í", "ì", "ỉ", "ĩ", "ị" ]
+            }
+        },
+        {
+            base: {
+                base: "o",
+                unicode: [ "ô", "ơ" ],
+                unicodeWithSound: [ "ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ" ]
+            }
+        },
+        {
+            base: {
+                base: "u",
+                unicode: [ "ư" ],
+                unicodeWithSound: [ "ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự" ]
+            }
+        },
+        {
+            base: {
+                base: "y",
+                unicode: [],
+                unicodeWithSound: [ "ý", "ỳ", "ỷ", "ỹ", "ỵ" ]
+            }
+        }
+    ];
+    function removeVietnameseTones(str) {
+        vietnameseChars.forEach(char => {
+            const { base, unicode, unicodeWithSound } = char.base;
+            const allVariants = [...unicode, ...unicodeWithSound];
+            allVariants.forEach(variant => {
+                const regex = new RegExp(variant, 'g');
+                str = str.replace(regex, base);
+            });
+        });
+        return str;
+    }
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -424,7 +478,7 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
-                                    <div class="form-group col-lg-5">
+                                    <div class="form-group col-lg-6">
                                         <label class="font-weight-bold">Tiêu đề <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
@@ -435,19 +489,24 @@ export default () => {
                                         />
                                         {errorUi.title && <p className="text-danger">{errorUi.title}</p>}
                                     </div>
-                                    <div class="form-group col-lg-7"></div>
-                                    <div class="form-group col-lg-5">
+                                    <div class="form-group col-lg-6">
+                                    <label class="font-weight-bold">URL</label>
+                                    <input
+                                            type="text"
+                                            className="form-control"
+                                            value={"/"+ removeVietnameseTones(modalTemp.title).replace(/\s/g, '-')} readOnly
+                                        />
+                                    </div>
+                                    <div class="form-group col-lg-6">
                                         <label class="font-weight-bold">Layout <span className='red_star'>*</span></label>
                                         <select
                                             className="form-control mb-3"
                                             value={modalTemp.layout_id}
                                             onChange={(e) => setModalTemp({ ...modalTemp, layout_id: e.target.value })}
                                         >
-
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
                                         </select>
-                                        
                                     </div>
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered mb-3">

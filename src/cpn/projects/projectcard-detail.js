@@ -298,6 +298,30 @@ export default () => {
             })
     }, [])
 
+
+    //
+    const [uis, setUis] = useState([]);
+    useEffect(() => {
+        fetch(`${proxy}/uis/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        setUis(data.uis);
+
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+    console.log(uis)
     const addMember = (e) => {
         e.preventDefault();
         fetch(`${proxy}/projects/members`, {
