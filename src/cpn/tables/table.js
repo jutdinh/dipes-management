@@ -50,56 +50,13 @@ export default () => {
                             type: "initializeData",
                             payload: { tables, fields }
                         })
+                        setSection(TABLES)
                     }
                 } else {
                     // window.location = "/404-not-found"
                 }
             })
     }, [])
-    // console.log(tables)
-    const addTable = (e) => {
-        e.preventDefault();
-        const requestBody = {
-            version_id: version_id,
-            table: {
-                table_name: table.table_name
-            }
-        }
-
-        console.log(requestBody)
-        fetch(`${proxy}/db/tables/table`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(requestBody),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
-            })
-    };
 
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
@@ -364,64 +321,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                {/*add table */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addTable">
-                    <div class="modal-dialog modal-dialog-center">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Thêm bảng</h4>
-                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="row">
-                                        <div class="form-group col-lg-12">
-                                            <label>Tên bảng <span className='red_star'>*</span></label>
-                                            <input type="text" class="form-control" value={table.task_name} onChange={
-                                                (e) => { setTable({ ...table, table_name: e.target.value }) }
-                                            } placeholder="" />
-                                        </div>
-
-
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.create"]}</button>
-                                {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* Edit table */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="editTable">
-                    <div class="modal-dialog modal-dialog-center">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Chỉnh sửa bảng</h4>
-                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="row">
-                                        <div class="form-group col-lg-12">
-                                            <label>Tên bảng <span className='red_star'>*</span></label>
-                                            <input type="text" class="form-control" value={tableUpdate.table_name} onChange={
-                                                (e) => { setUpdateTable({ ...tableUpdate, table_name: e.target.value }) }
-                                            } placeholder="" />
-                                        </div>
-
-
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" onClick={updateTable} class="btn btn-success ">{lang["btn.update"]}</button>
-                                {/* <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button> */}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
             </div >
         </div >
     )

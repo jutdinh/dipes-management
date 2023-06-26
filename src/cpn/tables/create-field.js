@@ -199,12 +199,6 @@ export default () => {
             setForeignKeys(updatedForeignKeys);
         }
 
-
-
-
-
-
-
         dispatch({
             branch: "db",
             type: "updateField",
@@ -214,16 +208,13 @@ export default () => {
             }
         })
 
-
         setModalTemp((prevModalTemp) => ({
             ...prevModalTemp,
             ...defaultValues,
         }));
-
     };
 
     console.log(modalTemp)
-
 
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
     useEffect(() => {
@@ -292,9 +283,7 @@ export default () => {
         });
     }
 
-
     useEffect(() => {
-
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
                 Authorization: _token
