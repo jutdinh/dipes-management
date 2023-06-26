@@ -320,7 +320,8 @@ export default () => {
                     // window.location = "/404-not-found"
                 }
             })
-    }, [])
+    }, [versions])
+    console.log(`${versions[0]?.version_id}`)
     console.log(uis)
     const addMember = (e) => {
         e.preventDefault();
@@ -912,6 +913,7 @@ export default () => {
                 }
             });
     }
+    //page table
     const [currentPageTable, setCurrentPageTable] = useState(1);
     const rowsPerPageTable = 3;
 
@@ -921,7 +923,7 @@ export default () => {
 
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
-
+    // page api
     const [currentPageApi, setCurrentPageApi] = useState(1);
     const rowsPerPageApi = 3;
 
@@ -931,6 +933,16 @@ export default () => {
 
     const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
     const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
+    //page ui
+    const [currentPageUi, setCurrentPageUi] = useState(1);
+    const rowsPerPageUi = 3;
+
+    const indexOfLastUi = currentPageUi * rowsPerPageUi;
+    const indexOfFirstUi = indexOfLastUi - rowsPerPageUi;
+    const currentUi = uis.slice(indexOfFirstUi, indexOfLastUi);
+
+    const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
+    const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -2213,32 +2225,71 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên trang</th>
-                                                    <th>Ngày tạo</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Page 1</td>
-                                                    <td>06/06/2023 11:18</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Page 2</td>
-                                                    <td>06/06/2023 11:16</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Page 3</td>
-                                                    <td>06/06/2023 11:16</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                     
+                                        <div class="table-responsive">
+                                            {
+                                                currentUi && currentUi.length > 0 ? (
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="font-weight-bold">STT</th>
+                                                                <th class="font-weight-bold">Tên UI</th>
+                                                               
+                                                                <th class="font-weight-bold align-center">Ngày tạo</th>
+                                                            
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {currentUi.map((ui, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {ui.title}
+                                                                            </div>
+                                                                        </td>
+                                                                    <td>{ui.create_at}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>Chưa có trang</p>
+                                                    </div>
+                                                )
+                                            }
+
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul className="pagination mb-0">
+                                                        <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
+                                                                &laquo;
+                                                            </button>
+                                                        </li>
+                                                        {Array(totalPagesUi).fill().map((_, index) => (
+                                                            <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateUi(index + 1)}>
+                                                                    {index + 1}
+                                                                </button>
+                                                            </li>
+                                                        ))}
+                                                        <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
+                                                                &raquo;
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

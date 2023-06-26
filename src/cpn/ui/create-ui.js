@@ -6,7 +6,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ValidTypeEnum } from '../enum/type';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import Layout2 from './view_layout2'
+import Layout1 from './view_layout1'
 
+import { Navbar, Topbar } from '../navbar';
 
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
@@ -17,8 +20,15 @@ export default () => {
     const dispatch = useDispatch();
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
+
     let navigate = useNavigate();
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
+
+    const [layout, setLayout] = useState(0); // Default is Layout 1
+console.log(layout)
+    const handleClickLayout = (layoutNumber) => {
+        setLayout(layoutNumber);
+    };
 
     const defaultValues = {
         title: "",
@@ -398,9 +408,9 @@ export default () => {
         {
             base: {
                 base: "a",
-                unicode: [ "ă", "â" ],
+                unicode: ["ă", "â"],
                 unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
-            }    
+            }
         },
         {
             base: {
@@ -412,7 +422,7 @@ export default () => {
         {
             base: {
                 base: "e",
-                unicode: [ "ê" ],
+                unicode: ["ê"],
                 unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
             }
         },
@@ -420,28 +430,28 @@ export default () => {
             base: {
                 base: "i",
                 unicode: [],
-                unicodeWithSound: [ "í", "ì", "ỉ", "ĩ", "ị" ]
+                unicodeWithSound: ["í", "ì", "ỉ", "ĩ", "ị"]
             }
         },
         {
             base: {
                 base: "o",
-                unicode: [ "ô", "ơ" ],
-                unicodeWithSound: [ "ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ" ]
+                unicode: ["ô", "ơ"],
+                unicodeWithSound: ["ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ"]
             }
         },
         {
             base: {
                 base: "u",
-                unicode: [ "ư" ],
-                unicodeWithSound: [ "ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự" ]
+                unicode: ["ư"],
+                unicodeWithSound: ["ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự"]
             }
         },
         {
             base: {
                 base: "y",
                 unicode: [],
-                unicodeWithSound: [ "ý", "ỳ", "ỷ", "ỹ", "ỵ" ]
+                unicodeWithSound: ["ý", "ỳ", "ỷ", "ỹ", "ỵ"]
             }
         }
     ];
@@ -490,11 +500,11 @@ export default () => {
                                         {errorUi.title && <p className="text-danger">{errorUi.title}</p>}
                                     </div>
                                     <div class="form-group col-lg-6">
-                                    <label class="font-weight-bold">URL</label>
-                                    <input
+                                        <label class="font-weight-bold">URL</label>
+                                        <input
                                             type="text"
                                             className="form-control"
-                                            value={"/"+ removeVietnameseTones(modalTemp.title).replace(/\s/g, '-')} readOnly
+                                            value={"/" + removeVietnameseTones(modalTemp.title).replace(/\s/g, '-')} readOnly
                                         />
                                     </div>
                                     <div class="form-group col-lg-6">
@@ -507,6 +517,12 @@ export default () => {
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
                                         </select>
+                                    </div>
+                                    <div class="form-group col-lg-2">
+                                        <label class="font-weight-bold">Preview <span className='red_star'>*</span></label>
+                                        <br />
+                                        <button type="button" onClick={() => handleClickLayout(modalTemp.layout_id)}  class="btn btn-primary" data-toggle="modal" data-target="#preview">PreviewLayout</button>
+                                       
                                     </div>
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered mb-3">
@@ -864,6 +880,42 @@ export default () => {
                     </div>
                 </div>
 
+
+                {/*Preview */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="preview">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Xem trước</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div>
+                                        <Navbar />
+                                        <div id="content">
+                                            <Topbar />
+                                            {layout === 0 && <Layout1 />}
+                                       
+                                          
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-12">
+                                        <label>Layout</label>
+                                        <input class="form-control" type="text" value={modalTemp.layout_id} readOnly></input>
+                                    </div>
+
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div >
         </div >
     )
