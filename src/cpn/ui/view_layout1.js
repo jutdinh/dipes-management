@@ -72,7 +72,7 @@ export default () => {
 
                                         ))}
                                         <tr>
-                                            <td colspan="3" style={{ textAlign: 'right' }}>Nam: 10, Nữ: 20, Tổng: 1000</td>
+                                            <td class="font-weight-bold" colspan="3" style={{ textAlign: 'right' }}>Nam: 10, Nữ: 20, Tổng: 1000</td>
                                            
                                         </tr>
                                     </tbody>

@@ -486,7 +486,7 @@ export default () => {
         event.preventDefault();
         if (validateStatistical()) {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
- 
+
             const newStatistical = { fomular_alias, display_name, field, fomular };
 
 
@@ -1123,35 +1123,38 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
-                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                    <div key={fieldIndex}>
-                                                        <label>
-                                                            <input
-                                                                className="mr-1"
-                                                                type="checkbox"
-                                                                checked={selectedFields[tableId]?.includes(field.id) ?? false}
-                                                                onChange={e => {
-                                                                    if (modalTemp.api_method === "put" && (field.props.DATATYPE === "DATE" || field.props.DATATYPE === "DATETIME")) {
-                                                                        // Display error message
-                                                                        Swal.fire({
-                                                                            title: "Lỗi!",
-                                                                            text: "Không thể chọn trường có kiểu dữ liệu DATE hoặc DATETIME",
-                                                                            icon: "error",
-                                                                            showConfirmButton: false,
-                                                                            timer: 2000,
-                                                                        });
-                                                                    } else {
-                                                                        handleCheckboxChange(tableId, field.id, e.target.checked);
-                                                                    }
-                                                                }}
-                                                            />
-                                                            {field.field_name}
-                                                            {/* {field.props.DATATYPE} */}
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                                <div className="field-wrapper"> {/* New div for the fields */}
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                        <div key={fieldIndex}>
+                                                            <label>
+                                                                <input
+                                                                    className="mr-1"
+                                                                    type="checkbox"
+                                                                    checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                    onChange={e => {
+                                                                        if (modalTemp.api_method === "put" && (field.props.DATATYPE === "DATE" || field.props.DATATYPE === "DATETIME")) {
+                                                                            // Display error message
+                                                                            Swal.fire({
+                                                                                title: "Lỗi!",
+                                                                                text: "Không thể chọn trường có kiểu dữ liệu DATE hoặc DATETIME",
+                                                                                icon: "error",
+                                                                                showConfirmButton: false,
+                                                                                timer: 2000,
+                                                                            });
+                                                                        } else {
+                                                                            handleCheckboxChange(tableId, field.id, e.target.checked);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {field.field_name}
+                                                                {/* {field.props.DATATYPE} */}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         ))}
+
 
 
                                     </div>
@@ -1187,6 +1190,7 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                <div className="field-wrapper">
                                                 {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => (
                                                     <div key={fieldIndex}>
                                                         <label>
@@ -1216,6 +1220,7 @@ export default () => {
                                                         </label>
                                                     </div>
                                                 ))}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -1250,6 +1255,7 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                <div className="field-wrapper">
                                                 {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
                                                     <div key={fieldIndex}>
                                                         <label>
@@ -1262,6 +1268,7 @@ export default () => {
                                                         </label>
                                                     </div>
                                                 ))}
+                                                </div>
                                             </div>
                                         ))}
                                         {/* {modalTemp.tables?.map((tableId, index) => (

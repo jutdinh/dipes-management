@@ -61,7 +61,7 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
-        <Route path="/projects/:project_id" element={<Navigation Child={ProjectsCard} />} />
+
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />

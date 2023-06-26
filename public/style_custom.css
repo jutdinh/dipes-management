@@ -74,7 +74,10 @@
     margin-bottom: 10px;
     border-radius: 5px;
     width: calc(50% - 10px);
-    max-height: 120px; 
+}
+
+.field-wrapper { /* New CSS for the fields div */
+    max-height: 120px;
     overflow-y: auto;
 }
 

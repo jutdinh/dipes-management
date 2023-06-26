@@ -1010,7 +1010,7 @@ export default () => {
                                         tables && tables.length > 0 ? (
                                             <>
                                                 {/* Chọn đối số */}
-                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put" )&& (
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">Danh sách các trường đối số </p>
@@ -1361,18 +1361,20 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
-                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                    <div key={fieldIndex}>
-                                                        <label>
-                                                            <input className="mr-1 "
-                                                                type="checkbox"
-                                                                checked={selectedFields[tableId]?.includes(field.id) ?? false}
-                                                                onChange={e => handleCheckboxChange(tableId, field.id, e.target.checked)}
-                                                            />
-                                                            {field.field_name}
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                                <div className="field-wrapper">
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                        <div key={fieldIndex}>
+                                                            <label>
+                                                                <input className="mr-1 "
+                                                                    type="checkbox"
+                                                                    checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                    onChange={e => handleCheckboxChange(tableId, field.id, e.target.checked)}
+                                                                />
+                                                                {field.field_name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -1408,35 +1410,37 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
-                                                {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                    <div key={fieldIndex}>
-                                                        <label>
-                                                            <input className="mr-1 "
-                                                                type="checkbox"
-                                                                value={field.id}
-                                                                checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
-                                                                onChange={(e) => {
-                                                                    const checked = e.target.checked;
-                                                                    setSelectedFieldsModal2(prevState => {
-                                                                        let newFields = { ...prevState };
-                                                                        if (checked) {
-                                                                            if (!newFields[tableId]) newFields[tableId] = [];
-                                                                            newFields[tableId].push({
-                                                                                id: field.id,
-                                                                                display_name: field.field_name,
-                                                                                fomular_alias: field.fomular_alias
-                                                                            });
-                                                                        } else {
-                                                                            newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
-                                                                        }
-                                                                        return newFields;
-                                                                    });
-                                                                }}
-                                                            />
-                                                            {field.field_name}
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                                <div className="field-wrapper">
+                                                    {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                        <div key={fieldIndex}>
+                                                            <label>
+                                                                <input className="mr-1 "
+                                                                    type="checkbox"
+                                                                    value={field.id}
+                                                                    checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
+                                                                    onChange={(e) => {
+                                                                        const checked = e.target.checked;
+                                                                        setSelectedFieldsModal2(prevState => {
+                                                                            let newFields = { ...prevState };
+                                                                            if (checked) {
+                                                                                if (!newFields[tableId]) newFields[tableId] = [];
+                                                                                newFields[tableId].push({
+                                                                                    id: field.id,
+                                                                                    display_name: field.field_name,
+                                                                                    fomular_alias: field.fomular_alias
+                                                                                });
+                                                                            } else {
+                                                                                newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
+                                                                            }
+                                                                            return newFields;
+                                                                        });
+                                                                    }}
+                                                                />
+                                                                {field.field_name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -1490,18 +1494,20 @@ export default () => {
                                         {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
-                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                    <div key={fieldIndex}>
-                                                        <label>
-                                                            <input className="mr-1 "
-                                                                type="checkbox"
-                                                                checked={(selectedFieldsBody[tableId] || []).includes(field.id)}
-                                                                onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
-                                                            />
-                                                            {field.field_name}
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                                <div className="field-wrapper">
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                        <div key={fieldIndex}>
+                                                            <label>
+                                                                <input className="mr-1 "
+                                                                    type="checkbox"
+                                                                    checked={(selectedFieldsBody[tableId] || []).includes(field.id)}
+                                                                    onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
+                                                                />
+                                                                {field.field_name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

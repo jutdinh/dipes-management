@@ -170,6 +170,20 @@ export default () => {
         window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };
+
+
+
+
+
+    const [nameFilter, setNameFilter] = useState("");
+    const [methodFilter, setMethodFilter] = useState("");
+
+    const filteredApi = currentApi.filter(api =>
+        api.api_name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+        api.api_method.toLowerCase().includes(methodFilter.toLowerCase())
+    );
+    const methods = ['GET', 'POST', 'PUT', 'DELETE'];
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -198,6 +212,15 @@ export default () => {
                                     </div>
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
+                                        <select class="form-group"
+                                            value={methodFilter}
+                                            onChange={e => setMethodFilter(e.target.value)}
+                                        >
+                                            <option value="">ALL</option>
+                                            {methods.map((method, index) => (
+                                                <option key={index} value={method}>{method}</option>
+                                            ))}
+                                        </select>
                                             {/* <p class="font-weight-bold">Danh sách bảng </p> */}
                                             {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTable">
                                                 <i class="fa fa-plus"></i>
@@ -206,15 +229,22 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
+                                        {/* <input
+                                            type="text"
+                                            value={nameFilter}
+                                            onChange={e => setNameFilter(e.target.value)}
+                                            placeholder="Lọc theo tên API"
+                                        /> */}
+                                    
                                         <div class="table-responsive">
                                             {
-                                                currentApi && currentApi.length > 0 ? (
+                                                filteredApi && filteredApi.length > 0 ? (
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
                                                                 <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên API</th>
                                                                 <th class="font-weight-bold">Phương thức </th>
+                                                                <th class="font-weight-bold">Tên API</th>
                                                                 <th class="font-weight-bold">Phạm vi</th>
                                                                 <th class="font-weight-bold">Người tạo</th>
                                                                 <th class="font-weight-bold">Thời gian tạo</th>
@@ -223,15 +253,12 @@ export default () => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {currentApi.map((api, index) => (
+                                                            {filteredApi.map((api, index) => (
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
-                                                                    <td>{api.api_name}</td>
                                                                     <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
-
+                                                                    <td>{api.api_name}</td>
                                                                     <td>{api.api_scope}</td>
-
-
                                                                     <td>{api.create_by.fullname}</td>
                                                                     <td>{api.create_at}</td>
                                                                     <td class="font-weight-bold align-center">
@@ -261,7 +288,7 @@ export default () => {
                                             }
 
                                             <div className="d-flex justify-content-between align-items-center">
-                                                <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, filteredApi.length)} {lang["of"]} {filteredApi.length} {lang["results"]}</p>
                                                 <nav aria-label="Page navigation example">
                                                     <ul className="pagination mb-0">
                                                         <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
