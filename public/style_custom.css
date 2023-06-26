@@ -862,6 +862,7 @@ h5 {
     align-items: center;
     gap: 3px;
     padding-bottom: 5px;
+    min-height: 50px;
 }
 
 .dash_head {

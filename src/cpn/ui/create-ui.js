@@ -25,10 +25,10 @@ export default () => {
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
 
     const [layout, setLayout] = useState(0); // Default is Layout 1
-console.log(layout)
+
     const handleClickLayout = (layoutNumber) => {
         setLayout(layoutNumber);
-    };
+    }
 
     const defaultValues = {
         title: "",
@@ -37,7 +37,6 @@ console.log(layout)
         parmas: [],
         tables: [],
         statistic_fields: [],
-
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
@@ -52,7 +51,6 @@ console.log(layout)
         });
         return Object.values(temp).every(x => x === "");
     }
-
     // const handleSubmitModal = () => {
     //     if (validateApiname()) {
     //         setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -85,10 +83,8 @@ console.log(layout)
                     layout_id: modalTemp.layout_id,
                     statistic: modalTemp.statistic_fields
                 },
-
-
             }
-            console.log(requestBody)
+            // console.log(requestBody)
             fetch(`${proxy}/uis/ui`, {
                 method: "POST",
                 headers: {
@@ -126,13 +122,10 @@ console.log(layout)
     };
 
 
-
-
     const [errorTable, setErrorTable] = useState({});
     const validateTable = () => {
         let temp = {};
         temp.selectedTables = selectedTables ? "" : "Trường này không được để trống.";
-
         setErrorTable({
             ...temp
         });
@@ -169,7 +162,7 @@ console.log(layout)
 
     };
 
-    console.log(getAllField)
+    // console.log(getAllField)
 
     const [allTable, setAllTable] = useState([]);
 
@@ -302,12 +295,7 @@ console.log(layout)
         event.preventDefault();
         if (validateStatistical()) {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
-
             const newStatistical = { fomular_alias, display_name, field, fomular };
-
-
-
-
             // Cập nhật modalTemp
             setModalTemp(prev => ({
                 ...prev,
@@ -320,7 +308,7 @@ console.log(layout)
         }
 
     };
-    console.log(modalTemp)
+    // console.log(modalTemp)
     ///Cập nhât trường  thống kê
     const [statisticalUpdate, setStatisticalUpdate] = useState({
         display_name: "",
@@ -329,28 +317,23 @@ console.log(layout)
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         setStatisticalUpdate(sta)
-
-
     }
-
 
     const submitupdateFieldStatistical = () => {
         const updatedStatistical = modalTemp.statistic_fields.map(item =>
             item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
         );
 
-
         setModalTemp(prev => ({
             ...prev,
             statistic_fields: updatedStatistical
         }));
-
     };
 
     const handleDeleteStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
 
         Swal.fire({
             title: 'Xác nhận xóa',
@@ -367,7 +350,6 @@ console.log(layout)
                     ...prev,
                     statistic_fields: newCalculates
                 }));
-
 
                 Swal.fire({
                     title: 'Thành công!',
@@ -398,11 +380,10 @@ console.log(layout)
                 return { tableId, fieldInfo };
             }
         }
-
         return { tableId: null, fieldInfo: null };
     };
 
-    console.log(modalTemp)
+    // console.log(modalTemp)
     // console.log(tempFieldParam)
     const vietnameseChars = [
         {
@@ -521,8 +502,12 @@ console.log(layout)
                                     <div class="form-group col-lg-2">
                                         <label class="font-weight-bold">Preview <span className='red_star'>*</span></label>
                                         <br />
-                                        <button type="button" onClick={() => handleClickLayout(modalTemp.layout_id)}  class="btn btn-primary" data-toggle="modal" data-target="#preview">PreviewLayout</button>
-                                       
+
+                                        {modalTemp.layout_id == 0 ?
+                                            <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
+                                            :
+                                            <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
+                                        }
                                     </div>
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered mb-3">
@@ -891,22 +876,43 @@ console.log(layout)
                             </div>
                             <div class="modal-body">
                                 <form>
-                                    <div>
-                                        <Navbar />
-                                        <div id="content">
-                                            <Topbar />
-                                            {layout === 0 && <Layout1 />}
-                                       
-                                          
+
+
+
+
+
+                                    <div class="midde_cont">
+                                        <div class="container-fluid">
+                                            <div class="row column_title">
+                                                <div class="col-md-12">
+                                                    <div class="page_title">
+                                                        <h4>Layout 1</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* List table */}
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="white_shd full margin_bottom_30">
+                                                        <div class="full graph_head d-flex">
+                                                            <div class="heading1 margin_0 ">
+                                                                <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{modalTemp.title}</h5>
+                                                            </div>
+                                                            <div class="ml-auto">
+                                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <>
+                                                            {layout === 0 && <Layout1 />}
+                                                            {layout === 1 && <Layout2 />}
+                                                        </>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="form-group col-md-12">
-                                        <label>Layout</label>
-                                        <input class="form-control" type="text" value={modalTemp.layout_id} readOnly></input>
-                                    </div>
-
-
                                 </form>
                             </div>
                             <div class="modal-footer">

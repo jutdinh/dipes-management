@@ -2060,7 +2060,7 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">1</p>
+                                                    <p class="total_no">{uis.length || 0}</p>
                                                     <p class="head_couter">UI</p>
                                                 </div>
                                             </div>

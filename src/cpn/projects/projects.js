@@ -611,13 +611,9 @@ export default () => {
                                                             {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
                                                             <p class="font-weight-bold">{lang["projectmanager"]}</p>
                                                             <div class="profile_contacts">
-                                                                {
-                                                                    item.manager && item.manager.length > 0 ?
+                                                               
                                                                         <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
-                                                                        : <div class="profile_contacts">
-                                                                            <p>{lang["projectempty"]} </p>
-                                                                        </div>
-                                                                }
+                                                                   
                                                             </div>
                                                             <p class="font-weight-bold">{lang["projectmember"]}</p>
 

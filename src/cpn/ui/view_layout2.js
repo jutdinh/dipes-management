@@ -175,7 +175,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>Quản lý giao diện22222222222222222222</h4>
+                            <h4>Layout 2</h4>
                         </div>
                     </div>
                 </div>
