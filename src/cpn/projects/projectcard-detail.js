@@ -998,7 +998,7 @@ export default () => {
             const { data, success, content } = res;
             const { apis } = data;
 
-            const jsonData = JSON.stringify({ data: apis });
+            const jsonData = JSON.stringify({ data: {apis} });
             const blob = new Blob([jsonData], { type: 'application/json' });
             saveAs(blob, `${project.project_name}-${ ver.version_name }-apis.json`);
         }) 
