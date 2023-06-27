@@ -13,6 +13,7 @@ export default () => {
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
     const [uis, setUis] = useState([]);
+    
     useEffect(() => {
         fetch(`${proxy}/uis/v/${version_id}`, {
             headers: {
@@ -144,6 +145,13 @@ export default () => {
             }
         });
     }
+const [detailUi, setDetailUi] = useState({});
+    const handlDetailUi = async (ui) => {
+
+       setDetailUi(ui)
+
+    };
+
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 11;
@@ -234,12 +242,10 @@ export default () => {
                                                                         </select>
                                                                     </td>
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
-
+                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
                                                                         {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
                                                                         <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
                                                                     </td>
-
-
                                                                 </tr>
                                                             ))}
                                                         </tbody>
@@ -250,7 +256,6 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
                                                 <nav aria-label="Page navigation example">
@@ -282,6 +287,49 @@ export default () => {
                         </div>
                     </div>
                 </div>
+
+                 {/* View UI */}
+                 <div class={`modal`} id="viewUi">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thông tin UI</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-6">
+                                                <label><b>Tên trang</b></label>
+                                                <span className="d-block"> {detailUi?.title} </span>
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label><b>URL</b></label>
+                                                <span className="d-block"> {detailUi?.url} </span>
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label><b>Trạng thái</b></label>
+                                                <span className="d-block"> {detailUi?.status ? "On" : "Off"} </span>
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label><b>Tạo bởi</b></label>
+                                                <span className="d-block"> {detailUi?.create_by?.fullname} </span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>Thời gian</b></label>
+                                                <span className="d-block"> {detailUi?.create_at} </span>
+                                            </div>
+                                            
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button"  data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div >
         </div >
     )

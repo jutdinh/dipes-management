@@ -485,7 +485,7 @@ export default () => {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value={"/" + removeVietnameseTones(modalTemp.title).replace(/\s/g, '-')} readOnly
+                                            value={"/" + removeVietnameseTones(modalTemp.title.toLowerCase()).replace(/\s/g, '-').toLowerCase()} readOnly
                                         />
                                     </div>
                                     <div class="form-group col-lg-6">
