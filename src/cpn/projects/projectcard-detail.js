@@ -5,9 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { saveAs } from 'file-saver';
-
 import $ from 'jquery';
-
 import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
@@ -935,9 +933,9 @@ export default () => {
             Swal.fire({
                 title: "Thất bại!",                
                 icon: "error",
-                showConfirmButton: false,
+                showConfirmButton: true,
                 text: lang["export.error.invalidData"],
-                timer: 2000,
+               
             }).then(function () {
                 // Không cần reload trang
             });
@@ -960,9 +958,9 @@ export default () => {
                 Swal.fire({
                     title: "Thất bại!",                
                     icon: "error",
-                    showConfirmButton: false,
+                    showConfirmButton: true,
                     text: lang["export.error.invalidVersionData"],
-                    timer: 2000,
+                    
                 })
             }
         })       
@@ -1137,7 +1135,6 @@ export default () => {
                                 <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
-
                                         <div style={{
                                             width: "100%",
                                             overflow: "hidden",
@@ -1153,7 +1150,6 @@ export default () => {
                                                 </a>
                                             </div>
                                         )}
-
                                     </div>
                                 </div>
                                 <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>

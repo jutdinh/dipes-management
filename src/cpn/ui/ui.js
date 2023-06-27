@@ -35,53 +35,49 @@ export default () => {
     }, [])
     console.log(uis)
 
-  
-
-
     const handleUpdateStatus = (uiid) => {
-        console.log("api", uiid)
-        // const newStatus = !uiid.status;
-        // const requestBody = {
-        //     version_id: version_id,
-        //     api: { ...uiid, status: newStatus }
-        // };
+        console.log("ui", uiid)
+        const newStatus = !uiid.status;
+        const requestBody = {
+            version_id: version_id,
+            ui_id: uiid.ui_id,
+            status: newStatus
+        };
 
-        // console.log(requestBody)
-        // fetch(`${proxy}/apis/api`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         "content-type": "application/json",
-        //         Authorization: `${_token}`,
-        //     },
-        //     body: JSON.stringify(requestBody)
-        // })
-        //     .then(res => res.json())
-        //     .then((resp) => {
-        //         const { success, content, data, status } = resp;
-        //         if (success) {
-        //             Swal.fire({
-        //                 title: "Thành công!",
-        //                 text: content,
-        //                 icon: "success",
-        //                 showConfirmButton: false,
-        //                 timer: 1500,
-        //             }).then(function () {
-        //                 window.location.reload();
-        //             });
-        //         } else {
-        //             Swal.fire({
-        //                 title: "Thất bại!",
-        //                 text: content,
-        //                 icon: "error",
-        //                 showConfirmButton: false,
-        //                 timer: 2000,
-        //             }).then(function () {
-        //                 // Không cần reload trang
-        //             });
-        //         }
-        //     });
-
-
+        console.log(requestBody)
+        fetch(`${proxy}/uis/ui/status`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: content,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        text: content,
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(function () {
+                        // Không cần reload trang
+                    });
+                }
+            });
     }
     const handleDeleteApi = (uiid) => {
         console.log(uiid)
@@ -226,7 +222,7 @@ export default () => {
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
                                                                     <td>{ui.title}</td>
-                                                                    
+
 
 
                                                                     <td>{ui.create_by.fullname}</td>
@@ -238,12 +234,12 @@ export default () => {
                                                                         </select>
                                                                     </td>
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                        
+
                                                                         {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
                                                                         <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
                                                                     </td>
-                                                                    
-                                                                 
+
+
                                                                 </tr>
                                                             ))}
                                                         </tbody>

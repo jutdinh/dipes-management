@@ -267,7 +267,6 @@ export default () => {
                                                                             <option value={false} selected={!api.status} style={{ color: 'red' }}>Off</option>
                                                                         </select>
                                                                     </td>
-
                                                                     <td class="align-center" style={{ minWidth: "130px" }}>
                                                                         {/* {api.status ?
                                                                             <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
