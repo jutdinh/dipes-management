@@ -147,9 +147,7 @@ export default () => {
     }
 const [detailUi, setDetailUi] = useState({});
     const handlDetailUi = async (ui) => {
-
        setDetailUi(ui)
-
     };
 
 
