@@ -188,9 +188,9 @@ const [detailUi, setDetailUi] = useState({});
                                 <div class="heading1 margin_0 ">
                                     <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Quản lý giao diện</h5>
                                 </div>
-                                <div class="ml-auto">
+                                {/* <div class="ml-auto">
                                     <i class="fa fa-newspaper-o icon-ui"></i>
-                                </div>
+                                </div> */}
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">

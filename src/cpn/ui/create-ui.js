@@ -876,42 +876,11 @@ export default () => {
                             </div>
                             <div class="modal-body">
                                 <form>
-
-
-
-
-
                                     <div class="midde_cont">
-                                        <div class="container-fluid">
-                                            <div class="row column_title">
-                                                <div class="col-md-12">
-                                                    <div class="page_title">
-                                                        <h4>Layout 1</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/* List table */}
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="white_shd full margin_bottom_30">
-                                                        <div class="full graph_head d-flex">
-                                                            <div class="heading1 margin_0 ">
-                                                                <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{modalTemp.title}</h5>
-                                                            </div>
-                                                            <div class="ml-auto">
-                                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
-                                                                    <i class="fa fa-plus"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <>
-                                                            {layout === 0 && <Layout1 />}
-                                                            {layout === 1 && <Layout2 />}
-                                                        </>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <>
+                                            {layout === 0 && <Layout1 data={modalTemp}  />}
+                                            {layout === 1 && <Layout2 />}
+                                        </>
                                     </div>
                                 </form>
                             </div>
