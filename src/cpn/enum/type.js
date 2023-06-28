@@ -38,7 +38,7 @@ export const ValidTypeEnum = Object.freeze({
     BOOL: { id: 5, name: "BOOL", type: "bool", limit: {
         min: 0,
         max: 1
-    }, props: [{ name: "IF_TRUE", label: "Giá trị đúng", type: "text" }, { name: "IF_FALSE", label: "Giá trị sai", type: "text" }] },
+    }, props: [{ name: "DEFAULT_TRUE", label: "Giá trị đúng", type: "text" }, { name: "DEFAULT_FALSE", label: "Giá trị sai", type: "text" }] },
     
     DECIMAL: {
         id: 6, name: "DECIMAL", type: "floating-point", limit: {
