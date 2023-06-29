@@ -1166,3 +1166,68 @@ h5 {
 .mrl-15{
     margin-left: -15px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* D3 */
+.rect {
+    fill: rgb(131, 192, 224);
+  }
+  
+  .rect1 {
+    fill: rgb(231, 209, 85)
+  }
+  
+  .rect2 {
+    fill: rgb(219, 204, 116)
+  }
+  
+  .rect3 {
+    fill: rgb(185, 170, 81)
+  }
+  
+  .rect5 {
+    fill: rgb(107, 165, 212)
+  }
+  
+  .circle {
+    fill: rgb(231, 209, 85)
+  }
+  
+  .circle2 {
+    fill: rgb(231, 85, 85)
+  }
+  
+  .link {
+    fill: none;
+    stroke: #2c0808;
+    stroke-width: 0.5px;
+  }
+  
+  .textweight {
+    font-family: "UTM Avo", sans-serif;
+    fill: rgb(3, 3, 3);
+    font-weight: bold;
+    font-size: 12px
+  }
+  
+  .text {
+    font-family: "UTM Avo", sans-serif;
+    fill: rgb(3, 3, 3);
+  
+    font-size: 12px
+  }
+  
+  .circle.root-node {
+    fill: red;
+    /* Thay đổi màu nút gốc thành màu đỏ */
+  }

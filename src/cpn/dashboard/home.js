@@ -390,7 +390,7 @@ export default () => {
                                         position={{ x: 600, y: 25 }}
                                     />
                                     <Legend />
-                                    <Bar barSize={100} dataKey="Khởi tạo" stackId="a" fill="#1ed085" >
+                                    <Bar barSize={55} dataKey="Khởi tạo" stackId="a" fill="#1ed085" >
                                         <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
                                     <Bar dataKey="Thực hiện" stackId="a" fill="#8884d8" >

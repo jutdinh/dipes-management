@@ -47,7 +47,7 @@ export default () => {
                {user.role === "ad" || user.role === "uad" ? (
                   <li className="navbar-item">
                      <NavLink to="/users" activeClassName="nav-active">
-                        <i class="fa fa-users"></i>
+                        <i class="fa fa-users green_color3"></i>
                         <span>{lang["accounts manager"]}</span>
                      </NavLink>
                   </li>
@@ -55,7 +55,7 @@ export default () => {
               
                   <li className="navbar-item">
                      <NavLink to="/statis" activeClassName="nav-active">
-                        <i class="fa fa-bar-chart-o green_color"></i>
+                        <i class="fa fa-bar-chart-o blue2_color"></i>
                         <span>{lang["statistic"]}</span>
                      </NavLink>
                   </li>
@@ -65,12 +65,18 @@ export default () => {
                         <span>{lang["report"]}</span>
                      </NavLink>
                   </li>
+                  <li className="navbar-item">
+                     <NavLink to="/workflow" activeClassName="nav-active">
+                        <i class="fa fa-code-fork"></i>
+                        <span>{lang["workflow"]}</span>
+                     </NavLink>
+                  </li>
     
 
 
 
             
-               <li><a href="/workflow"><i class="fa fa-clock-o orange_color"></i> <span>{lang["workflow"]}</span></a></li>
+            
                <li>
                   <a href="/contacts">
                      <i class="fa fa-paper-plane red_color"></i> <span>{lang["contacts"]}</span></a>

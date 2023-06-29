@@ -22,6 +22,7 @@ import { UI, CreateUi} from './ui'
 import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
+import Workflow from './workflow/workflow';
 import "../css/index.scss";
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
 
         <Route path="/statis" element={<Navigation Child={Statistical} />} />
         <Route path="/report" element={<Navigation Child={Report} />} />
+        <Route path="/workflow" element={<Navigation Child={Workflow} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />

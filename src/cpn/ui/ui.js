@@ -89,7 +89,7 @@ export default () => {
         console.log(requestBody)
         Swal.fire({
             title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa api này?',
+            text: 'Bạn có chắc chắn muốn xóa UI này?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Xóa',
