@@ -52,7 +52,24 @@ export default () => {
                      </NavLink>
                   </li>
                ) : null}
-               <li><a href="/statistic"><i class="fa fa-bar-chart-o green_color"></i> <span>{lang["statistic"]}</span></a></li>
+              
+                  <li className="navbar-item">
+                     <NavLink to="/statis" activeClassName="nav-active">
+                        <i class="fa fa-bar-chart-o green_color"></i>
+                        <span>{lang["statistic"]}</span>
+                     </NavLink>
+                  </li>
+                  <li className="navbar-item">
+                     <NavLink to="/report" activeClassName="nav-active">
+                        <i class="fa fa-file-excel-o green_color"></i>
+                        <span>{lang["report"]}</span>
+                     </NavLink>
+                  </li>
+    
+
+
+
+            
                <li><a href="/workflow"><i class="fa fa-clock-o orange_color"></i> <span>{lang["workflow"]}</span></a></li>
                <li>
                   <a href="/contacts">

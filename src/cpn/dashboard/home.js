@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from "react-router-dom";
-
+import {
+    BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
+} from 'recharts';
 import { Header } from '../common';
-import {  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, LineChart, Line, PieChart, Pie, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+
 export default () => {
     const { proxy, lang } = useSelector(state => state)
     const _token = localStorage.getItem("_token");
@@ -56,26 +58,151 @@ export default () => {
             })
     }, [])
 
-    const data = [
-        { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-        { name: 'Page B', uv: 300, pv: 2210, amt: 2290 },
-        { name: 'Page C', uv: 200, pv: 2290, amt: 2000 },
-        { name: 'Page D', uv: 278, pv: 2000, amt: 2181 },
-        { name: 'Page E', uv: 189, pv: 2181, amt: 2500 },
-        { name: 'Page F', uv: 239, pv: 2500, amt: 2100 },
-    ];
-    const data1 = [
-        { name: 'Group A', value: 400 },
-        { name: 'Group B', value: 300 },
-        { name: 'Group C', value: 200 },
-        // additional data entries...
-    ];
-    const data2 = [
-        { subject: 'Math', A: 120, B: 110, fullMark: 150 },
-        { subject: 'Chinese', A: 98, B: 130, fullMark: 150 },
-        { subject: 'English', A: 86, B: 130, fullMark: 150 },
-        // additional data entries...
-    ];
+
+    const [statis, setStatis] = useState([]);
+
+    useEffect(() => {
+        fetch(`${proxy}/projects/statistic`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                // console.log(resp)
+                if (success) {
+
+                    console.log(data.annualStatistic)
+                    setStatis(data.annualStatistic);
+
+
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+    console.log(statis)
+
+    const mapStatus = {
+        "1": "Khởi tạo",
+        "2": "Thực hiện",
+        "3": "Triển khai",
+        "4": "Hoàn thành",
+        "5": "Tạm dừng",
+    };
+
+    const dataKeyY = "y";
+
+    // const processData = (statis) => {
+    //     return statis.map((item) => {
+    //       let obj = { XAxisData: item.year };
+
+    //       for (const key in item) {
+    //         if (key !== "year") {
+    //           obj[mapStatus[key]] = item[key];
+    //         }
+    //       }
+
+    //       return obj;
+    //     });
+    //   };
+    const processData = (statis) => {
+        return statis.map((item) => {
+            let obj = { XAxisData: item.year, y: 0, z: 1 };
+            let totalProjects = 0;
+
+            for (const key in item) {
+                if (key !== "year") {
+                    const projectCount = item[key];
+                    obj[mapStatus[key]] = projectCount;
+                    totalProjects += projectCount;
+                }
+            }
+
+            obj.y = totalProjects;
+            return obj;
+        });
+    };
+
+    const data = processData(statis);
+
+
+
+
+
+    const CustomTooltipStack = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
+            const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
+            if (filteredPayload.length > 0) {
+                return (
+                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
+                        <p className="label" >{`Năm ${label}: ${totalValue} dự án`}</p>
+                        <div style={{ display: 'inline', justifyContent: 'center' }}>
+                            {filteredPayload.map((pld) => (
+                                <div style={{ padding: '15px', textAlign: 'left' }}>
+                                    <div style={{ color: pld.fill }}>{pld.dataKey}: {pld.value}</div>
+
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+        }
+        return null;
+    };
+
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
+            const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
+            if (filteredPayload.length > 0) {
+                return (
+                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
+                        <p className="label">{`Năm ${label}: ${totalValue} dự án`}</p>
+                        <div style={{ display: 'inline', justifyContent: 'center' }}>
+                            {filteredPayload.map((pld) => (
+                                <div style={{ padding: '15px', textAlign: 'left' }}>
+                                    <div style={{ color: pld.fill }}>{pld.dataKey}: {pld.value}</div>
+
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+        }
+        return null;
+    };
+
+    const renderCustomizedLabel = (props) => {
+        const { x, y, width, height, value, dataKey } = props;
+        let labelValue;
+        let yPos;// Vị trí y nằm giữa cột
+        if (dataKey != 'y') {
+            labelValue = value === 0 ? '' : value;
+            yPos = y + height / 2; // Giữ nhãn ở giữa thanh
+        } else {
+            labelValue = `${value} dự án`;
+            yPos = y - 20; // Di chuyển nhãn lên phía trên thanh. Bạn có thể điều chỉnh giá trị này nếu cần.
+        }
+        return (
+            <text x={x + width / 2} y={yPos} fill="#ffffff" fontSize={18} fontWeight={10} textAnchor="middle" dominantBaseline="middle">
+                {labelValue}
+            </text>
+        );
+    };
+
+
+
+
+
+
+
+
     return (
 
         <div class="midde_cont">
@@ -234,56 +361,54 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Line Chart</h2>
+                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <LineChart width={500} height={300} data={data}>
-                                    <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-                                    <CartesianGrid stroke="#ccc" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                </LineChart>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-lg-3">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
-                                <div class="heading1 margin_0">
-                                    <h2>Line Chart</h2>
-                                </div>
-                            </div>
-                            <div class="map_section padding_infor_info">
-                                <BarChart width={500} height={300} data={data}>
-                                    <Bar dataKey="pv" fill="#8884d8" />
-                                    <Bar dataKey="uv" fill="#82ca9d" />
-                                    <CartesianGrid stroke="#ccc" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
+
+                                <BarChart
+                                    style={{ margin: 'auto', display: 'block' }}
+                                    width={700}
+                                    height={500}
+                                    data={data}
+                                    margin={{
+                                        top: 25, right: 30, left: 20, bottom: 5,
+                                    }}>
+                                    <XAxis dataKey="XAxisData" >
+                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
+                                    </XAxis>
+                                    <YAxis>
+                                        <Label value="Số dự án" fontSize={16} angle={-90} position='insideLeft' />
+                                    </YAxis>
+                                    <CartesianGrid strokeDasharray="1 1" />
+
+                                    <Tooltip
+                                        content={<CustomTooltipStack />}
+                                        cursor={{ fill: "transparent" }}
+                                        isAnimationActive={true}
+                                        animationEasing="ease-out"
+                                        position={{ x: 600, y: 25 }}
+                                    />
+                                    <Legend />
+                                    <Bar barSize={100} dataKey="Khởi tạo" stackId="a" fill="#1ed085" >
+                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar dataKey="Thực hiện" stackId="a" fill="#8884d8" >
+                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar dataKey="Triển khai" stackId="a" fill="#ffc658" >
+                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar dataKey="Hoàn thành" stackId="a" fill="#ff8042" >
+                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar dataKey="Tạm dừng" stackId="a" fill="#FF0000" >
+                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={70} dataKey="z" stackId="a" fill="transparent">
+                                        <LabelList dataKey={dataKeyY} position="top" fill="#000000" formatter={(value) => `${value} dự án`} />
+                                    </Bar>
                                 </BarChart>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-lg-3">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
-                                <div class="heading1 margin_0">
-                                    <h2>Radar Chart</h2>
-                                </div>
-                            </div>
-                            <div class="map_section padding_infor_info">
-                                <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={400} data={data2}>
-                                    <PolarGrid />
-                                    <PolarAngleAxis dataKey="subject" />
-                                    <PolarRadiusAxis angle={30} domain={[0, 150]} />
-                                    <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                                    <Radar name="John" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-                                    <Tooltip />
-                                </RadarChart>
 
                             </div>
                         </div>
@@ -292,17 +417,60 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Pie Chart</h2>
+                                    <h2>Biểu đồ cột chồng thống kê dự án qua các năm</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                                <PieChart width={400} height={400}>
-                                    <Pie dataKey="value" isAnimationActive={false} data={data1} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label />
-                                    <Tooltip />
-                                </PieChart>
+                                <BarChart
+                                    style={{ margin: 'auto', display: 'block' }}
+                                    width={700}
+                                    height={500}
+                                    data={data}
+                                    margin={{
+                                        top: 25, right: 30, left: 20, bottom: 5,
+                                    }}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="XAxisData" >
+                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
+                                    </XAxis>
+                                    <YAxis
+
+                                    >
+                                        <Label value="Số dự án" angle={-90} fontSize={16} position='insideLeft' />
+                                    </YAxis>
+                                    <Tooltip
+                                        content={<CustomTooltip />}
+                                        cursor={{ fill: "transparent" }}
+                                        isAnimationActive={true}
+                                        animationEasing="ease-out"
+                                        position={{ x: 550, y: 25 }}
+                                    />
+                                    <Legend />
+                                    {/* <Bar barSize={70} dataKey="z" fill="transparent">
+                                                <LabelList dataKey="displayY" position="top" fill="#000000" />
+                                            </Bar> */}
+
+                                    <Bar barSize={100} dataKey="Khởi tạo" fill="#1ed085" >
+                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Thực hiện" fill="#8884d8"  >
+                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Triển khai" fill="#ffc658" >
+                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Hoàn thành" fill="#ff8042" >
+                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Tạm dừng" fill="#FF0000" >
+                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+
+                                </BarChart>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

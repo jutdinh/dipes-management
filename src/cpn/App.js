@@ -17,9 +17,11 @@ import { Tasks } from './tasks';
 import { Logs } from './logs';
 import { Tables, Field, UpdateField } from './tables';
 import { Apis, CreateApi, UpdateAi,StatisticalField} from './api';
+
 import { UI, CreateUi} from './ui'
 import updateApi from './api/update-api';
-
+import Statistical from './statistical/static';
+import Report from './report/report';
 import "../css/index.scss";
 
 function App() {
@@ -73,6 +75,9 @@ function App() {
 
         <Route path="/projects/:version_id/uis" element={<Navigation Child={UI} />} />
         <Route path="/projects/:version_id/uis/create" element={<Navigation Child={CreateUi} />} />
+
+        <Route path="/statis" element={<Navigation Child={Statistical} />} />
+        <Route path="/report" element={<Navigation Child={Report} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />
