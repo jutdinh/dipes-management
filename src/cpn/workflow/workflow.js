@@ -176,19 +176,16 @@ export default () => {
                     + " " + d.source.y + "," + d.source.x;
             });
 
-            treeNodes.selectAll("text.nodes")
-            .data(treeData.descendants().slice(parentsNumber))
+        treeNodes.selectAll("text.nodes")
+            .data(treeData.descendants())
             .enter()
-            .append("a")
-            .attr("xlink:href", d => d.data.link)
-            .attr("target", "_blank") // Mở trong tab mới
+            .filter(d => d.data.key !== "" && d.depth !== 5)
             .append("text")
-            .attr("class", "text")
-            .attr("transform", d => `translate(${d.y + 10}, ${d.x + 5})`)
-            .text(d => d.data.essay)
-            .on("mouseover", MouseOverText)
-            .on("mouseout", MouseOutText);
-          
+            .attr("class", "textweight")
+            .attr("transform", d => `translate(${d.y - (d.depth == 0 ? 65 : 5)},${d.x - (d.depth == 0 ? 50 : -5)})`)
+            .text(d => d.data.key)
+         
+
             treeNodes.selectAll("text.nodes.depth5")
             .data(treeData.descendants().filter(d => d.depth === 5))
             .enter()
