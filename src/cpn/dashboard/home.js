@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import {
-    PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
+    ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import { Header } from '../common';
 
@@ -351,7 +351,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
+                                    <h2>Biểu đồ thống kê dự án theo trạng thái</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -385,11 +385,12 @@ export default () => {
                                     <div className="col-md-8">
                                         <div class="table-responsive mt-4">
                                             {statisStatus && statisStatus.length > 0 ? (
-                                                <table class="table no-border-table">
+                                                <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
                                                             <th>Project Status</th>
-                                                            <th colspan="2">{totalSum} {lang["project"]}</th>
+                                                            <th style={{}}>{totalSum} {lang["project"]}</th>
+                                                            <th>%</th>
 
                                                         </tr>
                                                     </thead>
@@ -438,7 +439,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
+                                    <h2>Biểu đồ thống kê dự án theo người quản lý</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -467,13 +468,13 @@ export default () => {
                                     <div className="col-md-8">
                                         <div class="table-responsive mt-4">
                                             {statisLead && statisLead.length > 0 ? (
-                                                <table class="table no-border-table">
+                                              <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
                                                             <th>Leader</th>
 
-                                                            <th colspan="2">{totalSumLead} {lang["project"]}</th>
-
+                                                            <th>{totalSumLead} {lang["project"]}</th>
+                                                          <th>%</th>
 
                                                         </tr>
                                                     </thead>
@@ -518,63 +519,8 @@ export default () => {
 
                 </div>
                 <div class="row column1">
-                    <div class="col-lg-6 col-lg-3">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
-                                <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
-                                </div>
-                            </div>
-                            <div class="map_section padding_infor_info">
-
-                                <BarChart
-                                    style={{ margin: 'auto', display: 'block' }}
-                                    width={700}
-                                    height={500}
-                                    data={data}
-                                    margin={{
-                                        top: 25, right: 30, left: 20, bottom: 5,
-                                    }}>
-                                    <XAxis dataKey="XAxisData" >
-                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
-                                    </XAxis>
-                                    <YAxis>
-                                        <Label value="Số dự án" fontSize={16} angle={-90} position='insideLeft' />
-                                    </YAxis>
-                                    <CartesianGrid strokeDasharray="1 1" />
-
-                                    <Tooltip
-                                        content={<CustomTooltipStack />}
-                                        cursor={{ fill: "transparent" }}
-                                        isAnimationActive={true}
-                                        animationEasing="ease-out"
-                                        position={{ x: 600, y: 25 }}
-                                    />
-                                    <Legend />
-                                    <Bar barSize={55} dataKey="Khởi tạo" stackId="a" fill="#1ed085" >
-                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar dataKey="Thực hiện" stackId="a" fill="#8884d8" >
-                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar dataKey="Triển khai" stackId="a" fill="#ffc658" >
-                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar dataKey="Hoàn thành" stackId="a" fill="#ff8042" >
-                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar dataKey="Tạm dừng" stackId="a" fill="#FF0000" >
-                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={70} dataKey="z" stackId="a" fill="transparent">
-                                        <LabelList dataKey={dataKeyY} position="top" fill="#000000" formatter={(value) => `${value} dự án`} />
-                                    </Bar>
-                                </BarChart>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-lg-3">
+                  
+                    <div class="col-lg-12 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -582,10 +528,10 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
+                            <ResponsiveContainer width="100%" height={500}>
                                 <BarChart
                                     style={{ margin: 'auto', display: 'block' }}
-                                    width={700}
-                                    height={500}
+                                   
                                     data={data}
                                     margin={{
                                         top: 25, right: 30, left: 20, bottom: 5,
@@ -628,6 +574,7 @@ export default () => {
                                     </Bar>
 
                                 </BarChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
                     </div>

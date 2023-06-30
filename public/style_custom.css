@@ -1066,7 +1066,7 @@ h5 {
 .table th {
     padding: 0.5rem;
     vertical-align: middle;
-    border-top: 1px solid #dee2e6;
+   
 }
 
 .msg_list {
@@ -1256,10 +1256,6 @@ h5 {
     border: none;
 }
 
-.no-border-table thead tr th {
-    border: none;
-    
-}
 
 .no-border-table tbody tr {
     border: none;
@@ -1270,4 +1266,18 @@ h5 {
     border: none;
     border-collapse: collapse;
     padding: 12px;
+}
+.no-border-table, 
+.no-border-table th, 
+.no-border-table td {
+    border: none !important;
+}
+.table1 th, table tr {
+    border: none !important;
+    border-collapse: collapse;
+}
+
+.no-border thead th {
+    border-bottom: 1px solid #000 !important;
+    background: none !important;
 }
