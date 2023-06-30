@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import responseMessages from "../enum/response-code";
 import Swal from 'sweetalert2';
 import { Header } from '../common';
+import $ from 'jquery';
+
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const dispatch = useDispatch()
@@ -30,7 +32,8 @@ export default () => {
                 setShowModal(false);
             }
         });
-    };
+    };   
+    
 
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
@@ -346,6 +349,26 @@ export default () => {
         console.log(project)
         window.location.href = `projects/detail/${project.project_id}`;
     };
+
+    useEffect(()=> {
+        const url = new URL(window.location.href);
+
+    // Get the search params from the URL
+        const searchParams = new URLSearchParams(url.search);
+
+        // Access individual parameters
+        const action = searchParams.get('action');        
+
+        switch(action){
+            case "create":
+                console.log("clicked")
+                $('#create-btn').click()
+                break;
+            default:
+                break;
+        }
+    }, [ projects ])
+
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -355,7 +378,7 @@ export default () => {
                             <h4>{lang["projects.title"]}</h4>
                             {
                                 ["ad"].indexOf(auth.role) != -1 ?
-                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
+                                    <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
                                     </button> : null
                             }

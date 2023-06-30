@@ -33,6 +33,7 @@ export default {
     "min ago": "min ago",
     "statistic": "Statistic",
     "workflow": "Workflow",
+    "site-map":"Site map",
 
     "about us": "About Us",
     "contacts": "Contacts",

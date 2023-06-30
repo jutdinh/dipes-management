@@ -68,22 +68,22 @@ export default () => {
                   <li className="navbar-item">
                      <NavLink to="/workflow" activeClassName="nav-active">
                         <i class="fa fa-code-fork"></i>
-                        <span>{lang["workflow"]}</span>
+                        <span>{lang["site-map"]}</span>
                      </NavLink>
                   </li>
-    
-
-
-
+                  <li className="navbar-item">
+                     <NavLink to="/about" activeClassName="nav-active">
+                        <i class="fa fa-paper-plane red_color"></i>
+                        <span>{lang["about us"]}</span>
+                     </NavLink>
+                  </li>
+   
             
-            
-               <li>
+               {/* <li>
                   <a href="/contacts">
                      <i class="fa fa-paper-plane red_color"></i> <span>{lang["contacts"]}</span></a>
-               </li>
-
-               <li><a href="/about"><i class="fa fa-info purple_color2"></i> <span>{lang["about us"]}</span></a></li>
-
+               </li> */}
+               {/* <li><a href="/about"><i class="fa fa-info purple_color2"></i> <span>{lang["about us"]}</span></a></li> */}
                <li><a href="/settings"><i class="fa fa-cog yellow_color"></i> <span>{lang["settings"]}</span></a></li>
                { user.role === "uad" ? (
                   <li className="navbar-item">

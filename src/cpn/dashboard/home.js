@@ -196,27 +196,18 @@ export default () => {
         );
     };
 
-
-
-
-
-
-
-
     return (
-
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
                             <h4>{lang["home"]}</h4>
-
                         </div>
                     </div>
                 </div>
                 <div class="row column1">
-                    <div class="col-md-6 col-lg-6">
+                    <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -231,7 +222,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-6">
+                    <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -246,7 +237,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    {/* <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -275,87 +266,137 @@ export default () => {
                                 </div>
                             </div>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
-                {/* <div class="row column1 social_media_section">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full socile_icons fb margin_bottom_30">
-                            <div class="social_icon">
-                                <i class="fa fa-facebook"></i>
-                            </div>
-                            <div class="social_cont">
-                                <ul>
-                                    <li>
-                                        <span><strong>35k</strong></span>
-                                        <span>Friends</span>
-                                    </li>
-                                    <li>
-                                        <span><strong>128</strong></span>
-                                        <span>Feeds</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full socile_icons tw margin_bottom_30">
-                            <div class="social_icon">
-                                <i class="fa fa-twitter"></i>
-                            </div>
-                            <div class="social_cont">
-                                <ul>
-                                    <li>
-                                        <span><strong>584k</strong></span>
-                                        <span>Followers</span>
-                                    </li>
-                                    <li>
-                                        <span><strong>978</strong></span>
-                                        <span>Tweets</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full socile_icons linked margin_bottom_30">
-                            <div class="social_icon">
-                                <i class="fa fa-linkedin"></i>
-                            </div>
-                            <div class="social_cont">
-                                <ul>
-                                    <li>
-                                        <span><strong>758+</strong></span>
-                                        <span>Contacts</span>
-                                    </li>
-                                    <li>
-                                        <span><strong>365</strong></span>
-                                        <span>Feeds</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full socile_icons google_p margin_bottom_30">
-                            <div class="social_icon">
-                                <i class="fa fa-google-plus"></i>
-                            </div>
-                            <div class="social_cont">
-                                <ul>
-                                    <li>
-                                        <span><strong>450</strong></span>
-                                        <span>Followers</span>
-                                    </li>
-                                    <li>
-                                        <span><strong>57</strong></span>
-                                        <span>Circles</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
 
+
+                <div class="row column1">
+                    <div class="col-lg-6 col-lg-3">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0">
+                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
+                                </div>
+                            </div>
+                            <div class="map_section padding_infor_info">
+                               
+                                    <div class="contact_blog">
+                                        <div class="contact_inner">
+                                            <div class="right">
+                                                <div class="profile_contacts">
+                                                    <img class="img-responsive" width={100} src={"#"} alt="#" />
+                                                </div>
+                                            </div>
+                                            <div class="left-cus ">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table no-border-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Firstname</th>
+                                                                <th>Lastname</th>
+                                                                <th>Email</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>John</td>
+                                                                <td>Doe</td>
+                                                                <td>john@example.com</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Mary</td>
+                                                                <td>Moe</td>
+                                                                <td>mary@example.com</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>July</td>
+                                                                <td>Dooley</td>
+                                                                <td>july@example.com</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Mary</td>
+                                                                <td>Moe</td>
+                                                                <td>mary@example.com</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="bottom_list">
+                                                <div class="right_button">
+                                                    {/* <button type="button" class="btn btn-primary" >
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger">
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </button> */}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                             
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-lg-3">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0">
+                                    <h2>Biểu đồ cột chồng thống kê dự án qua các năm</h2>
+                                </div>
+                            </div>
+                            <div class="map_section padding_infor_info">
+                                <BarChart
+                                    style={{ margin: 'auto', display: 'block' }}
+                                    width={700}
+                                    height={500}
+                                    data={data}
+                                    margin={{
+                                        top: 25, right: 30, left: 20, bottom: 5,
+                                    }}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="XAxisData" >
+                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
+                                    </XAxis>
+                                    <YAxis
+
+                                    >
+                                        <Label value="Số dự án" angle={-90} fontSize={16} position='insideLeft' />
+                                    </YAxis>
+                                    <Tooltip
+                                        content={<CustomTooltip />}
+                                        cursor={{ fill: "transparent" }}
+                                        isAnimationActive={true}
+                                        animationEasing="ease-out"
+                                        position={{ x: 550, y: 25 }}
+                                    />
+                                    <Legend />
+                                    {/* <Bar barSize={70} dataKey="z" fill="transparent">
+                                                <LabelList dataKey="displayY" position="top" fill="#000000" />
+                                            </Bar> */}
+
+                                    <Bar barSize={100} dataKey="Khởi tạo" fill="#1ed085" >
+                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Thực hiện" fill="#8884d8"  >
+                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Triển khai" fill="#ffc658" >
+                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Hoàn thành" fill="#ff8042" >
+                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+                                    <Bar barSize={100} dataKey="Tạm dừng" fill="#FF0000" >
+                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
+                                    </Bar>
+
+                                </BarChart>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 <div class="row column1">
                     <div class="col-lg-6 col-lg-3">
                         <div class="white_shd full margin_bottom_30">

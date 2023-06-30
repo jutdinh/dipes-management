@@ -76,7 +76,7 @@ export default () => {
                 lv3: "Quản lý",
                 lv4: "API",
                 lv5: "",
-                link: "https://www.example.com"
+                link: "http://localhost:3000/projects?action=create"
             },
             {
                 site: "DIPEs Management",

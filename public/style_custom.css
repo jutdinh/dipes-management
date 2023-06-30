@@ -1231,3 +1231,28 @@ h5 {
     fill: red;
     /* Thay đổi màu nút gốc thành màu đỏ */
   }
+  .no-border-table {
+    border-collapse: none;
+}
+
+.no-border-table th, .no-border-table td {
+    border-top: 1px solid b#dee2e6;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.table.no-border-table {
+    border: none;
+}
+
+.no-border-table thead tr th {
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.no-border-table tbody tr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+}
+

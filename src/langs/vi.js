@@ -33,6 +33,7 @@ export default {
     "projects worked": "Dự án đã tham gia",
     "statistic": "Thống kê",
     "workflow": "Quy trình",
+    "site-map":"Site map",
     "about us": "Giới thiệu",
     "contacts": "Liên hệ",
     "404": "KHÔNG TÌM THẤY",
