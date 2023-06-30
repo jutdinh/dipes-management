@@ -7,7 +7,7 @@ import {
   Route,
 } from "react-router-dom";
 
-import { Home } from './dashboard';
+import { Home, About } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
 import { Login, SignUp, SignOut } from './auth';
 import { Settings } from './settings';
@@ -84,6 +84,7 @@ function App() {
         <Route path="/users" element={<Navigation Child={ListUser} />} />
         <Route path="/users/profile" element={<Navigation Child={Profile} />} />
         <Route path="/settings" element={<Navigation Child={Settings} />} />
+        <Route path="/about" element={<Navigation Child={About} />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
