@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 export default ( props ) => {
+    const { version_id } = useParams()
+    
     const { table, fields } = props;
     table.fields = fields
     const ref = useRef()
+
     const [tableRef, setTableRef] = useState({})
     const dispatch = useDispatch()
     useEffect(() => {
@@ -42,11 +46,10 @@ export default ( props ) => {
     }
 
     const setCurrentTable = () => {
-        dispatch({
-            branch: "db",
-            type: "setCurrentTable",
-            payload: { table }
-        })
+        const table_id = table.id;
+        
+        console.log(table_id)
+        window.location = `/projects/${ version_id }/table/${table_id}`
     }
 
     const isForeignKey = (field) => {

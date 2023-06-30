@@ -524,7 +524,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột chồng thống kê dự án qua các năm</h2>
+                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
@@ -557,19 +557,19 @@ export default () => {
                                                 <LabelList dataKey="displayY" position="top" fill="#000000" />
                                             </Bar> */}
 
-                                    <Bar barSize={100} dataKey="Khởi tạo" fill="#1ed085" >
+                                    <Bar barSize={70} dataKey="Khởi tạo" fill="#1ed085" >
                                         <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
-                                    <Bar barSize={100} dataKey="Thực hiện" fill="#8884d8"  >
+                                    <Bar barSize={70} dataKey="Thực hiện" fill="#8884d8"  >
                                         <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
-                                    <Bar barSize={100} dataKey="Triển khai" fill="#ffc658" >
+                                    <Bar barSize={70} dataKey="Triển khai" fill="#ffc658" >
                                         <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
-                                    <Bar barSize={100} dataKey="Hoàn thành" fill="#ff8042" >
+                                    <Bar barSize={70} dataKey="Hoàn thành" fill="#ff8042" >
                                         <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
-                                    <Bar barSize={100} dataKey="Tạm dừng" fill="#FF0000" >
+                                    <Bar barSize={70} dataKey="Tạm dừng" fill="#FF0000" >
                                         <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
                                     </Bar>
 

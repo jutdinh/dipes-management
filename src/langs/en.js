@@ -101,7 +101,7 @@ export default {
     "edit": "Edit",
     "edittask":"Edit task",
 
-    "duty":"Duty",
+    "duty":"Role",
     "confirm":"Confirm",
 
 

@@ -9,7 +9,7 @@ export default () => {
         },
         {   
             index: 1,
-            icon: { icon: "fa-terminal", color: " blue1_color" },
+            icon: { icon: "fa-cog", color: " blue1_color" },
             title: "Công cụ",
             content: "Cung cấp công cụ tạo API giao tiếp với phần mềm / hệ thống khác",
         },
