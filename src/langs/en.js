@@ -18,6 +18,7 @@ export default {
     "signout": "Sign Out",
     "dashboard": "Dashboard",
     "home": "Home",
+    "project" :"Projects",
     "user info": "Hi",
     "projects manager": "Project Manager",
     "project list": "Project List",

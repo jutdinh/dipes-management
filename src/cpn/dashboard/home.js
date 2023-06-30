@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import {
-    BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
+    PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import { Header } from '../common';
 
@@ -84,6 +84,54 @@ export default () => {
     }, [])
     console.log(statis)
 
+    const [statisStatus, setStatisStatus] = useState([]);
+
+    useEffect(() => {
+        fetch(`${proxy}/projects/statistic/status/over/years`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, statistic, status, content } = resp;
+                // console.log(resp)
+                if (success) {
+                    const dataArray = Object.keys(statistic).map((key) => {
+                        return {
+                            "status": key,
+                            ...statistic[key]
+                        };
+                    });
+                    setStatisStatus(dataArray);
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+    console.log(statisStatus)
+
+    const [statisLead, setStatisLead] = useState([]);
+
+    useEffect(() => {
+        fetch(`${proxy}/projects/statistic/manager/and/their/projects`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, statistic, status, content } = resp;
+                // console.log(resp)
+                if (success) {
+
+                    setStatisLead(statistic);
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+    console.log(statisLead)
     const mapStatus = {
         "1": "Khởi tạo",
         "2": "Thực hiện",
@@ -91,22 +139,8 @@ export default () => {
         "4": "Hoàn thành",
         "5": "Tạm dừng",
     };
-
     const dataKeyY = "y";
 
-    // const processData = (statis) => {
-    //     return statis.map((item) => {
-    //       let obj = { XAxisData: item.year };
-
-    //       for (const key in item) {
-    //         if (key !== "year") {
-    //           obj[mapStatus[key]] = item[key];
-    //         }
-    //       }
-
-    //       return obj;
-    //     });
-    //   };
     const processData = (statis) => {
         return statis.map((item) => {
             let obj = { XAxisData: item.year, y: 0, z: 1 };
@@ -126,11 +160,6 @@ export default () => {
     };
 
     const data = processData(statis);
-
-
-
-
-
     const CustomTooltipStack = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
@@ -153,7 +182,6 @@ export default () => {
         }
         return null;
     };
-
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -195,7 +223,57 @@ export default () => {
             </text>
         );
     };
+    // const status = [
+    //     { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+    //     { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+    //     { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
+    //     { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
+    //     { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
+    // ]
+    let statusNames = {
+        "0": lang["initialization"],
+        "1": lang["implement"],
+        "2": lang["deploy"],
+        "3": lang["complete"],
+        "4": lang["pause"]
+    };
+    let outputData = Object.keys(statisStatus).map(key => ({
+        name: statusNames[key],
+        value: statisStatus[key].total
+    }));
+    let totalSum = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
 
+
+
+    const COLORS = ['#1ed085', '#8884d8', '#ffc658', '#ff8042', "#FF0000"];
+
+
+    let outputDataLead = Object.keys(statisLead).map(key => ({
+        name: statisLead[key].fullname,
+        value: statisLead[key].total,
+        avatar: statisLead[key].avatar
+    }));
+    console.log(outputDataLead)
+    let totalSumLead = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
+
+
+
+    const COLORSLEAD = ['#1ed085', '#8884d8', '#ffc658', '#ff8042', "#FF0000"];
+    const RADIAN = Math.PI / 180;
+    const renderCustomizedLabel1 = ({
+        cx, cy, midAngle, innerRadius, outerRadius, percent, index,
+    }) => {
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        return (
+            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                {`${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
+    console.log(outputDataLead)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -268,8 +346,6 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row column1">
                     <div class="col-lg-6 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
@@ -278,63 +354,83 @@ export default () => {
                                     <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
                                 </div>
                             </div>
-                            <div class="map_section padding_infor_info">
-                               
-                                    <div class="contact_blog">
-                                        <div class="contact_inner">
-                                            <div class="right">
-                                                <div class="profile_contacts">
-                                                    <img class="img-responsive" width={100} src={"#"} alt="#" />
-                                                </div>
-                                            </div>
-                                            <div class="left-cus ">
-                                                <div class="table-responsive-sm">
-                                                    <table class="table no-border-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Firstname</th>
-                                                                <th>Lastname</th>
-                                                                <th>Email</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>John</td>
-                                                                <td>Doe</td>
-                                                                <td>john@example.com</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Mary</td>
-                                                                <td>Moe</td>
-                                                                <td>mary@example.com</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>July</td>
-                                                                <td>Dooley</td>
-                                                                <td>july@example.com</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Mary</td>
-                                                                <td>Moe</td>
-                                                                <td>mary@example.com</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="bottom_list">
-                                                <div class="right_button">
-                                                    {/* <button type="button" class="btn btn-primary" >
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger">
-                                                        <i class="fa fa-trash-o"></i>
-                                                    </button> */}
-                                                </div>
-                                            </div>
+                            <div class="map_section padding_infor_info_home">
+                                <div className="row">
+                                    <div className="col-md-4 d-flex justify-content-center">
+                                        <div className="my-auto">
+                                            <PieChart width={300} height={300}>
+                                                <Pie
+                                                    dataKey="value"
+                                                    startAngle={360}
+                                                    endAngle={0}
+                                                    data={outputData}
+                                                    cx="45%"
+                                                    cy="50%"
+                                                    outerRadius={80}
+                                                    fill="#8884d8"
+                                                    label
+                                                    labelLine={{ outerRadius: '90%' }}
+                                                    innerRadius={60}
+                                                >
+                                                    {
+                                                        outputData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                                    }
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend />
+                                            </PieChart>
                                         </div>
                                     </div>
-                             
+
+                                    <div className="col-md-8">
+                                        <div class="table-responsive mt-4">
+                                            {statisStatus && statisStatus.length > 0 ? (
+                                                <table class="table no-border-table">
+                                                    <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
+                                                        <tr>
+                                                            <th>Project Status</th>
+                                                            <th colspan="2">{totalSum} {lang["project"]}</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {statisStatus?.map((statis, index) => (
+                                                            <tr key={index}>
+                                                                <td>
+
+                                                                    <div style={{
+                                                                        display: 'inline-block',
+                                                                        width: '10px',
+                                                                        height: '10px',
+                                                                        borderRadius: '50%',
+                                                                        backgroundColor: COLORS[index % COLORS.length],
+                                                                        marginRight: '10px'
+                                                                    }}></div>
+
+                                                                    {statusNames[String(index)]}
+
+                                                                </td>
+
+                                                                <td>{statis.total}</td>
+
+                                                                <td>{statis.percentage}</td>
+
+                                                            </tr>
+
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not Found !</p>
+                                                </div>
+                                            )
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -342,56 +438,80 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột chồng thống kê dự án qua các năm</h2>
+                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
                                 </div>
                             </div>
-                            <div class="map_section padding_infor_info">
-                                <BarChart
-                                    style={{ margin: 'auto', display: 'block' }}
-                                    width={700}
-                                    height={500}
-                                    data={data}
-                                    margin={{
-                                        top: 25, right: 30, left: 20, bottom: 5,
-                                    }}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="XAxisData" >
-                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
-                                    </XAxis>
-                                    <YAxis
+                            <div class="map_section padding_infor_info_home">
+                                <div className="row">
+                                    <div className="col-md-4 d-flex justify-content-center">
+                                        <div className="my-auto">
+                                            <PieChart width={300} height={300}>
+                                                <Pie
+                                                    data={outputDataLead}
+                                                    cx="45%"
+                                                    cy="50%"
+                                                    labelLine={false}
+                                                    label={renderCustomizedLabel1}
+                                                    outerRadius={80}
+                                                    fill="#8884d8"
+                                                    dataKey="value"
+                                                >
+                                                    {
+                                                        outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
+                                                    }
+                                                </Pie>
+                                            </PieChart>
+                                        </div>
+                                    </div>
 
-                                    >
-                                        <Label value="Số dự án" angle={-90} fontSize={16} position='insideLeft' />
-                                    </YAxis>
-                                    <Tooltip
-                                        content={<CustomTooltip />}
-                                        cursor={{ fill: "transparent" }}
-                                        isAnimationActive={true}
-                                        animationEasing="ease-out"
-                                        position={{ x: 550, y: 25 }}
-                                    />
-                                    <Legend />
-                                    {/* <Bar barSize={70} dataKey="z" fill="transparent">
-                                                <LabelList dataKey="displayY" position="top" fill="#000000" />
-                                            </Bar> */}
+                                    <div className="col-md-8">
+                                        <div class="table-responsive mt-4">
+                                            {statisLead && statisLead.length > 0 ? (
+                                                <table class="table no-border-table">
+                                                    <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
+                                                        <tr>
+                                                            <th>Leader</th>
 
-                                    <Bar barSize={100} dataKey="Khởi tạo" fill="#1ed085" >
-                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={100} dataKey="Thực hiện" fill="#8884d8"  >
-                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={100} dataKey="Triển khai" fill="#ffc658" >
-                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={100} dataKey="Hoàn thành" fill="#ff8042" >
-                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={100} dataKey="Tạm dừng" fill="#FF0000" >
-                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
+                                                            <th colspan="2">{totalSumLead} {lang["project"]}</th>
 
-                                </BarChart>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {statisLead?.map((statis, index) => (
+                                                            <tr key={index}>
+
+                                                                <td>
+                                                                    <div class="profile_contacts">
+                                                                        <div style={{
+                                                                            display: 'inline-block',
+                                                                            width: '10px',
+                                                                            height: '10px',
+                                                                            borderRadius: '50%',
+                                                                            backgroundColor: COLORSLEAD[index % COLORSLEAD.length],
+                                                                            marginRight: '10px'
+                                                                        }}></div>
+                                                                        <img class="img-responsive circle-image-home" src={proxy + statis.avatar} alt="#" />
+                                                                        {statis.fullname}
+                                                                    </div>
+                                                                </td>
+                                                                <td>{statis.total}</td>
+                                                                <td>{statis.percentage}</td>
+
+                                                            </tr>
+
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not Found !</p>
+                                                </div>
+                                            )
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

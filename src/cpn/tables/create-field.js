@@ -180,7 +180,6 @@ export default () => {
     };
 
     const handleUpdatetModal = () => {
-
         if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
             const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
             setPrimaryKey(newPrimaryKey);
@@ -190,7 +189,6 @@ export default () => {
             const uniquePrimaryKey = [...newPrimaryKey];
             setPrimaryKey(uniquePrimaryKey)
         }
-
         if (isOnforenkey) {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
             updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index });
@@ -199,7 +197,6 @@ export default () => {
             const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
             setForeignKeys(updatedForeignKeys);
         }
-
         dispatch({
             branch: "db",
             type: "updateField",
@@ -208,7 +205,6 @@ export default () => {
 
             }
         })
-
         setModalTemp((prevModalTemp) => ({
             ...prevModalTemp,
             ...defaultValues,

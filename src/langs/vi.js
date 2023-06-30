@@ -19,6 +19,7 @@ export default {
     "dashboard": "Bảng điều khiển",
     "home": "Trang chủ",
     "user info": "Xin chào",
+    "project" :"Dự án",
     "projects manager": "Quản lý dự án",
     "project list": "Danh sách dự án",
     "accounts manager": "Quản lý tài khoản",
