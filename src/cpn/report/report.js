@@ -255,38 +255,52 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full price_table padding_infor_info">
                                 <div className="container-fluid">
-                                <div class="d-flex align-items-center mb-1">
-                                <select value={filterStatus} class=" form-group mt-2 mrl-15" onChange={handleStatusChange}>
-                                        <option value="">Tất cả trạng thái</option>
-                                        {statusProject.map(status =>
-                                            <option value={status.value}>{lang[`${status.label}`]}</option>
-                                        )}
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div class="col-sm-2">
+                                            <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
+                                                <option value="">Tất cả trạng thái</option>
+                                                {statusProject.map(status =>
+                                                    <option value={status.value}>{lang[`${status.label}`]}</option>
+                                                )}
+
+                                            </select>
+                                        </div>
                                        
-                                    </select>
-                                            
-                                           
-                                        </div>
-                                   
-                                    {filteredProjects.map((project) => (
-                                        <div key={project.project_id} class="row group">
-                                            <div class="col-md-12 col-lg-12">
-                                                <p>Tên dự án: <b class="font-weight-bold">{project.project_name}</b></p>
-                                                <p>Mã dự án: {project.project_code} </p>
-                                                <p>Ngày tạo: {formatDate(project.create_at)}</p>
-                                                <p>Trạng thái:
-                                                    <span className="status-label d-inline-block ml-1" style={{
-                                                        backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
-                                                        whiteSpace: "nowrap",
-                                                    }}>
-                                                        {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                    </span>
-                                                </p>
-                                                <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => exportToExcel(project)}>
-                                                    Xuất
-                                                </button>
+
+
+
+                                    </div>
+                                {
+                                    filteredProjects && filteredProjects.length > 0 ? (
+                                        <>{filteredProjects.map((project) => (
+                                            <div key={project.project_id} class="row group">
+                                                <div class="col-md-12 col-lg-12">
+                                                    <p>Tên dự án: <b class="font-weight-bold">{project.project_name}</b></p>
+                                                    <p>Mã dự án: {project.project_code} </p>
+                                                    <p>Ngày tạo: {formatDate(project.create_at)}</p>
+                                                    <p>Trạng thái:
+                                                        <span className="status-label d-inline-block ml-1" style={{
+                                                            backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
+                                                            whiteSpace: "nowrap",
+                                                        }}>
+                                                            {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                                        </span>
+                                                    </p>
+                                                    <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => exportToExcel(project)}>
+                                                        Xuất
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                        </>
+                                        
+                                    ):(
+                                        <div>
+                                                        <p>Not found</p>
+                                                    </div>
+                                    )
+                                }
+                                  
                                 </div>
                             </div>
                         </div>

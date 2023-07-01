@@ -1174,7 +1174,7 @@ h5 {
     /* Kích hoạt thanh cuộn khi nội dung vượt quá chiều cao tối đa */
 }
 .mrl-15{
-    margin-left: -15px;
+    margin-left: -30px;
 }
 
 
@@ -1281,3 +1281,54 @@ h5 {
     border-bottom: 1px solid #000 !important;
     background: none !important;
 }
+.tree {
+    list-style-type: none;
+    padding: 0;
+    position: relative;
+  }
+  
+  .tree::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 30px;
+    border-left: 1px solid #000;
+  }
+  
+  .tree-node {
+    margin: 20px 0;
+    padding-left: 40px;
+    position: relative;
+  }
+  
+  .tree-node::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    height: 100%;
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+    border-radius: 10px 0 0 0;
+  }
+  
+  .tree-node::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -40px;
+    width: 40px;
+    height: 1px;
+    background: #fff;
+  }
+  
+  .tree-link {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .tree-link:hover {
+    text-decoration: underline;
+  }
+  

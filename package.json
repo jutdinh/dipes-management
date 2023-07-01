@@ -20,6 +20,7 @@
     "jquery-ui-bundle": "^1.12.1-migrate",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
+    "react-d3-tree": "^3.6.1",
     "react-database-diagram": "^0.1.12",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",

@@ -84,7 +84,7 @@ export default () => {
                      <i class="fa fa-paper-plane red_color"></i> <span>{lang["contacts"]}</span></a>
                </li> */}
                {/* <li><a href="/about"><i class="fa fa-info purple_color2"></i> <span>{lang["about us"]}</span></a></li> */}
-               <li><a href="/settings"><i class="fa fa-cog yellow_color"></i> <span>{lang["settings"]}</span></a></li>
+               {/* <li><a href="/settings"><i class="fa fa-cog yellow_color"></i> <span>{lang["settings"]}</span></a></li> */}
                { user.role === "uad" ? (
                   <li className="navbar-item">
                      <NavLink to="/logs" activeClassName="nav-active">

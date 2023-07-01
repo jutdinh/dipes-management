@@ -82,7 +82,7 @@ function App() {
         <Route path="/workflow" element={<Navigation Child={Workflow} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
-        <Route path="/users/profile" element={<Navigation Child={Profile} />} />
+        <Route path="/profile" element={<Navigation Child={Profile} />} />
         <Route path="/settings" element={<Navigation Child={Settings} />} />
         <Route path="/about" element={<Navigation Child={About} />} />
         <Route path="*" element={<PageNotFound />} />

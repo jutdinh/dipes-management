@@ -44,49 +44,50 @@ export default (props) => {
     };
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
-        // Xử lý tệp tin tại đây
         if (file) {
-            if (file != undefined) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    setProfile({ ...profile, avatar: e.target.result })
-                    fetch(`${proxy}/auth/self/avatar`, {
-                        method: "PUT",
-                        headers: {
-                            "content-type": "application/json",
-                            Authorization: _token
-                        },
-                        body: JSON.stringify({ image: e.target.result })
-                    }).then(res => res.json()).then(data => {
-                        const { success, content } = data;
-                      
-                        if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
-                        }
-                    })
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (e) => {
+            setProfile({ ...profile, avatar: e.target.result });
+      
+            // Send the image data to the server for processing
+            fetch(`${proxy}/auth/self/avatar`, {
+              method: "PUT",
+              headers: {
+                "content-type": "application/json",
+                Authorization: _token,
+              },
+              body: JSON.stringify({ image: e.target.result }),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                const { success, content } = data;
+      
+                if (success) {
+                  Swal.fire({
+                    title: "Thành công!",
+                    text: content,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                } else {
+                  Swal.fire({
+                    title: "Thất bại!",
+                    text: content,
+                    icon: "error",
+                    showConfirmButton: false,
+                    timer: 2000,
+                  });
                 }
-            }
+              })
+              .catch((error) => {
+                // Handle any errors that occur during the request
+                console.error("Error uploading image:", error);
+              });
+          };
         }
-    };
+      };
     const submitUpdate = (e) => {
         e.preventDefault();
         if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {

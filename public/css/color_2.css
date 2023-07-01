@@ -15,6 +15,9 @@
 .sidebar_user_info {
     background: #fff;
 }
+.topbar_lang_light{
+    color: rgb(3, 3, 3);
+}
 
 .sidebar_toggle {
     background: #0971b8;

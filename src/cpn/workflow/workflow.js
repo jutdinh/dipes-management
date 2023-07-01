@@ -76,7 +76,7 @@ export default () => {
                 lv3: "Quản lý",
                 lv4: "API",
                 lv5: "",
-                link: "http://localhost:3000/projects?action=create"
+                link: "https://www.example.com"
             },
             {
                 site: "DIPEs Management",
@@ -369,7 +369,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
-                            <h4>{lang["site-map"]}</h4>
+                            <h4>{lang["workflow"]}</h4>
                         </div>
                     </div>
                 </div>
