@@ -19,7 +19,7 @@ export default {
     "dashboard": "Bảng điều khiển",
     "home": "Trang chủ",
     "user info": "Xin chào",
-    "project" :"Dự án",
+    "project": "Dự án",
     "projects manager": "Quản lý dự án",
     "project list": "Danh sách dự án",
     "accounts manager": "Quản lý tài khoản",
@@ -34,7 +34,7 @@ export default {
     "projects worked": "Dự án đã tham gia",
     "statistic": "Thống kê",
     "workflow": "Quy trình",
-    "site-map":"Site map",
+    "site-map": "Site map",
     "about us": "Giới thiệu",
     "contacts": "Liên hệ",
     "404": "KHÔNG TÌM THẤY",
@@ -46,8 +46,8 @@ export default {
     //description
     "description": "Mô tả",
 
-"project.info":"Thông tin dự án",
-"project.deploy":"Thông tin website triển khai",
+    "project.info": "Thông tin dự án",
+    "project.deploy": "Thông tin website triển khai",
     //Project
     "projects": "Dự án",
     "projects.title": "Quản lý dự án",
@@ -93,13 +93,14 @@ export default {
     "task_priority": "Mức độ ưu tiên",
     "taskmember": "Thành viên",
     "p.description": "Mô tả yêu cầu",
-    "updatestatus":"Cập nhật trạng thái",
-    "viewdetail":"Xem chi tiết",
+    "updatestatus": "Cập nhật trạng thái",
+    "viewdetail": "Xem chi tiết",
     "delete": "Xóa",
-    "edit":"Chỉnh sửa",
-    "edittask":"Chỉnh sửa yêu cầu",
-
-
+    "edit": "Chỉnh sửa",
+    "edittask": "Chỉnh sửa yêu cầu",
+    "await": "Chờ duyệt",
+    "approved": "Đã duyệt",
+    "choose": "Chọn",
     //Managers
     "editmanager": "Chỉnh sửa quản lý dự án",
     //Members
@@ -118,8 +119,8 @@ export default {
     "p.versiondescription": "Nhập mô tả",
     //Task
     "task": "Yêu cầu",
-    "duty":"Chức vụ",
-    "confirm":"Xác nhận",
+    "duty": "Chức vụ",
+    "confirm": "Xác nhận",
     //User
     "users.title": "Quản lý người dùng",
     //Group user
@@ -176,46 +177,54 @@ export default {
     "log.information": "Thông tin",
     "log.warning": "Cảnh báo",
     "log.error": "Lỗi",
-    "log.title":"Lịch sử",
+    "log.title": "Lịch sử",
     "log.statis": "Thống kê",
     "log.type": "Loại",
-    "log.selecttype":"Chọn loại",
-    "log.daystart":"Ngày bắt đầu",
+    "log.selecttype": "Chọn loại",
+    "log.daystart": "Ngày bắt đầu",
     "log.dayend": "Ngày kết thúc",
-    "log.listlog":"Danh sách lịch sử",
-    "log.no":"STT",
-    "log.id":"ID",
-    "log.listtitle":"Tiêu đề",
-    "log.dayupdate":"Ngày cập nhật",
+    "log.listlog": "Danh sách lịch sử",
+    "log.no": "STT",
+    "log.id": "ID",
+    "log.listtitle": "Tiêu đề",
+    "log.dayupdate": "Ngày cập nhật",
     "log.action": "Thao tác",
-    "btn.ok":"Lọc",
-    "btn.clear":"Xóa",
-    "btn.viewdetail":"Xem chi tiết",
+    "btn.ok": "Lọc",
+    "btn.clear": "Xóa",
+    "btn.viewdetail": "Xem chi tiết",
     "btn.export": "Xuất",
-    "detaillog":"Chi tiết lịch sử",
-    "log.create_user":"Người thực hiện",
-    "log.create_at":"Ngày tạo",
-
+    "detaillog": "Chi tiết lịch sử",
+    "log.create_user": "Người thực hiện",
+    "log.create_at": "Ngày tạo",
+    //home
+    "project-status-chart": "Biểu đồ trạng thái dự án",
+    "project-lead-chart": "Biểu đồ người quản lý dự án",
+    "project-status-chart-year": "Biểu đồ trạng thái dự án theo năm",
+    "project-number": "Số dự án",
+    "year": "Năm",
+    //report
+    "allstatus": "Tất cả trạng thái",
+    "export": "Xuất",
     //page
 
-    "show":"Hiển thị",
+    "show": "Hiển thị",
     "of": "của",
-    "results":"kết quả",
+    "results": "kết quả",
 
 
-    "supervisor":"Giám sát",
+    "supervisor": "Giám sát",
     "deployers": "Triển khai",
 
 
 
-    "btn.cancel":"Hủy",
-    "btn.addfield":"Thêm mới trường",
+    "btn.cancel": "Hủy",
+    "btn.addfield": "Thêm mới trường",
 
 
     // export oprions
 
     "export.title": "Xuất dự án",
-    "export.type": "Loại xuất bản",   
+    "export.type": "Loại xuất bản",
 
     "export.types.wholeProjects": "Toàn bộ dự án",
     "export.types.tablesOnly": "Cơ sở dữ liệu",
@@ -225,4 +234,37 @@ export default {
     "export.version": "Chọn phiên bản",
     "export.error.invalidData": "Các trường cần phải được điền dữ liệu trước khi xuất",
     "export.error.invalidVersionData": "Không tìm thấy UI nào trong Phiên bản này!",
-}
+
+
+
+    "list of tables": "Danh sách bảng",
+
+    "list of api": "Danh sách API",
+    "list of ui": "Danh sách UI",
+    "create-at": "Ngày tạo",
+    "table name": "Tên bảng",
+    "api name": "Tên API",
+    "ui name": "Tên UI ",
+    "creator": "Người tạo",
+    "managetable": "Quản lý bảng",
+    "create table" :"Tạo bảng mới",
+    "list fields": "Danh sách các trường",
+    "key" : "Khóa",
+    "pkey": "Khóa chính",
+    "fkey": "Khóa ngoại",
+    "fields name": "Tên trường",
+    "datatype": "Kiểu dữ liệu",
+    "null": "Yêu cầu dữ liệu",
+   
+
+    "create fields": "Tạo trường mới",
+    "update fields": "Cập nhật trường",
+    "list add fields": "Danh sách các trường chuẩn bị thêm vào"
+    
+
+
+
+
+
+
+} 

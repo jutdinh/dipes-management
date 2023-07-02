@@ -78,9 +78,9 @@ export default () => {
     //     { id: 3, label: lang["pause"], value: 4, color: "#FF0000" }
     // ]
     const statusTask = [
-        { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
-        { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
-
+        { id: 0, label: lang["await"], value: 0, color: "#1ed085" },
+        { id: 1, label: lang["approved"], value: 1, color: "#181dd4" },
+       
 
     ]
     const statusPriority = [
@@ -2018,7 +2018,7 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["export.version"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" onChange={(e) => { setExporter({ ...exporter, version: e.target.value }) }}>
-                                                    <option value="">Chọn</option>
+                                                    <option value="">{lang["choose"]}</option>
                                                     {versions.map((ver, index) => {
                                                         return (
                                                             <option key={index} value={ver.version_id}>{ver.version_name}</option>
@@ -2029,7 +2029,7 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["export.type"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" onChange={(e) => { setExporter({ ...exporter, type: parseInt(e.target.value) }) }}>
-                                                    <option value="">Chọn</option>
+                                                    <option value="">{lang["choose"]}</option>
                                                     {exportTypes.map((type, index) => {
                                                         return (
                                                             <option key={index} value={type.id}>{type.label}</option>
@@ -2112,7 +2112,7 @@ export default () => {
                                 <div class="row column1">
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">Danh sách bảng </p>
+                                            <p class="font-weight-bold">{lang["list of tables"]} </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -2125,8 +2125,8 @@ export default () => {
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -2178,7 +2178,7 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có bảng</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
@@ -2186,7 +2186,7 @@ export default () => {
                                     </div>
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">Danh sách API </p>
+                                            <p class="font-weight-bold">{lang["list of api"]} </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
 
                                                 <i class="fa fa-plus"></i>
@@ -2200,8 +2200,8 @@ export default () => {
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">Tên api</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["api name"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -2252,7 +2252,7 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có bảng</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
@@ -2261,7 +2261,7 @@ export default () => {
 
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">Danh sách UI </p>
+                                            <p class="font-weight-bold">{lang["list of ui"]} </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -2273,10 +2273,10 @@ export default () => {
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên UI</th>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["ui name"]}</th>
 
-                                                                <th class="font-weight-bold align-center">Ngày tạo</th>
+                                                                <th class="font-weight-bold align-center">{lang["create-at"]}</th>
 
                                                             </tr>
                                                         </thead>
@@ -2301,7 +2301,7 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có trang</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }

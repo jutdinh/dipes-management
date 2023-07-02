@@ -3,6 +3,7 @@ import { Dropdown } from "../common";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from 'react-responsive';
 import $ from 'jquery';
+import { useLocation  } from 'react-router-dom';
 
 export default () => {
     const { proxy, lang, auth, profiles } = useSelector((state) => state);
@@ -25,7 +26,14 @@ export default () => {
     }, []);
 
 
+    const location = useLocation();
+
     useEffect(() => {
+        let langItem = localStorage.getItem("lang");
+        langItem = langItem ? langItem : "Vi";
+        const defaultLang = langs.filter((l) => l.value === langItem)[0];
+        setDefaultValue(defaultLang);
+
         const storedPageState = localStorage.getItem("pageState");
         const initialPageState = storedPageState ? JSON.parse(storedPageState) : false;
         setPageState(initialPageState);
@@ -37,8 +45,18 @@ export default () => {
         `);
             }
         }
-    }, []);
 
+        // Listen for route changes
+       
+
+    }, []);
+    useEffect(() => {
+        // Re-fetch the pageState when location changes
+        const storedPageState = localStorage.getItem("pageState");
+        const initialPageState = storedPageState ? JSON.parse(storedPageState) : false;
+        setPageState(initialPageState);
+    }, [location]);
+    
     const LanguageRender = ({ name, flag }) => {
         return (
             <div className="d-flex flex-nowrap">

@@ -73,13 +73,13 @@ export default () => {
             })
     }, [])
     console.log(statis)
-
+   
     const mapStatus = {
-        "1": "Khởi tạo",
-        "2": "Thực hiện",
-        "3": "Triển khai",
-        "4": "Hoàn thành",
-        "5": "Tạm dừng",
+        "1": lang["initialization"],
+        "2": lang["implement"],
+        "3": lang["deploy"],
+        "4": lang["complete"],
+        "5": lang["pause"]
     };
 
     const dataKeyY = "y";
@@ -237,10 +237,10 @@ export default () => {
                                                     top: 25, right: 30, left: 20, bottom: 5,
                                                 }}>
                                                 <XAxis dataKey="XAxisData" >
-                                                    <Label value="Năm" fontSize={16} position="insideBottomRight" />
+                                                    <Label value={lang["year"]} fontSize={16} position="insideBottomRight" />
                                                 </XAxis>
                                                 <YAxis>
-                                                    <Label value="Số dự án" fontSize={16} angle={-90} position='insideLeft' />
+                                                    <Label value={lang["project-number"]} fontSize={16} angle={-90} position='insideLeft' />
                                                 </YAxis>
                                                 <CartesianGrid strokeDasharray="1 1" />
 
@@ -252,26 +252,26 @@ export default () => {
                                                     position={{ x: 1100, y: 25 }}
                                                 />
                                                 <Legend />
-                                                <Bar barSize={100} dataKey="Khởi tạo" stackId="a" fill="#1ed085" >
-                                                    <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
+                                              <Bar barSize={100} dataKey={lang["initialization"]} stackId="a" fill="#1ed085" >
+                                                    <LabelList dataKey={lang["initialization"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar dataKey="Thực hiện" stackId="a" fill="#8884d8" >
-                                                    <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
+                                                <Bar dataKey={lang["implement"]} stackId="a" fill="#8884d8" >
+                                                    <LabelList dataKey={lang["implement"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar dataKey="Triển khai" stackId="a" fill="#ffc658" >
+                                                <Bar dataKey={lang["deploy"]} stackId="a" fill="#ffc658" >
                                                     <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar dataKey="Hoàn thành" stackId="a" fill="#ff8042" >
-                                                    <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
+                                                <Bar dataKey={lang["complete"]} stackId="a" fill="#ff8042" >
+                                                    <LabelList dataKey={lang["complete"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar dataKey="Tạm dừng" stackId="a" fill="#FF0000" >
-                                                    <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
+                                                <Bar dataKey={lang["pause"]} stackId="a" fill="#FF0000" >
+                                                    <LabelList dataKey={lang["pause"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
                                                 <Bar barSize={70} dataKey="z" stackId="a" fill="transparent">
                                                     <LabelList dataKey={dataKeyY} position="top" fill="#000000" formatter={(value) => `${value} dự án`} />
                                                 </Bar>
                                             </BarChart>
-                                            <p class="align-center mt-4"> Biểu đồ cột thống kê dự án qua các năm</p>
+                                            {/* <p class="align-center mt-4"> Biểu đồ cột thống kê dự án qua các năm</p> */}
                                         </div>
 
                                     }
@@ -289,12 +289,12 @@ export default () => {
                                                 }}>
                                                 <CartesianGrid strokeDasharray="3 3" />
                                                 <XAxis dataKey="XAxisData" >
-                                                    <Label value="Năm" fontSize={16} position="insideBottomRight" />
+                                                    <Label value={lang["year"]} fontSize={16} position="insideBottomRight" />
                                                 </XAxis>
                                                 <YAxis
 
                                                 >
-                                                    <Label value="Số dự án" angle={-90} fontSize={16} position='insideLeft' />
+                                                    <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
                                                 </YAxis>
                                                 <Tooltip
                                                     content={<CustomTooltip />}
@@ -308,24 +308,24 @@ export default () => {
                                                 <LabelList dataKey="displayY" position="top" fill="#000000" />
                                             </Bar> */}
 
-                                                <Bar barSize={100} dataKey="Khởi tạo" fill="#1ed085" >
-                                                    <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
+                                                <Bar barSize={100} dataKey={lang["initialization"]} fill="#1ed085" >
+                                                    <LabelList dataKey={lang["initialization"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar barSize={100} dataKey="Thực hiện" fill="#8884d8"  >
-                                                    <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
+                                                <Bar barSize={100} dataKey={lang["implement"]} fill="#8884d8"  >
+                                                    <LabelList dataKey={lang["implement"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar barSize={100} dataKey="Triển khai" fill="#ffc658" >
-                                                    <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
+                                                <Bar barSize={100} dataKey={lang["deploy"]} fill="#ffc658" >
+                                                    <LabelList dataKey={lang["deploy"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar barSize={100} dataKey="Hoàn thành" fill="#ff8042" >
-                                                    <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
+                                                <Bar barSize={100} dataKey={lang["complete"]} fill="#ff8042" >
+                                                    <LabelList dataKey={lang["complete"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
-                                                <Bar barSize={100} dataKey="Tạm dừng" fill="#FF0000" >
-                                                    <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
+                                                <Bar barSize={100} dataKey={lang["pause"]} fill="#FF0000" >
+                                                    <LabelList dataKey={lang["pause"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
 
                                             </BarChart>
-                                            <p class="align-center mt-4"> Biểu đồ cột thống kê dự án qua các năm</p>
+                                            {/* <p class="align-center mt-4"> Biểu đồ cột thống kê dự án qua các năm</p> */}
                                         </div>
                                     }
                                 </div>

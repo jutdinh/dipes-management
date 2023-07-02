@@ -166,7 +166,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title">
                             {/* <h4><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-4"></i></a>Quản lý bảng</h4> */}
-                            <h4>Quản lý bảng</h4>
+                            <h4>{lang["managetable"]}</h4>
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Quản lý bảng</h5>
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["managetable"]}</h5>
                                 </div>
 
                                 <div class="ml-auto" onClick={ () => { setSection( section === TABLES ? DIAGRAM : TABLES ) } }>
@@ -212,9 +212,9 @@ export default () => {
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                    <th class="font-weight-bold" scope="col">Người tạo</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">Ngày tạo</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
 
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                                 </tr>

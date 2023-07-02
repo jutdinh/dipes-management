@@ -133,12 +133,13 @@ export default () => {
     }, [])
     console.log(statisLead)
     const mapStatus = {
-        "1": "Khởi tạo",
-        "2": "Thực hiện",
-        "3": "Triển khai",
-        "4": "Hoàn thành",
-        "5": "Tạm dừng",
+        "1": lang["initialization"],
+        "2": lang["implement"],
+        "3": lang["deploy"],
+        "4": lang["complete"],
+        "5": lang["pause"]
     };
+
     const dataKeyY = "y";
 
     const processData = (statis) => {
@@ -160,28 +161,7 @@ export default () => {
     };
 
     const data = processData(statis);
-    const CustomTooltipStack = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
-            const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
-            if (filteredPayload.length > 0) {
-                return (
-                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
-                        <p className="label" >{`Năm ${label}: ${totalValue} dự án`}</p>
-                        <div style={{ display: 'inline', justifyContent: 'center' }}>
-                            {filteredPayload.map((pld) => (
-                                <div style={{ padding: '15px', textAlign: 'left' }}>
-                                    <div style={{ color: pld.fill }}>{pld.dataKey}: {pld.value}</div>
-
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            }
-        }
-        return null;
-    };
+    
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -285,7 +265,7 @@ export default () => {
                     </div>
                 </div>
                 <div class="row column1">
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-6">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -300,7 +280,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-6">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -315,7 +295,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    {/* <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
                                 <div>
@@ -344,14 +324,14 @@ export default () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div class="row column1">
                     <div class="col-lg-6 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ thống kê dự án theo trạng thái</h2>
+                                    <h2>{lang["project-status-chart"]}</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -388,7 +368,7 @@ export default () => {
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
-                                                            <th>Project Status</th>
+                                                            <th>{lang["projectstatus"]}</th>
                                                             <th style={{}}>{totalSum} {lang["project"]}</th>
                                                             <th>%</th>
 
@@ -439,7 +419,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ thống kê dự án theo người quản lý</h2>
+                                    <h2>{lang["project-lead-chart"]}</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -468,13 +448,13 @@ export default () => {
                                     <div className="col-md-8">
                                         <div class="table-responsive mt-4">
                                             {statisLead && statisLead.length > 0 ? (
-                                              <table class="table table1 no-border-table no-border ">
+                                                <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
-                                                            <th>Leader</th>
+                                                            <th>{lang["projects manager"]}</th>
 
                                                             <th>{totalSumLead} {lang["project"]}</th>
-                                                          <th>%</th>
+                                                            <th>%</th>
 
                                                         </tr>
                                                     </thead>
@@ -519,61 +499,62 @@ export default () => {
 
                 </div>
                 <div class="row column1">
-                  
+
                     <div class="col-lg-12 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>Biểu đồ cột thống kê dự án qua các năm</h2>
+                                    <h2>{lang["project-status-chart-year"]}</h2>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
-                            <ResponsiveContainer width="100%" height={500}>
-                                <BarChart
-                                    style={{ margin: 'auto', display: 'block' }}
-                                   
-                                    data={data}
-                                    margin={{
-                                        top: 25, right: 30, left: 20, bottom: 5,
-                                    }}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="XAxisData" >
-                                        <Label value="Năm" fontSize={16} position="insideBottomRight" />
-                                    </XAxis>
-                                    <YAxis
+                                <ResponsiveContainer width="95%" height={500}>
+                                    <BarChart
+                                        style={{ margin: 'auto', display: 'block' }}
+                                        width={1100}
+                                        height={700}
+                                        data={data}
+                                        margin={{
+                                            top: 25, right: 30, left: 20, bottom: 5,
+                                        }}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="XAxisData" >
+                                            <Label value={lang["year"]} fontSize={16} position="insideBottomRight" />
+                                        </XAxis>
+                                        <YAxis
 
-                                    >
-                                        <Label value="Số dự án" angle={-90} fontSize={16} position='insideLeft' />
-                                    </YAxis>
-                                    <Tooltip
-                                        content={<CustomTooltip />}
-                                        cursor={{ fill: "transparent" }}
-                                        isAnimationActive={true}
-                                        animationEasing="ease-out"
-                                        position={{ x: 550, y: 25 }}
-                                    />
-                                    <Legend />
-                                    {/* <Bar barSize={70} dataKey="z" fill="transparent">
+                                        >
+                                            <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
+                                        </YAxis>
+                                        <Tooltip
+                                            content={<CustomTooltip />}
+                                            cursor={{ fill: "transparent" }}
+                                            isAnimationActive={true}
+                                            animationEasing="ease-out"
+                                            position={{ x: 1100, y: 10 }}
+                                        />
+                                        <Legend />
+                                        {/* <Bar barSize={70} dataKey="z" fill="transparent">
                                                 <LabelList dataKey="displayY" position="top" fill="#000000" />
                                             </Bar> */}
 
-                                    <Bar barSize={70} dataKey="Khởi tạo" fill="#1ed085" >
-                                        <LabelList dataKey="Khởi tạo" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={70} dataKey="Thực hiện" fill="#8884d8"  >
-                                        <LabelList dataKey="Thực hiện" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={70} dataKey="Triển khai" fill="#ffc658" >
-                                        <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={70} dataKey="Hoàn thành" fill="#ff8042" >
-                                        <LabelList dataKey="Hoàn thành" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
-                                    <Bar barSize={70} dataKey="Tạm dừng" fill="#FF0000" >
-                                        <LabelList dataKey="Tạm dừng" position="inside" content={renderCustomizedLabel} />
-                                    </Bar>
+                                        <Bar barSize={100} dataKey={lang["initialization"]} fill="#1ed085" >
+                                            <LabelList dataKey={lang["initialization"]} position="inside" content={renderCustomizedLabel} />
+                                        </Bar>
+                                        <Bar barSize={100} dataKey={lang["implement"]} fill="#8884d8"  >
+                                            <LabelList dataKey={lang["implement"]} position="inside" content={renderCustomizedLabel} />
+                                        </Bar>
+                                        <Bar barSize={100} dataKey={lang["deploy"]} fill="#ffc658" >
+                                            <LabelList dataKey={lang["deploy"]} position="inside" content={renderCustomizedLabel} />
+                                        </Bar>
+                                        <Bar barSize={100} dataKey={lang["complete"]} fill="#ff8042" >
+                                            <LabelList dataKey={lang["complete"]} position="inside" content={renderCustomizedLabel} />
+                                        </Bar>
+                                        <Bar barSize={100} dataKey={lang["pause"]} fill="#FF0000" >
+                                            <LabelList dataKey={lang["pause"]} position="inside" content={renderCustomizedLabel} />
+                                        </Bar>
 
-                                </BarChart>
+                                    </BarChart>
                                 </ResponsiveContainer>
                             </div>
                         </div>

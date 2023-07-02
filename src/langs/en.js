@@ -18,7 +18,7 @@ export default {
     "signout": "Sign Out",
     "dashboard": "Dashboard",
     "home": "Home",
-    "project" :"Projects",
+    "project": "Projects",
     "user info": "Hi",
     "projects manager": "Project Manager",
     "project list": "Project List",
@@ -34,7 +34,7 @@ export default {
     "min ago": "min ago",
     "statistic": "Statistic",
     "workflow": "Workflow",
-    "site-map":"Site map",
+    "site-map": "Site map",
 
     "about us": "About Us",
     "contacts": "Contacts",
@@ -53,8 +53,8 @@ export default {
     "pause": "Pause",
     //description
     "description": "Description",
-    "project.info":"Project Information",
-    "project.deploy":"Deployment website information",
+    "project.info": "Project Information",
+    "project.deploy": "Deployment website information",
     //Project
     "projects": "Projects",
     "projects.title": "Projects",
@@ -95,15 +95,16 @@ export default {
     "task_priority": "Priority",
     "taskmember": "Members",
     "p.description": "Description of the task",
-    "updatestatus":"Status updates",
-    "viewdetail":"View detail",
+    "updatestatus": "Status updates",
+    "viewdetail": "View detail",
     "delete": "Delete",
     "edit": "Edit",
-    "edittask":"Edit task",
-
-    "duty":"Role",
-    "confirm":"Confirm",
-
+    "edittask": "Edit task",
+    "choose": "Choose",
+    "duty": "Role",
+    "confirm": "Confirm",
+    "await": "Wait for approval",
+    "approved": "Approved",
 
 
 
@@ -201,11 +202,20 @@ export default {
 
     "btn.export": "Export",
 
-    "detaillog":"Log details",
+    "detaillog": "Log details",
     "log.create_user": "Executor",
-    "log.create_at":"Creation date",
+    "log.create_at": "Creation date",
 
+    //home
+    "project-status-chart": "Project status chart",
+    "project-lead-chart": "Project manager chart",
+    "project-status-chart-year": "Project status chart by year",
+    "project-number": "Number of projects",
+    "year": "Year",
 
+    //report
+    "allstatus": "All status",
+    "export": "Export",
     //page
 
     "show": "Showing",
@@ -214,10 +224,10 @@ export default {
 
 
     //
-    "supervisor":"Supervisor",
+    "supervisor": "Supervisor",
     "deployers": "Deployers",
-    "btn.cancel":"Cancel",
-    "btn.addfield":"Add new field",
+    "btn.cancel": "Cancel",
+    "btn.addfield": "Add new field",
 
 
     // export options
@@ -229,10 +239,32 @@ export default {
     "export.types.tablesOnly": "Database only",
     "export.types.apisOnly": "Apis only",
     "export.types.uiOnly": "UI Only",
-    
+
     "export.version": "Export version",
     "export.error.invalidData": "Invalid data selection",
     "export.error.invalidVersionData": "Cannot find any UI from this version!",
+
+    "list of tables":"List of tables",
+    "list of api": "List of API",
+    "list of ui": "List of UI",
+    "create-at": "Creation date",
+    "table name": "Table name",
+    "api name": "API name",
+    "ui name": "UI name ",
+    "creator": "Creator",
+    "managetable": "Manage Table",
+    "create table" :"Create new table",
+    "list fields": "List of fields",
+    "key" : "Key",
+    "pkey": "Primary Key",
+    "fkey": "Foreign Key",
+    "fields name": "Fields name",
+    "datatype": "Data type",
+    "null": "Data Requests",
+    "create fields": "Create new fields",
+    "update fields": "Update fields",
+    "list add fields":"List of fields to be added"
+   
 }
 
 
