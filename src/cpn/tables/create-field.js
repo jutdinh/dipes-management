@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { Tables } from ".";
 import { data } from "jquery";
-
+import responseMessages from "../enum/response-code";
 
 
 const types = [
@@ -58,6 +58,27 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
 
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
@@ -359,13 +380,8 @@ export default () => {
                             const tableId = data.table.id; // Lấy id bảng vừa tạo
                             addField(tableId);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            });
+                            showApiResponseMessage(status);
+
                         }
                     });
             }
@@ -412,13 +428,8 @@ export default () => {
                         addKey({ tableId, data });
                         // handleClickPrimary(fieldId);
                     } else {
-                        Swal.fire({
-                            title: "Thất bại!",
-                            text: content,
-                            icon: "error",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
+                        showApiResponseMessage(status);
+
                     }
                 });
         }
@@ -455,27 +466,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        // window.location.href = `/projects/${version_id}/tables/field`;
-                        window.location.reload();
-                    })
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                showApiResponseMessage(status);
             });
     };
 
@@ -538,26 +529,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                showApiResponseMessage(status);
+
             })
         // Sau khi thành công, có thể xóa bảng tạm thời
         setFieldTemp([]);
@@ -586,26 +559,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                showApiResponseMessage(status);
+
             })
 
 
@@ -636,39 +591,8 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                            return;
-                        }
-                        if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
-                        }
+                        showApiResponseMessage(status);
+
                     });
             }
         });

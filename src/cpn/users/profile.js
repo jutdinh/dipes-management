@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useRef } from "react";
 import Swal from 'sweetalert2';
-import { Profile } from '.';
+import { Profile } from '.'; 
+import responseMessages from "../enum/response-code";
+
 export default (props) => {
     const { lang, proxy } = useSelector(state => state);
 
@@ -18,6 +20,32 @@ export default (props) => {
         { id: 2, label: "Người triển khai ( Implementation Staff )", value: "pd" },
         { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
+
+
+
+
+ const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
+
     useEffect(() => {
         fetch(`${proxy}/auth/u/${user.username}`, {
             headers: {
@@ -61,25 +89,9 @@ export default (props) => {
             })
               .then((res) => res.json())
               .then((data) => {
-                const { success, content } = data;
+                const { success, content, status } = data;
       
-                if (success) {
-                  Swal.fire({
-                    title: "Thành công!",
-                    text: content,
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-                } else {
-                  Swal.fire({
-                    title: "Thất bại!",
-                    text: content,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
-                  });
-                }
+                showApiResponseMessage(status);
               })
               .catch((error) => {
                 // Handle any errors that occur during the request
@@ -117,30 +129,14 @@ export default (props) => {
         })
             .then(res => res.json())
             .then((resp) => {
-                const { success, content } = resp;
+                const { success, content, status } = resp;
                 console.log(resp)
                 if (success) {
                     const stringifiedUser = JSON.stringify( requestBody.account )
                     localStorage.setItem("user", stringifiedUser)
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                         window.location.reload();
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
-                    });
+                    showApiResponseMessage(status);
                 }
             });
     }

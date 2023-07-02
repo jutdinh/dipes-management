@@ -7,7 +7,7 @@ import { ValidTypeEnum } from '../enum/type';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
-
+import responseMessages from "../enum/response-code";
 
 
 
@@ -40,7 +40,27 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
 
+            }
+        });
+    };
 
 
     const [errorApi, setErrorApi] = useState({});
@@ -102,24 +122,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             })
     };

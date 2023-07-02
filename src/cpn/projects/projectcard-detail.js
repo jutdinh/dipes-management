@@ -7,6 +7,7 @@ import { StatusEnum, StatusTask } from '../enum/status';
 import { saveAs } from 'file-saver';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
+import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -22,8 +23,8 @@ export default () => {
     const [showViewMore, setShowViewMore] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [ exporter, setExporter ] = useState({})
-    
+    const [exporter, setExporter] = useState({})
+
     // console.log(selectedMemberTask)
     // Page 
 
@@ -33,7 +34,27 @@ export default () => {
     ]
     // page
 
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
 
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
 
     const statusProject = [
         StatusEnum.INITIALIZATION,
@@ -241,14 +262,11 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
                         setApis(data.apis);
-                        //    console.log(data)
                     }
                 } else {
-
                     // window.location = "/404-not-found"
                 }
             })
@@ -343,27 +361,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        window.location.reload();
-
-                    });
+                    showApiResponseMessage(status);
                 }
             })
 
@@ -396,23 +396,9 @@ export default () => {
         const { success, content, data, status } = resp;
 
         if (success) {
-            Swal.fire({
-                title: "Thành công!",
-                text: content,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-            }).then(function () {
-                window.location.reload();
-            });
+            showApiResponseMessage(status);
         } else {
-            Swal.fire({
-                title: "Thất bại!",
-                text: content,
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            }).then(function () { });
+            showApiResponseMessage(status);
         }
 
         // call addMember after submitUpdateProject has completed
@@ -457,22 +443,9 @@ export default () => {
 
 
         if (success) {
-            await Swal.fire({
-                title: "Thành công!",
-                text: content,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-            });
-            window.location.reload();
+            showApiResponseMessage(status);
         } else {
-            await Swal.fire({
-                title: "Thất bại!",
-                text: content,
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            });
+            showApiResponseMessage(status);
         }
     };
 
@@ -495,24 +468,9 @@ export default () => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
-                            window.location.reload();
-                            setShowModal(false);
-                        });
+                        showApiResponseMessage(status);
                     } else {
-                        Swal.fire({
-                            title: "Thất bại!",
-                            text: content,
-                            icon: "error",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
+                        showApiResponseMessage(status);
                     }
                 }
             })
@@ -560,24 +518,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                        setShowModal(false);
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             })
 
@@ -628,25 +571,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
-                    });
+                    showApiResponseMessage(status);
                 }
             });
 
@@ -696,25 +623,9 @@ export default () => {
                             return;
                         }
                         if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
+                            showApiResponseMessage(status);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
+                            showApiResponseMessage(status);
                         }
                     });
             }
@@ -722,10 +633,8 @@ export default () => {
     }
     const handleDeleteUser = (member) => {
         const requestBody = {
-
             project_id: project.project_id,
             username: member.username
-
         };
 
         Swal.fire({
@@ -763,25 +672,9 @@ export default () => {
                             return;
                         }
                         if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
+                            showApiResponseMessage(status);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
+                            showApiResponseMessage(status);
                         }
                     });
             }
@@ -866,7 +759,7 @@ export default () => {
 
         // window.location.href = `tables`;
     };
-   
+
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
@@ -894,25 +787,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        // window.location.reload();
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
-                    });
+                    showApiResponseMessage(status);
                 }
             });
     }
@@ -920,109 +797,109 @@ export default () => {
     const closeModalManually = () => {
         $("#exportOptions").removeAttr("style")
         $(".modal-backdrop").remove()
-        $('#exportClickTrigger').click()   
+        $('#exportClickTrigger').click()
     }
 
     const exportTrigger = () => {
         closeModalManually()
         setShowModal(false)
         const { version, type } = exporter
-        if( version != undefined && type != undefined ){
-            const option = exportTypes.find( opt => opt.id == type )
+        if (version != undefined && type != undefined) {
+            const option = exportTypes.find(opt => opt.id == type)
             const { func } = option;
             func();
-        }else{
+        } else {
             Swal.fire({
-                title: "Thất bại!",                
+                title: "Thất bại!",
                 icon: "error",
                 showConfirmButton: true,
                 text: lang["export.error.invalidData"],
-               
+
             }).then(function () {
                 // Không cần reload trang
             });
-        }        
+        }
     }
 
     const exportWholeProject = () => {
         const { version } = exporter;
-        fetch(`${ proxy }/versions/d/${ version }/write-ui`,{
+        fetch(`${proxy}/versions/d/${version}/write-ui`, {
             method: "GET",
             headers: {
                 Authorization: `${_token}`
             }
-        }).then( (res) => res.json() )
-        .then( (res) => {
-            const { data, success, content } = res;
-            if( success ){
-                window.open(`${ proxy }/versions/d/${ version }/whole`)
-            }else{
-                Swal.fire({
-                    title: "Thất bại!",                
-                    icon: "error",
-                    showConfirmButton: true,
-                    text: lang["export.error.invalidVersionData"],
-                    
-                })
-            }
-        })       
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                if (success) {
+                    window.open(`${proxy}/versions/d/${version}/whole`)
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        icon: "error",
+                        showConfirmButton: true,
+                        text: lang["export.error.invalidVersionData"],
+
+                    })
+                }
+            })
     }
 
     const exportTablesOnly = () => {
         const { version } = exporter;
-        const ver = versions.find( v => v.version_id == version )
-        fetch(`${ proxy }/versions/d/${ version }/tables`,{
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/tables`, {
             method: "GET",
             headers: {
                 Authorization: `${_token}`
             }
-        }).then( (res) => res.json() )
-        .then( (res) => {
-            const { data, success, content } = res;
-            const { database } = data;
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { database } = data;
 
-            const jsonData = JSON.stringify({ data: database });
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            saveAs(blob, `${project.project_name}-${ ver.version_name }-database.json`);
-        }) 
+                const jsonData = JSON.stringify({ data: database });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-database.json`);
+            })
     }
 
     const exportApisOnly = () => {
         const { version } = exporter;
-        const ver = versions.find( v => v.version_id == version )
-        fetch(`${ proxy }/versions/d/${ version }/apis`,{
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/apis`, {
             method: "GET",
             headers: {
                 Authorization: `${_token}`
             }
-        }).then( (res) => res.json() )
-        .then( (res) => {
-            const { data, success, content } = res;
-            const { apis } = data;
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { apis } = data;
 
-            const jsonData = JSON.stringify({ data: {apis} });
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            saveAs(blob, `${project.project_name}-${ ver.version_name }-apis.json`);
-        }) 
+                const jsonData = JSON.stringify({ data: { apis } });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-apis.json`);
+            })
     }
 
     const exportUIOnly = () => {
         const { version } = exporter;
-        const ver = versions.find( v => v.version_id == version )
-        fetch(`${ proxy }/versions/d/${ version }/ui`,{
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/ui`, {
             method: "GET",
             headers: {
                 Authorization: `${_token}`
             }
-        }).then( (res) => res.json() )
-        .then( (res) => {
-            const { data, success, content } = res;
-            const { uis } = data;
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { uis } = data;
 
-            const jsonData = JSON.stringify({data: uis});
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            saveAs(blob, `${project.project_name}-${ ver.version_name }-ui.json`);
-        }) 
+                const jsonData = JSON.stringify({ data: uis });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-ui.json`);
+            })
     }
 
     const exportTypes = [
@@ -1063,12 +940,6 @@ export default () => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
-
-
-
-
-
-
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -2141,32 +2012,32 @@ export default () => {
                                     <h4 class="modal-title">{lang["export.title"]}</h4>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
-                                <div class="modal-body">                                                    
+                                <div class="modal-body">
                                     <form>
                                         <div className="row">
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["export.version"]} <span className='red_star'>*</span></label>
-                                                <select className="form-control" onChange={(e) => { setExporter({...exporter, version: e.target.value }) }}>
+                                                <select className="form-control" onChange={(e) => { setExporter({ ...exporter, version: e.target.value }) }}>
                                                     <option value="">Chọn</option>
                                                     {versions.map((ver, index) => {
                                                         return (
                                                             <option key={index} value={ver.version_id}>{ver.version_name}</option>
                                                         );
                                                     })}
-                                                </select>                                                
+                                                </select>
                                             </div>
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["export.type"]} <span className='red_star'>*</span></label>
-                                                <select className="form-control" onChange={(e) => { setExporter({...exporter, type: parseInt(e.target.value) }) }}>
+                                                <select className="form-control" onChange={(e) => { setExporter({ ...exporter, type: parseInt(e.target.value) }) }}>
                                                     <option value="">Chọn</option>
                                                     {exportTypes.map((type, index) => {
                                                         return (
                                                             <option key={index} value={type.id}>{type.label}</option>
                                                         );
                                                     })}
-                                                </select>                                                
+                                                </select>
                                             </div>
-                                        </div>                                        
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -2185,7 +2056,7 @@ export default () => {
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
-                                <div class="ml-auto pointer" type="button" id = "exportClickTrigger"  data-toggle="modal" data-target="#exportOptions" >
+                                <div class="ml-auto pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
                                     <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }}></i>
                                 </div>
                             </div>
@@ -2387,15 +2258,15 @@ export default () => {
                                             }
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">Danh sách UI </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto"  onClick={() => uisManager()} data-toggle="modal" data-target="#">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                     
+
                                         <div class="table-responsive">
                                             {
                                                 currentUi && currentUi.length > 0 ? (
@@ -2404,9 +2275,9 @@ export default () => {
                                                             <tr>
                                                                 <th class="font-weight-bold">STT</th>
                                                                 <th class="font-weight-bold">Tên UI</th>
-                                                               
+
                                                                 <th class="font-weight-bold align-center">Ngày tạo</th>
-                                                            
+
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -2414,15 +2285,15 @@ export default () => {
                                                                 <tr key={index}>
                                                                     <td>{index + 1}</td>
                                                                     <td style={{ maxWidth: "100px" }}>
-                                                                            <div style={{
-                                                                                width: "100%",
-                                                                                overflow: "hidden",
-                                                                                textOverflow: "ellipsis",
-                                                                                whiteSpace: "nowrap"
-                                                                            }}>
-                                                                                {ui.title}
-                                                                            </div>
-                                                                        </td>
+                                                                        <div style={{
+                                                                            width: "100%",
+                                                                            overflow: "hidden",
+                                                                            textOverflow: "ellipsis",
+                                                                            whiteSpace: "nowrap"
+                                                                        }}>
+                                                                            {ui.title}
+                                                                        </div>
+                                                                    </td>
                                                                     <td>{ui.create_at}</td>
                                                                 </tr>
                                                             ))}

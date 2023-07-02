@@ -9,7 +9,7 @@ import { ValidTypeEnum } from '../enum/type';
 import Swal from 'sweetalert2';
 import { Tables } from ".";
 import { data } from "jquery";
-
+import responseMessages from "../enum/response-code";
 
 const types = [
     ValidTypeEnum.INT,
@@ -43,6 +43,27 @@ export default () => {
     let navigate = useNavigate();
     const [fieldTemp, setFieldTemp] = useState({});
     // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
 
 
     const defaultValues = {
@@ -367,39 +388,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                // window.location.reload();
-                            });
-                            return;
-                        }
-                        if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
-                        }
+                        showApiResponseMessage(status);
                     });
             }
         });
@@ -577,13 +566,7 @@ export default () => {
                 if (success) {
                     updateFields();
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             })
     };
@@ -615,13 +598,7 @@ export default () => {
                     console.log(data)
                     updateKey(data);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             })
     };
@@ -655,27 +632,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        // window.location.href = `/projects/${version_id}/tables/field`;
-                        // window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                showApiResponseMessage(status);
             });
     };
 
@@ -706,13 +663,7 @@ export default () => {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             });
     };
@@ -749,27 +700,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        // window.location.href = `/projects/${version_id}/tables/field`;
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                showApiResponseMessage(status);
             });
     };
     const [currentPageTable, setCurrentPageTable] = useState(1);

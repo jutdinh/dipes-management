@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Layout2 from './view_layout2'
 import Layout1 from './view_layout1'
-
+import responseMessages from "../enum/response-code";
 import { Navbar, Topbar } from '../navbar';
 
 export default () => {
@@ -38,7 +38,27 @@ export default () => {
         tables: [],
         statistic_fields: [],
     };
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
 
+            }
+        });
+    };
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
 
     const [errorUi, setErrorUi] = useState({});
@@ -96,26 +116,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    if (success) {
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
-                            window.location.reload();
-                            setShowModal(false);
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Thất bại!",
-                            text: content,
-                            icon: "error",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
-                    }
+                    showApiResponseMessage(status);
                 })
         }
 
@@ -175,11 +176,9 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
                         setAllTable(data.tables);
-
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -188,9 +187,6 @@ export default () => {
     }, [])
 
     const [selectedTables, setSelectedTables] = useState(null);
-
-
-
     //  hiển thị các tường của bảngđược chọn
     const [tables, setTables] = useState([]);
 
@@ -213,11 +209,7 @@ export default () => {
 
     }, [modalTemp.tables]);
 
-
-
-
     const [tableFields, setTableFields] = useState([]);
-
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -234,12 +226,7 @@ export default () => {
                 return null; // Trả về null nếu có lỗi
             }
         }
-
-
-
     }, [modalTemp.tables]);
-
-
 
     //console.log(selectedFields)
     //delete selected table 
@@ -268,8 +255,6 @@ export default () => {
             return null;
         }
     };
-
-
 
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
@@ -306,7 +291,6 @@ export default () => {
             setField("");
             setFomular("");
         }
-
     };
     // console.log(modalTemp)
     ///Cập nhât trường  thống kê

@@ -6,12 +6,34 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import responseMessages from "../enum/response-code";
 import { Tables } from ".";
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
     const [apis, setApis] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/apis/v/${version_id}`, {
@@ -61,25 +83,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                        // Không cần reload trang
-                    });
+                    showApiResponseMessage(status);
                 }
             });
 
@@ -126,25 +132,9 @@ export default () => {
                             return;
                         }
                         if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
+                            showApiResponseMessage(status);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
+                            showApiResponseMessage(status);
                         }
                     });
             }

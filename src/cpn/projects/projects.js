@@ -14,12 +14,34 @@ export default () => {
     const [manager, setManager] = useState("")
     const [selectedProject, setSelectedProject] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
-    const showApiResponseMessage = (status) => {
-        const message = responseMessages[status];
 
-        const title = message?.type || "Unknown error";
-        const description = message?.description || "Unknown error";
-        const icon = message?.type === "Informations" ? "success" : "error";
+    // const showApiResponseMessage = (status) => {
+    //     const message = responseMessages[status];
+
+    //     const title = message?.type || "Unknown error";
+    //     const description = message?.description || "Unknown error";
+    //     const icon = message?.type === "Informations" ? "success" : "error";
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
+    //             setShowModal(false);
+    //         }
+    //     });
+    // };  
+    const showApiResponseMessage = (status) => {
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+    
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+        
         Swal.fire({
             title,
             text: description,
@@ -29,10 +51,12 @@ export default () => {
         }).then(() => {
             if (icon === "success") {
                 window.location.reload();
-                setShowModal(false);
+
             }
         });
-    };   
+    };
+    
+     
     
 
     const handleOpenAdminPopup = () => {
@@ -306,38 +330,10 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                            return;
-                        }
                         if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
+                            showApiResponseMessage(status);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
+                            showApiResponseMessage(status);
                         }
                     });
             }
