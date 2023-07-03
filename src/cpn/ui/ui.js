@@ -212,7 +212,7 @@ const [detailUi, setDetailUi] = useState({});
                                                         <tbody>
                                                             {currentUi.map((ui, index) => (
                                                                 <tr key={index}>
-                                                                    <td>{index + 1}</td>
+                                                                    <td>{indexOfFirstUi + index + 1}</td>
                                                                     <td>{ui.title}</td>
 
 

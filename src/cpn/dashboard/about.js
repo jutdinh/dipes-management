@@ -1,29 +1,30 @@
+import { useDispatch, useSelector } from 'react-redux';
 export default () => {
-
+    const { proxy, lang } = useSelector(state => state)
     const tabInfors = [
         {   
             index: 0,
             icon: { icon: "fa-cube", color: " yellow_color" },
-            title: "Dữ liệu",
-            content: "Thu thập và xử lý dữ liệu",
+            title: lang["data"],
+            content: lang["data.content"],
         },
         {   
             index: 1,
             icon: { icon: "fa-cog", color: " blue1_color" },
-            title: "Công cụ",
-            content: "Cung cấp công cụ tạo API giao tiếp với phần mềm / hệ thống khác",
+            title: lang["tool"],
+            content: lang["tool.content"],
         },
         {   
             index: 2,
             icon: { icon: "fa-refresh", color: "green_color" },
-            title: "Nhanh chóng",
-            content: "Cung cấp thông tin hỗ trợ người dùng quản lý, cảnh báo lỗi và đưa ra quyết định nhanh chóng",
+            title: lang["fast"],
+            content: lang["fast.content"],
         },
         {   
             index: 3,
             icon: { icon: "fa-puzzle-piece", color: "red_color" },
-            title: "Linh hoạt",
-            content: "Mô phỏng quy trình làm việc của khách hàng theo các module cần thiết",
+            title: lang["flexible"],
+            content: lang["flexible.content"],
         },
     ]
 
@@ -104,7 +105,7 @@ export default () => {
             </div>
             
             <div class="col-md-5 mx-auto text-center _m-t-2">
-               <p class="lead font-weight-normal">ĐỘI PHÁT TRIỂN</p>              
+               <p class="lead font-weight-normal">{lang["dev-staff"]}</p>              
             </div>
             
             <div class="row column4 graph" style={{ marginTop: 16}}>

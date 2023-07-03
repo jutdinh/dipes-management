@@ -26,8 +26,8 @@ export default () => {
     };
     const eventType = [
         { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-log " },
-        { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size" },
-        { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle fa-2x" },
+        { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-log " },
+        { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-log " },
 
     ]
 
@@ -103,7 +103,7 @@ export default () => {
             })
     };
     const [currentPageLogs, setCurrentPageLogs] = useState(1);
-    const rowsPerPageLogs = 8;
+    const rowsPerPageLogs = 12;
     const indexOfLastMemberLogs = currentPageLogs * rowsPerPageLogs;
     const indexOfFirstMemberLogs = indexOfLastMemberLogs - rowsPerPageLogs;
     const currentMembersLogs = view.slice(indexOfFirstMemberLogs, indexOfLastMemberLogs);
@@ -203,7 +203,7 @@ export default () => {
 
                                                             return (
                                                                 <tr key={log.id}>
-                                                                    <td scope="row">{index + 1}</td>
+                                                                       <td scope="row">{indexOfFirstMemberLogs + index + 1}</td>
 
                                                                     <td class="align-center">
                                                                         {/* Kiểm tra xem có tìm thấy sự kiện không, nếu có thì hiển thị nhãn và icon */}
@@ -213,7 +213,7 @@ export default () => {
                                                                         </>}
                                                                     </td>
                                                                     <td>{log.event_title}</td>
-                                                                    <td>{log.event_description}</td>
+                                                                    <td>{log.event_description.slice(0, 100)}{ log.event_description.length > 100 ? "...": "" }</td>
                                                                     <td>{log.create_at}</td>
                                                                     <td class="align-center">
                                                                         <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
@@ -241,11 +241,11 @@ export default () => {
                                                                     &laquo;
                                                                 </button>
                                                             </li>
-                                                            {currentPageLogs > 3 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            {currentPageLogs > 2 && <li className="page-item"><span className="page-link">...</span></li>}
                                                             {Array(totalPagesLogs).fill().map((_, index) => {
                                                                 if (
                                                                     index + 1 === currentPageLogs ||
-                                                                    (index + 1 >= currentPageLogs - 5 && index + 1 <= currentPageLogs + 5)
+                                                                    (index + 1 >= currentPageLogs - 2 && index + 1 <= currentPageLogs + 2)
                                                                 ) {
                                                                     return (
                                                                         <li key={index} className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>

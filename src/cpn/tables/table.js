@@ -143,7 +143,7 @@ export default () => {
         });
     }
     const [currentPageTable, setCurrentPageTable] = useState(1);
-    const rowsPerPageTable = 7;
+    const rowsPerPageTable = 12;
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
@@ -222,7 +222,7 @@ export default () => {
                                                             <tbody>
                                                                 {currentTable.map((table, index) => (
                                                                     <tr key={table.id}>
-                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td scope="row">{ indexOfFirstTable+ index + 1}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",

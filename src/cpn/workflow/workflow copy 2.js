@@ -145,10 +145,8 @@ const siteMapData = [
                             <div class="full price_table padding_infor_info">
                                 <div class="container-fluid">
 
+                                     <SiteMap data={siteMapData} />
                                    
-                                <h5>
-                                coming soon ...
-                                </h5>
                                 </div>
                             </div>
                         </div>

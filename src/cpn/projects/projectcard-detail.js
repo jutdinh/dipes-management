@@ -1048,10 +1048,10 @@ export default () => {
                                                             <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
                                                             {
-                                                                    ["pm"].indexOf(auth.role) != -1 &&
-                                                                    <th class="font-weight-bold">{lang["log.action"]}</th>
-                                                                }
-                                                          
+                                                                ["pm"].indexOf(auth.role) != -1 &&
+                                                                <th class="font-weight-bold">{lang["log.action"]}</th>
+                                                            }
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1078,7 +1078,16 @@ export default () => {
                                                     </tbody>
                                                 </table>
 
-                                                <div className="d-flex justify-content-between align-items-center">
+                                              
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>Chưa có thành viên</p>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center">
                                                     <p>{lang["show"]} {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
                                                     <nav aria-label="Page navigation example">
                                                         <ul className="pagination mb-0">
@@ -1102,14 +1111,6 @@ export default () => {
                                                         </ul>
                                                     </nav>
                                                 </div>
-                                            </>
-                                        ) : (
-                                            <div class="list_cont ">
-                                                <p>Chưa có thành viên</p>
-                                            </div>
-                                        )
-                                    }
-                                </div>
 
                             </div>
                         </div>
@@ -1476,7 +1477,8 @@ export default () => {
                                                     <tbody>
                                                         {currentMembersTask.map((task, index) => (
                                                             <tr key={task.id}>
-                                                                <td scope="row">{index + 1}</td>
+                                                              <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
+
                                                                 <td style={{ maxWidth: "100px" }}>
                                                                     <div style={{
                                                                         width: "100%",
@@ -2119,7 +2121,7 @@ export default () => {
                                                             <tbody>
                                                                 {currentTable.map((table, index) => (
                                                                     <tr key={table.id}>
-                                                                        <td scope="row">{index + 1}</td>
+                                                                      <td scope="row">{indexOfFirstTable + index + 1}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",
@@ -2190,7 +2192,7 @@ export default () => {
                                                             <tbody>
                                                                 {currentApi.map((api, index) => (
                                                                     <tr key={api.id}>
-                                                                        <td scope="row">{index + 1}</td>
+                                                                   <td scope="row">{indexOfFirstApi + index + 1}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",
@@ -2207,6 +2209,53 @@ export default () => {
                                                             </tbody>
                                                         </table>
                                                         <div className="d-flex justify-content-between align-items-center">
+
+                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(1)}>
+                                                                            &#8810;
+                                                                        </button>
+                                                                    </li>
+                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {currentPageApi > 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                    {Array(totalPagesApi).fill().map((_, index) => {
+                                                                        if (
+                                                                            index + 1 === currentPageApi ||
+                                                                            (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
+                                                                        ) {
+                                                                            return (
+                                                                                <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                        {index + 1}
+                                                                                    </button>
+                                                                                </li>
+                                                                            )
+                                                                        }
+                                                                    })}
+                                                                    {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
+                                                                            &#8811;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+
+
+                                                        </div>
+                                                        {/* <div className="d-flex justify-content-between align-items-center">
                                                             <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">
                                                                 <ul className="pagination mb-0">
@@ -2229,7 +2278,7 @@ export default () => {
                                                                     </li>
                                                                 </ul>
                                                             </nav>
-                                                        </div>
+                                                        </div> */}
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
@@ -2260,7 +2309,7 @@ export default () => {
                                                         <tbody>
                                                             {currentUi.map((ui, index) => (
                                                                 <tr key={index}>
-                                                                    <td>{index + 1}</td>
+                                                                     <td scope="row">{indexOfFirstUi + index + 1}</td>
                                                                     <td style={{ maxWidth: "100px" }}>
                                                                         <div style={{
                                                                             width: "100%",
@@ -2282,7 +2331,9 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-                                            <div className="d-flex justify-content-between align-items-center">
+                                            
+                                        </div>
+                                        <div className="d-flex justify-content-between align-items-center">
                                                 <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
                                                 <nav aria-label="Page navigation example">
                                                     <ul className="pagination mb-0">
@@ -2306,7 +2357,6 @@ export default () => {
                                                     </ul>
                                                 </nav>
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

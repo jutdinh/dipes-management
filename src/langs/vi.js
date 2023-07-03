@@ -312,6 +312,18 @@ export default {
     "update statistics fields": "Cập nhật trường thống kê",
     "preview": "Xem trước",
 
+    //about
+    "data":" Dữ liệu",
+    "data.content": "Thu thập và xử lý dữ liệu",
+    "tool": "Công cụ",
+    "tool.content": "Cung cấp công cụ tạo API giao tiếp với phần mềm / hệ thống khác",
+    "fast": "Nhanh chóng",
+    "fast.tool": "Cung cấp thông tin hỗ trợ người dùng quản lý, cảnh báo lỗi và đưa ra quyết định nhanh chóng",
+    "flexible": "Linh hoạt",
+    "flexible.content":"Mô phỏng quy trình làm việc của khách hàng theo các module cần thiết",
+    "dev-staff": "ĐỘI PHÁT TRIỂN"
+
+
 
 
 

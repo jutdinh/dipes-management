@@ -674,7 +674,7 @@ export default () => {
 
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
-                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
                                                                         <td class="align-center"> {primaryKey.includes(field.index) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
                                                                             {foreignKeys.some((fk) => fk.index === field.index) && (
                                                                                 <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />

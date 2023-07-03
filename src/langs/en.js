@@ -107,7 +107,7 @@ export default {
     "approved": "Approved",
 
     "oldvalue": "Old value",
-    "newvalue" : "New value",
+    "newvalue": "New value",
     "time change": "Time for a change",
     "user change": "Changer",
 
@@ -286,7 +286,7 @@ export default {
     "edit fields show": "Edit fields display",
     "calculated fields": "Calculated fields",
     "edit api": "Edit api",
-    "fields data":"Fields body",
+    "fields data": "Fields body",
     "calculations": "Calculations",
     "edit calculated fiels": "Edit calculated field",
     "add fields body": "Add fields body",
@@ -296,8 +296,8 @@ export default {
     "edit field calculations": "Edit fields calculations",
     "fomular": "Fomular",
     "statistical fields": "Statistical fields ",
-    "fields name statistic" : "Statistics field name",
-  "edit statistical fields": "Edit statistics field",
+    "fields name statistic": "Statistics field name",
+    "edit statistical fields": "Edit statistics field",
     "select fields": "Select fields",
     "ui information": "UI information",
     "name page": "Page name",
@@ -311,8 +311,17 @@ export default {
 
     "select fomular": "Select fomular",
     "update statistics fields": "Update statistics fields",
-    "preview" : "Preview"
-
+    "preview": "Preview",
+    //about
+    "data": "Data",
+    "data.content": "Data collection and processing",
+    "tool": "Tools",
+    "tool.content": "Provide API creation tool that communicates with other software/systems",
+    "fast": "Fast",
+    "fast.content": "Provide information to help users manage, warn errors, and make quick decisions",
+    "flexible": "Flexible",
+    "flexible.content": "Simulate customer workflow according to necessary modules",
+    "dev-staff": "DEVELOPMENT STAFF"
 
 }
 

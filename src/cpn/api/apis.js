@@ -253,7 +253,7 @@ export default () => {
                                                         <tbody>
                                                             {filteredApi.map((api, index) => (
                                                                 <tr key={index}>
-                                                                    <td>{index + 1}</td>
+                                                                    <td>{indexOfFirstApi + index + 1}</td>
                                                                     <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
                                                                     <td>{api.api_name}</td>
                                                                     {/* <td>{api.api_scope}</td> */}

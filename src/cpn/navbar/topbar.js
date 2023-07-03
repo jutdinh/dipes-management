@@ -38,12 +38,17 @@ export default () => {
         const initialPageState = storedPageState ? JSON.parse(storedPageState) : false;
         setPageState(initialPageState);
 
-        if (initialPageState) {
-            if (!$('#second-style-sheet').length) {
-                $('head').append(`
-          <link id="second-style-sheet" rel="stylesheet" href="css/color_2.css" />
-        `);
-            }
+        if (initialPageState) {           
+            $('head').append(`                
+                <link id="second-style-sheet" rel="stylesheet" href="/css/color_2.css" />
+            `);
+            $("#primary-style-sheet").remove()
+            
+        } else {
+            $('#second-style-sheet').remove();
+            $('head').append(`                
+                <link id="primary-style-sheet" rel="stylesheet" href="/css/colors.css" />
+            `);
         }
 
         // Listen for route changes
@@ -105,14 +110,17 @@ export default () => {
     const changeTheme = () => {
         const newPageState = !pageState;
 
-        if (newPageState) {
-            if (!$('#second-style-sheet').length) {
-                $('head').append(`
-          <link id="second-style-sheet" rel="stylesheet" href="css/color_2.css" />
-        `);
-            }
+        if (newPageState) {           
+            $('head').append(`                
+                <link id="second-style-sheet" rel="stylesheet" href="/css/color_2.css" />
+            `);
+            $("#primary-style-sheet").remove()
+            
         } else {
             $('#second-style-sheet').remove();
+            $('head').append(`                
+                <link id="primary-style-sheet" rel="stylesheet" href="/css/colors.css" />
+            `);
         }
 
         setPageState(newPageState);
