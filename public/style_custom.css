@@ -1339,4 +1339,40 @@ h5 {
   .tree-link:hover {
     text-decoration: underline;
   }
+  .siteMap ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .siteMap ul li {
+    padding: 10px 0;
+  }
+  
+  .siteMap button {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .siteMap a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .siteMap a:hover {
+    text-decoration: underline;
+  }
+  .level-0 a {
+    font-weight: bold;
+  }
+  
+  .level-1 a {
+    font-weight: normal;
+  }
+  
+  .level-2 a {
+    font-weight: normal;
+  }
   
