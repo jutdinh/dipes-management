@@ -540,7 +540,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>Quản lý API</h4>
+                            <h4>{lang["manage api"]}</h4>
                         </div>
                     </div>
                 </div>
@@ -550,14 +550,14 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Tạo mới api </h5>
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["create api"]} </h5>
 
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-5">
-                                        <label class="font-weight-bold">Tên api <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["api name"]} <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -592,7 +592,7 @@ export default () => {
                                         
                                     </div> */}
                                     <div class="form-group col-lg-4">
-                                        <label class="font-weight-bold">Trạng thái <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">
                                             <div class="checkbox-item">
                                                 <input
@@ -615,7 +615,7 @@ export default () => {
                                     </div>
                                     <div class="form-group col-lg-8"></div>
                                     <div class="form-group col-lg-5">
-                                        <label class="font-weight-bold">Phương thức <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["method"]} <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">
                                             <div class="checkbox-item">
                                                 <input
@@ -708,7 +708,7 @@ export default () => {
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered">
                                         <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">Danh sách các bảng <span className='red_star'> *</span> </p>
+                                            <p class="font-weight-bold">{lang["list of tables"]} <span className='red_star'> *</span> </p>
                                             {errorApi.tables && <p className="text-danger">{(errorApi.tables)}</p>}
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
                                                 <i class="fa fa-plus"></i>
@@ -722,9 +722,9 @@ export default () => {
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
-                                                                    <th class="font-weight-bold" scope="col">Người tạo</th>
-                                                                    <th class="font-weight-bold" scope="col">Thời gian</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["time"]}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -741,7 +741,7 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu bảng</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
@@ -757,7 +757,7 @@ export default () => {
                                                 {(modalTemp.api_method === "get" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường đối số </p>
+                                                            <p class="font-weight-bold">{lang["param fields"]} </p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -770,8 +770,8 @@ export default () => {
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
 
                                                                                 </tr>
                                                                             </thead>
@@ -810,7 +810,7 @@ export default () => {
                                                                     </>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Chưa có dữ liệu trường đối số</p>
+                                                                        <p>Not found</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -821,7 +821,7 @@ export default () => {
                                                 {(modalTemp.api_method === "post" || modalTemp.api_method === "put") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường dữ liệu </p>
+                                                            <p class="font-weight-bold">{lang["fields data"]} </p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldBody">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -834,8 +834,8 @@ export default () => {
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên trường</th>
-                                                                                    <th class="font-weight-bold" scope="col">Tên bảng</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
 
                                                                                 </tr>
                                                                             </thead>
@@ -866,7 +866,7 @@ export default () => {
                                                                     </>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Chưa có dữ liệu trường dữ liệu</p>
+                                                                        <p>Not found</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -880,7 +880,7 @@ export default () => {
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường hiển thị </p><span className='red_star'>*</span>
+                                                            <p class="font-weight-bold">{lang["fields display"]} </p><span className='red_star'>*</span>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -891,10 +891,10 @@ export default () => {
                                                                     <table class="table table-striped">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="font-weight-bold">STT</th>
-                                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
-                                                                                <th class="font-weight-bold">Bí danh</th>
-                                                                                <td class="font-weight-bold">Tên bảng</td>
+                                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                                <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                                <td class="font-weight-bold">{lang["table name"]}</td>
 
                                                                             </tr>
                                                                         </thead>
@@ -921,7 +921,7 @@ export default () => {
                                                                     </table>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                                        <p>Not found</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -940,7 +940,7 @@ export default () => {
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường tính toán </p>
+                                                            <p class="font-weight-bold">{lang["calculated fields"]}</p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -950,10 +950,10 @@ export default () => {
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="font-weight-bold">STT</th>
-                                                                            <th class="font-weight-bold">Tên trường tính toán</th>
-                                                                            <th class="font-weight-bold">Bí danh</th>
-                                                                            <th class="font-weight-bold">Phép tính</th>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
 
                                                                         </tr>
                                                                     </thead>
@@ -970,7 +970,7 @@ export default () => {
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Chưa có dữ liệu trường tính toán</p>
+                                                                    <p>Not found</p>
                                                                 </div>
                                                             )
                                                             }
@@ -981,7 +981,7 @@ export default () => {
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">Danh sách các trường thống kê</p>
+                                                            <p class="font-weight-bold">{lang["statistical fields"]}</p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -991,10 +991,10 @@ export default () => {
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="font-weight-bold">STT</th>
-                                                                            <th class="font-weight-bold">Tên trường thống kê</th>
-                                                                            <th class="font-weight-bold">Bí danh</th>
-                                                                            <th class="font-weight-bold">Phép tính</th>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
 
                                                                         </tr>
                                                                     </thead>
@@ -1011,7 +1011,7 @@ export default () => {
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Chưa có dữ liệu trường tính toán</p>
+                                                                    <p>Not found</p>
                                                                 </div>
                                                             )
                                                             }
@@ -1046,15 +1046,15 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Chọn bảng</h4>
+                                <h4 class="modal-title">{lang["select table"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Tên bảng <span className='red_star'>*</span></label>
+                                        <label>{lang["table name"]} <span className='red_star'>*</span></label>
                                         <select className="form-control" onChange={handleChange}>
-                                            <option value="">Chọn</option>
+                                            <option value="">{lang["choose"]}</option>
                                             {possibleTables.map(table => (
                                                 <option key={table.id} value={table.table_name}>
                                                     {table.table_name}
@@ -1065,7 +1065,7 @@ export default () => {
                                         {selectedTables.length > 0 && (
                                             <div className={`form-group col-lg-12 mt-2`}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <label >Danh sách các bảng đã chọn: <span className='red_star'>*</span></label>
+                                                    <label >{lang["selected table"]}: <span className='red_star'>*</span></label>
                                                     <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>Xóa tất cả</button>
                                                 </div>
                                                 <div className="outerBox">
@@ -1079,11 +1079,11 @@ export default () => {
                                         )}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo</label>
+                                        <label>{lang["creator"]}</label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo</label>
+                                        <label>{lang["time"]}</label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>
@@ -1100,7 +1100,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường đối số</h4>
+                                <h4 class="modal-title">{lang["add param"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1164,11 +1164,11 @@ export default () => {
 
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo </label>
+                                        <label>{lang["creator"]} </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo </label>
+                                        <label>{lang["time"]} </label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>
@@ -1186,7 +1186,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường hiển thị</h4>
+                                <h4 class="modal-title">{lang["add fields show"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1230,11 +1230,11 @@ export default () => {
                                         ))}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo </label>
+                                        <label>{lang["creator"]} </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo </label>
+                                        <label>{lang["time"]} </label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>
@@ -1251,7 +1251,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường dữ liệu</h4>
+                                <h4 class="modal-title">{lang["add fields body"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1308,11 +1308,11 @@ export default () => {
                                         ))} */}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo </label>
+                                        <label>{lang["creator"]} </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo </label>
+                                        <label>{lang["time"]}</label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>
@@ -1329,13 +1329,13 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường tính toán</h4>
+                                <h4 class="modal-title">{lang["add field calculations"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Tên trường <span className='red_star'>*</span></label>
+                                        <label>{lang["fields name"]} <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -1346,17 +1346,17 @@ export default () => {
                                         {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Danh sách trường hiển thị</label>
+                                        <label>{lang["fields display"]}</label>
                                         <div class="table-responsive">
                                             {
                                                 modalTemp.fields && modalTemp.fields.length > 0 ? (
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
-                                                                <th class="font-weight-bold">Bí danh</th>
-                                                                <td class="font-weight-bold">Tên bảng</td>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                <td class="font-weight-bold">{lang["table name"]}</td>
 
                                                             </tr>
                                                         </thead>
@@ -1383,14 +1383,14 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
                                         </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Công thức <span className='red_star'>*</span></label>
+                                        <label>{lang["fomular"]} <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -1401,11 +1401,11 @@ export default () => {
                                         {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo </label>
+                                        <label>{lang["creator"]} </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo </label>
+                                        <label>{lang["time"]} </label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>
@@ -1422,13 +1422,13 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm trường thống kê </h4>
+                                <h4 class="modal-title">{lang["statistical fields "]} </h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Tên trường thống kê <span className='red_star'>*</span></label>
+                                        <label>{lang["fields name"]} <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -1450,17 +1450,17 @@ export default () => {
                                         </select>
                                     </div> */}
                                     <div class="form-group col-md-12">
-                                        <label>Danh sách trường hiển thị</label>
+                                        <label>{lang["fields display"]}</label>
                                         <div class="table-responsive">
                                             {
                                                 modalTemp.fields && modalTemp.fields.length > 0 ? (
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên trường hiển thị</th>
-                                                                <th class="font-weight-bold">Bí danh</th>
-                                                                <td class="font-weight-bold">Tên bảng</td>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                <td class="font-weight-bold">{lang["table name"]}</td>
 
                                                             </tr>
                                                         </thead>
@@ -1487,16 +1487,16 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu trường hiển thị</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
                                         </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Chọn trường <span className='red_star'>*</span></label>
+                                        <label>{lang["select fields"]}<span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
-                                            <option value="">Chọn trường</option>
+                                            <option value="">{lang["choose"]}</option>
                                             {Object.values(selectedFieldsModal2).flat().map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
                                                     {field.fomular_alias}
@@ -1512,14 +1512,14 @@ export default () => {
                                     </div>
 
                                     <div className={`form-group col-lg-12`}>
-                                        <label>Công thức <span className='red_star'>*</span></label>
+                                        <label>{lang["fomular"]} <span className='red_star'>*</span></label>
                                         <select
                                             className="form-control"
                                             value={fomular}
                                             onChange={(e) => setFomular(e.target.value)}
                                             required
                                         >
-                                            <option value="">Chọn công thức</option>
+                                            <option value="">{lang["choose"]}</option>
                                             <option value="SUM">SUM</option>
                                             <option value="AVERAGE">AVERAGE</option>
                                             <option value="COUNT">COUNT</option>
@@ -1527,11 +1527,11 @@ export default () => {
                                         {errorStatistical.fomular && <p className="text-danger">{errorStatistical.fomular}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Người tạo </label>
+                                        <label>{lang["creator"]} </label>
                                         <input class="form-control" type="text" value={users.fullname} readOnly></input>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Ngày tạo </label>
+                                        <label>{lang["time"]} </label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                     </div>
                                 </form>

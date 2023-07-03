@@ -247,7 +247,7 @@ export default (props) => {
                                                 <div class="contact_inner">
                                                     <h3>{profile.fullname || "Administrator"}</h3>
                                                     <ul class="list-unstyled">
-                                                        <li>{lang["username"]}: {profile.username}</li>
+                                                        {/* <li>{lang["username"]}: {profile.username}</li> */}
                                                         <li>{lang["permission"]}: {profile.role === "ad" ? "Quản trị viên" :
                                                             profile.role === "pm" ? "Quản lý dự án" :
                                                                 profile.role === "pd" ? "Người triển khai" :

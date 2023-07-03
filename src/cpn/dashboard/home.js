@@ -170,7 +170,7 @@ export default () => {
             if (filteredPayload.length > 0) {
                 return (
                     <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
-                        <p className="label">{`Năm ${label}: ${totalValue} dự án`}</p>
+                        <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
                                 <div style={{ padding: '15px', textAlign: 'left' }}>
@@ -336,7 +336,7 @@ export default () => {
                             </div>
                             <div class="map_section padding_infor_info_home">
                                 <div className="row">
-                                    <div className="col-md-4 d-flex justify-content-center">
+                                    <div className="col-md-5 d-flex justify-content-center">
                                         <div className="my-auto">
                                             <PieChart width={300} height={300}>
                                                 <Pie
@@ -362,7 +362,7 @@ export default () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-md-8">
+                                    <div className="col-md-7">
                                         <div class="table-responsive mt-4">
                                             {statisStatus && statisStatus.length > 0 ? (
                                                 <table class="table table1 no-border-table no-border ">
@@ -371,14 +371,12 @@ export default () => {
                                                             <th>{lang["projectstatus"]}</th>
                                                             <th style={{}}>{totalSum} {lang["project"]}</th>
                                                             <th>%</th>
-
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {statisStatus?.map((statis, index) => (
                                                             <tr key={index}>
                                                                 <td>
-
                                                                     <div style={{
                                                                         display: 'inline-block',
                                                                         width: '10px',
@@ -387,17 +385,11 @@ export default () => {
                                                                         backgroundColor: COLORS[index % COLORS.length],
                                                                         marginRight: '10px'
                                                                     }}></div>
-
                                                                     {statusNames[String(index)]}
-
                                                                 </td>
-
                                                                 <td>{statis.total}</td>
-
                                                                 <td>{statis.percentage}</td>
-
                                                             </tr>
-
                                                         ))}
                                                     </tbody>
                                                 </table>
@@ -406,9 +398,7 @@ export default () => {
                                                     <p>Not Found !</p>
                                                 </div>
                                             )
-
                                             }
-
                                         </div>
                                     </div>
                                 </div>
@@ -424,9 +414,9 @@ export default () => {
                             </div>
                             <div class="map_section padding_infor_info_home">
                                 <div className="row">
-                                    <div className="col-md-4 d-flex justify-content-center">
+                                    <div className="col-md-5 d-flex justify-content-center">
                                         <div className="my-auto">
-                                            <PieChart width={300} height={300}>
+                                            <PieChart width={250} height={300}>
                                                 <Pie
                                                     data={outputDataLead}
                                                     cx="45%"
@@ -445,14 +435,13 @@ export default () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-md-8">
+                                    <div className="col-md-7">
                                         <div class="table-responsive mt-4">
                                             {statisLead && statisLead.length > 0 ? (
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
                                                             <th>{lang["projects manager"]}</th>
-
                                                             <th>{totalSumLead} {lang["project"]}</th>
                                                             <th>%</th>
 
@@ -463,7 +452,7 @@ export default () => {
                                                             <tr key={index}>
 
                                                                 <td>
-                                                                    <div class="profile_contacts">
+                                                                    <div class="profile_contacts_chart">
                                                                         <div style={{
                                                                             display: 'inline-block',
                                                                             width: '10px',
@@ -472,15 +461,13 @@ export default () => {
                                                                             backgroundColor: COLORSLEAD[index % COLORSLEAD.length],
                                                                             marginRight: '10px'
                                                                         }}></div>
-                                                                        <img class="img-responsive circle-image-home" src={proxy + statis.avatar} alt="#" />
+                                                                        <img class="img-responsive circle-image-home mr-1" src={proxy + statis.avatar} alt="#" />
                                                                         {statis.fullname}
                                                                     </div>
                                                                 </td>
                                                                 <td>{statis.total}</td>
                                                                 <td>{statis.percentage}</td>
-
                                                             </tr>
-
                                                         ))}
                                                     </tbody>
                                                 </table>
@@ -496,10 +483,8 @@ export default () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="row column1">
-
                     <div class="col-lg-12 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">

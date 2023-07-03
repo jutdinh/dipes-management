@@ -162,7 +162,7 @@ const [detailUi, setDetailUi] = useState({});
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>Quản lý giao diện</h4>
+                            <h4>{lang["manage ui"]}</h4>
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ const [detailUi, setDetailUi] = useState({});
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Quản lý giao diện</h5>
+                                    <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["manage ui"]}</h5>
                                 </div>
                                 {/* <div class="ml-auto">
                                     <i class="fa fa-newspaper-o icon-ui"></i>
@@ -201,11 +201,11 @@ const [detailUi, setDetailUi] = useState({});
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Tên UI</th>
-                                                                <th class="font-weight-bold">Người tạo</th>
-                                                                <th class="font-weight-bold">Thời gian tạo</th>
-                                                                <th class="font-weight-bold">Trạng thái</th>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["ui name"]}</th>
+                                                                <th class="font-weight-bold">{lang["creator"]}</th>
+                                                                <th class="font-weight-bold">{lang["time"]}</th>
+                                                                <th class="font-weight-bold">{lang["projectstatus"]}</th>
                                                                 <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                             </tr>
                                                         </thead>
@@ -236,7 +236,7 @@ const [detailUi, setDetailUi] = useState({});
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có trang</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }
@@ -277,14 +277,14 @@ const [detailUi, setDetailUi] = useState({});
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Thông tin UI</h4>
+                                    <h4 class="modal-title">{lang["ui information"]}</h4>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <form>
                                         <div class="row">
                                             <div class="form-group col-lg-6">
-                                                <label><b>Tên trang</b></label>
+                                                <label><b>{lang["name page"]}</b></label>
                                                 <span className="d-block"> {detailUi?.title} </span>
                                             </div>
                                             <div class="form-group col-lg-6">
@@ -292,15 +292,15 @@ const [detailUi, setDetailUi] = useState({});
                                                 <span className="d-block"> {detailUi?.url} </span>
                                             </div>
                                             <div class="form-group col-lg-6">
-                                                <label><b>Trạng thái</b></label>
+                                                <label><b>{lang["projectstatus"]}</b></label>
                                                 <span className="d-block"> {detailUi?.status ? "On" : "Off"} </span>
                                             </div>
                                             <div class="form-group col-lg-6">
-                                                <label><b>Tạo bởi</b></label>
+                                                <label><b>{lang["creator"]}</b></label>
                                                 <span className="d-block"> {detailUi?.create_by?.fullname} </span>
                                             </div>
                                             <div class="form-group col-lg-12">
-                                                <label><b>Thời gian</b></label>
+                                                <label><b>{lang["time"]}</b></label>
                                                 <span className="d-block"> {detailUi?.create_at} </span>
                                             </div>
                                             

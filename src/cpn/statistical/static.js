@@ -17,6 +17,7 @@ export default () => {
     let navigate = useNavigate();
     const [tab, setTab] = useState(1);
     const [projects, setProjects] = useState([]);
+    const [data, setData] = useState([]);
     const chartTab = () => {
         setTab(!tab)
     }
@@ -65,7 +66,7 @@ export default () => {
 
                     console.log(data.annualStatistic)
                     setStatis(data.annualStatistic);
-
+                    setData(processData(data.annualStatistic))
 
                 } else {
                     // window.location = "/404-not-found"
@@ -115,7 +116,7 @@ export default () => {
         });
     };
 
-    const data = processData(statis);
+
 
 
 
@@ -128,7 +129,7 @@ export default () => {
             if (filteredPayload.length > 0) {
                 return (
                     <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
-                        <p className="label" >{`Năm ${label}: ${totalValue} dự án`}</p>
+                          <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
                                 <div style={{ padding: '15px', textAlign: 'left' }}>
@@ -152,7 +153,7 @@ export default () => {
             if (filteredPayload.length > 0) {
                 return (
                     <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
-                        <p className="label">{`Năm ${label}: ${totalValue} dự án`}</p>
+                        <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
                                 <div style={{ padding: '15px', textAlign: 'left' }}>
@@ -176,7 +177,7 @@ export default () => {
             labelValue = value === 0 ? '' : value;
             yPos = y + height / 2; // Giữ nhãn ở giữa thanh
         } else {
-            labelValue = `${value} dự án`;
+            labelValue = `${value} ${lang["projects"]}`;
             yPos = y - 20; // Di chuyển nhãn lên phía trên thanh. Bạn có thể điều chỉnh giá trị này nếu cần.
         }
         return (
@@ -185,27 +186,14 @@ export default () => {
             </text>
         );
     };
-
-
-
-
-
-
-
-
-
-
     return (
-
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["statistic"]}</h4>
-
                             <img className="ml-auto mr-2" width={36} onClick={chartTab} src="/assets/icon/viewmode/data-analytics.png" />
-
                         </div>
                     </div>
                 </div>
@@ -222,7 +210,6 @@ export default () => {
                                 </div>
                             </div>
                         </div> */}
-
                             {/* List user */}
                             <div class="full price_table padding_infor_info">
                                 <div class="container-fluid">
@@ -243,7 +230,6 @@ export default () => {
                                                     <Label value={lang["project-number"]} fontSize={16} angle={-90} position='insideLeft' />
                                                 </YAxis>
                                                 <CartesianGrid strokeDasharray="1 1" />
-
                                                 <Tooltip
                                                     content={<CustomTooltipStack />}
                                                     cursor={{ fill: "transparent" }}
@@ -259,7 +245,7 @@ export default () => {
                                                     <LabelList dataKey={lang["implement"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
                                                 <Bar dataKey={lang["deploy"]} stackId="a" fill="#ffc658" >
-                                                    <LabelList dataKey="Triển khai" position="inside" content={renderCustomizedLabel} />
+                                                    <LabelList dataKey={lang["deploy"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
                                                 <Bar dataKey={lang["complete"]} stackId="a" fill="#ff8042" >
                                                     <LabelList dataKey={lang["complete"]} position="inside" content={renderCustomizedLabel} />
@@ -268,7 +254,7 @@ export default () => {
                                                     <LabelList dataKey={lang["pause"]} position="inside" content={renderCustomizedLabel} />
                                                 </Bar>
                                                 <Bar barSize={70} dataKey="z" stackId="a" fill="transparent">
-                                                    <LabelList dataKey={dataKeyY} position="top" fill="#000000" formatter={(value) => `${value} dự án`} />
+                                                    <LabelList dataKey={dataKeyY} position="top" fill="#000000" formatter={(value) => `${value} ${lang["projects"]}`} />
                                                 </Bar>
                                             </BarChart>
                                             {/* <p class="align-center mt-4"> Biểu đồ cột thống kê dự án qua các năm</p> */}

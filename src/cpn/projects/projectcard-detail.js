@@ -80,7 +80,7 @@ export default () => {
     const statusTask = [
         { id: 0, label: lang["await"], value: 0, color: "#1ed085" },
         { id: 1, label: lang["approved"], value: 1, color: "#181dd4" },
-       
+
 
     ]
     const statusPriority = [
@@ -1047,7 +1047,11 @@ export default () => {
                                                             <th class="font-weight-bold" scope="col">{lang["members"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
-                                                            {/* <th scope="col">Hành động</th> */}
+                                                            {
+                                                                    ["pm"].indexOf(auth.role) != -1 &&
+                                                                    <th class="font-weight-bold">{lang["log.action"]}</th>
+                                                                }
+                                                          
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1314,10 +1318,10 @@ export default () => {
                                                 } placeholder={lang["p.projectdescripton"]} />
                                             </div>
                                             <div className="form-group col-lg-12">
-                                                <label>Thành viên dự án</label>
+                                                <label>{lang["projectmember"]}</label>
                                                 <div class="options-container">
                                                     <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                        <h5>Giám sát</h5>
+                                                        <h5>{lang["supervisor"]}</h5>
                                                         <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
                                                             {
                                                                 selectedUsers.map(user => {
@@ -1338,7 +1342,7 @@ export default () => {
                                                         </button>
                                                     </div>
                                                     <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                        <h5>Triển Khai</h5>
+                                                        <h5>{lang["deployers"]}</h5>
                                                         <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
                                                             {
                                                                 selectedImple.map(user => {
@@ -1408,8 +1412,8 @@ export default () => {
                                                         })}
                                                     </div>
                                                     <div className="user-popup-actions">
-                                                        <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
-                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                        <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1613,7 +1617,7 @@ export default () => {
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-                                                    <option value="">Chọn</option>
+                                                    <option value="">{lang["choose"]}</option>
                                                     {statusPriority.map((status, index) => {
                                                         return (
                                                             <option key={index} value={status.value}>{status.label}</option>
@@ -1652,8 +1656,6 @@ export default () => {
                                                                 />
                                                                 {user.fullname}
                                                             </label>
-
-
                                                         </div>
                                                     ))}
                                                 </div>
@@ -1669,7 +1671,6 @@ export default () => {
                         </div>
                     </div>
                     {/* Update Progress */}
-
                     <div class={`modal ${showModal ? 'show' : ''}`} id="editTask">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -1686,7 +1687,6 @@ export default () => {
                                                     (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
                                                 } placeholder={lang["p.taskname"]} />
                                             </div>
-
                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
@@ -1697,7 +1697,6 @@ export default () => {
                                                         );
                                                     })}
                                                 </select>
-
                                             </div> */}
                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
@@ -1709,9 +1708,7 @@ export default () => {
                                                         );
                                                     })}
                                                 </select>
-
                                             </div> */}
-
                                             <div class="form-group col-lg-12">
                                                 <label>{lang["projectdescripton"]}</label>
                                                 <textarea rows="4" type="text" class="form-control" value={updateTaskinfo.task_description} onChange={
@@ -1782,14 +1779,12 @@ export default () => {
                                 <div class="modal-body">
                                     <form>
                                         <div class="row">
-
                                             <div class="form-group col-lg-12">
                                                 <label><b>{lang["taskname"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_name} </span>
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>{lang["taskstatus"]}</b></label>
-
                                                 <div>
                                                     <span className="status-label" style={{
                                                         backgroundColor: (statusTaskView.find((s) => s.value === taskDetail.task_status) || {}).color,
@@ -1800,26 +1795,25 @@ export default () => {
                                                 </div>
                                             </div>
                                             <div class="form-group col-lg-4">
-                                                <label><b>Ngày tạo</b></label>
+                                                <label><b>{lang["create-at"]}</b></label>
                                                 <span className="d-block"> {taskDetail.create_at} </span>
                                             </div>
                                             <div class="form-group col-lg-4">
-                                                <label><b>Người tạo</b></label>
+                                                <label><b>{lang["creator"]}</b></label>
                                                 <span className="d-block"> {taskDetail.create_by?.fullname} </span>
                                             </div>
                                             <div class="form-group col-lg-4">
-                                                <label><b>Mức độ ưu tiên</b></label>
+                                                <label><b>{lang["task_priority"]}</b></label>
                                                 <span className="d-block"> {taskDetail.task_priority} </span>
                                             </div>
                                             <div class="form-group col-lg-4">
-                                                <label><b>Xác nhận</b></label>
+                                                <label><b>{lang["confirm"]}</b></label>
                                                 <td class="font-weight-bold" style={{ color: getStatusColor(taskDetail.task_approve ? 1 : 0), textAlign: "center" }}>
                                                     {getStatusLabel(taskDetail.task_approve ? 1 : 0)}
                                                 </td>
-
                                             </div>
                                             <div class="form-group col-lg-4">
-                                                <label><b>Thành viên</b></label>
+                                                <label><b>{lang["members"]}</b></label>
                                                 <span className="d-block"> {
                                                     taskDetail.members && taskDetail.members.length > 0 ?
                                                         taskDetail.members.slice(0, 3).map(member => (
@@ -1857,7 +1851,6 @@ export default () => {
                                                                             <th class="font-weight-bold" scope="col">Giá trị mới</th>
                                                                             <th class="font-weight-bold" scope="col">Thời gian thay đổi</th>
                                                                             <th class="font-weight-bold" scope="col">Người thay đổi</th>
-
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -1883,7 +1876,6 @@ export default () => {
                                                                                 <td scope="row">
                                                                                     <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
                                                                                     {task.modified_by?.fullname}</td>
-
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
@@ -1921,10 +1913,10 @@ export default () => {
                                                                         <tr>
                                                                             <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold" scope="col">{lang["task"]}</th>
-                                                                            <th class="font-weight-bold" scope="col">Giá trị cũ</th>
-                                                                            <th class="font-weight-bold" scope="col">Giá trị mới</th>
-                                                                            <th class="font-weight-bold" scope="col">Thời gian thay đổi</th>
-                                                                            <th class="font-weight-bold" scope="col">Người thay đổi</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["oldvalue"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["newvalue"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["time"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["user change"]}</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -1964,14 +1956,11 @@ export default () => {
                                                         )
                                                     }
                                                 </div>
-
                                             </div>
-
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-
                                     <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                                 </div>
                             </div>
@@ -2004,7 +1993,6 @@ export default () => {
                             </div>
                         </div>
                     </div>
-
                     <div class={`modal ${showModal ? 'show' : ''}`} id="exportOptions">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -2107,7 +2095,6 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div class="row column1">
                                     <div class="col-md-4 col-lg-4">
@@ -2143,14 +2130,11 @@ export default () => {
                                                                                 {table.table_name}
                                                                             </div>
                                                                         </td>
-
                                                                         <td>{table.create_at}</td>
-
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
                                                         </table>
-
                                                         <div className="d-flex justify-content-between align-items-center">
                                                             <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">
@@ -2188,7 +2172,6 @@ export default () => {
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list of api"]} </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
-
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -2218,9 +2201,7 @@ export default () => {
                                                                                 {api.api_name}
                                                                             </div>
                                                                         </td>
-
                                                                         <td>{api.create_at}</td>
-
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -2258,7 +2239,6 @@ export default () => {
                                             }
                                         </div>
                                     </div>
-
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list of ui"]} </p>
@@ -2266,7 +2246,6 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-
                                         <div class="table-responsive">
                                             {
                                                 currentUi && currentUi.length > 0 ? (
@@ -2275,9 +2254,7 @@ export default () => {
                                                             <tr>
                                                                 <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                 <th class="font-weight-bold">{lang["ui name"]}</th>
-
                                                                 <th class="font-weight-bold align-center">{lang["create-at"]}</th>
-
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -2305,7 +2282,6 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
                                                 <nav aria-label="Page navigation example">

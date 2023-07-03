@@ -86,7 +86,7 @@ export default {
     //update project 
     "updateproject": "Project update",
     //Task  
-    "tasklist": "List of tasks",
+    "tasklist": "Tasks",
     "detailtask": "Task Detail",
     "addtask": "Add Task",
     "taskname": "Task name",
@@ -103,13 +103,18 @@ export default {
     "choose": "Choose",
     "duty": "Role",
     "confirm": "Confirm",
-    "await": "Wait for approval",
+    "await": "Waiting for approval",
     "approved": "Approved",
+
+    "oldvalue": "Old value",
+    "newvalue" : "New value",
+    "time change": "Time for a change",
+    "user change": "Changer",
 
 
 
     //Managers
-    "editmanager": "Edit a project manager",
+    "editmanager": "Edit project manager",
     //Members
     "members": "Members",
     //button project
@@ -244,18 +249,18 @@ export default {
     "export.error.invalidData": "Invalid data selection",
     "export.error.invalidVersionData": "Cannot find any UI from this version!",
 
-    "list of tables":"List of tables",
-    "list of api": "List of API",
-    "list of ui": "List of UI",
+    "list of tables": "Tables",
+    "list of api": "API",
+    "list of ui": "UI",
     "create-at": "Creation date",
     "table name": "Table name",
     "api name": "API name",
     "ui name": "UI name ",
     "creator": "Creator",
     "managetable": "Manage Table",
-    "create table" :"Create new table",
+    "create table": "Create new table",
     "list fields": "List of fields",
-    "key" : "Key",
+    "key": "Key",
     "pkey": "Primary Key",
     "fkey": "Foreign Key",
     "fields name": "Fields name",
@@ -263,8 +268,52 @@ export default {
     "null": "Data Requests",
     "create fields": "Create new fields",
     "update fields": "Update fields",
-    "list add fields":"List of fields to be added"
-   
+    "list add fields": "List of fields to be added",
+    //Api
+    "manage api": "Manage API",
+    "create api": "Create API",
+    "method": "Method",
+    "api name": "API name",
+    "select table": "Select table",
+    "edit table": "Edit table",
+    "selected table": "Selected tables",
+    "add param": "Add param fields",
+    "edit param": "Edit param fields",
+    "param fields": "Param fields",
+    "fields display": "Display fields",
+    "alias": "Aliases",
+    "add fields show": "Add fields display",
+    "edit fields show": "Edit fields display",
+    "calculated fields": "Calculated fields",
+    "edit api": "Edit api",
+    "fields data":"Fields body",
+    "calculations": "Calculations",
+    "edit calculated fiels": "Edit calculated field",
+    "add fields body": "Add fields body",
+
+    "rdit fields body": "Edit fields body",
+    "add field calculations": "Add fields calculations",
+    "edit field calculations": "Edit fields calculations",
+    "fomular": "Fomular",
+    "statistical fields": "Statistical fields ",
+    "fields name statistic" : "Statistics field name",
+  "edit statistical fields": "Edit statistics field",
+    "select fields": "Select fields",
+    "ui information": "UI information",
+    "name page": "Page name",
+    "manage ui": "Manage UI",
+    "create ui": "Create UI",
+    "ui.title": "Title",
+
+    "add fields statis": "Add statistics field",
+    "edit fields statis": "Edit statistics field",
+    "fields name statis": "Statistics field name",
+
+    "select fomular": "Select fomular",
+    "update statistics fields": "Update statistics fields",
+    "preview" : "Preview"
+
+
 }
 
 

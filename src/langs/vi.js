@@ -43,6 +43,13 @@ export default {
     "settings.languages": "Ngôn ngữ",
     "settings.color": "Màu sắc",
     "settings.color button": "Thay đổi",
+
+    "oldvalue": "Giá trị cũ",
+    "newvalue" : "Giá trị mới",
+    "time change": "Thời gian thay đổi",
+    "user chagne": "Người thay đổi",
+
+
     //description
     "description": "Mô tả",
 
@@ -247,20 +254,72 @@ export default {
     "ui name": "Tên UI ",
     "creator": "Người tạo",
     "managetable": "Quản lý bảng",
-    "create table" :"Tạo bảng mới",
+    "create table": "Tạo bảng mới",
     "list fields": "Danh sách các trường",
-    "key" : "Khóa",
+    "key": "Khóa",
     "pkey": "Khóa chính",
     "fkey": "Khóa ngoại",
     "fields name": "Tên trường",
     "datatype": "Kiểu dữ liệu",
     "null": "Yêu cầu dữ liệu",
-   
+
 
     "create fields": "Tạo trường mới",
     "update fields": "Cập nhật trường",
-    "list add fields": "Danh sách các trường chuẩn bị thêm vào"
+    "list add fields": "Danh sách các trường chuẩn bị thêm vào",
+    //api
+    "manage api": "Quản lý API",
+    "create api": "Tạo API",
+
+    "method": "Phương thức",
+    "api name": "Tên API",
+    "select table": "Chọn bảng",
+    "edit table": "Chỉnh sửa bảng",
+    "selected table": "Danh sách các bảng đã chọn",
+    "add param": "Thêm trường đối số",
+    "edit param": "Chỉnh sửa trường đối số",
+    "param fields": "Danh sách các trường đối số",
+
+    "fields display": "Danh sách các trường hiển thị",
+    "alias": "Bí danh",
+    "add fields show": "Thêm trường hiển thị",
+    "edit fields show": "Chỉnh sửa trường hiển thị",
+    "calculated fields": "Danh sách các trường tính toán",
     
+    "calculations": "Phép tính",
+    "add fields body": "Thêm trường dữ liệu",
+    "edit fields body": "Chỉnh sửa trường dữ liệu",
+    "add field calculations": "Thêm trường tính toán",
+    "edit field calculations": "Chỉnh sửa trường tính toán",
+    "fomular": "Phép toán",
+    "fields name statistic": "Tên trường thống kê",
+    "statistical fields": "Danh sách trường thống kê",
+    "edit statistical fields": "Chỉnh sửa trường thống kê",
+    "select fields": "Chọn trường",
+    "edit api": "Chỉnh sửa api",
+    "fields data": "Danh sách các trường dữ liệu",
+
+
+    //ui
+    "manage ui": "Quản lý UI",
+    "ui information": "Thông tin UI",
+    "name page": "Tên trang",
+    "create ui": "Tạo mới giao diện",
+    "ui.title": "Tiêu đề",
+    "add fields statis": "Thêm trường thống kê",
+    "fields name statis": "Tên trường thống kê",
+    "select fomular": "Chọn công thức",
+    "update statistics fields": "Cập nhật trường thống kê",
+    "preview": "Xem trước",
+
+
+
+
+
+
+
+
+
 
 
 

@@ -105,7 +105,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Some data fields are blank or incorrect",
+            "description": "Some fields are blank or incorrect",
             "type": "Error"
         }
     },
@@ -325,7 +325,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Account does not exist or has been deleted",
+            "description": "Account does not exist or is deleted",
             "type": "Error"
         }
     },
@@ -411,11 +411,11 @@ const responseMessages = {
     },
     "0x4501041": {
         "vi": {
-            "description": "-",
+            "description": "  ",
             "type": "Thành công"
         },
         "en": {
-            "description": null,
+            "description": "",
             "type": "Success"
         }
     },
@@ -461,11 +461,11 @@ const responseMessages = {
     },
     "0x4501046": {
         "vi": {
-            "description": "-",
+            "description": " ",
             "type": "Thành công"
         },
         "en": {
-            "description": null,
+            "description": "",
             "type": "Success"
         }
     },
@@ -481,11 +481,11 @@ const responseMessages = {
     },
     "0x4501048": {
         "vi": {
-            "description": "-",
+            "description": " ",
             "type": "Thành công"
         },
         "en": {
-            "description": null,
+            "description": "",
             "type": "Success"
         }
     },
@@ -555,7 +555,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create a project to add a successful manager",
+            "description": "Create a project and add a successful manager",
             "type": "Success"
         }
     },
@@ -621,11 +621,11 @@ const responseMessages = {
     },
     "0x4501062": {
         "vi": {
-            "description": "Thêm thành công",
+            "description": "Tạo thành công",
             "type": "Thành công"
         },
         "en": {
-            "description": "More success",
+            "description": "Create success",
             "type": "Success"
         }
     },
@@ -2025,7 +2025,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update table success",
+            "description": "Table update successful",
             "type": "Success"
         }
     },
@@ -2045,7 +2045,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "There is no permission to change because you are not part of the group making the request",
+            "description": "There is no permission to change because you are not part of the requesting team",
             "type": "Error"
         }
     },
@@ -2257,6 +2257,116 @@ const responseMessages = {
         "en": {
             "description": "Remove API successfully",
             "type": "Success"
+        }
+    },
+    "0x4501226": {
+        "vi": {
+            "description": "Bảng không hợp lệ  vì không có khóa chính ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The table is invalid because there is no primary key",
+            "type": "Error"
+        }
+    },
+    "0x4501227": {
+        "vi": {
+            "description": "Bảng không hợp lệ vì khum có trường nào khác ngoài khóa chính",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The table is invalid because the camber has no field other than the primary key",
+            "type": "Error"
+        }
+    },
+    "0x4501228": {
+        "vi": {
+            "description": "Bảng không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Table does not exist",
+            "type": "Error"
+        }
+    },
+    "0x4501229": {
+        "vi": {
+            "description": "URL này đã tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "This URL already exists",
+            "type": "Error"
+        }
+    },
+    "0x4501230": {
+        "vi": {
+            "description": "Tham số không hợp lệ hoặc sai quy cách",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Invalid or incorrect parameter",
+            "type": "Error"
+        }
+    },
+    "0x4501231": {
+        "vi": {
+            "description": "Tạo UI thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Successful UI Creation",
+            "type": "Success"
+        }
+    },
+    "0x4501232": {
+        "vi": {
+            "description": "Cập nhật trạng thái UI thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "UI status update successful",
+            "type": "Success"
+        }
+    },
+    "0x4501233": {
+        "vi": {
+            "description": "UI không tồn tại hoặc đã bị xóa",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "UI does not exist or has been removed",
+            "type": "Error"
+        }
+    },
+    "0x4501234": {
+        "vi": {
+            "description": "Xóa UI thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Remove UI successfully",
+            "type": "Success"
+        }
+    },
+    "0x4501235": {
+        "vi": {
+            "description": "Không được xóa trường khóa chính",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Primary key field cannot be deleted",
+            "type": "Error"
+        }
+    },
+    "0x4501236": {
+        "vi": {
+            "description": "Mã trường không hợp lệ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Invalid field code",
+            "type": "Error"
         }
     }
 }

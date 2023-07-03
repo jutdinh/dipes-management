@@ -5,6 +5,7 @@ import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ValidTypeEnum } from '../enum/type';
+import { formatDate } from '../../redux/configs/format-date';
 
 import Swal from 'sweetalert2';
 import { Tables } from ".";
@@ -27,8 +28,8 @@ const types = [
     ValidTypeEnum.TEXT
 ]
 const typenull = [
-    { value: false, label: "Có" },
-    { value: true, label: "Không" }
+    { value: false, label: "Not null" },
+    { value: true, label: "Null" }
 
 ]
 export default () => {
@@ -96,7 +97,7 @@ export default () => {
             field_name: '',
             DATATYPE: '',
             NULL: false,
-            LENGTH: 255,
+            LENGTH: 65535,
             AUTO_INCREMENT: true,
             MIN: '',
             MAX: '',
@@ -439,7 +440,7 @@ export default () => {
             table_id: fieldId.table_id,
             field_ids: [fieldId.id]
         };
-        // console.log(requestBody)
+        console.log(requestBody)
         Swal.fire({
             title: 'Xác nhận xóa',
             text: 'Bạn có chắc chắn muốn xóa trường này?',
@@ -461,7 +462,19 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        showApiResponseMessage(status);
+                        console.log(resp)
+                        if(data.failField[0].status)
+                        {
+                            Swal.fire({
+                                title: 'Warning!',
+                                text: 'Không được xóa trường khóa chính.',
+                                icon: 'warning ',
+                                showConfirmButton: true,
+                               
+                            })
+                            return;
+                        }
+                        // showApiResponseMessage(status);
                     });
             }
         });
@@ -846,7 +859,7 @@ export default () => {
     
     // console.log(getTableFields.fields)
     // console.log(getTableFields.primary_key)
-    console.log(modalTemp)
+    console.log(tempFields)
     console.log(fieldNew)
     return (
         <div class="midde_cont">
@@ -1034,7 +1047,8 @@ export default () => {
                                                                             )}
                                                                             </td>
                                                                             <td>{users.fullname}</td>
-                                                                            <td>{field.create_at.toString()}</td>
+                                                                            <td>{formatDate(field.create_at.toISOString())}</td>
+
                                                                             <td class="align-center" style={{ minWidth: "130px" }}>
                                                                                 <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdFieldTempNew(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
                                                                                 <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>
@@ -1176,7 +1190,7 @@ export default () => {
                                         <div class="form-group col-lg-12">
                                             <label>{lang["null"]} </label>
                                             <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
-                                                <option value={false}>Chọn</option>
+                                                <option value={false}>{lang["choose"]}</option>
                                                 {typenull.map((item, index) => {
                                                     return (
                                                         <option key={index} value={item.value} >
@@ -1359,7 +1373,7 @@ export default () => {
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
                                                 }}
                                                 disabled={!isOnforenkey}>
-                                                <option value="">Chọn</option>
+                                                <option value="">{lang["choose"]}</option>
                                                 {tables.tables?.map((table, index) => {
                                                     const field_id = fieldTempUpdate.id;
                                                     const table_id = getTableFields.id;
@@ -1367,7 +1381,7 @@ export default () => {
                                                     const foreignKeys = getTableFields.foreign_keys ? getTableFields.foreign_keys : [];
                                                     const foreignKey = foreignKeys.find(key => key.field_id == field_id);
                                                     if (foreignKey && foreignKey.table_id == table.id) {
-                                                        <option value={""}>Chọn</option>
+                                                        <option value={""}>{lang["choose"]}</option>
                                                         return (
                                                             <option selected="selected" key={index} value={table.id}>
                                                                 {table.table_name}

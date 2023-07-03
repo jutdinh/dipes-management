@@ -16,11 +16,11 @@ export default () => {
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
         const message = responseMessages[status];
-    
+
         const title = message?.[langItem]?.type || "Unknown error";
         const description = message?.[langItem]?.description || "Unknown error";
         const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
+
         Swal.fire({
             title,
             text: description,
@@ -180,7 +180,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>Quản lý API</h4>
+                            <h4>{lang["manage api"]}</h4>
                         </div>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Quản lý API</h5>
+                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["manage api"]}</h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -202,15 +202,23 @@ export default () => {
                                     </div>
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
-                                        <select class="form-group"
-                                            value={methodFilter}
-                                            onChange={e => setMethodFilter(e.target.value)}
-                                        >
-                                            <option value="">ALL</option>
-                                            {methods.map((method, index) => (
-                                                <option key={index} value={method}>{method}</option>
-                                            ))}
-                                        </select>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <select class="form-control"
+                                                        value={methodFilter}
+                                                        onChange={e => setMethodFilter(e.target.value)}
+                                                    >
+                                                        <option value="">ALL</option>
+                                                        {methods.map((method, index) => (
+                                                            <option key={index} value={method}>{method}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-1">
+
+                                                </div>
+                                            </div>
+
                                             {/* <p class="font-weight-bold">Danh sách bảng </p> */}
                                             {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTable">
                                                 <i class="fa fa-plus"></i>
@@ -225,20 +233,20 @@ export default () => {
                                             onChange={e => setNameFilter(e.target.value)}
                                             placeholder="Lọc theo tên API"
                                         /> */}
-                                    
+
                                         <div class="table-responsive">
                                             {
                                                 filteredApi && filteredApi.length > 0 ? (
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold">STT</th>
-                                                                <th class="font-weight-bold">Phương thức </th>
-                                                                <th class="font-weight-bold">Tên API</th>
-                                                                <th class="font-weight-bold">Phạm vi</th>
-                                                                <th class="font-weight-bold">Người tạo</th>
-                                                                <th class="font-weight-bold">Thời gian tạo</th>
-                                                                <th class="font-weight-bold align-center">Trạng thái</th>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["method"]}</th>
+                                                                <th class="font-weight-bold">{lang["api name"]}</th>
+                                                                {/* <th class="font-weight-bold">Phạm vi</th> */}
+                                                                <th class="font-weight-bold">{lang["creator"]}</th>
+                                                                <th class="font-weight-bold">{lang["time"]}</th>
+                                                                <th class="font-weight-bold align-center">{lang["projectstatus"]}</th>
                                                                 <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                             </tr>
                                                         </thead>
@@ -248,7 +256,7 @@ export default () => {
                                                                     <td>{index + 1}</td>
                                                                     <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
                                                                     <td>{api.api_name}</td>
-                                                                    <td>{api.api_scope}</td>
+                                                                    {/* <td>{api.api_scope}</td> */}
                                                                     <td>{api.create_by.fullname}</td>
                                                                     <td>{api.create_at}</td>
                                                                     <td class="font-weight-bold align-center">

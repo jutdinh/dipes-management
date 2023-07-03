@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import { Tables } from ".";
 import { data } from "jquery";
 import responseMessages from "../enum/response-code";
-
+import { formatDate } from '../../redux/configs/format-date';
 
 const types = [
     ValidTypeEnum.INT,
@@ -692,13 +692,13 @@ export default () => {
                                                                         </td>
                                                                         <td>{field.DATATYPE}</td>
                                                                         <td> {field.NULL ? (
-                                                                            <span>Không cần dữ liệu</span>
+                                                                            <span>Null</span>
                                                                         ) : (
-                                                                            <span>Cần dữ liệu</span>
+                                                                            <span>Not null</span>
                                                                         )}
                                                                         </td>
                                                                         <td>{users.fullname}</td>
-                                                                        <td>{field.create_at.toString()}</td>
+                                                                        <td>{formatDate(field.create_at.toISOString())}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdFieldTemp(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
                                                                             <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>

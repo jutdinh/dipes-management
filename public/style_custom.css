@@ -51,7 +51,7 @@
 }
 .circle-image-home {
     border-radius: 100%;
-    width: 30px;
+    width: 25px;
 }
 .description-container {
     display: flex;
@@ -869,6 +869,14 @@ h5 {
     gap: 3px;
     padding-bottom: 5px;
     min-height: 50px;
+}
+.profile_contacts_chart {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1px;
+    padding-bottom: 0px;
+    min-height: 0px;
 }
 
 .dash_head {
