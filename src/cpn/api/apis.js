@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
+import XLSX from 'xlsx-js-style'
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 import { Tables } from ".";
@@ -62,11 +63,86 @@ export default () => {
     }
 
     const downloadAPI = () => {
-        /* EXPORT EXCEL  */
-        console.log(apis)
-
-
-    }
+        console.log(apis);
+      
+        const header = ["API ID", "Tên API", "Phương thức API", "Ngày tạo"];
+      
+        // Biến đổi dữ liệu để phù hợp với cấu trúc của báo cáo
+        const reportData = apis.map(item => {
+          return [
+            item.api_id,
+            item.api_name,
+            item.api_method,
+            item.create_at,
+          ];
+        });
+      
+        const now = new Date();
+        const date = now.toLocaleDateString("vi-VN", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric"
+        });
+      
+        const title = ["THÔNG TIN MÔ TẢ API"];
+        const projectMasterInfo = [`Nhân viên xuất: ${auth.fullname}`];
+        const datex = [`Ngày xuất: ${date}`];
+        const formattedData = [
+          title,
+          projectMasterInfo,
+          datex,
+          header,
+          ...reportData
+        ];
+      
+        const ws = XLSX.utils.aoa_to_sheet(formattedData);
+      
+        const mergeTitle = { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } };
+        const mergeInfo = { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }; // gộp hàng từ A2 đến D2
+     
+         // gộp hàng từ A1 đến D1
+         ws["!merges"] = [mergeTitle, mergeInfo];
+      
+        // Định nghĩa định dạng
+        const titleStyle = {
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          fill: { fgColor: { rgb: "008000" } },
+          alignment: { horizontal: "center", vertical: "center" },
+        };
+        const infoStyle = {
+          alignment: { horizontal: "center", vertical: "center" },
+        };
+        const headerStyle = {
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          fill: { fgColor: { rgb: "008000" } },
+          alignment: { horizontal: "center", vertical: "center" },
+        };
+      
+        // Thêm định dạng cho tiêu đề
+        ws["A1"].s = titleStyle;
+      
+        // Thêm định dạng cho thông tin
+        ws["A2"].s = infoStyle;
+        ws["A3"].s = infoStyle;
+      
+        // Thêm định dạng cho header
+        ws["A4"].s = headerStyle;
+        ws["B4"].s = headerStyle;
+        ws["C4"].s = headerStyle;
+        ws["D4"].s = headerStyle;
+      
+        ws["!cols"] = [{ width: 6 }, { width: 45 }, { width: 20 }, { width: 35 }, { width: 20 }, { width: 40 }];
+        ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
+        // Tạo một Workbook mới và thêm Worksheet vào Workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "APIs");
+      
+        // Ghi Workbook ra file Excel
+        XLSX.writeFile(wb, "APIs.xlsx");
+      };
+      
+      
+      
 
 
     const handleUpdateStatus = (apiid) => {
@@ -188,7 +264,7 @@ export default () => {
                                 <div class="heading1 margin_0 ">
                                     <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["manage api"]}</h5>
                                 </div>
-                                <div class="ml-auto" onClick={ downloadAPI }>
+                                <div class="ml-auto" onClick={downloadAPI}>
                                     <i class="fa fa-download icon-ui"></i>
                                 </div>
                             </div>
