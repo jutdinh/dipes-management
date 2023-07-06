@@ -61,6 +61,13 @@ export default () => {
         console.log("api", apiid)
     }
 
+    const downloadAPI = () => {
+        /* EXPORT EXCEL  */
+        console.log(apis)
+
+
+    }
+
 
     const handleUpdateStatus = (apiid) => {
         console.log("api", apiid)
@@ -99,46 +106,35 @@ export default () => {
         };
         console.log(requestBody)
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa api này?',
+            title: lang["confirm"],
+            text: lang["delete.api"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`${proxy}/apis/api`, {
-                    method: 'DELETE',
-                    headers: {
-                        "content-type": "application/json",
-                        Authorization: `${_token}`,
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                    .then(res => res.json())
-                    .then((resp) => {
-                        const { success, content, data, status } = resp;
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                            return;
-                        }
-                        if (success) {
-                            showApiResponseMessage(status);
-                        } else {
-                            showApiResponseMessage(status);
-                        }
-                    });
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class',
+                // add more custom classes if needed
             }
-        });
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`${proxy}/apis/api`, {
+                        method: 'DELETE',
+                        headers: {
+                            "content-type": "application/json",
+                            Authorization: `${_token}`,
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                        .then(res => res.json())
+                        .then((resp) => {
+                            const { success, content, data, status } = resp;
+                            showApiResponseMessage(status);
+
+                        });
+                }
+            });
     }
 
     const [currentPageApi, setCurrentPageApi] = useState(1);
@@ -188,9 +184,12 @@ export default () => {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["manage api"]}</h5>
+                                </div>
+                                <div class="ml-auto" onClick={ downloadAPI }>
+                                    <i class="fa fa-download icon-ui"></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -233,82 +232,82 @@ export default () => {
                                             onChange={e => setNameFilter(e.target.value)}
                                             placeholder="Lọc theo tên API"
                                         /> */}
-
-                                        <div class="table-responsive">
-                                            {
-                                                filteredApi && filteredApi.length > 0 ? (
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold">{lang["method"]}</th>
-                                                                <th class="font-weight-bold">{lang["api name"]}</th>
-                                                                {/* <th class="font-weight-bold">Phạm vi</th> */}
-                                                                <th class="font-weight-bold">{lang["creator"]}</th>
-                                                                <th class="font-weight-bold">{lang["time"]}</th>
-                                                                <th class="font-weight-bold align-center">{lang["projectstatus"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {filteredApi.map((api, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{indexOfFirstApi + index + 1}</td>
-                                                                    <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
-                                                                    <td>{api.api_name}</td>
-                                                                    {/* <td>{api.api_scope}</td> */}
-                                                                    <td>{api.create_by.fullname}</td>
-                                                                    <td>{api.create_at}</td>
-                                                                    <td class="font-weight-bold align-center">
-                                                                        <select className="form-control" onChange={() => handleUpdateStatus(api)}>
-                                                                            <option value={true} selected={api.status} style={{ color: 'green' }}>On</option>
-                                                                            <option value={false} selected={!api.status} style={{ color: 'red' }}>Off</option>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                        {/* {api.status ?
+                                        {
+                                            filteredApi && filteredApi.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold">{lang["method"]}</th>
+                                                                    <th class="font-weight-bold">{lang["api name"]}</th>
+                                                                    {/* <th class="font-weight-bold">Phạm vi</th> */}
+                                                                    <th class="font-weight-bold">{lang["creator"]}</th>
+                                                                    <th class="font-weight-bold">{lang["time"]}</th>
+                                                                    <th class="font-weight-bold align-center">{lang["projectstatus"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {filteredApi.map((api, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>{indexOfFirstApi + index + 1}</td>
+                                                                        <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
+                                                                        <td>{api.api_name}</td>
+                                                                        {/* <td>{api.api_scope}</td> */}
+                                                                        <td>{api.create_by.fullname}</td>
+                                                                        <td>{api.create_at}</td>
+                                                                        <td class="font-weight-bold align-center">
+                                                                            <select className="form-control" onChange={() => handleUpdateStatus(api)}>
+                                                                                <option value={true} selected={api.status} style={{ color: 'green' }}>On</option>
+                                                                                <option value={false} selected={!api.status} style={{ color: 'red' }}>Off</option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                            {/* {api.status ?
                                                                             <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
                                                                             : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleUpdateStatus(api)} title={lang["updatestatus"]}></i>
                                                                         } */}
-                                                                        <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(api)} title={lang["edit"]}></i>
-                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(api)} title={lang["delete"]}></i>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Chưa có api</p>
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(api)} title={lang["edit"]}></i>
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(api)} title={lang["delete"]}></i>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                )
-                                            }
-
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, filteredApi.length)} {lang["of"]} {filteredApi.length} {lang["results"]}</p>
-                                                <nav aria-label="Page navigation example">
-                                                    <ul className="pagination mb-0">
-                                                        <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
-                                                                &laquo;
-                                                            </button>
-                                                        </li>
-                                                        {Array(totalPagesApi).fill().map((_, index) => (
-                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
-                                                                    {index + 1}
-                                                                </button>
-                                                            </li>
-                                                        ))}
-                                                        <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
-                                                                &raquo;
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
-                                        </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, filteredApi.length)} {lang["of"]} {filteredApi.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {Array(totalPagesApi).fill().map((_, index) => (
+                                                                    <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Chưa có api</p>
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>

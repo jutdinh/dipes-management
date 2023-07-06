@@ -23,7 +23,7 @@ import { UI, CreateUi} from './ui'
 import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
-import Workflow from './workflow/workflow';
+import { Workflow } from './workflow';
 import "../css/index.scss";
 
 function App() {

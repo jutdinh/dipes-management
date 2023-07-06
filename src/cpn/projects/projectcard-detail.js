@@ -589,13 +589,15 @@ export default () => {
         console.log(requestBody)
 
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa yều cầu này?',
+            title: lang["confirm"],
+            text: lang["delete.task"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/tasks/task`, {
@@ -609,24 +611,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-
-                        if (status === "0x52404") {
-                            Swal.fire({
-                                title: "Cảnh báo!",
-                                text: content,
-                                icon: "warning",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
-                            return;
-                        }
-                        if (success) {
-                            showApiResponseMessage(status);
-                        } else {
-                            showApiResponseMessage(status);
-                        }
+                        showApiResponseMessage(status);
                     });
             }
         });
@@ -638,13 +623,15 @@ export default () => {
         };
 
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa thành viên này?',
+            title: lang["confirm"],
+            text: lang["delete.member"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/projects/remove/project/member`, {
@@ -810,7 +797,7 @@ export default () => {
             func();
         } else {
             Swal.fire({
-                title: "Thất bại!",
+                title: "error.title",
                 icon: "error",
                 showConfirmButton: true,
                 text: lang["export.error.invalidData"],
@@ -940,6 +927,23 @@ export default () => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
+
+
+    const toTitleCase = ( word ) => {
+        let result = ""
+        if( word != undefined ){
+            const splitted = word.split(' ')
+            result = splitted.map( piece => {                
+                if( piece != undefined && piece.length > 0 ){
+                    return piece[0].toUpperCase() + piece.slice(1, piece.length)
+                }
+                return ""
+            }).join(' ')
+            
+        }
+        return result
+    }
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -965,22 +969,6 @@ export default () => {
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
-                                {/* <p class="font-weight-bold">{lang["projectname"]}:</p>
-                                <p class="mb-2">{projectdetail.project_name}</p>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
-                                        <p class="mb-2">{projectdetail.project_code}</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
-                                        {versions.map(version => (
-                                            <p class="mb-2">{version.version_name}</p>
-                                        ))}
-                                    </div>
-                                </div>
-                                <p class="font-weight-bold">{lang["description"]}: </p>
-                                <p class="mb-2">{projectdetail.project_description}</p> */}
                                 <p class="font-weight-bold">{lang["projectname"]}:</p>
                                 <p class="mb-2">{projectdetail.project_name}</p>
                                 <div class="d-flex justify-content-between">
@@ -994,17 +982,11 @@ export default () => {
                                             <p class="mb-2">{version.version_name}</p>
                                         ))}
                                     </div>
-                                </div>
-                                {/* <p class="font-weight-bold">{lang["description"]}: </p>
-                                <div style={{
-                                    width: showFull ? "auto" : "100%",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: showFull ? "normal" : "nowrap"
-                                }}>
-                                    {projectdetail.project_description}
-                                </div>
-                                <a href="#" onClick={() => setShowFull(!showFull)}>{showFull ? '...Thu gọn' : '...Xem thêm'}</a> */}
+                                    <div>
+                                        <p class="font-weight-bold">{lang["projecttype"]}:</p>
+                                        <p class="mb-2">{ toTitleCase(projectdetail.project_type) }</p>
+                                    </div>
+                                </div>                                
                                 <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
@@ -1078,39 +1060,39 @@ export default () => {
                                                     </tbody>
                                                 </table>
 
-                                              
+
                                             </>
                                         ) : (
                                             <div class="list_cont ">
-                                                <p>Chưa có thành viên</p>
+                                                <p>{lang["empty.member"]}</p>
                                             </div>
                                         )
                                     }
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center">
-                                                    <p>{lang["show"]} {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul className="pagination mb-0">
-                                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li>
-                                                            {Array(totalPages).fill().map((_, index) => (
-                                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                                        {index + 1}
-                                                                    </button>
-                                                                </li>
-                                                            ))}
-                                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+                                    <p>{lang["show"]} {indexOfFirstMember + 1} - {Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
+                                    <nav aria-label="Page navigation example">
+                                        <ul className="pagination mb-0">
+                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                    &laquo;
+                                                </button>
+                                            </li>
+                                            {Array(totalPages).fill().map((_, index) => (
+                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                        {index + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                    &raquo;
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
 
                             </div>
                         </div>
@@ -1288,7 +1270,7 @@ export default () => {
                                 <div class="modal-body">
                                     <form>
                                         <div class="row">
-                                            <div class="form-group col-lg-12">
+                                            <div class="form-group col-lg-6">
                                                 <label>{lang["projectname"]} <span className='red_star'>*</span></label>
                                                 <input type="text" class="form-control" value={project.project_name} onChange={
                                                     (e) => { setProject({ ...project, project_name: e.target.value }) }
@@ -1312,6 +1294,26 @@ export default () => {
                                                 </select>
                                                 {errorMessagesedit.project_status && <span class="error-message">{errorMessagesedit.project_status}</span>}
                                             </div>
+
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["projecttype"]}</label>
+                                                <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>                                                
+                                                    <option value="database">Database</option>
+                                                    <option value="api">API</option>
+                                                </select>
+                                            </div>
+
+                                            {
+                                                project.project_type == "api" ? 
+                                                    <div class="form-group col-lg-6 ml-auto">
+                                                        <label>{lang["projectproxyserver"]}</label>
+                                                        <input type="text" class="form-control" value={ project.proxy_server } onChange={
+                                                            (e) => { setProject({ ...project, proxy_server: e.target.value }) }
+                                                        } placeholder="http://example.com || http://127.0.0.1"/>
+                                                    </div>
+                                                :null
+                                            }
+
                                             <div class="form-group col-lg-12 ">
                                                 <label>{lang["projectdescripton"]} </label>
                                                 <textarea rows="10" type="text" class="form-control" value={project.project_description} onChange={
@@ -1453,7 +1455,7 @@ export default () => {
                                     <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mt-2">
                                     <p class="font-weight-bold">{lang["tasklist"]}: </p>
                                     <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
                                         <i class="fa fa-plus"></i>
@@ -1477,7 +1479,7 @@ export default () => {
                                                     <tbody>
                                                         {currentMembersTask.map((task, index) => (
                                                             <tr key={task.id}>
-                                                              <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
+                                                                <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
 
                                                                 <td style={{ maxWidth: "100px" }}>
                                                                     <div style={{
@@ -1503,12 +1505,12 @@ export default () => {
                                                                     }
                                                                     {
                                                                         task.members.length > 2 &&
-                                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
+                                                                        <div className="img-responsive circle-image-detail" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
                                                                             <span>+{task.members.length - 3}</span>
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center" style={{ width: "230px" }} >
+                                                                <td class="align-center" style={{ minWidth: "130px" }} >
 
                                                                     {/* {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]} */}
 
@@ -1563,37 +1565,38 @@ export default () => {
                                                         ))}
                                                     </tbody>
                                                 </table>
-                                                <div className="d-flex justify-content-between align-items-center">
-                                                    <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul className="pagination mb-0">
-                                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li>
-                                                            {Array(totalPagesTask).fill().map((_, index) => (
-                                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
-                                                                        {index + 1}
-                                                                    </button>
-                                                                </li>
-                                                            ))}
-                                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+
                                             </>
                                         ) : (
                                             <div class="list_cont ">
-                                                <p>Chưa có thành viên</p>
+                                                <p>{lang["empty.member"]}</p>
                                             </div>
                                         )
                                     }
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
+                                    <nav aria-label="Page navigation example">
+                                        <ul className="pagination mb-0">
+                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
+                                                    &laquo;
+                                                </button>
+                                            </li>
+                                            {Array(totalPagesTask).fill().map((_, index) => (
+                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
+                                                        {index + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
+                                                    &raquo;
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
@@ -2106,10 +2109,10 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <div class="table-responsive">
-                                            {
-                                                currentTable && currentTable.length > 0 ? (
-                                                    <>
+                                        {
+                                            currentTable && currentTable.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
                                                         <table class="table table-striped">
                                                             <thead>
                                                                 <tr>
@@ -2121,7 +2124,7 @@ export default () => {
                                                             <tbody>
                                                                 {currentTable.map((table, index) => (
                                                                     <tr key={table.id}>
-                                                                      <td scope="row">{indexOfFirstTable + index + 1}</td>
+                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",
@@ -2137,39 +2140,39 @@ export default () => {
                                                                 ))}
                                                             </tbody>
                                                         </table>
-                                                        <div className="d-flex justify-content-between align-items-center">
-                                                            <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul className="pagination mb-0">
-                                                                    <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
-                                                                            &laquo;
-                                                                        </button>
-                                                                    </li>
-                                                                    {Array(totalPagesTable).fill().map((_, index) => (
-                                                                        <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
-                                                                            <button className="page-link" onClick={() => paginateTable(index + 1)}>
-                                                                                {index + 1}
-                                                                            </button>
-                                                                        </li>
-                                                                    ))}
-                                                                    <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
-                                                                            &raquo;
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Not found</p>
                                                     </div>
-                                                )
-                                            }
-                                        </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {Array(totalPagesTable).fill().map((_, index) => (
+                                                                    <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </>) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+                                        }
                                     </div>
+
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list of api"]} </p>
@@ -2177,85 +2180,41 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <div class="table-responsive">
-                                            {
-                                                currentApi && currentApi.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["api name"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {currentApi.map((api, index) => (
-                                                                    <tr key={api.id}>
-                                                                   <td scope="row">{indexOfFirstApi + index + 1}</td>
-                                                                        <td style={{ maxWidth: "100px" }}>
-                                                                            <div style={{
-                                                                                width: "100%",
-                                                                                overflow: "hidden",
-                                                                                textOverflow: "ellipsis",
-                                                                                whiteSpace: "nowrap"
-                                                                            }}>
-                                                                                {api.api_name}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>{api.create_at}</td>
+                                        {
+                                            currentApi && currentApi.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+
+                                                        <>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["api name"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
                                                                     </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                        <div className="d-flex justify-content-between align-items-center">
+                                                                </thead>
+                                                                <tbody>
+                                                                    {currentApi.map((api, index) => (
+                                                                        <tr key={api.id}>
+                                                                            <td scope="row">{indexOfFirstApi + index + 1}</td>
+                                                                            <td style={{ maxWidth: "100px" }}>
+                                                                                <div style={{
+                                                                                    width: "100%",
+                                                                                    overflow: "hidden",
+                                                                                    textOverflow: "ellipsis",
+                                                                                    whiteSpace: "nowrap"
+                                                                                }}>
+                                                                                    {api.api_name}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>{api.create_at}</td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
 
-                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
-
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul className="pagination mb-0">
-                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(1)}>
-                                                                            &#8810;
-                                                                        </button>
-                                                                    </li>
-                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
-                                                                            &laquo;
-                                                                        </button>
-                                                                    </li>
-                                                                    {currentPageApi > 1 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                    {Array(totalPagesApi).fill().map((_, index) => {
-                                                                        if (
-                                                                            index + 1 === currentPageApi ||
-                                                                            (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
-                                                                        ) {
-                                                                            return (
-                                                                                <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                                    <button className="page-link" onClick={() => paginateApi(index + 1)}>
-                                                                                        {index + 1}
-                                                                                    </button>
-                                                                                </li>
-                                                                            )
-                                                                        }
-                                                                    })}
-                                                                    {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
-                                                                            &raquo;
-                                                                        </button>
-                                                                    </li>
-                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
-                                                                            &#8811;
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </nav>
-
-
-                                                        </div>
-                                                        {/* <div className="d-flex justify-content-between align-items-center">
+                                                            {/* <div className="d-flex justify-content-between align-items-center">
                                                             <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">
                                                                 <ul className="pagination mb-0">
@@ -2279,14 +2238,63 @@ export default () => {
                                                                 </ul>
                                                             </nav>
                                                         </div> */}
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Not found</p>
+                                                        </>
+
                                                     </div>
-                                                )
-                                            }
-                                        </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(1)}>
+                                                                        &#8810;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {currentPageApi > 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                {Array(totalPagesApi).fill().map((_, index) => {
+                                                                    if (
+                                                                        index + 1 === currentPageApi ||
+                                                                        (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
+                                                                    ) {
+                                                                        return (
+                                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                    {index + 1}
+                                                                                </button>
+                                                                            </li>
+                                                                        )
+                                                                    }
+                                                                })}
+                                                                {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
+                                                                        &#8811;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+
+
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+
+                                        }
+
                                     </div>
                                     <div class="col-md-4 col-lg-4">
                                         <div class="d-flex align-items-center mb-1">
@@ -2295,68 +2303,79 @@ export default () => {
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
-                                        <div class="table-responsive">
-                                            {
-                                                currentUi && currentUi.length > 0 ? (
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold">{lang["ui name"]}</th>
-                                                                <th class="font-weight-bold align-center">{lang["create-at"]}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {currentUi.map((ui, index) => (
-                                                                <tr key={index}>
-                                                                     <td scope="row">{indexOfFirstUi + index + 1}</td>
-                                                                    <td style={{ maxWidth: "100px" }}>
-                                                                        <div style={{
-                                                                            width: "100%",
-                                                                            overflow: "hidden",
-                                                                            textOverflow: "ellipsis",
-                                                                            whiteSpace: "nowrap"
-                                                                        }}>
-                                                                            {ui.title}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>{ui.create_at}</td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Not found</p>
+                                        {
+                                            currentUi && currentUi.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+                                                        {
+                                                            currentUi && currentUi.length > 0 ? (
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["ui name"]}</th>
+                                                                            <th class="font-weight-bold align-center">{lang["create-at"]}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {currentUi.map((ui, index) => (
+                                                                            <tr key={index}>
+                                                                                <td scope="row">{indexOfFirstUi + index + 1}</td>
+                                                                                <td style={{ maxWidth: "100px" }}>
+                                                                                    <div style={{
+                                                                                        width: "100%",
+                                                                                        overflow: "hidden",
+                                                                                        textOverflow: "ellipsis",
+                                                                                        whiteSpace: "nowrap"
+                                                                                    }}>
+                                                                                        {ui.title}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>{ui.create_at}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>Not found</p>
+                                                                </div>
+                                                            )
+                                                        }
+
                                                     </div>
-                                                )
-                                            }
-                                            
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                                <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
-                                                <nav aria-label="Page navigation example">
-                                                    <ul className="pagination mb-0">
-                                                        <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
-                                                                &laquo;
-                                                            </button>
-                                                        </li>
-                                                        {Array(totalPagesUi).fill().map((_, index) => (
-                                                            <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateUi(index + 1)}>
-                                                                    {index + 1}
-                                                                </button>
-                                                            </li>
-                                                        ))}
-                                                        <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
-                                                                &raquo;
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {Array(totalPagesUi).fill().map((_, index) => (
+                                                                    <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateUi(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+                                        }
+
                                     </div>
                                 </div>
                             </div>

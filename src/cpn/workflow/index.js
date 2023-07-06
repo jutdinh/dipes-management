@@ -1,4 +1,4 @@
-import Workflow from './workflow'
+import Workflow from './site-map-cua-be-cong-ne'
 
 
 export {

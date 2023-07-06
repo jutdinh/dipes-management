@@ -2,7 +2,8 @@ import { useSelector } from "react-redux"
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 export default () => {
-   const { proxy, lang } = useSelector(state => state)
+   const { proxy, lang, functions } = useSelector(state => state)
+   const { openTab } = functions
    const stringifiedUser = localStorage.getItem("user");
    const user = JSON.parse(stringifiedUser) || {}
    const [activeLink, setActiveLink] = useState("/");
@@ -65,11 +66,12 @@ export default () => {
                         <span>{lang["report"]}</span>
                      </NavLink>
                   </li>
-                  <li className="navbar-item">
-                     <NavLink to="/workflow" activeClassName="nav-active">
+                  <li className="navbar-item">                     
+                     <NavLink to="/workflow" onClick={ () => { openTab('/workflow') } } activeClassName="nav-active">                        
                         <i class="fa fa-code-fork"></i>
                         <span>{lang["site-map"]}</span>
                      </NavLink>
+                    
                   </li>
                   <li className="navbar-item">
                      <NavLink to="/about" activeClassName="nav-active">

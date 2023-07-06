@@ -645,11 +645,8 @@ export default () => {
             submitupdateFieldCalculates();
         }
     }, [calculatesUpdate]);
-
     console.log(calculates)
-
     console.log(modalTemp.calculates)
-
     const handleDeleteCalculates = (cal) => {
         console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
@@ -658,13 +655,15 @@ export default () => {
         //     calculates: newCalculates
         // }));
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            title: lang["confirm"],
+            text: lang["delete.field"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 const newCalculates = modalTemp.calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
@@ -673,8 +672,8 @@ export default () => {
                     calculates: newCalculates
                 }));
                 Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Trường đã được xóa thành công.',
+                    title: lang["success"],
+                    text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500,
@@ -724,13 +723,15 @@ export default () => {
         //     calculates: newCalculates
         // }));
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            title: lang["confirm"],
+            text: lang["delete.field"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 const newCalculates = modalTemp.statistic.filter(item => item.fomular_alias !== sta.fomular_alias);
@@ -740,8 +741,8 @@ export default () => {
                 }));
 
                 Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Trường đã được xóa thành công.',
+                    title: lang["success"],
+                    text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500,
@@ -849,6 +850,20 @@ export default () => {
                                         {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-7"></div>
+
+
+                                    <div class="form-group col-lg-5">
+                                        <label class="font-weight-bold">{lang["api.description"]} <span className='red_star'>*</span></label>
+                                        <textarea                                            
+                                            className="form-control"
+                                            value={modalTemp.description}
+                                            onChange={(e) => setModalTemp({ ...modalTemp, description: e.target.value })}
+                                            placeholder=""
+                                        />
+                                    </div>
+                                    <div class="form-group col-lg-7"></div>
+
+
                                     {/* <div class="form-group col-lg-4">
                                         <label class="font-weight-bold">Phạm vi <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">

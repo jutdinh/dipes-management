@@ -45,7 +45,7 @@ export default {
     "settings.color button": "Thay đổi",
 
     "oldvalue": "Giá trị cũ",
-    "newvalue" : "Giá trị mới",
+    "newvalue": "Giá trị mới",
     "time change": "Thời gian thay đổi",
     "user chagne": "Người thay đổi",
 
@@ -73,6 +73,14 @@ export default {
     "projectempty": "Chưa có thành viên",
     "createby": "Tạo bởi",
     "by": " bởi ",
+
+    // No privilege alarm
+
+    "alarm.alarm": "Cảnh báo",
+    "alarm.message": "Bạn phải có quyền Quản trị viên để thực thi hành động này",
+
+    "projects.noprojectfound": "Không có dự án nào được tìm thấy ",
+
     //add project
     "addproject": "Thêm mới dự án",
 
@@ -81,6 +89,8 @@ export default {
     "projectcode": "Mã dự án",
     "p.projectcode": "Nhập mã dự án",
     "projectstatus": "Trạng thái",
+    "projecttype": "Kiểu dự án",
+    "projectproxyserver": "Tên miền API",
     "p.projectstatus": "Chọn trạng thái",
     "projectrole": "Người quản lý",
     "p.projectrole": "Chọn người quản lý",
@@ -108,6 +118,7 @@ export default {
     "await": "Chờ duyệt",
     "approved": "Đã duyệt",
     "choose": "Chọn",
+
     //Managers
     "editmanager": "Chỉnh sửa quản lý dự án",
     //Members
@@ -127,8 +138,7 @@ export default {
     //Task
     "task": "Yêu cầu",
     "duty": "Chức vụ",
-    "confirm": "Xác nhận",
-    //User
+
     "users.title": "Quản lý người dùng",
     //Group user
     "administrator": " Quản trị viên",
@@ -273,6 +283,7 @@ export default {
 
     "method": "Phương thức",
     "api name": "Tên API",
+    "api.description": "Mô tả API",
     "select table": "Chọn bảng",
     "edit table": "Chỉnh sửa bảng",
     "selected table": "Danh sách các bảng đã chọn",
@@ -285,7 +296,7 @@ export default {
     "add fields show": "Thêm trường hiển thị",
     "edit fields show": "Chỉnh sửa trường hiển thị",
     "calculated fields": "Danh sách các trường tính toán",
-    
+
     "calculations": "Phép tính",
     "add fields body": "Thêm trường dữ liệu",
     "edit fields body": "Chỉnh sửa trường dữ liệu",
@@ -313,15 +324,48 @@ export default {
     "preview": "Xem trước",
 
     //about
-    "data":" Dữ liệu",
+    "data": " Dữ liệu",
     "data.content": "Thu thập và xử lý dữ liệu",
     "tool": "Công cụ",
     "tool.content": "Cung cấp công cụ tạo API giao tiếp với phần mềm / hệ thống khác",
     "fast": "Nhanh chóng",
-    "fast.tool": "Cung cấp thông tin hỗ trợ người dùng quản lý, cảnh báo lỗi và đưa ra quyết định nhanh chóng",
+    "fast.content": "Cung cấp thông tin hỗ trợ người dùng quản lý, cảnh báo lỗi và đưa ra quyết định nhanh chóng",
     "flexible": "Linh hoạt",
-    "flexible.content":"Mô phỏng quy trình làm việc của khách hàng theo các module cần thiết",
-    "dev-staff": "ĐỘI PHÁT TRIỂN"
+    "flexible.content": "Mô phỏng quy trình làm việc của khách hàng theo các module cần thiết",
+    "dev-staff": "ĐỘI PHÁT TRIỂN",
+
+    // contact
+    "contact.content": "Mọi đóng góp và câu hỏi vui lòng gửi cho chúng tôi bất kỳ lúc nào, chúng tôi cố gắng trả lời tất cả các câu hỏi trong vòng 24 giờ vào ngày làm việc. Rất hân hạnh được trả lời câu hỏi của bạn.",
+    //notificatio
+    "error.input": "Trường này không được để trống",
+    "error.title": "Thất bại!",
+    "success.title": "Thành công",
+
+    "confirm": "Xác nhận",
+    "delete.api": "Bạn có chắc chắn muốn xóa api này?",
+    "btn.delete": "Xóa",
+
+    "delete.field": "Bạn có chắc chắn muốn xóa trường này?",
+    "delete.success.field": "Trường đã được xóa thành công",
+    "delete.task": "Bạn có chắc chắn muốn xóa yều cầu này?",
+    "delete.member": "Bạn có chắc chắn muốn xóa thành viên này?",
+    "delete.project": "Bạn có chắc chắn muốn xóa dự án này?",
+    "primary-table": "Bảng phải có khóa chính",
+    "delete.table": "Bạn có chắc chắn muốn xóa bảng này?",
+    "error.select.table": "Bạn phải chọn bảng",
+    "error.select.field": "Bạn phải chọn trường",
+    "error.delete.pramry": "Không được xóa trường khóa chính.",
+    "delete.ui": "Bạn có chắc chắn muốn xóa UI này?",
+    "delete.user": "Bạn có chắc chắn muốn xóa người dùng này?",
+
+
+    "empty.member": "Chưa có thành viên",
+
+
+
+
+
+
 
 
 

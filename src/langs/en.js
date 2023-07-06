@@ -69,6 +69,13 @@ export default {
     "createby": "Create by",
     "by": " by ",
 
+    // No privilege alarm
+
+    "alarm.alarm": "Warning",
+    "alarm.message": "You have to be the Operator to execute this action",
+
+    "projects.noprojectfound": "No projects can be found!",
+
     //add project
     "addproject": "Add proejct",
     "projectname": "Project name",
@@ -76,6 +83,8 @@ export default {
     "projectcode": "Project code",
     "p.projectcode": "Enter the project code",
     "projectstatus": "Status",
+    "projecttype": "Project of",
+    "projectproxyserver": "API server",
     "p.projectstatus": "Select status",
     "projectrole": "Managers",
     "p.projectrole": "Choose a manager",
@@ -255,6 +264,7 @@ export default {
     "create-at": "Creation date",
     "table name": "Table name",
     "api name": "API name",
+    "api.description": "Description",
     "ui name": "UI name ",
     "creator": "Creator",
     "managetable": "Manage Table",
@@ -321,7 +331,33 @@ export default {
     "fast.content": "Provide information to help users manage, warn errors, and make quick decisions",
     "flexible": "Flexible",
     "flexible.content": "Simulate customer workflow according to necessary modules",
-    "dev-staff": "DEVELOPMENT STAFF"
+    "dev-staff": "DEVELOPMENT STAFF",
+
+"contact.content":"Any contributions and questions please send us at any time, we try to answer all inquiries within 24 hours on the working day. It is a pleasure to answer your questions.",
+     //notification
+     "error.input":"This field can't be blank",
+     "error.title": "Fail!",
+     "success.title": "Success",
+
+     "confirm": "Confirm",
+     "delete.api": "Are you sure you want to remove this api?",
+     "btn.delete": "Delete",
+     "btn.cancel": "Cancel",
+     "delete.field": "Are you sure you want to remove this field?",
+     "delete.success.field": "The field was successfully deleted",
+     "delete.task": "Are you sure you want to remove this task?",
+     "delete.member": "Are you sure you want to remove this member?",
+     "delete.project": "Are you sure you want to delete this project?",
+     "primary-table": "The table must have a primary key",
+     "delete.table": "Are you sure you want to delete this table?",
+     "error.select.table": "You must select the table!",
+    "error.select.field": "You have to choose a field!",
+    "error.delete.pramry" : "The primary key field must not be deleted.",
+    "delete.ui": "Are you sure you want to remove this UI?",
+    "delete.user": "Are you sure you want to delete this user?",
+
+
+    "empty.member": "No members yet",
 
 }
 

@@ -111,18 +111,18 @@ export default () => {
     const validate = () => {
         let temp = {};
 
-        temp.field_name = modalTemp.field_name ? "" : "Trường này không được để trống.";
-        temp.DATATYPE = modalTemp.DATATYPE ? "" : "Trường này không được để trống.";
+        temp.field_name = modalTemp.field_name ? "" : lang["error.input"];
+        temp.DATATYPE = modalTemp.DATATYPE ? "" : lang["error.input"];
 
         if (isOnforenkey) {
             if (!foreignKey.table_id) {
-                temp.table_id = "Bạn phải chọn bảng.";
+                temp.table_id = lang["error.select.table"];
             } else {
                 temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
             }
 
             if (!foreignKey.ref_field_id) {
-                temp.ref_field_id = "Bạn phải chọn trường.";
+                temp.ref_field_id = lang["error.select.field"];
             } else {
                 temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
             }
@@ -139,7 +139,7 @@ export default () => {
     const validateTablename = () => {
         let temp = {};
 
-        temp.table_name = table.table_name ? "" : "Trường này không được để trống.";
+        temp.table_name = table.table_name ? "" : lang["error.input"];
 
 
 
@@ -181,7 +181,7 @@ export default () => {
                 field_name: '',
                 DATATYPE: '',
                 NULL: true,
-                LENGTH: 255,
+                LENGTH: 66535,
                 AUTO_INCREMENT: true,
                 MIN: '',
                 MAX: '',
@@ -269,14 +269,18 @@ export default () => {
     }
     const deleteFieldTemp = (fieldId) => {
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            title: lang["confirm"],
+            text: lang["delete.field"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
-        }).then((result) => {
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
+        })
+
+       .then((result) => {
             if (result.isConfirmed) {
                 const tempFieldsUpdate = tempFields.filter((field) => field.index !== fieldId.index);
                 const newPrimaryKey = primaryKey.filter(index => index !== fieldId.index);
@@ -291,8 +295,8 @@ export default () => {
                 })
 
                 Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Trường đã được xóa thành công.',
+                    title: lang["success"],
+                    text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500,
@@ -387,11 +391,11 @@ export default () => {
             }
             else {
                 Swal.fire({
-                    title: "Thất bại!",
-                    text: "Bảng phải có khóa chính",
+                    title: lang["error.title"],
+                    text: lang["primary-table"],
                     icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
+                    showConfirmButton: true,
+                    
                 });
                 return;
             }
@@ -570,14 +574,18 @@ export default () => {
         const requestBody = {
             table_id: parseInt(tableid.id)
         };
+       
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa bảng này?',
+            title: lang["confirm"],
+            text: lang["delete.api"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.table"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class',
+                // add more custom classes if needed
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/db/tables/table`, {

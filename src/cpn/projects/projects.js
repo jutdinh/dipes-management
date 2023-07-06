@@ -37,11 +37,11 @@ export default () => {
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
         const message = responseMessages[status];
-    
+
         const title = message?.[langItem]?.type || "Unknown error";
         const description = message?.[langItem]?.description || "Unknown error";
         const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
+
         Swal.fire({
             title,
             text: description,
@@ -51,13 +51,21 @@ export default () => {
         }).then(() => {
             if (icon === "success") {
                 window.location.reload();
-
             }
         });
     };
-    
-     
-    
+
+
+    const showNoPrivilegeAlarm = () => {
+
+        Swal.fire({
+            title: lang["alarm.alarm"],
+            text: lang["alarm.message"],
+            icon: "warning",
+            showConfirmButton: true,
+            timer: 1500,
+        })
+    }
 
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
@@ -177,7 +185,7 @@ export default () => {
     const _token = localStorage.getItem("_token");
     // const stringifiedUser = localStorage.getItem("user");
     // const users = JSON.parse(stringifiedUser)
-    const [project, setProject] = useState({});
+    const [project, setProject] = useState({ project_type: "database" });
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
@@ -310,34 +318,33 @@ export default () => {
             }
         };
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa người dùng này?',
+            title: lang["confirm"],
+            text: lang["delete.project"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`${proxy}/projects/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        "content-type": "application/json",
-                        Authorization: `${_token}`,
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                    .then(res => res.json())
-                    .then((resp) => {
-                        const { success, content, data, status } = resp;
-                        if (success) {
-                            showApiResponseMessage(status);
-                        } else {
-                            showApiResponseMessage(status);
-                        }
-                    });
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
             }
-        });
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`${proxy}/projects/delete`, {
+                        method: 'DELETE',
+                        headers: {
+                            "content-type": "application/json",
+                            Authorization: `${_token}`,
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                        .then(res => res.json())
+                        .then((resp) => {
+                            const { success, content, data, status } = resp;
+                            showApiResponseMessage(status);
+                        });
+                }
+            });
         // console.log(requestBody)
     }
     const detailProject = (project) => {
@@ -346,24 +353,28 @@ export default () => {
         window.location.href = `projects/detail/${project.project_id}`;
     };
 
-    useEffect(()=> {
+    useEffect(() => {
         const url = new URL(window.location.href);
 
-    // Get the search params from the URL
+        // Get the search params from the URL
         const searchParams = new URLSearchParams(url.search);
 
         // Access individual parameters
-        const action = searchParams.get('action');        
+        const action = searchParams.get('action');
 
-        switch(action){
+        switch (action) {
             case "create":
                 console.log("clicked")
                 $('#create-btn').click()
                 break;
+            case "export":
+                console.log("clicked")
+                $('#create-btn-export').click()
+                break;
             default:
                 break;
         }
-    }, [ projects ])
+    }, [projects])
 
     return (
         <div className="container-fluid">
@@ -376,7 +387,10 @@ export default () => {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
-                                    </button> : null
+                                    </button> : 
+                                    <button type="button" class="btn btn-danger custom-buttonadd ml-auto" data-toggle="modal" onClick={ showNoPrivilegeAlarm }>
+                                        <i class="fa fa-info font-weight-bold"></i>
+                                    </button>
                             }
                         </div>
                     </div>
@@ -415,7 +429,40 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-                                        <div className="form-group col-lg-6">
+
+
+
+
+
+
+
+
+                                        <div class="form-group col-lg-6 ">
+                                            <label>{lang["projecttype"]}</label>
+                                            <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>                                                
+                                                <option value="database">Database</option>
+                                                <option value="api">API</option>
+                                            </select>
+                                        </div>
+
+
+
+                                        {
+                                            project.project_type == "api" ? 
+                                            <div class="form-group col-lg-6 ml-auto">
+                                                <label>{lang["projectproxyserver"]}</label>
+                                                <input type="text" class="form-control" value={ project.proxy_server } onChange={
+                                                    (e) => { setProject({ ...project, proxy_server: e.target.value }) }
+                                                } placeholder="http://example.com || http://127.0.0.1"/>
+                                            </div>
+                                            :null
+                                        }
+
+
+
+
+
+                                        <div className="form-group col-lg-12">
                                             <label htmlFor="sel1">{lang["projectrole"]} <span className="red_star">*</span></label>
                                             <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
                                                 <option value="">{lang["p.projectrole"]}</option>
@@ -630,9 +677,9 @@ export default () => {
                                                             {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
                                                             <p class="font-weight-bold">{lang["projectmanager"]}</p>
                                                             <div class="profile_contacts">
-                                                               
-                                                                        <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
-                                                                   
+
+                                                                <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
+
                                                             </div>
                                                             <p class="font-weight-bold">{lang["projectmember"]}</p>
 
@@ -694,6 +741,8 @@ export default () => {
                                                     </div>
                                                 </div>
                                             ))}
+
+                                            { projects.length == 0 ? <h1>{lang["projects.noprojectfound"]}</h1>:null }
                                         </div>
                                     </div>
                                 </div>

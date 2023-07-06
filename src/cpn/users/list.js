@@ -186,14 +186,18 @@ export default (props) => {
             }
         };
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa người dùng này?',
+            title: lang["confirm"],
+            text: lang["delete.user"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
-        }).then((result) => {
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class',
+                // add more custom classes if needed
+            }
+        })
+        .then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/auth/user`, {
                     method: 'DELETE',

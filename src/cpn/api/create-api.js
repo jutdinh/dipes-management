@@ -555,7 +555,8 @@ export default () => {
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
-                                <div class="row column1">
+                                <div class="row column1">                                    
+
                                     <div class="form-group col-lg-5">
                                         <label class="font-weight-bold">{lang["api name"]} <span className='red_star'>*</span></label>
                                         <input
@@ -567,7 +568,21 @@ export default () => {
                                         />
                                         {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
+
+
                                     <div class="form-group col-lg-7"></div>
+                                    <div class="form-group col-lg-5">
+                                        <label class="font-weight-bold">{lang["api.description"]} <span className='red_star'>*</span></label>
+                                        <textarea                                            
+                                            className="form-control"
+                                            value={modalTemp.description}
+                                            onChange={(e) => setModalTemp({ ...modalTemp, description: e.target.value })}
+                                            placeholder=""
+                                        />
+                                    </div>
+                                    <div class="form-group col-lg-7"></div>
+
+
                                     {/* <div class="form-group col-lg-4">
                                         <label class="font-weight-bold">Phạm vi <span className='red_star'>*</span></label>
                                         <div class="checkbox-group">

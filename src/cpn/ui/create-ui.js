@@ -65,8 +65,8 @@ export default () => {
     const [errorUi, setErrorUi] = useState({});
     const validateUiname = () => {
         let temp = {};
-        temp.title = modalTemp.title ? "" : "Trường này không được để trống.";
-        temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
+        temp.title = modalTemp.title ? "" : lang["error.input"];
+        temp.tables = tables && tables.length > 0 ? "" : lang["error.input"];
         setErrorUi({
             ...temp
         });
@@ -127,7 +127,7 @@ export default () => {
     const [errorTable, setErrorTable] = useState({});
     const validateTable = () => {
         let temp = {};
-        temp.selectedTables = selectedTables ? "" : "Trường này không được để trống.";
+        temp.selectedTables = selectedTables ? "" : lang["error.input"];
         setErrorTable({
             ...temp
         });
@@ -261,9 +261,9 @@ export default () => {
     const validateStatistical = () => {
         let temp = {};
 
-        temp.display_name = display_name ? "" : "Trường này không được để trống.";
-        temp.fomular = fomular ? "" : "Trường này không được để trống.";
-        temp.field = field ? "" : "Trường này không được bỏ trống.";
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
+        temp.field = field ? "" : lang["error.input"];
 
         setErrorStatistical({
             ...temp
@@ -321,13 +321,16 @@ export default () => {
         // console.log(sta)
 
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa trường này?',
+            title: lang["confirm"],
+            text: lang["delete.field"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class',
+                // add more custom classes if needed
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 const newCalculates = modalTemp.statistic_fields.filter(item => item.fomular_alias !== sta.fomular_alias);
@@ -337,8 +340,8 @@ export default () => {
                 }));
 
                 Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Trường đã được xóa thành công.',
+                    title: lang["success"],
+                    text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500,

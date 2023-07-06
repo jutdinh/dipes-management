@@ -1,8 +1,74 @@
+.my-confirm-button-class{
+    background-color: rgb(209, 72, 81);
+} 
+.swal2-styled.swal2-confirm {
+    border: 0;
+    border-radius: .25em;
+    background: initial;
+    background-color: rgb(209, 72, 81);
+    color: #fff;
+    font-size: 1em;
+}
+.swal2-styled.swal2-confirm.my-confirm-button-class {
+    border: 0;
+    border-radius: .25em;
+    background: initial;
+    background-color: rgb(209, 72, 81);
+    color: #fff;
+    font-size: 1em;
+}
+
+.footer-about {
+    min-height: 65px;
+    background: #dae8fc;
+    margin-top: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    /*Linh.Tran_230705: Command to fix UI*/
+    /*width: 100%;*/
+    /*End Linh.Tran_230705: Command to fix UI*/
+    
+    /*Linh.Tran_230705: Add to fix UI*/
+    margin-left: -5px; 
+    margin-right: -5px;
+    width: 100% + 10px;
+    /*End Linh.Tran_230705: Add to fix UI*/
+}
+
+/*Linh.Tran_230705: Add to fix UI*/
+.row-about {
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.counter_section_about {
+    min-height: auto;
+    display: block;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    border: 0px solid #e7e7e7;
+    padding: 0px 35px;
+    background: #fff;
+    border-radius: 5px;
+    min-height: 125px;
+    display: flex;
+}
+.graph_head_about {
+    padding: 0px 25px 5px;
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
+.heading1_about {
+    float: left;
+    padding: 0px;
+    width: 100%;
+    margin-top: 50px;
+}
 .sidebar_user_info_custom {
     padding: 5px 15px;
-    padding-top: 6px;
+    padding-top: 8px;
     background: #15283c;
-    padding-bottom: 7px;
+    padding-bottom: 9px;
 }
 
 .topbar .navbar {
@@ -171,7 +237,36 @@
     background-color: #fff;
     opacity: 0.5;
 }
+.circle-image-projectdetail {
+    border-radius: 100%;
+    width: 36px;
+    display: inline-block;
+    line-height: 36px;
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+ 
 
+    position: relative;
+    padding: 0px 2px;
+    color: #000;
+    font-weight: 600;
+}
+
+
+.circle-image-projectdetail::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+}
 .extra-images-cus-p {
     display: inline-block;
     width: 48px;
@@ -1366,6 +1461,7 @@ h5 {
   }
   .level-0 a {
     font-weight: bold;
+    color: #2272c9;
   }
   
   .level-1 a {

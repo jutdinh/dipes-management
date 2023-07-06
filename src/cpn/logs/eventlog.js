@@ -16,7 +16,7 @@ export default () => {
 
 
     const [showModal, setShowModal] = useState(false);
-    console.log(filter)
+    // console.log(filter)
     let langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
 
     const languages = langItem.toLowerCase();
@@ -41,7 +41,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setLogs(data);
@@ -53,10 +53,10 @@ export default () => {
                 }
             })
     }, [])
-
+// console.log(view)
     const [logDetail, setLogDetail] = useState([]);
     const detailLogs = async (logid) => {
-        console.log(logid)
+        // console.log(logid)
 
 
         setLogDetail(logid)

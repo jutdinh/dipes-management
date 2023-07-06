@@ -29,39 +29,37 @@ export default () => {
           const projectsData = data.map(project => {
             let projectChildren = [
               {
-                title: "Chi tiết",
+                title: lang["project_detail.title"],
                 url: `/projects/detail/${project.project_id}`,
                 children: [
                   {
-                    title: "Cập nhật thông tin",
+                    title: lang["project.info"],
                     url: `/projects/detail/${project.project_id}`,
                     
                   },
                   {
-                    title: "Quản lý",
+                    title: lang["project.deploy"],
                     url: `/projects/detail/${project.project_id}`,
                     children: [
                       {
-                        title: 'Quản lý bảng',
+                        title: lang["managetable"],
                         url: `/projects/${project.project_id}/tables`,
               
                       },
                       {
-                        title: 'Quản lý API',
+                        title: lang["manage api"],
                         url: `/projects/${project.project_id}/apis`,
               
                       },
                       {
-                        title: 'Quản lý UI',
+                        title: lang["manage ui"],
                         url: `/projects/${project.project_id}/uis`,
               
                       }
-              
-              
                     ],
                   },
                   {
-                    title: "Xuất dự án",
+                    title: lang["export.title"],
                     url: `/projects/detail/${project.project_id}`
                   },
                   
@@ -78,7 +76,7 @@ export default () => {
 
           // Now projectsInfo is a new object that contains the projects data
           const projectsInfo = {
-            title: 'Quản lý dự án',
+            title: lang["projects manage"],
             url: '/projects',
             children: projectsData,
           };
@@ -94,21 +92,21 @@ export default () => {
 
   const siteMapData = [
     {
-      title: 'Trang chủ',
+      title: lang["home"],
       url: '/',
       children: [],
     },
     ...projects,
     {
-      title: 'Quản lý người dùng',
+      title: lang["users.title"],
       url: '/users',
     },
     {
-      title: 'Thống kê',
+      title: lang["log.statis"],
       url: '/statis',
     },
     {
-      title: 'Báo cáo',
+      title: lang["report"],
       url: '/report',
     },
     {
@@ -116,40 +114,18 @@ export default () => {
       url: '/sitemap',
     },
     {
-      title: 'Giới thiệu',
+      title: lang["about us"],
       url: '/about',
     },
   ];
-  // const siteMapData = [
-  //   {
-  //     title: 'Trang chủ',
-  //     url: '/',
-  //     children: [],
-  //   },
-  //   ...projects,
-  //   {
-  //     title: 'Quản lý người dùng',
-  //     url: '/users',
-  //     children: [
-  //       {
-  //         title: 'á',
-  //         url: '/',
-
-  //       }
-
-
-  //     ],
-  //   },
-  // ];
-
-
 
   const PageItem = ({ title, url, children, level }) => {
     const itemStyle = {
       marginLeft: `${level * 20}px`,
     };
   
-    const [isExpanded, setIsExpanded] = useState(true);
+    // set isExpanded to true if level is 0 or 1, otherwise set it to false
+    const [isExpanded, setIsExpanded] = useState(level <= 1); 
   
     let itemClass = "";
     switch(level) {
