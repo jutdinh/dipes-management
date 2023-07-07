@@ -67,7 +67,6 @@ export default () => {
       
         const header = ["API ID", "Tên API", "Phương thức API", "Ngày tạo"];
       
-        // Biến đổi dữ liệu để phù hợp với cấu trúc của báo cáo
         const reportData = apis.map(item => {
           return [
             item.api_id,
@@ -99,11 +98,10 @@ export default () => {
       
         const mergeTitle = { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } };
         const mergeInfo = { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }; // gộp hàng từ A2 đến D2
-     
+        const mareDate = { s: { r: 2, c: 0 }, e: { r: 2, c: 3 } };
          // gộp hàng từ A1 đến D1
-         ws["!merges"] = [mergeTitle, mergeInfo];
+         ws["!merges"] = [mergeTitle, mergeInfo, mareDate];
       
-        // Định nghĩa định dạng
         const titleStyle = {
           font: { bold: true, color: { rgb: "FFFFFF" } },
           fill: { fgColor: { rgb: "008000" } },
@@ -122,8 +120,8 @@ export default () => {
         ws["A1"].s = titleStyle;
       
         // Thêm định dạng cho thông tin
-        ws["A2"].s = infoStyle;
-        ws["A3"].s = infoStyle;
+        // ws["A2"].s = infoStyle;
+        // ws["A3"].s = infoStyle;
       
         // Thêm định dạng cho header
         ws["A4"].s = headerStyle;
@@ -131,7 +129,7 @@ export default () => {
         ws["C4"].s = headerStyle;
         ws["D4"].s = headerStyle;
       
-        ws["!cols"] = [{ width: 6 }, { width: 45 }, { width: 20 }, { width: 35 }, { width: 20 }, { width: 40 }];
+        ws["!cols"] = [{ width: 45}, { width: 60 }, { width: 20 }, { width: 35 }, { width: 20 }, { width: 40 }];
         ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
         // Tạo một Workbook mới và thêm Worksheet vào Workbook
         const wb = XLSX.utils.book_new();

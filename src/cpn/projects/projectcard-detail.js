@@ -7,6 +7,7 @@ import { StatusEnum, StatusTask } from '../enum/status';
 import { saveAs } from 'file-saver';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
 import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
@@ -19,7 +20,7 @@ export default () => {
     const [manager, setManager] = useState("")
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
     const [showFull, setShowFull] = useState(false);
-
+    let navigate = useNavigate();
     const [showViewMore, setShowViewMore] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -950,7 +951,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>{lang["project_detail.title"]}</h4>
+                            <h4><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["project_detail.title"]}</h4>
                         </div>
                     </div>
                 </div>

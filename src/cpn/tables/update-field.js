@@ -452,18 +452,25 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        console.log(resp) 
-                        if (data.failField[0].status) {
+                        console.log(resp)
+                        if (data.failFields?.length > 0) {
                             Swal.fire({
-                                title: 'Warning!',
+                                title: lang["alarm.alarm"],
                                 text: lang["error.delete.pramry"],
                                 icon: 'warning ',
                                 showConfirmButton: true,
+                                customClass: {
+                                    confirmButton: 'swal2-confirm my-confirm-button-class',
+                                    // add more custom classes if needed
+                                }
 
                             })
                             return;
                         }
-                        // showApiResponseMessage(status);
+                        else {
+                            showApiResponseMessage(status);
+                        }
+
                     });
             }
         });

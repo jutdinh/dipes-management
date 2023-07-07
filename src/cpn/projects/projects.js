@@ -387,9 +387,9 @@ export default () => {
                                 ["ad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
-                                    </button> : 
-                                    <button type="button" class="btn btn-danger custom-buttonadd ml-auto" data-toggle="modal" onClick={ showNoPrivilegeAlarm }>
-                                        <i class="fa fa-info font-weight-bold"></i>
+                                    </button> :
+                                    <button type="button" class="btn btn-danger custom-buttonwarn ml-auto" data-toggle="modal" onClick={showNoPrivilegeAlarm}>
+                                        <i class="fa fa-info font-weight-bold" ></i>
                                     </button>
                             }
                         </div>
@@ -439,7 +439,7 @@ export default () => {
 
                                         <div class="form-group col-lg-6 ">
                                             <label>{lang["projecttype"]}</label>
-                                            <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>                                                
+                                            <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>
                                                 <option value="database">Database</option>
                                                 <option value="api">API</option>
                                             </select>
@@ -448,14 +448,14 @@ export default () => {
 
 
                                         {
-                                            project.project_type == "api" ? 
-                                            <div class="form-group col-lg-6 ml-auto">
-                                                <label>{lang["projectproxyserver"]}</label>
-                                                <input type="text" class="form-control" value={ project.proxy_server } onChange={
-                                                    (e) => { setProject({ ...project, proxy_server: e.target.value }) }
-                                                } placeholder="http://example.com || http://127.0.0.1"/>
-                                            </div>
-                                            :null
+                                            project.project_type == "api" ?
+                                                <div class="form-group col-lg-6 ml-auto">
+                                                    <label>{lang["projectproxyserver"]}</label>
+                                                    <input type="text" class="form-control" value={project.proxy_server} onChange={
+                                                        (e) => { setProject({ ...project, proxy_server: e.target.value }) }
+                                                    } placeholder="http://example.com || http://127.0.0.1" />
+                                                </div>
+                                                : null
                                         }
 
 
@@ -656,12 +656,13 @@ export default () => {
                                                 <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                                                     <div class="card project-block">
                                                         <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col">
-                                                                    <h5 class="project-name d-flex align-items-center">{item.project_name}</h5>
+                                                            <div class="row project-name-min-height">
+                                                                <div class="col-sm-10" >
+                                                                     
+                                                                    <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{ item.project_name.length > 55 ? "...": "" }</h5>
                                                                 </div>
 
-                                                                <div class="col-auto cross-hide pointer scaled-hover">
+                                                                <div class="col-sm-2 cross-hide pointer scaled-hover">
                                                                     <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
 
                                                                 </div>
@@ -742,7 +743,7 @@ export default () => {
                                                 </div>
                                             ))}
 
-                                            { projects.length == 0 ? <h1>{lang["projects.noprojectfound"]}</h1>:null }
+                                            {projects.length == 0 ? <h1>{lang["projects.noprojectfound"]}</h1> : null}
                                         </div>
                                     </div>
                                 </div>
