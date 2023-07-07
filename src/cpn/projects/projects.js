@@ -262,6 +262,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+                showApiResponseMessage(status);
                 if (success) {
 
 
@@ -278,37 +279,28 @@ export default () => {
                         }),
                     });
 
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: "error.message",
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                    throw new Error(content);
                 }
+                // else {
+                //     Swal.fire({
+                //         title: "Thất bại!",
+                //         text: "error.message",
+                //         icon: "error",
+                //         showConfirmButton: false,
+                //         timer: 2000,
+                //     });
+                //     throw new Error(content);
+                // }
             })
             .then(res => res && res.json())
             .then((resp) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
-                    if (success) {
-                        showApiResponseMessage(status);
-                    } else {
-                        showApiResponseMessage(status);
-                    }
+
+
+
                 }
             })
-            .catch((error) => {
-                Swal.fire({
-                    title: "Thất bại!",
-                    text: error.message,
-                    icon: "error",
-                    showConfirmButton: false,
-                    timer: 2000,
-                });
-            });
+
     };
     const handleDeleteUser = (project) => {
 
@@ -467,13 +459,18 @@ export default () => {
                                             <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
                                                 <option value="">{lang["p.projectrole"]}</option>
                                                 {users && users.map((user, index) => {
-                                                    if (user.role === "pm") {
-                                                        return (
-                                                            <option key={index} value={user.username}>{user.fullname}</option>
-                                                        );
-                                                    } else {
-                                                        return null;
-                                                    }
+                                                    // if (user.role === "pm") {
+                                                    //     return (
+                                                    //         <option key={index} value={user.username}>{user.fullname}</option>
+                                                    //     );
+                                                    // } else {
+                                                    //     return null;
+                                                    // }
+
+
+                                                    return (
+                                                        <option key={index} value={user.username}>{user.fullname}</option>
+                                                    );
                                                 })}
                                             </select>
                                         </div>
@@ -658,8 +655,8 @@ export default () => {
                                                         <div class="card-body">
                                                             <div class="row project-name-min-height">
                                                                 <div class="col-sm-10" >
-                                                                     
-                                                                    <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{ item.project_name.length > 55 ? "...": "" }</h5>
+
+                                                                    <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
                                                                 </div>
 
                                                                 <div class="col-sm-2 cross-hide pointer scaled-hover">
@@ -743,7 +740,7 @@ export default () => {
                                                 </div>
                                             ))}
 
-                                            {projects.length == 0 ? <h1>{lang["projects.noprojectfound"]}</h1> : null}
+                                            {projects.length == 0 ? <p>{lang["projects.noprojectfound"]}</p> : null}
                                         </div>
                                     </div>
                                 </div>

@@ -331,7 +331,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>{lang["project-status-chart"]}</h2>
+                                    <h5>{lang["project-status-chart"]}</h5>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -409,7 +409,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>{lang["project-lead-chart"]}</h2>
+                                    <h5>{lang["project-lead-chart"]}</h5>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
@@ -489,7 +489,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
-                                    <h2>{lang["project-status-chart-year"]}</h2>
+                                    <h5>{lang["project-status-chart-year"]}</h5>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info">
