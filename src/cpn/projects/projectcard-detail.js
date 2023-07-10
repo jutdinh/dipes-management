@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 import responseMessages from "../enum/response-code";
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
@@ -25,6 +25,7 @@ export default () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [exporter, setExporter] = useState({})
+    const [activate, setActivate] = useState({})
 
     // console.log(selectedMemberTask)
     // Page 
@@ -896,6 +897,21 @@ export default () => {
         { id: 2, label: lang["export.types.apisOnly"], func: exportApisOnly },
         { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
     ]
+
+    const generateKey = () => {
+        fetch(`${proxy}/activation/generate/key`, {
+            method: "POST",
+            headers: {
+                Authorization: `${_token}`,
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(activate),
+        }).then( res => res.json() ).then( res => {
+            const { success, activation_key, status } = res;            
+            setActivate({ ...activate, activation_key })
+            functions.showApiResponseMessage( status )
+        })
+    }
 
 
     //page table
@@ -1999,6 +2015,8 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Export file to many form */}
                     <div class={`modal ${showModal ? 'show' : ''}`} id="exportOptions">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
@@ -2041,6 +2059,51 @@ export default () => {
                             </div>
                         </div>
                     </div>
+                                        
+                    {/* Generate activation key */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="generateActivationKey">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["activate.title"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div className="row">
+                                            
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["activate.mac"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={activate.id} onChange={
+                                                    (e) => { setActivate({ ...activate, id: e.target.value }) }
+                                                } />
+                                            </div>
+
+                                            { activate.activation_key ? 
+                                                <div class="form-group col-lg-12">
+                                                    <label>{lang["activate.key"]}</label>
+                                                    <textarea type="text" class="form-control" value={ activate.activation_key } onChange={
+                                                        (e) => { e.preventDefault() }
+                                                    } 
+                                                        style={{ minHeight: 275 }}
+                                                        spellCheck={false}
+
+                                                    />
+                                                </div>
+                                                : null
+                                            }
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={ generateKey } class="btn btn-success ">{lang["btn.export"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 {/* Website info */}
                 <div class="row">
@@ -2050,7 +2113,10 @@ export default () => {
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
-                                <div class="ml-auto pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
+                                <div class="ml-auto pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#generateActivationKey" >
+                                    <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }}></i>
+                                </div>
+                                <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
                                     <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }}></i>
                                 </div>
                             </div>

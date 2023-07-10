@@ -365,8 +365,9 @@ export default {
 
 
 
-
-
+    "activate.title": "Tạo khóa kích hoạt cho dự án",
+    "activate.mac": "MAC",
+    "activate.key": "Khóa kích hoạt"
 
 
 

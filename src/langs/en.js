@@ -358,7 +358,11 @@ export default {
 
 
     "empty.member": "No members yet",
+    
 
+    "activate.title": "Generate product activation key",
+    "activate.mac": "MAC",
+    "activate.key": "Key"
 }
 
 
