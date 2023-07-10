@@ -258,15 +258,15 @@
 }
 .circle-image-projectdetail {
     border-radius: 100%;
-    width: 36px;
+    width: 32px;
     display: inline-block;
-    line-height: 36px;
+    line-height: 32px;
     text-align: center;
     /* Căn giữa văn bản theo chiều ngang */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
- 
+  
 
     position: relative;
     padding: 0px 2px;
@@ -302,7 +302,7 @@
     background-repeat: no-repeat;
     background-size: cover;
 
-    color: white;
+    color: rgb(0, 0, 0);
     /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;
     /* Đậm văn bản */
@@ -323,7 +323,7 @@
     /* Căn giữa văn bản theo chiều ngang */
     background-color: #8884d8;
     /* Màu nền, thay đổi theo ý thích */
-    color: white;
+    color: rgb(0, 0, 0);
     /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;
     /* Đậm văn bản */
@@ -347,7 +347,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
-    color: white;
+    color: rgb(0, 0, 0);
     /* Màu của văn bản, thay đổi theo ý thích */
     font-weight: bold;
     /* Đậm văn bản */
@@ -358,32 +358,7 @@
     padding: 0px 2px;
 }
 
-.extra-images-cus-p {
-    display: inline-block;
-    width: 48px;
-    /* Thay đổi kích thước này để phù hợp */
-    height: 48px;
-    /* Thay đổi kích thước này để phù hợp */
-    line-height: 48px;
-    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
-    border-radius: 100%;
-    /* Tạo hình tròn */
-    text-align: center;
-    /* Căn giữa văn bản theo chiều ngang */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
 
-    color: white;
-    /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;
-    /* Đậm văn bản */
-    margin-left: 2px;
-    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
-
-
-    padding: 0px 2px;
-}
 
 .ellipsis {
     width: 170px;

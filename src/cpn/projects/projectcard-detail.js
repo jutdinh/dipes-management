@@ -1524,7 +1524,7 @@ export default () => {
                                                                     }
                                                                     {
                                                                         task.members.length > 2 &&
-                                                                        <div className="img-responsive circle-image-detail" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
+                                                                        <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
                                                                             <span>+{task.members.length - 3}</span>
                                                                         </div>
                                                                     }
