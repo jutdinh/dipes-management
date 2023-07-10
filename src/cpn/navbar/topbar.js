@@ -75,7 +75,7 @@ export default () => {
         return (
             <div className="d-flex flex-nowrap">
                 <img style={{ width: 22 }} src={`/images/flags/${flag}`} />
-                <span className="d-block ml-2 topbar_lang_light mt-1">{name}</span>
+                <span className="d-block ml-2 topbar_lang_light">{name}</span>
             </div>
         );
     };

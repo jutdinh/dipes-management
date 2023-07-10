@@ -1,4 +1,5 @@
-const responseMessages = {
+const responseMessages = 
+{
     "0x4501000": {
         "vi": {
             "description": "Thành công",
@@ -2025,7 +2026,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Table update successful",
+            "description": "Update table success",
             "type": "Success"
         }
     },
@@ -2045,7 +2046,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "There is no permission to change because you are not part of the requesting team",
+            "description": "There is no permission to change because you are not part of the group making the request",
             "type": "Error"
         }
     },
@@ -2366,6 +2367,76 @@ const responseMessages = {
         },
         "en": {
             "description": "Invalid field code",
+            "type": "Error"
+        }
+    },
+    "0x4501237": {
+        "vi": {
+            "description": "Token không hợp lệ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Invalid token",
+            "type": "Error"
+        }
+    },
+    "0x4501238": {
+        "vi": {
+            "description": "Không có quyền tạo khóa ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "No permission to generate keys",
+            "type": "Error"
+        }
+    },
+    "0x4501239": {
+        "vi": {
+            "description": "Khóa kích hoạt đã tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Activation key already exists",
+            "type": "Error"
+        }
+    },
+    "0x4501240": {
+        "vi": {
+            "description": "Tạo khóa kích hoạt thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Activation key generated successfully",
+            "type": "Success"
+        }
+    },
+    "0x4501241": {
+        "vi": {
+            "description": "Định dạng không hợp lệ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Invalid format",
+            "type": "Error"
+        }
+    },
+    "0x4501242": {
+        "vi": {
+            "description": "Bạn đã kích hoạt sản phẩm rồi",
+            "type": "Cảnh báo"
+        },
+        "en": {
+            "description": "You have already activated the product",
+            "type": "Warning"
+        }
+    },
+    "0x4501243": {
+        "vi": {
+            "description": "Khóa kích hoạt không hợp lệ",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Invalid activation key",
             "type": "Error"
         }
     }

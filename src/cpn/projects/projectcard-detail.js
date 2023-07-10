@@ -899,10 +899,11 @@ export default () => {
     ]
 
     const generateKey = () => {
+        
         fetch(`${proxy}/activation/generate/key`, {
             method: "POST",
             headers: {
-                Authorization: `${_token}`,
+                Authorization: _token,
                 "content-type": "application/json"
             },
             body: JSON.stringify(activate),
