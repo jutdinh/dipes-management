@@ -451,7 +451,9 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["create ui"]}</h5>
+                               
+                                    <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create ui"]}
+                                    </label> </h5>
 
                                 </div>
                             </div>

@@ -312,8 +312,8 @@ export default {
 
 
     //ui
-    "manage ui": "Quản lý UI",
-    "ui information": "Thông tin UI",
+    "manage ui": "Quản lý giao diện",
+    "ui information": "Thông tin giao diện",
     "name page": "Tên trang",
     "create ui": "Tạo mới giao diện",
     "ui.title": "Tiêu đề",
@@ -363,11 +363,16 @@ export default {
 
 
 
-
+    "not found field": "Chưa có trường",
 
     "activate.title": "Tạo khóa kích hoạt cho dự án",
     "activate.mac": "MAC",
-    "activate.key": "Khóa kích hoạt"
+    "activate.key": "Khóa kích hoạt",
+    "copy json": "Sao chép JSON",
+    "copy url": "Sao chép URL",
+    "high": " Cao",
+    "medium": "Trung bình",
+    "low": "Thấp"
 
 
 

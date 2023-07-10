@@ -866,7 +866,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>Quản lý bảng</h4>
+                            <h4>{lang["managetable"]}</h4>
                         </div>
                     </div>
                 </div>
@@ -877,13 +877,15 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>Chỉnh sửa bảng</h5>
+                           
+                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit table"]}
+                                    </label> </h5>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-4">
-                                        <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["table name"]}  <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -980,7 +982,7 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có trường</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }

@@ -296,12 +296,12 @@ export default {
     "edit fields show": "Edit fields display",
     "calculated fields": "Calculated fields",
     "edit api": "Edit api",
-    "fields data": "Fields body",
+    "fields data": "Body Fields",
     "calculations": "Calculations",
     "edit calculated fiels": "Edit calculated field",
-    "add fields body": "Add fields body",
+    "add fields body": "Add body fields",
 
-    "rdit fields body": "Edit fields body",
+    "rdit fields body": "Edit body fields ",
     "add field calculations": "Add fields calculations",
     "edit field calculations": "Edit fields calculations",
     "fomular": "Fomular",
@@ -309,10 +309,10 @@ export default {
     "fields name statistic": "Statistics field name",
     "edit statistical fields": "Edit statistics field",
     "select fields": "Select fields",
-    "ui information": "UI information",
+    "ui information": "User interface information",
     "name page": "Page name",
-    "manage ui": "Manage UI",
-    "create ui": "Create UI",
+    "manage ui": "Manage user interface",
+    "create ui": "Create user interface",
     "ui.title": "Title",
 
     "add fields statis": "Add statistics field",
@@ -362,7 +362,13 @@ export default {
 
     "activate.title": "Generate product activation key",
     "activate.mac": "MAC",
-    "activate.key": "Key"
+    "activate.key": "Key",
+    "copy json": "Copy JSON",
+    "copy url": "Copy URL",
+    "high": " High",
+    "medium": "Medium",
+    "low": "Low"
+
 }
 
 

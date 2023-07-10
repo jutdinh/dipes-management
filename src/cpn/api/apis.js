@@ -260,7 +260,8 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["manage api"]}</h5>
+                                <h5><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["manage api"]}
+                                    </label> </h5>
                                 </div>
                                 <div class="ml-auto" onClick={downloadAPI}>
                                     <i class="fa fa-download icon-ui"></i>
@@ -378,7 +379,7 @@ export default () => {
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Chưa có api</p>
+                                                    <p>Not found</p>
                                                 </div>
                                             )
                                         }

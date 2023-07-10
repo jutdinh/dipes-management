@@ -636,7 +636,9 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["create table"]}</h5>
+                                   
+                                    <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create table"]}
+                                    </label> </h5>
                                 </div>
                             </div>
 
@@ -743,7 +745,7 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có trường</p>
+                                                        <p>Not found</p>
                                                     </div>
                                                 )
                                             }

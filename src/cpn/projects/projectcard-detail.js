@@ -86,9 +86,9 @@ export default () => {
 
     ]
     const statusPriority = [
-        { id: 0, label: "Cao", value: 1, color: "#1ed085" },
-        { id: 1, label: "Trung bình", value: 2, color: "#8884d8" },
-        { id: 2, label: "Thấp", value: 3, color: "#ffc658" },
+        { id: 0, label: "high", value: 1, color: "#1ed085" },
+        { id: 1, label: "medium", value: 2, color: "#8884d8" },
+        { id: 2, label: "low", value: 3, color: "#ffc658" },
 
     ]
 
@@ -967,7 +967,9 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["project_detail.title"]}</h4>
+             
+                            <h4><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
+                                    </label> </h4>
                         </div>
                     </div>
                 </div>
@@ -1642,7 +1644,7 @@ export default () => {
                                                     <option value="">{lang["choose"]}</option>
                                                     {statusPriority.map((status, index) => {
                                                         return (
-                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                            <option key={index} value={status.value}>{lang[status.label]}</option>
                                                         );
                                                     })}
                                                 </select>

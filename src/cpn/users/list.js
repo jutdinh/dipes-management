@@ -14,9 +14,9 @@ export default (props) => {
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [isDataAdded, setIsDataAdded] = useState(false);
     const roles = [
-        { id: 0, label: "Administrator", value: "ad" },
-        { id: 1, label: "Operator", value: "pm" },
-        { id: 2, label: "Normal", value: "pd" },
+        { id: 0, label: "administrator", value: "ad" },
+        { id: 1, label: "uprojectmanager", value: "pm" },
+        { id: 2, label: "normal", value: "pd" },
         // { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
     
@@ -379,11 +379,11 @@ export default (props) => {
                                                             <option value="">{lang["p.permission"]}</option>
                                                             {users.role === "ad" ? (
                                                                 roles.slice(0, 3).map(role => (
-                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                    <option key={role.id} value={role.value}>{lang[`${role.label}`]}</option>
                                                                 ))
                                                             ) : (
                                                                 roles.map(role => (
-                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                    <option key={role.id} value={role.value}>{lang[`${role.label}`]}</option>
                                                                 ))
                                                             )}
                                                         </select>
@@ -450,12 +450,12 @@ export default (props) => {
                                                         <select className="form-control" name="role" value={editUser.role} onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}>
                                                             
                                                             {users.role === "ad" ? (
-                                                                roles.slice(1, 4).map(role => (
-                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                roles.slice(0,3).map(role => (
+                                                                    <option key={role.id} value={role.value}>{lang[`${role.label}`]}</option>
                                                                 ))
                                                             ) : (
                                                                 roles.map(role => (
-                                                                    <option key={role.id} value={role.value}>{role.label}</option>
+                                                                    <option key={role.id} value={role.value}>{lang[`${role.label}`]}</option>
                                                                 ))
                                                             )}
                                                         </select>

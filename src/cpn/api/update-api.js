@@ -43,11 +43,11 @@ export default () => {
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
         const message = responseMessages[status];
-    
+
         const title = message?.[langItem]?.type || "Unknown error";
         const description = message?.[langItem]?.description || "Unknown error";
         const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
+
         Swal.fire({
             title,
             text: description,
@@ -823,16 +823,17 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0 ">
-                                    <h5><a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{lang["edit api"]}</h5>
+                                    <h5><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit api"]}
+                                    </label> </h5>
                                 </div>
                                 <div>
                                     {["post", "put"].includes(allApi.api_method) && (
                                         <button type="button" className="btn btn-primary mr-2" onClick={copyToClipboard}>
-                                            JSON
+                                            {lang["copy json"]}
                                         </button>
                                     )}
                                     <button type="button" className="btn btn-primary" onClick={copyURL}>
-                                        Copy URL
+                                        {lang["copy url"]}
                                     </button>
                                 </div>
                             </div>
@@ -854,7 +855,7 @@ export default () => {
 
                                     <div class="form-group col-lg-5">
                                         <label class="font-weight-bold">{lang["api.description"]} <span className='red_star'>*</span></label>
-                                        <textarea                                            
+                                        <textarea
                                             className="form-control"
                                             value={modalTemp.description}
                                             onChange={(e) => setModalTemp({ ...modalTemp, description: e.target.value })}
@@ -990,7 +991,7 @@ export default () => {
                                                         <table class="table table-striped">
                                                             <thead>
                                                                 <tr>
-                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["time"]}</th>
@@ -1038,7 +1039,7 @@ export default () => {
                                                                         <table class="table table-striped">
                                                                             <thead>
                                                                                 <tr>
-                                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                                                     <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
                                                                                     <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
 
@@ -1094,7 +1095,7 @@ export default () => {
                                                                         <table class="table table-striped">
                                                                             <thead>
                                                                                 <tr>
-                                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
                                                                                     <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
                                                                                     <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
                                                                                 </tr>
@@ -1147,7 +1148,7 @@ export default () => {
                                                                     <table class="table table-striped">
                                                                         <thead>
                                                                             <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                                 <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                                 <th class="font-weight-bold">{lang["alias"]}</th>
                                                                                 <td class="font-weight-bold">{lang["table name"]}</td>
@@ -1206,7 +1207,7 @@ export default () => {
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
-                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                             <th class="font-weight-bold">{lang["alias"]}</th>
                                                                             <th class="font-weight-bold">{lang["calculations"]}</th>
@@ -1253,7 +1254,7 @@ export default () => {
                                                                 <table class="table table-striped">
                                                                     <thead>
                                                                         <tr>
-                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                             <th class="font-weight-bold">{lang["alias"]}</th>
                                                                             <th class="font-weight-bold">{lang["calculations"]}</th>
@@ -1570,7 +1571,7 @@ export default () => {
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                 <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                 <th class="font-weight-bold">{lang["alias"]}</th>
                                                                 <td class="font-weight-bold">{lang["table name"]}</td>
@@ -1657,13 +1658,13 @@ export default () => {
                                                     modalTemp.fields && modalTemp.fields.length > 0 ? (
                                                         <table class="table table-striped">
                                                             <thead>
-                                                            <tr>
-                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                <td class="font-weight-bold">{lang["table name"]}</td>
+                                                                <tr>
+                                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                    <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                    <td class="font-weight-bold">{lang["table name"]}</td>
 
-                                                            </tr>
+                                                                </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {modalTemp.fields.map((field, index) => {
@@ -1866,13 +1867,13 @@ export default () => {
                                                     modalTemp.fields && modalTemp.fields.length > 0 ? (
                                                         <table class="table table-striped">
                                                             <thead>
-                                                            <tr>
-                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                <td class="font-weight-bold">{lang["table name"]}</td>
+                                                                <tr>
+                                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                    <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                    <td class="font-weight-bold">{lang["table name"]}</td>
 
-                                                            </tr>
+                                                                </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {modalTemp.fields.map((field, index) => {
