@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask } from '../enum/status';
+import { StatusEnum, StatusTask, Roles } from '../enum/status';
 import { saveAs } from 'file-saver';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
@@ -51,6 +51,11 @@ export default () => {
         StatusTask.IMPLEMENT,
         StatusTask.COMPLETE,
         StatusTask.PAUSE
+    ]
+
+    const RolesMember = [
+        Roles.SUPERVISOR,
+        Roles.NORMAL
 
     ]
     // const status = [
@@ -729,6 +734,45 @@ export default () => {
 
         // window.location.href = `tables`;
     };
+    const handleSelectChangeMember = async (e) => {
+        const role = e.target.value
+        const username = e.target.dataset.username;
+
+        console.log(role);
+        console.log(username)
+        updateRoleMember({ username: username, role: role });
+    }
+
+    const updateRoleMember = (member) => {
+        let newRole = '';
+        if (member.role === 'supervisor') {
+            newRole = 'pd';
+        } else if (member.role === 'deployer') {
+            newRole = 'ps';
+        }
+        console.log(member)
+        const requestBody = {
+            project_id: project.project_id,
+            username: member.username,
+            permission: newRole
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/projects/project/member/privilege`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+
+                showApiResponseMessage(status);
+
+            });
+    }
 
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
@@ -1042,13 +1086,39 @@ export default () => {
                                                                 <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                                                 <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
                                                                 <td>{member.fullname}</td>
-                                                                <td style={{ minWidth: "80px" }}>
-                                                                    {
-                                                                        member.permission === "supervisor" ? lang["supervisor"] :
-                                                                            member.permission === "deployer" ? lang["deployers"] :
-                                                                                "Khác"
-                                                                    }
-                                                                </td>
+                                                                {
+                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 ? (
+                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                            <select
+                                                                                className="form-control"
+                                                                                value={member.permission}
+                                                                                onChange={handleSelectChangeMember}
+                                                                                data-username={member.username}
+                                                                            >
+                                                                                {RolesMember.map((role, index) => {
+                                                                                    return (
+                                                                                        <option key={index} value={role.value} data-taskid={member.permission}>
+                                                                                            {lang[role.label]}
+                                                                                        </option>
+                                                                                    );
+                                                                                })}
+                                                                            </select>
+                                                                        </td>
+                                                                    ) : (
+                                                                        <td style={{ minWidth: "80px" }}>
+                                                                            {
+                                                                                member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                    member.permission === "deployer" ? lang["deployers"] :
+                                                                                        "Khác"
+                                                                            }
+                                                                        </td>
+                                                                    )
+                                                                }
+
+
+
+
+
                                                                 {
                                                                     ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                     <td class="align-center">
@@ -1221,7 +1291,7 @@ export default () => {
                                                     </div>
                                                 </div>
                                             )}
-                                            {showMonitorPopup && (
+                                            {/* {showMonitorPopup && (
                                                 <div class="user-popup3">
                                                     <div class="user-popup-content">
                                                         {users && users.map(user => {
@@ -1248,7 +1318,7 @@ export default () => {
                                                         <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
                                                     </div>
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </form>
                                 </div>
@@ -1512,16 +1582,7 @@ export default () => {
                                                                 </td>
                                                                 <td class="align-center" style={{ minWidth: "130px" }} >
 
-                                                                    {/* {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]} */}
 
-                                                                    {/* <select className="form-control" value={task.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
-                                                                        <option value="">Chọn</option>
-                                                                        {statusTaskView.map((status, index) => {
-                                                                            return (
-                                                                                <option key={index} value={status.value}>  {lang[`${(statusTaskView.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}`]}</option>
-                                                                            );
-                                                                        })}
-                                                                    </select> */}
                                                                     <select
                                                                         className="form-control"
                                                                         value={task.task_status}

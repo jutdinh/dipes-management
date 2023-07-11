@@ -185,7 +185,7 @@ export default {
     "error.permission": "Vui lòng chọn quyền",
     "error.address": "Vui lòng nhập địa chỉ",
 
-
+"select.member": "Chọn thành viên",
     // button modal edit user
     "btn.update": "Lưu lại",
     "edituser.title": "Chỉnh sửa người dùng",
