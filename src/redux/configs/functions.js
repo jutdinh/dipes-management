@@ -45,7 +45,7 @@ const removeDuplicate = ( data ) => {
     return uniqueArray
 }
 
-const showApiResponseMessage = (status) => {
+const showApiResponseMessage = (status, reload = true) => {
     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
     const message = responseMessages[status];
 
@@ -61,8 +61,10 @@ const showApiResponseMessage = (status) => {
         timer: 1500,
     }).then(() => {
         if (icon === "success") {
-            window.location.reload();
 
+            if( reload ){
+                window.location.reload();
+            }
         }
     });
 };

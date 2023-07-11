@@ -12,6 +12,7 @@ import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const { showApiResponseMessage } = functions 
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
@@ -36,27 +37,6 @@ export default () => {
     ]
     // page
 
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
-
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
-
-            }
-        });
-    };
 
     const statusProject = [
         StatusEnum.INITIALIZATION,
@@ -898,19 +878,18 @@ export default () => {
         { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
     ]
 
-    const generateKey = () => {
-        
+    const generateKey = () => {        
         fetch(`${proxy}/activation/generate/key`, {
             method: "POST",
             headers: {
-                Authorization: _token,
+                Authorization: `${_token}`,
                 "content-type": "application/json"
             },
             body: JSON.stringify(activate),
         }).then( res => res.json() ).then( res => {
             const { success, activation_key, status } = res;            
             setActivate({ ...activate, activation_key })
-            functions.showApiResponseMessage( status )
+            functions.showApiResponseMessage( status, false )
         })
     }
 
@@ -1050,7 +1029,7 @@ export default () => {
                                                             <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                             <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
                                                             {
-                                                                ["pm"].indexOf(auth.role) != -1 &&
+                                                                ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                 <th class="font-weight-bold">{lang["log.action"]}</th>
                                                             }
 
@@ -1070,7 +1049,7 @@ export default () => {
                                                                     }
                                                                 </td>
                                                                 {
-                                                                    ["pm"].indexOf(auth.role) != -1 &&
+                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                     <td class="align-center">
                                                                         <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
                                                                     </td>
@@ -1566,7 +1545,7 @@ export default () => {
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
 
                                                                     {
-                                                                        ["pm"].indexOf(auth.role) != -1 &&
+                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                         <>
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                                             {task.task_approve
@@ -2116,7 +2095,7 @@ export default () => {
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
-                                <div class="ml-auto pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#generateActivationKey" >
+                                <div class="ml-auto pointer" type="button" data-toggle="modal" data-target="#generateActivationKey" >
                                     <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }}></i>
                                 </div>
                                 <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >

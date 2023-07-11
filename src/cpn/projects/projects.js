@@ -376,7 +376,7 @@ export default () => {
                         <div class="page_title d-flex align-items-center">
                             <h4>{lang["projects.title"]}</h4>
                             {
-                                ["ad"].indexOf(auth.role) != -1 ?
+                                ["ad", "uad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
                                     </button> :
