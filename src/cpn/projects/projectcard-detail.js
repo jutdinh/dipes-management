@@ -1809,7 +1809,8 @@ export default () => {
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>{lang["task_priority"]}</b></label>
-                                                <span className="d-block"> {taskDetail.task_priority} </span>
+                                                <span className="d-block"> {lang[`${(statusPriority.find((s) => s.value === Number(taskDetail.task_priority)) || {}).label || taskDetail.task_priority}`]} </span>
+
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>{lang["confirm"]}</b></label>
