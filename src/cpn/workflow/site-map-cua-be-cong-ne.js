@@ -69,7 +69,6 @@ export default () => {
 
 
     useEffect( () => {
-
         if( rootRef.current != undefined){
             fetch(`${proxy}/projects/all/projects`, {
                 headers: {

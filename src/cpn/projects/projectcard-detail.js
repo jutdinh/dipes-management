@@ -12,7 +12,7 @@ import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
-    const { showApiResponseMessage } = functions 
+    const { showApiResponseMessage } = functions
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
@@ -531,6 +531,7 @@ export default () => {
         }
 
     };
+    console.log(taskDetail)
     const [deleteTask, setDelelteTask] = useState(false);
 
     const handleConfirmTask = (taskid) => {
@@ -878,7 +879,7 @@ export default () => {
         { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
     ]
 
-    const generateKey = () => {        
+    const generateKey = () => {
         fetch(`${proxy}/activation/generate/key`, {
             method: "POST",
             headers: {
@@ -886,10 +887,10 @@ export default () => {
                 "content-type": "application/json"
             },
             body: JSON.stringify(activate),
-        }).then( res => res.json() ).then( res => {
-            const { success, activation_key, status } = res;            
+        }).then(res => res.json()).then(res => {
+            const { success, activation_key, status } = res;
             setActivate({ ...activate, activation_key })
-            functions.showApiResponseMessage( status, false )
+            functions.showApiResponseMessage(status, false)
         })
     }
 
@@ -926,17 +927,17 @@ export default () => {
     const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
 
 
-    const toTitleCase = ( word ) => {
+    const toTitleCase = (word) => {
         let result = ""
-        if( word != undefined ){
+        if (word != undefined) {
             const splitted = word.split(' ')
-            result = splitted.map( piece => {                
-                if( piece != undefined && piece.length > 0 ){
+            result = splitted.map(piece => {
+                if (piece != undefined && piece.length > 0) {
                     return piece[0].toUpperCase() + piece.slice(1, piece.length)
                 }
                 return ""
             }).join(' ')
-            
+
         }
         return result
     }
@@ -947,9 +948,9 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-             
-                            <h4><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
-                                    </label> </h4>
+
+                            <h4><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
+                            </label> </h4>
                         </div>
                     </div>
                 </div>
@@ -983,9 +984,9 @@ export default () => {
                                     </div>
                                     <div>
                                         <p class="font-weight-bold">{lang["projecttype"]}:</p>
-                                        <p class="mb-2">{ toTitleCase(projectdetail.project_type) }</p>
+                                        <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
                                     </div>
-                                </div>                                
+                                </div>
                                 <div>
                                     <p className="font-weight-bold">{lang["description"]}: </p>
                                     <div className="description-container">
@@ -1296,21 +1297,21 @@ export default () => {
 
                                             <div class="form-group col-lg-6 ">
                                                 <label>{lang["projecttype"]}</label>
-                                                <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>                                                
+                                                <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>
                                                     <option value="database">Database</option>
                                                     <option value="api">API</option>
                                                 </select>
                                             </div>
 
                                             {
-                                                project.project_type == "api" ? 
+                                                project.project_type == "api" ?
                                                     <div class="form-group col-lg-6 ml-auto">
                                                         <label>{lang["projectproxyserver"]}</label>
-                                                        <input type="text" class="form-control" value={ project.proxy_server } onChange={
+                                                        <input type="text" class="form-control" value={project.proxy_server} onChange={
                                                             (e) => { setProject({ ...project, proxy_server: e.target.value }) }
-                                                        } placeholder="http://example.com || http://127.0.0.1"/>
+                                                        } placeholder="http://example.com || http://127.0.0.1" />
                                                     </div>
-                                                :null
+                                                    : null
                                             }
 
                                             <div class="form-group col-lg-12 ">
@@ -1915,7 +1916,7 @@ export default () => {
                                                                 <table class="table table-striped table-rounded table-scrollable ">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold" scope="col" style={{ maxWidth: "80px" }} >{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold" scope="col">{lang["task"]}</th>
                                                                             <th class="font-weight-bold" scope="col">{lang["oldvalue"]}</th>
                                                                             <th class="font-weight-bold" scope="col">{lang["newvalue"]}</th>
@@ -1926,23 +1927,35 @@ export default () => {
                                                                     <tbody>
                                                                         {taskDetail.history.reverse().map((task, index) => (
                                                                             <tr key={task.id}>
-                                                                                <td scope="row">{index + 1}</td>
+                                                                                <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
                                                                                 <td scope="row">
                                                                                     {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                        task.modified_what === "info" ? lang["log.information"] :
+                                                                                        task.modified_what === "infor" ? lang["log.information"] :
                                                                                             task.modified_what === "status" ? lang["taskstatus"] :
                                                                                                 task.modified_what}
                                                                                 </td>
                                                                                 <td scope="row">
-                                                                                    {task.old_value === "true" ? "Đã duyệt" :
-                                                                                        task.old_value === "false" ? "Chờ duyệt" :
-                                                                                            task.old_value}
+                                                                                    {
+                                                                                        task.old_value === "true" ? lang["await"] :
+                                                                                            task.old_value === "false" ? lang["approved"] :
+                                                                                                !isNaN(task.old_value) ?
+                                                                                                    lang[`${(statusProject.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                    :
+                                                                                                    `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+
+                                                                                    }
                                                                                 </td>
                                                                                 <td scope="row">
-                                                                                    {task.old_value === "true" ? "Chờ duyệt" :
-                                                                                        task.old_value === "false" ? "Đã duyệt" :
-                                                                                            task.old_value}
+                                                                                    {
+                                                                                        task.new_value === "true" ? lang["await"] :
+                                                                                            task.new_value === "false" ? lang["approved"] :
+                                                                                                !isNaN(task.new_value) ?
+                                                                                                    lang[`${(statusProject.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                    :
+                                                                                                    `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                    }
                                                                                 </td>
+
                                                                                 <td scope="row">{task.modified_at}</td>
                                                                                 <td scope="row">
                                                                                     <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
@@ -2041,7 +2054,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                                        
+
                     {/* Generate activation key */}
                     <div class={`modal ${showModal ? 'show' : ''}`} id="generateActivationKey">
                         <div class="modal-dialog modal-dialog-center">
@@ -2053,7 +2066,7 @@ export default () => {
                                 <div class="modal-body">
                                     <form>
                                         <div className="row">
-                                            
+
                                             <div class="form-group col-lg-12">
                                                 <label>{lang["activate.mac"]} <span className='red_star'>*</span></label>
                                                 <input type="text" class="form-control" value={activate.id} onChange={
@@ -2061,12 +2074,12 @@ export default () => {
                                                 } />
                                             </div>
 
-                                            { activate.activation_key ? 
+                                            {activate.activation_key ?
                                                 <div class="form-group col-lg-12">
                                                     <label>{lang["activate.key"]}</label>
-                                                    <textarea type="text" class="form-control" value={ activate.activation_key } onChange={
+                                                    <textarea type="text" class="form-control" value={activate.activation_key} onChange={
                                                         (e) => { e.preventDefault() }
-                                                    } 
+                                                    }
                                                         style={{ minHeight: 275 }}
                                                         spellCheck={false}
 
@@ -2079,7 +2092,7 @@ export default () => {
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" onClick={ generateKey } class="btn btn-success ">{lang["btn.export"]}</button>
+                                    <button type="button" onClick={generateKey} class="btn btn-success ">{lang["btn.export"]}</button>
                                     <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                                 </div>
                             </div>

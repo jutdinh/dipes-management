@@ -118,7 +118,7 @@ export default {
     "await": "Chờ duyệt",
     "approved": "Đã duyệt",
     "choose": "Chọn",
-
+    "user change": "Người thay đổi",
     //Managers
     "editmanager": "Chỉnh sửa quản lý dự án",
     //Members
