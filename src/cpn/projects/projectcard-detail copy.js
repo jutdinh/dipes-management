@@ -1,13 +1,18 @@
 
 import { useParams } from "react-router-dom";
 import Header from "../common/header"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { StatusEnum, StatusTask, Roles } from '../enum/status';
+import { saveAs } from 'file-saver';
+import $ from 'jquery';
 import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+import responseMessages from "../enum/response-code";
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const { showApiResponseMessage } = functions
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
@@ -15,7 +20,15 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [manager, setManager] = useState("")
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
-    console.log(selectedMemberTask)
+    const [showFull, setShowFull] = useState(false);
+    let navigate = useNavigate();
+    const [showViewMore, setShowViewMore] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [exporter, setExporter] = useState({})
+    const [activate, setActivate] = useState({})
+
+    // console.log(selectedMemberTask)
     // Page 
 
     const sortOptions = [
@@ -24,32 +37,52 @@ export default () => {
     ]
     // page
 
-    const status = [
-        { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
-        { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
-        { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
-        { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
-        { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
+
+    const statusProject = [
+        StatusEnum.INITIALIZATION,
+        StatusEnum.IMPLEMENT,
+        StatusEnum.DEPLOY,
+        StatusEnum.COMPLETE,
+        StatusEnum.PAUSE
+
     ]
+    const statusTaskView = [
+        StatusTask.INITIALIZATION,
+        StatusTask.IMPLEMENT,
+        StatusTask.COMPLETE,
+        StatusTask.PAUSE
+    ]
+
+    const RolesMember = [
+        Roles.SUPERVISOR,
+        Roles.NORMAL
+
+    ]
+    // const status = [
+    //     { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+    //     { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+    //     { id: 2, label: lang["complete"], value: 3, color: "#ff8042" },
+    //     { id: 3, label: lang["pause"], value: 4, color: "#FF0000" }
+    // ]
     const statusTask = [
-        { id: 0, label: "Chờ duyệt", value: 1, color: "#1ed085" },
-        { id: 1, label: "Thực hiện", value: 2, color: "#8884d8" },
-        { id: 2, label: "Hoàn thành", value: 3, color: "#ffc658" },
+        { id: 0, label: lang["await"], value: 0, color: "#1ed085" },
+        { id: 1, label: lang["approved"], value: 1, color: "#181dd4" },
+
 
     ]
     const statusPriority = [
-        { id: 0, label: "Cao", value: 1, color: "#1ed085" },
-        { id: 1, label: "Trung bình", value: 2, color: "#8884d8" },
-        { id: 2, label: "Thấp", value: 3, color: "#ffc658" },
+        { id: 0, label: "high", value: 1, color: "#1ed085" },
+        { id: 1, label: "medium", value: 2, color: "#8884d8" },
+        { id: 2, label: "low", value: 3, color: "#ffc658" },
 
     ]
 
-    // const handleOpenAdminPopup = () => {
-    //     setShowAdminPopup(true);
-    //     setShowImplementationPopup(false);
-    //     setShowMonitorPopup(false);
-    //     setTempSelectedUsers([...selectedUsers]);
-    // };
+    const handleOpenAdminPopup = () => {
+        setShowAdminPopup(true);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+        setTempSelectedUsers([...selectedUsers]);
+    };
     const handleOpenImplementationPopup = () => {
         setShowAdminPopup(false);
         setShowImplementationPopup(true);
@@ -76,7 +109,8 @@ export default () => {
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
     const [tempSelectedMonitor, setTempSelectedMonitor] = useState([]);
-
+console.log(selectedUsers)
+console.log(selectedImple)
     const handleAdminCheck = (user, role) => {
         const userWithRole = { username: user.username, role };
         setTempSelectedUsers(prevTempSelectedUsers => {
@@ -148,6 +182,8 @@ export default () => {
     const [versions, setProjectVersion] = useState([]);
     const [users, setUsers] = useState([]);
     const [projectmanager, setProjectManager] = useState({});
+
+    const [process, setProcess] = useState({});
     useEffect(() => {
 
         fetch(`${proxy}/projects/project/${project_id}`, {
@@ -166,6 +202,7 @@ export default () => {
                         setProjectVersion(data.versions)
                         setProjectMember(data.members)
                         setProjectManager(data.manager)
+                        setProcess(data)
                         setManager(data.manager.username)
                     }
                 } else {
@@ -173,6 +210,57 @@ export default () => {
                 }
             })
     }, [])
+
+
+    const [tables, setTables] = useState({});
+
+    useEffect(() => {
+
+        fetch(`${proxy}/db/tables/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        setTables(data);
+                        console.log(data)
+                    }
+                } else {
+                    console.log("data")
+                    // window.location = "/404-not-found"
+                }
+            })
+
+    }, [versions]);
+
+    const [apis, setApis] = useState([]);
+
+    useEffect(() => {
+
+        fetch(`${proxy}/apis/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                if (success) {
+                    if (data) {
+                        setApis(data.apis);
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+
+    }, [versions]);
+
 
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
@@ -198,6 +286,7 @@ export default () => {
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
     useEffect(() => {
+
         fetch(`${proxy}/projects/project/${project_id}/tasks`, {
             headers: {
                 Authorization: _token
@@ -210,6 +299,7 @@ export default () => {
                 if (success) {
                     if (data) {
                         setTasks(data);
+                        console.log("data task", data)
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -217,6 +307,31 @@ export default () => {
             })
     }, [])
 
+
+    //
+    const [uis, setUis] = useState([]);
+    useEffect(() => {
+        fetch(`${proxy}/uis/v/${versions[0]?.version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+
+                if (success) {
+                    if (data) {
+                        setUis(data.uis);
+
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [versions])
+    console.log(`${versions[0]?.version_id}`)
+    console.log(uis)
     const addMember = (e) => {
         e.preventDefault();
         fetch(`${proxy}/projects/members`, {
@@ -234,30 +349,15 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        // window.location.reload();
-                        setShowModal(false);
-                    });
+                    showApiResponseMessage(status);
                 } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    showApiResponseMessage(status);
                 }
             })
 
 
     };
-    const submitUpdateProject = (e) => {
+    const submitUpdateProject = async (e) => {
         e.preventDefault();
         const { project_name, project_status } = project;
         const errors = {};
@@ -271,41 +371,28 @@ export default () => {
             setErrorMessagesedit(errors);
             return;
         }
-        fetch(`${proxy}/projects/update`, {
+        const response = await fetch(`${proxy}/projects/update`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
             },
             body: JSON.stringify({ project: { ...project, project_status: parseInt(project.project_status) } }),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
+        });
 
-                if (success) {
-                    Swal.fire({
-                        title: "Thành công!",
-                        text: content,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    }).then(function () {
-                        window.location.reload();
-                    });
+        const resp = await response.json();
+        const { success, content, data, status } = resp;
 
-                } else {
-                    Swal.fire({
-                        title: "Thất bại!",
-                        text: content,
-                        icon: "error",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(function () {
-                    });
-                }
-            });
+        if (success) {
+            showApiResponseMessage(status);
+        } else {
+            showApiResponseMessage(status);
+        }
+
+        // call addMember after submitUpdateProject has completed
+        addMember(e);
     };
+
     const submitUpdateManager = async (e) => {
         e.preventDefault();
         const requestBody = {
@@ -344,22 +431,9 @@ export default () => {
 
 
         if (success) {
-            await Swal.fire({
-                title: "Thành công!",
-                text: content,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-            });
-            window.location.reload();
+            showApiResponseMessage(status);
         } else {
-            await Swal.fire({
-                title: "Thất bại!",
-                text: content,
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            });
+            showApiResponseMessage(status);
         }
     };
 
@@ -382,24 +456,9 @@ export default () => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        Swal.fire({
-                            title: "Thành công!",
-                            text: content,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500,
-                        }).then(function () {
-                            window.location.reload();
-                            setShowModal(false);
-                        });
+                        showApiResponseMessage(status);
                     } else {
-                        Swal.fire({
-                            title: "Thất bại!",
-                            text: content,
-                            icon: "error",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
+                        showApiResponseMessage(status);
                     }
                 }
             })
@@ -413,6 +472,48 @@ export default () => {
 
     }, [projectmember]);
 
+    const [updateTaskinfo, setUpdateTask] = useState({});
+
+    const getIdTask = (taskid) => {
+        setUpdateTask(taskid);
+    }
+
+    useEffect(() => {
+        console.log(updateTaskinfo);
+    }, [updateTaskinfo]);
+
+
+
+    const updateTask = (e) => {
+        e.preventDefault();
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: updateTaskinfo.task_id,
+            task_name: updateTaskinfo.task_name,
+            task_description: updateTaskinfo.task_description,
+            task_priority: updateTaskinfo.task_priority,
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/info`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    showApiResponseMessage(status);
+                } else {
+                    showApiResponseMessage(status);
+                }
+            })
+
+
+    };
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
@@ -436,22 +537,90 @@ export default () => {
         }
 
     };
-    const handleDeleteUser = (member) => {
+    console.log(taskDetail)
+    const [deleteTask, setDelelteTask] = useState(false);
+
+    const handleConfirmTask = (taskid) => {
+        const newTaskApproveStatus = !taskid.task_approve;
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: taskid.task_id,
+            task_approve: newTaskApproveStatus
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/approve`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    showApiResponseMessage(status);
+                } else {
+                    showApiResponseMessage(status);
+                }
+            });
+
+
+    }
+    const handleDeleteTask = (taskid) => {
         const requestBody = {
 
             project_id: project.project_id,
-            username: member.username
+            task_id: taskid.task_id
 
+        };
+        console.log(requestBody)
+
+        Swal.fire({
+            title: lang["confirm"],
+            text: lang["delete.task"],
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/tasks/task`, {
+                    method: 'DELETE',
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(res => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        showApiResponseMessage(status);
+                    });
+            }
+        });
+    }
+    const handleDeleteUser = (member) => {
+        const requestBody = {
+            project_id: project.project_id,
+            username: member.username
         };
 
         Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa thành viên này?',
+            title: lang["confirm"],
+            text: lang["delete.member"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: 'rgb(209, 72, 81)',
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`${proxy}/projects/remove/project/member`, {
@@ -479,25 +648,9 @@ export default () => {
                             return;
                         }
                         if (success) {
-                            Swal.fire({
-                                title: "Thành công!",
-                                text: content,
-                                icon: "success",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            }).then(function () {
-                                window.location.reload();
-                            });
+                            showApiResponseMessage(status);
                         } else {
-                            Swal.fire({
-                                title: "Thất bại!",
-                                text: content,
-                                icon: "error",
-                                showConfirmButton: false,
-                                timer: 2000,
-                            }).then(function () {
-                                // Không cần reload trang
-                            });
+                            showApiResponseMessage(status);
                         }
                     });
             }
@@ -512,11 +665,19 @@ export default () => {
         setUniqueUsers(duplicateUsers);
     }, [users, projectmember]);
 
+    const getStatusLabel = (statusId) => {
+        const status = statusTask.find(st => st.id === statusId);
+        return status ? status.label : 'N/A';
+    };
 
+    const getStatusColor = (statusId) => {
+        const status = statusTask.find(st => st.id === statusId);
+        return status ? status.color : 'N/A';
+    };
     //task
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 3;
+    const rowsPerPage = 4;
 
     const indexOfLastMember = currentPage * rowsPerPage;
     const indexOfFirstMember = indexOfLastMember - rowsPerPage;
@@ -527,7 +688,7 @@ export default () => {
 
     // Page member task
     const [currentPageTask, setCurrentPageTask] = useState(1);
-    const rowsPerPageTask = 4;
+    const rowsPerPageTask = 7;
 
     const indexOfLastMemberTask = currentPageTask * rowsPerPageTask;
     const indexOfFirstMemberTask = indexOfLastMemberTask - rowsPerPageTask;
@@ -535,729 +696,1818 @@ export default () => {
 
     const paginateTask = (pageNumber) => setCurrentPageTask(pageNumber);
     const totalPagesTask = Math.ceil(tasks.length / rowsPerPageTask);
+
+    // Page detail task
+    const [currentViewDetailTask, setCurrentViewDetailTask] = useState(1);
+    const rowsPerViewDetailTask = 5;
+
+    const indexOfLastMemberViewDetailTask = currentViewDetailTask * rowsPerViewDetailTask;
+    const indexOfFirstMemberViewDetailTask = indexOfLastMemberViewDetailTask - rowsPerViewDetailTask;
+    const currentMembersViewDetailTask = taskDetail.history?.slice(indexOfFirstMemberViewDetailTask, indexOfLastMemberViewDetailTask);
+
+    const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
+    const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
+
+
+    useEffect(() => {
+        if (projectdetail.project_description?.length > 100) {
+            setShowViewMore(true);
+        } else {
+            setShowViewMore(false);
+        }
+    }, [projectdetail.project_description]);
+
+    const tablesManager = (project) => {
+
+        window.location.href = `/projects/${versions[0]?.version_id}/tables`;
+
+        // window.location.href = `tables`;
+    };
+    const apisManager = (project) => {
+
+        window.location.href = `/projects/${versions[0]?.version_id}/apis`;
+
+        // window.location.href = `tables`;
+    };
+    const uisManager = (project) => {
+
+        window.location.href = `/projects/${versions[0]?.version_id}/uis`;
+
+        // window.location.href = `tables`;
+    };
+    const handleSelectChangeMember = async (e) => {
+        const role = e.target.value
+        const username = e.target.dataset.username;
+
+        console.log(role);
+        console.log(username)
+        updateRoleMember({ username: username, role: role });
+    }
+
+    const updateRoleMember = (member) => {
+        let newRole = '';
+        if (member.role === 'supervisor') {
+            newRole = 'pd';
+        } else if (member.role === 'deployer') {
+            newRole = 'ps';
+        }
+        console.log(member)
+        const requestBody = {
+            project_id: project.project_id,
+            username: member.username,
+            permission: newRole
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/projects/project/member/privilege`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+
+                showApiResponseMessage(status);
+
+            });
+    }
+
+    const handleSelectChange = async (e) => {
+        const newTaskStatus = parseInt(e.target.value, 10);
+        const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
+        console.log(taskId);
+        updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
+    }
+
+    const updateStatusTask = (taskInfo) => {
+
+        const requestBody = {
+            project_id: project.project_id,
+            task_id: taskInfo.task_id,
+            task_status: taskInfo.newTaskStatus
+        };
+        console.log(requestBody)
+        fetch(`${proxy}/tasks/task/status`, {
+            method: 'PUT',
+            headers: {
+                "content-type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(res => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    showApiResponseMessage(status);
+                } else {
+                    showApiResponseMessage(status);
+                }
+            });
+    }
+
+    const closeModalManually = () => {
+        $("#exportOptions").removeAttr("style")
+        $(".modal-backdrop").remove()
+        $('#exportClickTrigger').click()
+    }
+
+    const exportTrigger = () => {
+        closeModalManually()
+        setShowModal(false)
+        const { version, type } = exporter
+        if (version != undefined && type != undefined) {
+            const option = exportTypes.find(opt => opt.id == type)
+            const { func } = option;
+            func();
+        } else {
+            Swal.fire({
+                title: "error.title",
+                icon: "error",
+                showConfirmButton: true,
+                text: lang["export.error.invalidData"],
+
+            }).then(function () {
+                // Không cần reload trang
+            });
+        }
+    }
+
+    const exportWholeProject = () => {
+        const { version } = exporter;
+        fetch(`${proxy}/versions/d/${version}/write-ui`, {
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                if (success) {
+                    window.open(`${proxy}/versions/d/${version}/whole`)
+                } else {
+                    Swal.fire({
+                        title: "Thất bại!",
+                        icon: "error",
+                        showConfirmButton: true,
+                        text: lang["export.error.invalidVersionData"],
+
+                    })
+                }
+            })
+    }
+
+    const exportTablesOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/tables`, {
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { database } = data;
+
+                const jsonData = JSON.stringify({ data: database });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-database.json`);
+            })
+    }
+
+    const exportApisOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/apis`, {
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { apis } = data;
+
+                const jsonData = JSON.stringify({ data: { apis } });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-apis.json`);
+            })
+    }
+
+    const exportUIOnly = () => {
+        const { version } = exporter;
+        const ver = versions.find(v => v.version_id == version)
+        fetch(`${proxy}/versions/d/${version}/ui`, {
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then((res) => res.json())
+            .then((res) => {
+                const { data, success, content } = res;
+                const { uis } = data;
+
+                const jsonData = JSON.stringify({ data: uis });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-ui.json`);
+            })
+    }
+
+    const exportTypes = [
+        { id: 0, label: lang["export.types.wholeProjects"], func: exportWholeProject },
+        { id: 1, label: lang["export.types.tablesOnly"], func: exportTablesOnly },
+        { id: 2, label: lang["export.types.apisOnly"], func: exportApisOnly },
+        { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
+    ]
+
+    const generateKey = () => {
+        fetch(`${proxy}/activation/generate/key`, {
+            method: "POST",
+            headers: {
+                Authorization: `${_token}`,
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(activate),
+        }).then(res => res.json()).then(res => {
+            const { success, activation_key, status } = res;
+            setActivate({ ...activate, activation_key })
+            functions.showApiResponseMessage(status, false)
+        })
+    }
+
+
+    //page table
+    const [currentPageTable, setCurrentPageTable] = useState(1);
+    const rowsPerPageTable = 3;
+
+    const indexOfLastTable = currentPageTable * rowsPerPageTable;
+    const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
+    const currentTable = tables.tables?.slice(indexOfFirstTable, indexOfLastTable);
+
+    const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
+    const totalPagesTable = Math.ceil(tables.tables?.length / rowsPerPageTable);
+    // page api
+    const [currentPageApi, setCurrentPageApi] = useState(1);
+    const rowsPerPageApi = 3;
+
+    const indexOfLastApi = currentPageApi * rowsPerPageApi;
+    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
+    const currentApi = apis.slice(indexOfFirstApi, indexOfLastApi);
+
+    const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
+    const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
+    //page ui
+    const [currentPageUi, setCurrentPageUi] = useState(1);
+    const rowsPerPageUi = 3;
+
+    const indexOfLastUi = currentPageUi * rowsPerPageUi;
+    const indexOfFirstUi = indexOfLastUi - rowsPerPageUi;
+    const currentUi = uis.slice(indexOfFirstUi, indexOfLastUi);
+
+    const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
+    const totalPagesUi = Math.ceil(uis.length / rowsPerPageUi);
+
+
+    const toTitleCase = (word) => {
+        let result = ""
+        if (word != undefined) {
+            const splitted = word.split(' ')
+            result = splitted.map(piece => {
+                if (piece != undefined && piece.length > 0) {
+                    return piece[0].toUpperCase() + piece.slice(1, piece.length)
+                }
+                return ""
+            }).join(' ')
+
+        }
+        return result
+    }
+selectedUsers.push(selectedImple)
+selectedUsers.push(projectdetail.manager)
+    console.log(selectedUsers)
+    
+
     return (
-        <div className="container-fluid">
-            <div class="midde_cont">
+        <div class="midde_cont">
+            <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
-                        <div class="page_title d-flex align-items-center">
-                            <h4>{lang["project_detail.title"]}</h4>
+                        <div class="page_title">
+
+                            <h4><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
+                            </label> </h4>
                         </div>
                     </div>
                 </div>
-                <div class="row column1">
+                <div class="row">
+                    {/* Detail */}
+                    <div class="col-md-5">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head d-flex justify-content-between align-items-center">
+                                <div class="heading1 margin_0">
+                                    <h5>{lang["project.info"]}</h5>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
+                                        <i class="fa fa-edit size pointer" ></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table_section padding_infor_info">
+                                <p class="font-weight-bold">{lang["projectname"]}:</p>
+                                <p class="mb-2">{projectdetail.project_name}</p>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                        <p class="mb-2">{projectdetail.project_code}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                        {versions.map(version => (
+                                            <p class="mb-2">{version.version_name}</p>
+                                        ))}
+                                    </div>
+                                    <div>
+                                        <p class="font-weight-bold">{lang["projecttype"]}:</p>
+                                        <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="font-weight-bold">{lang["description"]}: </p>
+                                    <div className="description-container">
+                                        <div style={{
+                                            width: "100%",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap"
+                                        }}>
+                                            {projectdetail.project_description}
+                                        </div>
+                                        {showViewMore && (
+                                            <div className="view-more-link">
+                                                <a href="#" data-toggle="modal" data-target="#viewDescription">
+                                                    <b>Xem thêm</b>
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
+                                <div class="profile_contacts">
+                                    <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
+                                    {projectdetail.manager?.fullname}
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <p class="font-weight-bold">{lang["projectmember"]}: </p>
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    {
+                                        sortedMembers && sortedMembers.length > 0 ? (
+                                            <>
+                                                <table class="table table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
+                                                            {
+                                                                ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                <th class="font-weight-bold">{lang["log.action"]}</th>
+                                                            }
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentMembers.map((member, index) => (
+                                                            <tr key={member.username}>
+                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                <td>{member.fullname}</td>
+                                                                {
+                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                    <>
+                                                                        <td class="align-center" style={{ minWidth: "130px" }} >
+
+                                                                            <select
+                                                                                className="form-control"
+                                                                                value={member.permission}
+                                                                                onChange={handleSelectChangeMember}
+                                                                                data-username={member.username}
+
+                                                                            >
+
+                                                                                {RolesMember.map((role, index) => {
+                                                                                    return (
+                                                                                        <option key={index} value={role.value} data-taskid={member.permission}>
+                                                                                            {lang[role.label]}
+                                                                                        </option>
+                                                                                    );
+                                                                                })}
+                                                                            </select>
+
+                                                                        </td>
+                                                                    </>
+                                                                }
+                                                                <td style={{ minWidth: "80px" }}>
+                                                                    {
+                                                                        member.permission === "supervisor" ? lang["supervisor"] :
+                                                                            member.permission === "deployer" ? lang["deployers"] :
+                                                                                "Khác"
+                                                                    }
+                                                                </td>
+
+
+
+
+                                                                {
+                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                    <td class="align-center">
+                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
+                                                                    </td>
+                                                                }
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+
+
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>{lang["empty.member"]}</p>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <p>{lang["show"]} {indexOfFirstMember + 1} - {Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
+                                    <nav aria-label="Page navigation example">
+                                        <ul className="pagination mb-0">
+                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                    &laquo;
+                                                </button>
+                                            </li>
+                                            {Array(totalPages).fill().map((_, index) => (
+                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                        {index + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                    &raquo;
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    {/* Update member */}
+                    <div class={`modal show`} id="editMember">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Cập nhật thành viên dự án</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div className="form-group col-lg-12">
+                                                <label>Thành viên dự án</label>
+                                                <div class="options-container">
+                                                    <div class="option">
+                                                        <h5>Phụ trách</h5>
+                                                        {
+
+                                                            selectedUsers.map(user => {
+                                                                if (user.username === manager) {
+                                                                    return null;
+                                                                }
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option">
+                                                        <h5>Triển Khai</h5>
+                                                        {
+                                                            selectedImple.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option">
+                                                        <h5>Theo Dõi</h5>
+                                                        {
+                                                            selectedMonitor.map(user => {
+                                                                const userData = users.find(u => u.username === user.username);
+                                                                return (
+                                                                    <div key={user.username}>
+                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {showAdminPopup && (
+                                                <div class="user-popup4">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedImple.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                            onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {showImplementationPopup && (
+                                                <div class="user-popup2">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                            onChange={() => handleImpleCheck(user, 'deployer')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {/* {showMonitorPopup && (
+                                                <div class="user-popup3">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedMonitor.some(u => u.username === user.username)}
+                                                                            onChange={() => handleMonitorCheck(user, 'ps')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'ps')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )} */}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={addMember} class="btn btn-success ">Lưu lại</button>
+                                    <button type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Update Project */}
+                    <div class={`modal show`} id="editProject">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["updateproject"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-6">
+                                                <label>{lang["projectname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={project.project_name} onChange={
+                                                    (e) => { setProject({ ...project, project_name: e.target.value }) }
+                                                } placeholder={lang["p.projectname"]} />
+                                                {errorMessagesedit.project_name && <span class="error-message">{errorMessagesedit.project_name}</span>}
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label>{lang["projectcode"]} </label>
+                                                <input type="text" class="form-control" value={project.project_code} onChange={
+                                                    (e) => { setProject({ ...project, project_code: e.target.value }) }
+                                                } placeholder={lang["p.projectcode"]} />
+                                            </div>
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
+                                                    {statusProject.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                                {errorMessagesedit.project_status && <span class="error-message">{errorMessagesedit.project_status}</span>}
+                                            </div>
+
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["projecttype"]}</label>
+                                                <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>
+                                                    <option value="database">Database</option>
+                                                    <option value="api">API</option>
+                                                </select>
+                                            </div>
+
+                                            {
+                                                project.project_type == "api" ?
+                                                    <div class="form-group col-lg-6 ml-auto">
+                                                        <label>{lang["projectproxyserver"]}</label>
+                                                        <input type="text" class="form-control" value={project.proxy_server} onChange={
+                                                            (e) => { setProject({ ...project, proxy_server: e.target.value }) }
+                                                        } placeholder="http://example.com || http://127.0.0.1" />
+                                                    </div>
+                                                    : null
+                                            }
+
+                                            <div class="form-group col-lg-12 ">
+                                                <label>{lang["projectdescripton"]} </label>
+                                                <textarea rows="10" type="text" class="form-control" value={project.project_description} onChange={
+                                                    (e) => { setProject({ ...project, project_description: e.target.value }) }
+                                                } placeholder={lang["p.projectdescripton"]} />
+                                            </div>
+                                            <div className="form-group col-lg-12">
+                                                <label>{lang["projectmember"]}</label>
+                                                {/* <div class="options-container">
+                                                    <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                        <h5>{lang["supervisor"]}</h5>
+                                                        <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                            {
+                                                                selectedUsers.map(user => {
+                                                                    if (user.username === manager) {
+                                                                        return null;
+                                                                    }
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                        <h5>{lang["deployers"]}</h5>
+                                                        <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
+                                                            {
+                                                                selectedImple.map(user => {
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div> */}
+
+                                            </div>
+                                            {showAdminPopup && (
+                                                <div class="user-popup4">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                            onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {showImplementationPopup && (
+                                                <div class="user-popup2">
+                                                    <div class="user-popup-content">
+                                                        {users && users.map(user => {
+                                                            if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                                return (
+                                                                    <div key={user.username} class="user-item">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                            onChange={() => handleImpleCheck(user, 'deployer')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                    <div className="user-popup-actions">
+                                                        <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
+                                                        <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={submitUpdateProject} class="btn btn-success ">{lang["btn.update"]}</button>
+                                    <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Progress */}
+                    <div class="col-md-7">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0">
+                                    <h5>{lang["projectprocess"]}</h5>
+                                </div>
+                            </div>
+                            <div class="table_section padding_infor_info">
+                                <div className="d-flex">
+                                    <div>
+                                        <span className="status-label d-block" style={{
+                                            backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
+                                            whiteSpace: "nowrap"
+                                        }}>
+                                            {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                        </span>
+                                    </div>
+                                    <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
+                                </div>
+                                <div class="progress skill-bar ">
+                                    <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mt-2">
+                                    <p class="font-weight-bold">{lang["tasklist"]}: </p>
+                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    {
+                                        sortedMembers && sortedMembers.length > 0 ? (
+                                            <>
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                            <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentMembersTask.map((task, index) => (
+                                                            <tr key={task.id}>
+                                                                <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
+
+                                                                <td style={{ maxWidth: "100px" }}>
+                                                                    <div style={{
+                                                                        width: "100%",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                        whiteSpace: "nowrap"
+                                                                    }}>
+                                                                        {task.task_name}
+                                                                    </div>
+                                                                </td>
+                                                                <td style={{ width: "170px" }} >
+                                                                    {
+                                                                        task.members && task.members.length > 0 ?
+                                                                            task.members.slice(0, 2).map(member => (
+                                                                                <img
+                                                                                    class="img-responsive circle-image-cus"
+                                                                                    src={proxy + member.avatar}
+                                                                                    alt={member.username}
+                                                                                />
+                                                                            )) :
+                                                                            <p>{lang["projectempty"]} </p>
+                                                                    }
+                                                                    {
+                                                                        task.members.length > 2 &&
+                                                                        <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
+                                                                            <span>+{task.members.length - 3}</span>
+                                                                        </div>
+                                                                    }
+                                                                </td>
+                                                                <td class="align-center" style={{ minWidth: "130px" }} >
+
+
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={task.task_status}
+                                                                        onChange={handleSelectChange}
+                                                                        disabled={task.task_approve}
+                                                                    >
+
+                                                                        {statusTaskView.map((status, index) => {
+                                                                            return (
+                                                                                <option key={index} value={status.value} data-taskid={task.task_id}>
+                                                                                    {lang[status.label]}
+                                                                                </option>
+                                                                            );
+                                                                        })}
+                                                                    </select>
+
+                                                                </td>
+                                                                <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                                    {getStatusLabel(task.task_approve ? 1 : 0)}
+                                                                </td>
+                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+
+                                                                    {
+                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                        <>
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                                                                            {task.task_approve
+                                                                                ? (task.task_status !== StatusTask.NOT_APPROVED
+                                                                                    ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                                : (task.task_status === StatusTask.COMPLETE.value
+                                                                                    ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            }
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
+                                                                        </>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>{lang["empty.member"]}</p>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
+                                    <nav aria-label="Page navigation example">
+                                        <ul className="pagination mb-0">
+                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
+                                                    &laquo;
+                                                </button>
+                                            </li>
+                                            {Array(totalPagesTask).fill().map((_, index) => (
+                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
+                                                        {index + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
+                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
+                                                    &raquo;
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Add Progress */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["addtask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={task.task_name} onChange={
+                                                    (e) => { setTask({ ...task, task_name: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
+                                                    <option value="">{lang["choose"]}</option>
+                                                    {statusPriority.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{lang[status.label]}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                                <input type="hidden" class="form-control" value={task.task_status} onChange={
+                                                    (e) => { setTask({ ...task, task_status: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectdescripton"]}</label>
+                                                <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
+                                                    (e) => { setTask({ ...task, task_description: e.target.value }) }
+                                                } placeholder={lang["p.description"]} />
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectmember"]}</label>
+                                                <div class="user-checkbox-container">
+                                                    {projectdetail.members?.map((user, index) => (
+                                                        <div key={index} class="user-checkbox-item">
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox" class="mr-1"
+                                                                    value={JSON.stringify(user)}
+                                                                    onChange={(e) => {
+                                                                        let selectedUser = JSON.parse(e.target.value);
+                                                                        let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                        if (alreadySelected) {
+                                                                            setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                        } else {
+                                                                            setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {user.fullname}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Update Progress */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="editTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["edittask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={updateTaskinfo.task_name} onChange={
+                                                    (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
+                                                } placeholder={lang["p.taskname"]} />
+                                            </div>
+                                            {/* <div class="form-group col-lg-6 ">
+                                                <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {statusPriority.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            </div> */}
+                                            {/* <div class="form-group col-lg-6 ">
+                                                <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
+                                                    <option value="">Chọn</option>
+                                                    {statusTaskView.map((status, index) => {
+                                                        return (
+                                                            <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            </div> */}
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["projectdescripton"]}</label>
+                                                <textarea rows="4" type="text" class="form-control" value={updateTaskinfo.task_description} onChange={
+                                                    (e) => { setUpdateTask({ ...updateTaskinfo, task_description: e.target.value }) }
+                                                } placeholder={lang["p.description"]} />
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>Thành viên</b></label>
+                                                <span className="d-block"> {
+                                                    updateTaskinfo.members && updateTaskinfo.members.length > 0 ?
+                                                        updateTaskinfo.members.slice(0, 3).map(member => (
+                                                            <img
+                                                                class="img-responsive circle-image-cus"
+                                                                src={proxy + member.avatar}
+                                                                alt={member.username}
+                                                            />
+                                                        )) :
+                                                        <p>{lang["projectempty"]} </p>
+                                                }
+                                                    {
+                                                        updateTaskinfo.members?.length > 3 &&
+                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + updateTaskinfo.members[3].avatar})` }}>
+                                                            <span>+{updateTaskinfo.members.length - 3}</span>
+                                                        </div>
+                                                    }</span>
+                                            </div>
+                                            {/* <div class="form-group col-lg-12">
+                                                <label>Quản lý</label>
+                                                <div class="user-checkbox-container">
+                                                    {updateTaskinfo.members?.map((user, index) => (
+                                                        <div key={index} class="user-checkbox-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                value={JSON.stringify(user)}
+                                                                onChange={(e) => {
+                                                                    let selectedUser = JSON.parse(e.target.value);
+                                                                    let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                    if (alreadySelected) {
+                                                                        setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                    } else {
+                                                                        setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <label>{user.fullname}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={updateTask} class="btn btn-success ">{lang["btn.update"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* View Task */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["detailtask"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+                                                <label><b>{lang["taskname"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_name} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["taskstatus"]}</b></label>
+                                                <div>
+                                                    <span className="status-label" style={{
+                                                        backgroundColor: (statusTaskView.find((s) => s.value === taskDetail.task_status) || {}).color,
+                                                        whiteSpace: "nowrap"
+                                                    }}>
+                                                        {lang[`${(statusTaskView.find((s) => s.value === taskDetail.task_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["create-at"]}</b></label>
+                                                <span className="d-block"> {taskDetail.create_at} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["creator"]}</b></label>
+                                                <span className="d-block"> {taskDetail.create_by?.fullname} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["task_priority"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_priority} </span>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["confirm"]}</b></label>
+                                                <td class="font-weight-bold" style={{ color: getStatusColor(taskDetail.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                    {getStatusLabel(taskDetail.task_approve ? 1 : 0)}
+                                                </td>
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label><b>{lang["members"]}</b></label>
+                                                <span className="d-block"> {
+                                                    taskDetail.members && taskDetail.members.length > 0 ?
+                                                        taskDetail.members.slice(0, 3).map(member => (
+                                                            <img
+                                                                class="img-responsive circle-image-cus"
+                                                                src={proxy + member.avatar}
+                                                                alt={member.username}
+                                                            />
+                                                        )) :
+                                                        <p>{lang["projectempty"]} </p>
+                                                }
+                                                    {
+                                                        taskDetail.members?.length > 3 &&
+                                                        <div className="extra-images-cus" style={{ backgroundImage: `url(${proxy + taskDetail.members[3].avatar})` }}>
+                                                            <span>+{taskDetail.members.length - 3}</span>
+                                                        </div>
+                                                    }</span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>{lang["description"]}</b></label>
+                                                <span className="d-block"> {taskDetail.task_description} </span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>Lịch sử</b></label>
+                                                <div class="table-responsive">
+                                                    {/* {
+                                                        currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
+                                                            <>
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị cũ</th>
+                                                                            <th class="font-weight-bold" scope="col">Giá trị mới</th>
+                                                                            <th class="font-weight-bold" scope="col">Thời gian thay đổi</th>
+                                                                            <th class="font-weight-bold" scope="col">Người thay đổi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {currentMembersViewDetailTask.map((task, index) => (
+                                                                            <tr key={task.id}>
+                                                                                <td scope="row">{index + 1}</td>
+                                                                                <td scope="row">
+                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                        task.modified_what === "info" ? lang["log.information"] :
+                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                task.modified_what}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Đã duyệt" :
+                                                                                        task.old_value === "false" ? "Chờ duyệt" :
+                                                                                            task.old_value}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {task.old_value === "true" ? "Chờ duyệt" :
+                                                                                        task.old_value === "false" ? "Đã duyệt" :
+                                                                                            task.old_value}</td>
+                                                                                <td scope="row">{task.modified_at}</td>
+                                                                                <td scope="row">
+                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                    {task.modified_by?.fullname}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                                <div className="d-flex justify-content-between align-items-center">
+                                                                    <p>{lang["show"]} {indexOfFirstMemberViewDetailTask + 1}-{Math.min(indexOfLastMemberViewDetailTask, taskDetail.history?.length)} {lang["of"]} {taskDetail.history?.length} {lang["results"]}</p>
+                                                                    <nav aria-label="Page navigation example">
+                                                                        <ul className="pagination mb-0">
+                                                                            <li className={`page-item ${currentViewDetailTask === 1 ? 'disabled' : ''}`}>
+                                                                                <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(currentViewDetailTask - 1); }}>&laquo;</button>
+                                                                            </li>
+                                                                            {Array(totalPagesTask).fill().map((_, index) => (
+                                                                                <li className={`page-item ${currentViewDetailTask === index + 1 ? 'active' : ''}`}>
+                                                                                    <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(index + 1); }}>{index + 1}</button>
+                                                                                </li>
+                                                                            ))}
+                                                                            <li className={`page-item ${currentViewDetailTask === totalViewDetailTask ? 'disabled' : ''}`}>
+                                                                                <button className="page-link" onClick={(e) => { e.stopPropagation(); paginateViewDetailTask(currentViewDetailTask + 1); }}>&raquo;</button>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </nav>
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>Chưa có lịch sử</p>
+                                                            </div>
+                                                        )
+                                                    } */}
+                                                    {
+                                                        taskDetail.history && taskDetail.history.length > 0 ? (
+                                                            <>
+                                                                <table class="table table-striped table-rounded table-scrollable ">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold" scope="col" style={{ maxWidth: "80px" }} >{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["oldvalue"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["newvalue"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["time"]}</th>
+                                                                            <th class="font-weight-bold" scope="col">{lang["user change"]}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {taskDetail.history.reverse().map((task, index) => (
+                                                                            <tr key={task.id}>
+                                                                                <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
+                                                                                <td scope="row">
+                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                        task.modified_what === "infor" ? lang["log.information"] :
+                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                task.modified_what}
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {
+                                                                                        task.old_value === "true" ? lang["await"] :
+                                                                                            task.old_value === "false" ? lang["approved"] :
+                                                                                                !isNaN(task.old_value) ?
+                                                                                                    lang[`${(statusProject.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                    :
+                                                                                                    `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+
+                                                                                    }
+                                                                                </td>
+                                                                                <td scope="row">
+                                                                                    {
+                                                                                        task.new_value === "true" ? lang["await"] :
+                                                                                            task.new_value === "false" ? lang["approved"] :
+                                                                                                !isNaN(task.new_value) ?
+                                                                                                    lang[`${(statusProject.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                    :
+                                                                                                    `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                    }
+                                                                                </td>
+
+                                                                                <td scope="row">{task.modified_at}</td>
+                                                                                <td scope="row">
+                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                    {task.modified_by?.fullname}
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>Chưa có lịch sử</p>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* View Description Project */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="viewDescription">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["description"]}</h4>
+                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="form-group col-lg-12">
+
+                                                <span className="d-block" style={{ textAlign: "justify" }}>
+                                                    {projectdetail.project_description}
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Export file to many form */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="exportOptions">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["export.title"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div className="row">
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["export.version"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" onChange={(e) => { setExporter({ ...exporter, version: e.target.value }) }}>
+                                                    <option value="">{lang["choose"]}</option>
+                                                    {versions.map((ver, index) => {
+                                                        return (
+                                                            <option key={index} value={ver.version_id}>{ver.version_name}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-lg-6 ">
+                                                <label>{lang["export.type"]} <span className='red_star'>*</span></label>
+                                                <select className="form-control" onChange={(e) => { setExporter({ ...exporter, type: parseInt(e.target.value) }) }}>
+                                                    <option value="">{lang["choose"]}</option>
+                                                    {exportTypes.map((type, index) => {
+                                                        return (
+                                                            <option key={index} value={type.id}>{type.label}</option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={exportTrigger} class="btn btn-success ">{lang["btn.export"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Generate activation key */}
+                    <div class={`modal ${showModal ? 'show' : ''}`} id="generateActivationKey">
+                        <div class="modal-dialog modal-dialog-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{lang["activate.title"]}</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div className="row">
+
+                                            <div class="form-group col-lg-12">
+                                                <label>{lang["activate.mac"]} <span className='red_star'>*</span></label>
+                                                <input type="text" class="form-control" value={activate.id} onChange={
+                                                    (e) => { setActivate({ ...activate, id: e.target.value }) }
+                                                } />
+                                            </div>
+
+                                            {activate.activation_key ?
+                                                <div class="form-group col-lg-12">
+                                                    <label>{lang["activate.key"]}</label>
+                                                    <textarea type="text" class="form-control" value={activate.activation_key} onChange={
+                                                        (e) => { e.preventDefault() }
+                                                    }
+                                                        style={{ minHeight: 275 }}
+                                                        spellCheck={false}
+
+                                                    />
+                                                </div>
+                                                : null
+                                            }
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onClick={generateKey} class="btn btn-success ">{lang["btn.export"]}</button>
+                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {/* Website info */}
+                <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full price_table padding_infor_info">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="row column4 graph">
-                                            {/* Proejct */}
-                                            {/* Detail */}
-                                            <div class="col-md-5">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>Thông tin dự án</h5>
-                                                                <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editProject"></i></p>
-                                                                </span>
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="full">
-                                                                            <div class="padding_infor_info">
-                                                                                <p class="font-weight-bold">{lang["projectname"]}:</p>
-                                                                                <p class="mb-2">{projectdetail.project_name}</p>
-
-
-                                                                                <div class="d-flex justify-content-between">
-                                                                                    <div>
-                                                                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
-                                                                                        <p class="mb-2">{projectdetail.project_code}</p>
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
-                                                                                        {versions.map(version => (
-                                                                                            <p class="mb-2">{version.version_name}</p>
-                                                                                        ))}
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <p class="font-weight-bold">{lang["description"]}: </p>
-                                                                                <p class="mb-2">{projectdetail.project_description}</p>
-                                                                                <p class="font-weight-bold">{lang["projectmanager"]}: </p>
-                                                                                <div class="profile_contacts">
-                                                                                    <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
-                                                                                    {projectdetail.manager?.fullname}
-                                                                                </div>
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <p class="font-weight-bold">{lang["projectmember"]}: </p>
-                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
-                                                                                        <i class="fa fa-edit"></i>
-                                                                                    </button>
-                                                                                </div>
-
-                                                                                <div class="table-responsive">
-                                                                                    {
-                                                                                        sortedMembers && sortedMembers.length > 0 ? (
-                                                                                            <>
-                                                                                                <table class="table table-striped ">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th scope="col">STT</th>
-                                                                                                            <th scope="col">Avatar</th>
-                                                                                                            <th scope="col">Họ và tên</th>
-                                                                                                            <th scope="col">Chức vụ</th>
-                                                                                                            <th scope="col">Hành động</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        {currentMembers.map((member, index) => (
-                                                                                                            <tr key={member.username}>
-                                                                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                                                                <td><img src={proxy + member.avatar} class="img-responsive circle-image" alt="#" /></td>
-                                                                                                                <td>{member.fullname}</td>
-                                                                                                                <td>
-                                                                                                                    {
-                                                                                                                        member.permission === "supervisor" ? lang["supervisor"] :
-                                                                                                                            member.permission === "deployer" ? lang["deployers"] :
-                                                                                                                                "Khác"
-                                                                                                                    }
-                                                                                                                </td>
-                                                                                                                <td>
-                                                                                                                    <img class="abc" width={20} src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(member)}></img>
-                                                                                                                </td>
-                                                                                                            </tr>
-                                                                                                        ))}
-                                                                                                    </tbody>
-                                                                                                </table>
-
-                                                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                                                    <p>Hiển thị {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} của {sortedMembers.length} kết quả</p>
-                                                                                                    <nav aria-label="Page navigation example">
-                                                                                                        <ul className="pagination mb-0">
-                                                                                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                                                                                                    &laquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                            {Array(totalPages).fill().map((_, index) => (
-                                                                                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                                                                                        {index + 1}
-                                                                                                                    </button>
-                                                                                                                </li>
-                                                                                                            ))}
-                                                                                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                                                                                                    &raquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                        </ul>
-                                                                                                    </nav>
-                                                                                                </div>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <div class="list_cont ">
-                                                                                                <p>Chưa có thành viên</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                            <div class="full graph_head d-flex">
+                                <div class="heading1 margin_0 ">
+                                    <h5>{lang["project.deploy"]}</h5>
+                                </div>
+                                <div class="ml-auto pointer" type="button" data-toggle="modal" data-target="#generateActivationKey" >
+                                    <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }}></i>
+                                </div>
+                                <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
+                                    <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }}></i>
+                                </div>
+                            </div>
+                            <div class="table_section padding_infor_info">
+                                <div class="row column1">
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-table">
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-table yellow_color"></i>
                                                 </div>
                                             </div>
-                                            {/* Update member */}
-                                            <div class={`modal show`} id="editMember">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Cập nhật thành viên dự án</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div className="form-group col-lg-12">
-                                                                        <label>Thành viên dự án</label>
-                                                                        <div class="options-container">
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">{tables.tables?.length || 0}</p>
+                                                    <p class="head_couter">Tables</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-api">
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-cog blue1_color"></i>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">{apis.length || 0}</p>
+                                                    <p class="head_couter">API</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="full counter_section margin_bottom_30 box-ui " >
+                                            <div class="couter_icon">
+                                                <div>
+                                                    <i class="fa fa-newspaper-o green_color"></i>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no">{uis.length || 0}</p>
+                                                    <p class="head_couter">UI</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row column1">
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">{lang["list of tables"]} </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        {
+                                            currentTable && currentTable.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {currentTable.map((table, index) => (
+                                                                    <tr key={table.id}>
+                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
+                                                                        <td style={{ maxWidth: "100px" }}>
+                                                                            <div style={{
+                                                                                width: "100%",
+                                                                                overflow: "hidden",
+                                                                                textOverflow: "ellipsis",
+                                                                                whiteSpace: "nowrap"
+                                                                            }}>
+                                                                                {table.table_name}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{table.create_at}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {Array(totalPagesTable).fill().map((_, index) => (
+                                                                    <li className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </>) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
 
-                                                                            <div class="option">
-                                                                                <h5>{lang["supervisor"]}</h5>
-                                                                                {
-                                                                                    selectedImple.map(user => {
-                                                                                        const userData = users.find(u => u.username === user.username);
-                                                                                        return (
-                                                                                            <div key={user.username}>
-                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    })
-                                                                                }
-                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
-                                                                                    <i class="fa fa-plus"></i>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">{lang["list of api"]} </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        {
+                                            currentApi && currentApi.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+
+                                                        <>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["api name"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {currentApi.map((api, index) => (
+                                                                        <tr key={api.id}>
+                                                                            <td scope="row">{indexOfFirstApi + index + 1}</td>
+                                                                            <td style={{ maxWidth: "100px" }}>
+                                                                                <div style={{
+                                                                                    width: "100%",
+                                                                                    overflow: "hidden",
+                                                                                    textOverflow: "ellipsis",
+                                                                                    whiteSpace: "nowrap"
+                                                                                }}>
+                                                                                    {api.api_name}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>{api.create_at}</td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+
+                                                            {/* <div className="d-flex justify-content-between align-items-center">
+                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul className="pagination mb-0">
+                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                            &laquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {Array(totalPagesApi).fill().map((_, index) => (
+                                                                        <li className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                            &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div> */}
+                                                        </>
+
+                                                    </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(1)}>
+                                                                        &#8810;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {currentPageApi > 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                {Array(totalPagesApi).fill().map((_, index) => {
+                                                                    if (
+                                                                        index + 1 === currentPageApi ||
+                                                                        (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
+                                                                    ) {
+                                                                        return (
+                                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                    {index + 1}
                                                                                 </button>
-                                                                            </div>
-                                                                            <div class="option">
-                                                                                <h5>{lang["deployers"]}</h5>
-                                                                                {
-                                                                                    selectedMonitor.map(user => {
-                                                                                        const userData = users.find(u => u.username === user.username);
-                                                                                        return (
-                                                                                            <div key={user.username}>
-                                                                                                <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    })
-                                                                                }
-                                                                                <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenMonitorPopup} >
-                                                                                    <i class="fa fa-plus"></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                                            </li>
+                                                                        )
+                                                                    }
+                                                                })}
+                                                                {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
+                                                                        &#8811;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
 
-                                                                    {showImplementationPopup && (
-                                                                        <div class="user-popup2">
-                                                                            <div class="user-popup-content">
-                                                                                {users && users.map(user => {
-                                                                                    if (!selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
-                                                                                        return (
-                                                                                            <div key={user.username} class="user-item">
-                                                                                                <input
-                                                                                                    class="user-checkbox"
-                                                                                                    type="checkbox"
-                                                                                                    checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                                                    onChange={() => handleImpleCheck(user, 'supervisor')}
-                                                                                                />
-                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
-                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                    return null;
-                                                                                })}
-                                                                            </div>
-                                                                            <div className="user-popup-actions">
-                                                                                <button class="btn btn-success" onClick={handleSaveImple}>Lưu</button>
-                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                    {showMonitorPopup && (
-                                                                        <div class="user-popup3">
-                                                                            <div class="user-popup-content">
-                                                                                {users && users.map(user => {
-                                                                                    if (!selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
-                                                                                        return (
-                                                                                            <div key={user.username} class="user-item">
-                                                                                                <input
-                                                                                                    class="user-checkbox"
-                                                                                                    type="checkbox"
-                                                                                                    checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                                                    onChange={() => handleMonitorCheck(user, 'deployer')}
-                                                                                                />
-                                                                                                <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
-                                                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                    return null;
-                                                                                })}
-                                                                            </div>
-                                                                            <div className="user-popup-actions">
-                                                                                <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
-                                                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={addMember} class="btn btn-success ">Lưu lại</button>
-                                                            <button type="button" data-dismiss="modal" class="btn btn-danger">Đóng</button>
-                                                        </div>
+
                                                     </div>
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
                                                 </div>
-                                            </div>
-                                            {/* Update Project */}
-                                            <div class={`modal show`} id="editProject">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["updateproject"]}</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["projectname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={project.project_name} onChange={
-                                                                            (e) => { setProject({ ...project, project_name: e.target.value }) }
-                                                                        } placeholder={lang["p.projectname"]} />
-                                                                        {errorMessagesedit.project_name && <span class="error-message">{errorMessagesedit.project_name}</span>}
-                                                                    </div>
-                                                                    <div class="form-group col-lg-6">
-                                                                        <label>{lang["projectcode"]} </label>
-                                                                        <input type="text" class="form-control" value={project.project_code} onChange={
-                                                                            (e) => { setProject({ ...project, project_code: e.target.value }) }
-                                                                        } placeholder={lang["p.projectcode"]} />
-                                                                    </div>
-                                                                    <div class="form-group col-lg-6 ">
-                                                                        <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
-                                                                        <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
-                                                                            {status.map((status, index) => {
-                                                                                return (
-                                                                                    <option key={index} value={status.value}>{status.label}</option>
-                                                                                );
-                                                                            })}
-                                                                        </select>
-                                                                        {errorMessagesedit.project_status && <span class="error-message">{errorMessagesedit.project_status}</span>}
-                                                                    </div>
-                                                                    <div class="form-group col-lg-12 ">
-                                                                        <label>{lang["projectdescripton"]} </label>
-                                                                        <textarea rows="5" type="text" class="form-control" value={project.project_description} onChange={
-                                                                            (e) => { setProject({ ...project, project_description: e.target.value }) }
-                                                                        } placeholder={lang["p.projectdescripton"]} />
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={submitUpdateProject} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                            <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/* Progress */}
-                                            <div class="col-md-7">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>{lang["projectprocess"]}</h5>
-                                                                {/* <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#editManager"></i></p>
-                                                                </span> */}
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="full">
-                                                                            <div class="padding_infor_info">
-                                                                                <div class="progress-cus">
-                                                                                    <span className="status-label" style={{
-                                                                                        backgroundColor: (status.find((s) => s.value === projectdetail.project_status) || {}).color
+                                            )
+
+                                        }
+
+                                    </div>
+                                    <div class="col-md-4 col-lg-4">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <p class="font-weight-bold">{lang["list of ui"]} </p>
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        {
+                                            currentUi && currentUi.length > 0 ? (
+                                                <>
+                                                    <div class="table-responsive">
+                                                        {
+                                                            currentUi && currentUi.length > 0 ? (
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                            <th class="font-weight-bold">{lang["ui name"]}</th>
+                                                                            <th class="font-weight-bold align-center">{lang["create-at"]}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {currentUi.map((ui, index) => (
+                                                                            <tr key={index}>
+                                                                                <td scope="row">{indexOfFirstUi + index + 1}</td>
+                                                                                <td style={{ maxWidth: "100px" }}>
+                                                                                    <div style={{
+                                                                                        width: "100%",
+                                                                                        overflow: "hidden",
+                                                                                        textOverflow: "ellipsis",
+                                                                                        whiteSpace: "nowrap"
                                                                                     }}>
-                                                                                        {(status.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                    </span>
-                                                                                    <span class="skill" style={{ width: '250px' }}><span class="info_valume">85%</span></span>
-                                                                                    <div class="progress skill-bar ">
-                                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style={{ width: 225 }}>
-                                                                                        </div>
+                                                                                        {ui.title}
                                                                                     </div>
-                                                                                </div>
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#addTask">
-                                                                                        <i class="fa fa-plus"></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                                <div class="table-responsive">
-                                                                                    {
-                                                                                        sortedMembers && sortedMembers.length > 0 ? (
-                                                                                            <>
-                                                                                                <table class="table table-striped">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th scope="col">SST</th>
-                                                                                                            <th scope="col">Công việc</th>
-                                                                                                            <th scope="col">Người thực hiện</th>
-                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Trạng thái</th>
-                                                                                                            <th scope="col" style={{ textAlign: "center" }}>Thao tác</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        {currentMembersTask.map((task, index) => (
-                                                                                                            <tr key={task.id}>
-                                                                                                                <td scope="row">{index + 1}</td>
-                                                                                                                <td>{task.task_name}</td>
-                                                                                                                <td >
-                                                                                                                    {
-                                                                                                                        task.members && task.members.length > 0 ?
-                                                                                                                            task.members.slice(0, 3).map(member => (
-                                                                                                                                <img
-                                                                                                                                    class="img-responsive circle-image-cus"
-                                                                                                                                    src={proxy + member.avatar}
-                                                                                                                                    alt={member.username}
-                                                                                                                                />
-
-                                                                                                                            )) :
-                                                                                                                            <p>{lang["projectempty"]} </p>
-                                                                                                                    }
-                                                                                                                    {
-                                                                                                                        task.members.length > 3 &&
-                                                                                                                        <div className="extra-images-cus">
-                                                                                                                            +{task.members.length - 3}
-                                                                                                                        </div>
-                                                                                                                    }
-                                                                                                                </td>
-                                                                                                                <td style={{ textAlign: "center" }}><span className="status-label" style={{
-                                                                                                                    backgroundColor: (statusTask.find((s) => s.value === task.task_status) || {}).color
-                                                                                                                }}>
-                                                                                                                    {(statusTask.find((s) => s.value === task.task_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                                                </span></td>
-                                                                                                                <td style={{ textAlign: "center" }}>
-
-                                                                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask"></i>
-                                                                                                                    <i class="fa fa-trash-o"></i>
-                                                                                                                </td>
-
-                                                                                                            </tr>
-                                                                                                        ))}
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                                                    <p>Hiển thị {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} của {tasks.length} kết quả</p>
-                                                                                                    <nav aria-label="Page navigation example">
-                                                                                                        <ul className="pagination mb-0">
-                                                                                                            <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
-                                                                                                                    &laquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                            {Array(totalPagesTask).fill().map((_, index) => (
-                                                                                                                <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
-                                                                                                                    <button className="page-link" onClick={() => paginateTask(index + 1)}>
-                                                                                                                        {index + 1}
-                                                                                                                    </button>
-                                                                                                                </li>
-                                                                                                            ))}
-                                                                                                            <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
-                                                                                                                <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
-                                                                                                                    &raquo;
-                                                                                                                </button>
-                                                                                                            </li>
-                                                                                                        </ul>
-                                                                                                    </nav>
-                                                                                                </div>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <div class="list_cont ">
-                                                                                                <p>Chưa có thành viên</p>
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                                                </td>
+                                                                                <td>{ui.create_at}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>Not found</p>
                                                                 </div>
-                                                            </div>
-                                                        </div>
+                                                            )
+                                                        }
+
                                                     </div>
-                                                </div>
-                                            </div>
-                                            {/* Add Progress */}
-                                            <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["addtask"]}</h4>
-                                                            <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={task.task_name} onChange={
-                                                                            (e) => { setTask({ ...task, task_name: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-6 ">
-                                                                        <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
-                                                                        <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
-                                                                            <option value="">{lang["p.projectstatus"]}</option>
-                                                                            {statusPriority.map((status, index) => {
-                                                                                return (
-                                                                                    <option key={index} value={status.value}>{status.label}</option>
-                                                                                );
-                                                                            })}
-                                                                        </select>
-                                                                        <input type="hidden" class="form-control" value={task.task_status} onChange={
-                                                                            (e) => { setTask({ ...task, task_status: e.target.value }) }
-                                                                        } placeholder={lang["p.taskname"]} />
-                                                                    </div>
-
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["projectdescripton"]}</label>
-                                                                        <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
-                                                                            (e) => { setTask({ ...task, task_description: e.target.value }) }
-                                                                        } placeholder={lang["p.description"]} />
-                                                                    </div>
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>Quản lý</label>
-                                                                        <div class="user-checkbox-container">
-                                                                            {projectdetail.members?.map((user, index) => (
-                                                                                <div key={index} class="user-checkbox-item">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        value={JSON.stringify(user)}
-                                                                                        onChange={(e) => {
-                                                                                            let selectedUser = JSON.parse(e.target.value);
-                                                                                            let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
-                                                                                            if (alreadySelected) {
-                                                                                                setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
-                                                                                            } else {
-                                                                                                setSelectedMemberTask([...selectedMemberTask, selectedUser]);
-                                                                                            }
-                                                                                        }}
-                                                                                    />
-                                                                                    <label>{user.fullname}</label>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
-                                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
+                                                                        &laquo;
+                                                                    </button>
+                                                                </li>
+                                                                {Array(totalPagesUi).fill().map((_, index) => (
+                                                                    <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateUi(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
+                                                                        &raquo;
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
                                                     </div>
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
                                                 </div>
-                                            </div>
-                                            {/* View Task */}
-                                            <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
-                                                <div class="modal-dialog modal-dialog-center">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{lang["detailtask"]}</h4>
-                                                            <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="row">
+                                            )
+                                        }
 
-                                                                    <div class="form-group col-lg-12">
-                                                                        <label>{lang["taskname"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={taskDetail.task_name} readOnly />
-                                                                        <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
-                                                                        <input type="text" class="form-control" value={taskDetail.task_status} readOnly />
-                                                                        <label>{lang["description"]} <span className='red_star'>*</span></label>
-                                                                        <textarea rows={6} class="form-control" value={taskDetail.task_description} readOnly />
-
-                                                                    </div>
-
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
-
-                                                            <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row column4 graph">
-                                            {/* Proejct */}
-                                            {/* Website */}
-                                            <div class="col-md-12">
-                                                <div class="dash_blog">
-                                                    <div class="dash_blog_inner">
-                                                        <div class="dash_head">
-                                                            <h3>
-                                                                <h5>Thông tin website triển khai</h5>
-                                                                <span class="plus_green_bt">
-                                                                    <p><i class="fa fa-edit size pointer" data-toggle="modal" data-target="#"></i></p>
-                                                                </span>
-                                                            </h3>
-                                                        </div>
-                                                        <div class="member-cus">
-                                                            <div class="msg_list_main">
-                                                                <div class="row column1">
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-briefcase purple_color2"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">1</p>
-                                                                                    <p class="head_couter">Bảng</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-users blue1_color"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">1</p>
-                                                                                    <p class="head_couter">API</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="full counter_section margin_bottom_30">
-                                                                            <div class="couter_icon">
-                                                                                <div>
-                                                                                    <i class="fa fa-cloud-download green_color"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="counter_no">
-                                                                                <div>
-                                                                                    <p class="total_no">5</p>
-                                                                                    <p class="head_couter">UI</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div class="row column1">
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách bảng </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên bảng</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>Bảng 1</td>
-                                                                                    <td>06/06/2023 11:12</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>Bảng 2</td>
-                                                                                    <td>06/06/2023 11:14</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>Bảng 3</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách API </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên API</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>API 1</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>API 2</td>
-                                                                                    <td>06/06/2023 11:17</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>API 3</td>
-                                                                                    <td>j06/06/2023 11:18</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    <div class="col-md-4 col-lg-4">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <p class="font-weight-bold">Danh sách UI </p>
-                                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>STT</th>
-                                                                                    <th>Tên trang</th>
-                                                                                    <th>Ngày tạo</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>1</td>
-                                                                                    <td>Page 1</td>
-                                                                                    <td>06/06/2023 11:18</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>2</td>
-                                                                                    <td>Page 2</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>3</td>
-                                                                                    <td>Page 3</td>
-                                                                                    <td>06/06/2023 11:16</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1266,8 +2516,6 @@ export default () => {
                 </div>
             </div >
         </div >
-
-
     )
 }
 
