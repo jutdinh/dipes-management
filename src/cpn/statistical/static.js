@@ -16,39 +16,12 @@ export default () => {
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
     const [tab, setTab] = useState(1);
-    const [projects, setProjects] = useState([]);
+   
     const [data, setData] = useState([]);
     const chartTab = () => {
         setTab(!tab)
     }
-    useEffect(() => {
-        fetch(`${proxy}/projects/all/projects`, {
-            headers: {
-                Authorization: _token
-            }
-        })
-            .then(res => res.json())
-            .then(resp => {
-                const { success, data, status, content } = resp;
-                console.log(resp)
-                if (success) {
-                    if (data != undefined && data.length > 0) {
-                        setProjects(data);
-                        dispatch({
-                            branch: "default",
-                            type: "setProjects",
-                            payload: {
-                                projects: data
-                            }
-                        })
-                    }
-                } else {
-                    window.location = "/404-not-found"
-                }
-            })
-    }, [])
-    console.log(projects)
-
+    
 
     const [statis, setStatis] = useState([]);
 

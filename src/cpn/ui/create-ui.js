@@ -300,12 +300,76 @@ export default () => {
             setDisplayname("");
             setFomular("");
         }
-
     };
+
+    //Cập nhật trường tính toán
+    const [calculatesUpdate, setCalculatesUpdate] = useState({
+        display_name: "",
+        fomular: "",
+        fomular_alias: ""
+    });
+    const updateFieldCalculates = (cal) => {
+        console.log(cal)
+        setCalculatesUpdate(cal)
+    }
+    console.log(calculatesUpdate)
+    const submitupdateFieldCalculates = () => {
+        const updatedCalculates = modalTemp.calculates.map(item =>
+            item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
+        );
+        setCalculates(updatedCalculates);
+        setModalTemp(prev => ({
+            ...prev,
+            calculates: updatedCalculates
+        }));
+    };
+
+    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
+    useEffect(() => {
+        if (calculatesUpdate.fomular_alias) {
+            submitupdateFieldCalculates();
+        }
+    }, [calculatesUpdate]);
+    console.log(calculatesUpdate)
+    console.log(modalTemp.calculates.display_name)
+
+    const handleDeleteCalculates = (cal) => {
+        console.log(cal)
+        // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+        // setModalTemp(prev => ({
+        //     ...prev,
+        //     calculates: newCalculates
+        // }));
+        Swal.fire({
+            title: lang["confirm"],
+            text: lang["delete.field"],
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newCalculates = modalTemp.calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+                setModalTemp(prev => ({
+                    ...prev,
+                    calculates: newCalculates
+                }));
+                Swal.fire({
+                    title: lang["success.title"],
+                    text: lang["delete.success.field"],
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                })
+            }
+        });
+    }
+
     const [statistical, setStatistical] = useState([]);
-
     const handleSubmitFieldStatistical = async (event) => {
-
         event.preventDefault();
         if (validateStatistical()) {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
@@ -330,7 +394,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        // console.log(sta)
+        console.log(sta)
         setStatisticalUpdate(sta)
     }
 
@@ -346,7 +410,7 @@ export default () => {
     };
 
     const handleDeleteStatistical = (sta) => {
-        // console.log(sta)
+        console.log(sta)
 
         Swal.fire({
             title: lang["confirm"],
@@ -368,7 +432,7 @@ export default () => {
                 }));
 
                 Swal.fire({
-                    title: lang["success"],
+                    title: lang["success.title"],
                     text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
@@ -575,7 +639,7 @@ export default () => {
                                                         </button>
                                                     </div>
                                                     <div class="table-responsive">
-                                                        {calculates && calculates.length > 0 ? (
+                                                        {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
                                                             <table class="table table-striped">
                                                                 <thead>
                                                                     <tr>
@@ -594,9 +658,9 @@ export default () => {
                                                                             <td>{calculate.display_name}</td>
                                                                             <td>{calculate.fomular_alias}</td>
                                                                             <td>{calculate.fomular}</td>
-                                                                            <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(calculate)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
-                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(calculate)} title={lang["delete"]}></i>
+                                                                            <td class="align-center " style={{ minWidth: "130px" }}>
+                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
                                                                             </td>
                                                                         </tr>
                                                                     ))}
@@ -647,7 +711,7 @@ export default () => {
                                                             </table>
                                                         ) : (
                                                             <div class="list_cont ">
-                                                                <p>Chưa có dữ liệu trường tính toán</p>
+                                                                <p>Not found</p>
                                                             </div>
                                                         )
                                                         }
@@ -669,10 +733,7 @@ export default () => {
                                             <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                             </button>
                                         </div>
-
-
                                     ) : null
-
                                     }
                                 </div>
                             </div>
@@ -723,7 +784,6 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
                 {/*add Field statistical */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">
                     <div class="modal-dialog modal-dialog-center">
@@ -750,7 +810,6 @@ export default () => {
                                     <div class="form-group col-md-12">
                                         <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
                                         <div class="table-responsive">
-
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
@@ -758,11 +817,8 @@ export default () => {
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["alias"]}</th>
                                                         <th class="font-weight-bold">{lang["datatype"]}</th>
-
-
                                                     </tr>
                                                 </thead>
-
                                                 <tbody>
                                                     {getAllField.fields?.map((field, index) =>
                                                         <tr key={index}>
@@ -773,10 +829,8 @@ export default () => {
 
                                                         </tr>
                                                     )}
-
                                                 </tbody>
                                             </table>
-
                                         </div>
                                         <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
                                         <div class="table-responsive">
@@ -955,7 +1009,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1042,7 +1096,76 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/* Edit Field calculates */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="editCalculates">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["edit field calculations"]}</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="row">
+                                        <div className="form-group col-lg-12">
+                                            <label>{lang["fields name"]} <span className='red_star'>*</span></label>
+                                            <input type="text" className="form-control" value={calculatesUpdate.display_name} onChange={
+                                                (e) => { setCalculatesUpdate({ ...calculatesUpdate, display_name: e.target.value }) }
+                                            } placeholder="" />
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
+                                            <div class="table-responsive">
 
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                            <th class="font-weight-bold">{lang["datatype"]}</th> 
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        {getAllField.fields?.map((field, index) =>
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{field.field_name}</td>
+                                                                <td>{field.fomular_alias}</td>
+                                                                <td>{field.props.DATATYPE}</td>
+
+                                                            </tr>
+                                                        )}
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                        <div className={`form-group col-lg-12`}>
+                                            <label>{lang["fomular"]} <span className='red_star'>*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={calculatesUpdate.fomular}
+                                                onChange={
+                                                    (e) => { setCalculatesUpdate({ ...calculatesUpdate, fomular: e.target.value }) }
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={submitupdateFieldCalculates} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/*Preview */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="preview">

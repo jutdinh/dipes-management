@@ -13,7 +13,9 @@ export default (props) => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
+
     let uis_temp;
+
 
     if (data[0]?.fields) {
         uis_temp = data[0].fields.map((field, index) => {
@@ -59,7 +61,9 @@ export default (props) => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis_temp.length / rowsPerPageUi);
-    console.log(title)
+    console.log("statistic", statistic)
+    console.log("cal", calculate)
+
 
     return (
         <div class="container-fluid">
@@ -76,7 +80,7 @@ export default (props) => {
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head d-flex">
                             <div class="heading1 margin_0 ">
-                                <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || "Table Example"}</h5>
+                                <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || "Table Example"}</h5>
                             </div>
                             <div class="ml-auto">
                                 <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
@@ -97,7 +101,10 @@ export default (props) => {
                                                             {data[0]?.fields.map((ui, index) => (
                                                                 <th class="font-weight-bold">{ui.field_name}</th>
                                                             ))}
-                                                               <th class="font-weight-bold align-center">{lang["log.action"]}</th>
+                                                            {calculate.map((cal, index) => (
+                                                                <th class="font-weight-bold">{cal.display_name}</th>
+                                                            ))}
+                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -107,6 +114,36 @@ export default (props) => {
                                                                 {data[0]?.fields.map((field, fieldIndex) => (
                                                                     <td key={fieldIndex}>{ui[field.field_name]}</td>
                                                                 ))}
+                                                                <td>Tính toán</td>
+                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
+                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                      
+                                                        {statistic && statistic.length > 0 ? (
+                                                            <tr>
+                                                                <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>{statistic[0]?.display_name}: Dữ liệu </td>
+                                                            </tr>
+                                                        ) : null
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <table class="table table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">STT</th>
+                                                            <th class="font-weight-bold">Trường</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentUi.map((ui, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{ui.data}</td>
                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
@@ -114,36 +151,10 @@ export default (props) => {
                                                             </tr>
                                                         ))}
                                                         <tr>
-                                                            <td class="font-weight-bold" colspan={`${data[0]?.fields.length + 2}`} style={{ textAlign: 'right' }}>Nam: 10, Nữ: 20, Tổng: 1000</td>
+                                                            <td class="font-weight-bold" colspan="3" style={{ textAlign: 'right' }}>Thống kê: 5</td>
                                                         </tr>
                                                     </tbody>
-
                                                 </table>
-                                            ) : (
-                                                <table class="table table-striped ">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="font-weight-bold">STT</th>
-                                                        <th class="font-weight-bold">Trường</th>
-                                                        <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {currentUi.map((ui, index) => (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{ui.data}</td>
-                                                            <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
-                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    <tr>
-                                                        <td class="font-weight-bold" colspan="3" style={{ textAlign: 'right' }}>Thống kê: 5</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
                                             )
                                         }
                                         <div className="d-flex justify-content-between align-items-center">

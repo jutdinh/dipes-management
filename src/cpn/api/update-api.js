@@ -620,7 +620,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldCalculates = (cal) => {
-        console.log(cal)
+        console.log("Log data trường tính toán ",cal)
         setCalculatesUpdate(cal)
 
 
@@ -647,6 +647,7 @@ export default () => {
     }, [calculatesUpdate]);
     console.log(calculates)
     console.log(modalTemp.calculates)
+
     const handleDeleteCalculates = (cal) => {
         console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
@@ -823,7 +824,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit api"]}
+                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit api"]}
                                     </label> </h5>
                                 </div>
                                 <div>
@@ -1212,7 +1213,6 @@ export default () => {
                                                                             <th class="font-weight-bold">{lang["alias"]}</th>
                                                                             <th class="font-weight-bold">{lang["calculations"]}</th>
                                                                             <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -1226,7 +1226,6 @@ export default () => {
                                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculates)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
                                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculates)} title={lang["delete"]}></i>
                                                                                 </td>
-
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
