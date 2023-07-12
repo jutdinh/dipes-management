@@ -64,7 +64,7 @@ export default () => {
             text: lang["alarm.message"],
             icon: "warning",
             showConfirmButton: true,
-            timer: 1500,
+            
         })
     }
 

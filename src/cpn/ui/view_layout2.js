@@ -9,11 +9,13 @@ import Swal from 'sweetalert2';
 import { Tables } from ".";
 export default (props) => {
     const { lang, proxy, auth } = useSelector(state => state);
-    const { data } = props;
+    const { title, data, calculate, statistic } = props;
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
+
     let uis_temp;
+
 
     if (data[0]?.fields) {
         uis_temp = data[0].fields.map((field, index) => {
@@ -49,6 +51,22 @@ export default (props) => {
         ]
     }
 
+    let uis_temp_cal;
+
+
+    if (calculate) {
+        uis_temp_cal = calculate.map((field, index) => {
+            const tempObject = {
+                id: index + 1,
+            };
+
+            for (let f of calculate) {
+                tempObject[f.display_name] = `Dữ liệu ${index + 1} ${f.display_name}`;
+            }
+
+            return tempObject;
+        });
+    } 
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 11;
@@ -59,7 +77,9 @@ export default (props) => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis_temp.length / rowsPerPageUi);
-    console.log(data[0]?.fields.length)
+    console.log("statistic", statistic)
+    console.log("cal", uis_temp_cal)
+
 
     return (
         <div class="container-fluid">
@@ -76,7 +96,7 @@ export default (props) => {
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head d-flex">
                             <div class="heading1 margin_0 ">
-                                <h5> <a onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-3"></i></a>{data[0]?.table_name || "Table Example 2"}</h5>
+                                <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || "Table Example 2"}</h5>
                             </div>
                             <div class="ml-auto">
                                 <button type="button" class="btn btn-primary custom-buttonadd ml-auto" >
@@ -90,14 +110,17 @@ export default (props) => {
                                     <div class="table-responsive">
                                         {
                                             data && data.length > 0 ? (
-                                                <table class="table ">
-                                                    <thead class = "thead-light">
+                                                <table class="table table-secondary">
+                                                    <thead>
                                                         <tr>
                                                             <th class="font-weight-bold">{lang["log.no"]}</th>
                                                             {data[0]?.fields.map((ui, index) => (
                                                                 <th class="font-weight-bold">{ui.field_name}</th>
                                                             ))}
-                                                            <th class="font-weight-bold">{lang["acction"]}</th>
+                                                            {calculate.map((cal, index) => (
+                                                                <th class="font-weight-bold">{cal.display_name}</th>
+                                                            ))}
+                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -107,6 +130,39 @@ export default (props) => {
                                                                 {data[0]?.fields.map((field, fieldIndex) => (
                                                                     <td key={fieldIndex}>{ui[field.field_name]}</td>
                                                                 ))}
+                                                                {uis_temp_cal.map((calc, calcIndex) => (
+                                                                    <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>
+                                                                ))}
+
+                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
+                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+
+                                                        {statistic && statistic.length > 0 ? (
+                                                            <tr>
+                                                                <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>{statistic[0]?.display_name}: Dữ liệu </td>
+                                                            </tr>
+                                                        ) : null
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <table class="table table-secondary ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">STT</th>
+                                                            <th class="font-weight-bold">Trường</th>
+                                                            <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentUi.map((ui, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{ui.data}</td>
                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
@@ -114,36 +170,10 @@ export default (props) => {
                                                             </tr>
                                                         ))}
                                                         <tr>
-                                                            <td class="font-weight-bold" colspan={`${data[0]?.fields.length + 2}`} style={{ textAlign: 'right' }}>Nam: 10, Nữ: 20, Tổng: 1000</td>
+                                                            <td class="font-weight-bold" colspan="3" style={{ textAlign: 'right' }}>Thống kê: 5</td>
                                                         </tr>
                                                     </tbody>
-
                                                 </table>
-                                            ) : (
-                                                <table class="table">
-                                                 <thead class = "thead-light">
-                                                    <tr>
-                                                        <th class="font-weight-bold">STT</th>
-                                                        <th class="font-weight-bold">Trường</th>
-                                                        <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {currentUi.map((ui, index) => (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{ui.data}</td>
-                                                            <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
-                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    <tr>
-                                                        <td class="font-weight-bold" colspan="3" style={{ textAlign: 'right' }}>Thống kê: 5</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
                                             )
                                         }
                                         <div className="d-flex justify-content-between align-items-center">
@@ -151,21 +181,21 @@ export default (props) => {
                                             <nav aria-label="Page navigation example">
                                                 <ul className="pagination mb-0">
                                                     <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
+                                                        <span className="page-link" >
                                                             &laquo;
-                                                        </button>
+                                                        </span>
                                                     </li>
                                                     {Array(totalPagesUi).fill().map((_, index) => (
                                                         <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateUi(index + 1)}>
+                                                            <span className="page-link" >
                                                                 {index + 1}
-                                                            </button>
+                                                            </span>
                                                         </li>
                                                     ))}
                                                     <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
+                                                        <span className="page-link" >
                                                             &raquo;
-                                                        </button>
+                                                        </span>
                                                     </li>
                                                 </ul>
                                             </nav>

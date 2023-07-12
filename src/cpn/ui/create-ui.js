@@ -1180,7 +1180,7 @@ export default () => {
                                     <div class="midde_cont">
                                         <>
                                             {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 1 && <Layout2 data={tables} />}
+                                            {layout === 1 && <Layout2  title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>
                                 </form>

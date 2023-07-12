@@ -51,6 +51,22 @@ export default (props) => {
         ]
     }
 
+    let uis_temp_cal;
+
+
+    if (calculate) {
+        uis_temp_cal = calculate.map((field, index) => {
+            const tempObject = {
+                id: index + 1,
+            };
+
+            for (let f of calculate) {
+                tempObject[f.display_name] = `Dữ liệu ${index + 1} ${f.display_name}`;
+            }
+
+            return tempObject;
+        });
+    } 
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 11;
@@ -62,7 +78,7 @@ export default (props) => {
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis_temp.length / rowsPerPageUi);
     console.log("statistic", statistic)
-    console.log("cal", calculate)
+    console.log("cal", uis_temp_cal)
 
 
     return (
@@ -114,14 +130,17 @@ export default (props) => {
                                                                 {data[0]?.fields.map((field, fieldIndex) => (
                                                                     <td key={fieldIndex}>{ui[field.field_name]}</td>
                                                                 ))}
-                                                                <td>Tính toán</td>
+                                                                {uis_temp_cal.map((calc, calcIndex) => (
+                                                                    <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>
+                                                                ))}
+
                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
                                                                     <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
                                                                 </td>
                                                             </tr>
                                                         ))}
-                                                      
+
                                                         {statistic && statistic.length > 0 ? (
                                                             <tr>
                                                                 <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>{statistic[0]?.display_name}: Dữ liệu </td>
