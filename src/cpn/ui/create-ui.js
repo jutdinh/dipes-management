@@ -38,15 +38,16 @@ export default () => {
         parmas: [],
         tables: [],
         statistic_fields: [],
+        calculates: []
     };
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
         const message = responseMessages[status];
-    
+
         const title = message?.[langItem]?.type || "Unknown error";
         const description = message?.[langItem]?.description || "Unknown error";
         const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
+
         Swal.fire({
             title,
             text: description,
@@ -102,7 +103,8 @@ export default () => {
                 widget: {
                     table_id: modalTemp.tables,
                     layout_id: modalTemp.layout_id,
-                    statistic: modalTemp.statistic_fields
+                    statistic: modalTemp.statistic_fields,
+                    calculates: modalTemp.calculates
                 },
             }
             // console.log(requestBody)
@@ -120,9 +122,7 @@ export default () => {
                     showApiResponseMessage(status);
                 })
         }
-
     };
-
 
     const [errorTable, setErrorTable] = useState({});
     const validateTable = () => {
@@ -188,9 +188,9 @@ export default () => {
     }, [])
 
     const [selectedTables, setSelectedTables] = useState(null);
-    //  hiển thị các tường của bảngđược chọn
+    //  hiển thị các tường của bảng được chọn
     const [tables, setTables] = useState([]);
-
+    console.log("table", tables)
     useEffect(() => {
         const fetchTable = (tableId) => {
             return fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -273,7 +273,35 @@ export default () => {
     }
 
     const [field, setField] = useState("");
+    const [errorCaculates, setErrorCaculates] = useState({});
+    const validateCaculates = () => {
+        let temp = {};
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
+        setErrorCaculates({
+            ...temp
+        });
 
+        return Object.values(temp).every(x => x === "");
+    }
+    const handleSubmitFieldCalculates = async (event) => {
+        event.preventDefault();
+        if (validateCaculates()) {
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+            const newCalculate = { display_name, fomular_alias, fomular };
+
+
+            // Cập nhật modalTemp
+            setModalTemp(prev => ({
+                ...prev,
+                calculates: [...prev.calculates, newCalculate]
+            }));
+            setCalculates([...calculates, newCalculate])
+            setDisplayname("");
+            setFomular("");
+        }
+
+    };
     const [statistical, setStatistical] = useState([]);
 
     const handleSubmitFieldStatistical = async (event) => {
@@ -451,10 +479,8 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                               
                                     <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create ui"]}
                                     </label> </h5>
-
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -479,7 +505,14 @@ export default () => {
                                         />
                                     </div>
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold">Layout <span className='red_star'>*</span></label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <label class="font-weight-bold">Layout</label>
+                                            {modalTemp.layout_id == 0 ?
+                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
+                                                :
+                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                            }
+                                        </div>
                                         <select
                                             className="form-control mb-3"
                                             value={modalTemp.layout_id}
@@ -488,16 +521,6 @@ export default () => {
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
                                         </select>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <label class="font-weight-bold">Preview <span className='red_star'>*</span></label>
-                                        <br />
-
-                                        {modalTemp.layout_id == 0 ?
-                                            <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
-                                            :
-                                            <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
-                                        }
                                     </div>
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered mb-3">
@@ -543,8 +566,52 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
+                                                {/* Chọn trường tính toán */}
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <p class="font-weight-bold">{lang["calculated fields"]}</p>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        {calculates && calculates.length > 0 ? (
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                        <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                        <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                                        <th class="font-weight-bold align-center">{lang["log.action"]}</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {modalTemp.calculates.map((calculate, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{calculate.display_name}</td>
+                                                                            <td>{calculate.fomular_alias}</td>
+                                                                            <td>{calculate.fomular}</td>
+                                                                            <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(calculate)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(calculate)} title={lang["delete"]}></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>Not found</p>
+                                                            </div>
+                                                        )
+                                                        }
+                                                    </div>
+                                                </div>
                                                 {/* Chọn trường thống kê */}
-                                                <div class="col-md-12 col-lg-12 bordered">
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["statistical fields"]}</p>
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
@@ -561,7 +628,6 @@ export default () => {
                                                                         <th class="font-weight-bold">{lang["fields name statis"]}</th>
                                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
                                                                         <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -592,16 +658,22 @@ export default () => {
                                             null
                                         )
                                     }
-                                    <div className="mt-2 d-flex justify-content-end ml-auto">
-                                        <button type="button" onClick={addUI} class="btn btn-success mr-2">{lang["btn.create"]}</button>
-                                        <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                        </button>
-                                    </div>
-                                    {/* </>
-                                        ) : (
-                                            null
-                                        )
-                                    } */}
+                                    {tables && tables.length > 0 ? (
+                                        <div className="mt-2 d-flex justify-content-end ml-auto">
+                                            {modalTemp.layout_id == 0 ?
+                                                <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                :
+                                                <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                            }
+                                            <button type="button" onClick={addUI} class="btn btn-success mr-2">{lang["btn.create"]}</button>
+                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                            </button>
+                                        </div>
+
+
+                                    ) : null
+
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -684,7 +756,7 @@ export default () => {
                                                     <tr>
                                                         <th class="font-weight-bold">{lang["log.no"]}</th>
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                        <th class="font-weight-bold">{lang["fomular"]}</th>
+                                                        <th class="font-weight-bold">{lang["alias"]}</th>
                                                         <th class="font-weight-bold">{lang["datatype"]}</th>
 
 
@@ -706,6 +778,36 @@ export default () => {
                                             </table>
 
                                         </div>
+                                        <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
+                                        <div class="table-responsive">
+                                            {calculates && calculates.length > 0 ? (
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {modalTemp.calculates.map((calculate, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{calculate.display_name}</td>
+                                                                <td>{calculate.fomular_alias}</td>
+                                                                <td>{calculate.fomular}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+                                            }
+                                        </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
@@ -714,7 +816,12 @@ export default () => {
 
                                             {getAllField.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.field_name}
+                                                    {field.field_name} - {field.fomular_alias}
+                                                </option>
+                                            ))}
+                                            {calculates.map((calculate, index) => (
+                                                <option key={`calculate-${index}`} value={calculate.fomular_alias}>
+                                                    {calculate.display_name}  {calculate.fomular_alias}
                                                 </option>
                                             ))}
                                         </select>
@@ -783,7 +890,7 @@ export default () => {
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
                                                         <th class="font-weight-bold">{lang["datatype"]}</th>
@@ -854,6 +961,87 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/*add Field calculates */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldCalculates">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["add field calculations"]}</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className={`form-group col-lg-12`}>
+                                        <label>{lang["fields name"]} <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value={display_name}
+                                            onChange={(e) => setDisplayname(e.target.value)}
+                                            required
+                                        />
+                                        {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["fields display"]}</label>
+                                        <div class="table-responsive">
+
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                        <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                        <th class="font-weight-bold">{lang["fomular"]}</th>
+                                                        <th class="font-weight-bold">{lang["datatype"]}</th>
+
+
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    {getAllField.fields?.map((field, index) =>
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>{field.field_name}</td>
+                                                            <td>{field.fomular_alias}</td>
+                                                            <td>{field.props.DATATYPE}</td>
+
+                                                        </tr>
+                                                    )}
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                    <div className={`form-group col-lg-12`}>
+                                        <label>{lang["fomular"]} <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value={fomular}
+                                            onChange={(e) => setFomular(e.target.value)}
+                                            required
+                                        />
+                                        {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["creator"]} </label>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["time"]} </label>
+                                        <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
                 {/*Preview */}
@@ -868,8 +1056,8 @@ export default () => {
                                 <form>
                                     <div class="midde_cont">
                                         <>
-                                            {layout === 0 && <Layout1 data={modalTemp}  />}
-                                            {layout === 1 && <Layout2 />}
+                                            {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 1 && <Layout2 data={tables} />}
                                         </>
                                     </div>
                                 </form>

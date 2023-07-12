@@ -569,14 +569,6 @@ export default () => {
                                             />
                                             {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                         </div>
-
-
-
-
-
-
-
-
                                         <div class="form-group">
                                             <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                             <div class="checkbox-group">
