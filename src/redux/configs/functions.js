@@ -51,22 +51,33 @@ const showApiResponseMessage = (status, reload = true) => {
 
     const title = message?.[langItem]?.type || "Unknown error";
     const description = message?.[langItem]?.description || "Unknown error";
-    const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    let icon = "error";  
+    if (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") {
+        icon = "success";
+    } else if (message?.[langItem]?.type === "Cảnh báo" || message?.[langItem]?.type === "Warning") {
+        icon = "warning";
+    }
 
-    Swal.fire({
-        title,
-        text: description,
-        icon,
-        showConfirmButton: false,
-        timer: 1500,
-    }).then(() => {
-        if (icon === "success") {
-
-            if( reload ){
+    if (icon === "success") {
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (reload) {
                 window.location.reload();
             }
-        }
-    });
+        });
+    } else if (icon === "error") {
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: true,
+        });
+    }
 };
 
 

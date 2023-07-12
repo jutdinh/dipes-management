@@ -12,6 +12,9 @@ import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const stringifiedUser = localStorage.getItem("user");
+    const _users = JSON.parse(stringifiedUser)
+
     const { showApiResponseMessage } = functions
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
@@ -330,7 +333,7 @@ export default () => {
             })
     }, [versions])
     console.log(`${versions[0]?.version_id}`)
-    console.log(uis)
+
     const addMember = (e) => {
         e.preventDefault();
         fetch(`${proxy}/projects/members`, {
@@ -706,8 +709,8 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
-
-
+    console.log("manger", projectdetail.manager)
+console.log("members", currentMembers)
     useEffect(() => {
         if (projectdetail.project_description?.length > 100) {
             setShowViewMore(true);
@@ -746,9 +749,9 @@ export default () => {
     const updateRoleMember = (member) => {
         let newRole = '';
         if (member.role === 'supervisor') {
-            newRole = 'pd';
+            newRole = 'supervisor';
         } else if (member.role === 'deployer') {
-            newRole = 'ps';
+            newRole = 'deployer';
         }
         console.log(member)
         const requestBody = {
@@ -1087,32 +1090,33 @@ export default () => {
                                                                 <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
                                                                 <td>{member.fullname}</td>
                                                                 {
-                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 ? (
-                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <select
-                                                                                className="form-control"
-                                                                                value={member.permission}
-                                                                                onChange={handleSelectChangeMember}
-                                                                                data-username={member.username}
-                                                                            >
-                                                                                {RolesMember.map((role, index) => {
-                                                                                    return (
-                                                                                        <option key={index} value={role.value} data-taskid={member.permission}>
-                                                                                            {lang[role.label]}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </select>
-                                                                        </td>
-                                                                    ) : (
-                                                                        <td style={{ minWidth: "80px" }}>
-                                                                            {
-                                                                                member.permission === "supervisor" ? lang["supervisor"] :
-                                                                                    member.permission === "deployer" ? lang["deployers"] :
-                                                                                        "Khác"
-                                                                            }
-                                                                        </td>
-                                                                    )
+                                                                   (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
+                                                                    <td className="align-center" style={{ minWidth: "130px" }}>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={member.permission}
+                                                                            onChange={handleSelectChangeMember}
+                                                                            data-username={member.username}
+                                                                        >
+                                                                            {RolesMember.map((role, index) => {
+                                                                                return (
+                                                                                    <option key={index} value={role.value} data-taskid={member.permission}>
+                                                                                        {lang[role.label]}
+                                                                                    </option>
+                                                                                );
+                                                                            })}
+                                                                        </select>
+                                                                    </td>
+                                                                ) : (
+                                                                    <td style={{ minWidth: "80px" }}>
+                                                                        {
+                                                                            member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                member.permission === "deployer" ? lang["deployers"] :
+                                                                                    "Khác"
+                                                                        }
+                                                                    </td>
+                                                                )
+                                                                
                                                                 }
 
 
@@ -1607,7 +1611,7 @@ export default () => {
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
 
                                                                     {
-                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                       (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                         <>
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                                             {task.task_approve

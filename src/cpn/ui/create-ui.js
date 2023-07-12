@@ -190,7 +190,7 @@ export default () => {
     const [selectedTables, setSelectedTables] = useState(null);
     //  hiển thị các tường của bảng được chọn
     const [tables, setTables] = useState([]);
-
+    console.log("table", tables)
     useEffect(() => {
         const fetchTable = (tableId) => {
             return fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -276,11 +276,8 @@ export default () => {
     const [errorCaculates, setErrorCaculates] = useState({});
     const validateCaculates = () => {
         let temp = {};
-
-        temp.display_name = display_name ? "" : "Trường này không được để trống.";
-        temp.fomular = fomular ? "" : "Trường này không được để trống.";
-
-
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
         setErrorCaculates({
             ...temp
         });
@@ -508,7 +505,14 @@ export default () => {
                                         />
                                     </div>
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold">Layout <span className='red_star'>*</span></label>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <label class="font-weight-bold">Layout</label>
+                                            {modalTemp.layout_id == 0 ?
+                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
+                                                :
+                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                            }
+                                        </div>
                                         <select
                                             className="form-control mb-3"
                                             value={modalTemp.layout_id}
@@ -517,16 +521,6 @@ export default () => {
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
                                         </select>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <label class="font-weight-bold">Preview <span className='red_star'>*</span></label>
-                                        <br />
-
-                                        {modalTemp.layout_id == 0 ?
-                                            <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
-                                            :
-                                            <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary" data-toggle="modal" data-target="#preview">Preview Layout</button>
-                                        }
                                     </div>
                                     {/* Chọn các bảng */}
                                     <div class="col-md-12 col-lg-12 bordered mb-3">
@@ -573,8 +567,7 @@ export default () => {
                                         tables && tables.length > 0 ? (
                                             <>
                                                 {/* Chọn trường tính toán */}
-
-                                                <div class="col-md-12 col-lg-12 bordered">
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["calculated fields"]}</p>
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
@@ -617,9 +610,8 @@ export default () => {
                                                         }
                                                     </div>
                                                 </div>
-
                                                 {/* Chọn trường thống kê */}
-                                                <div class="col-md-12 col-lg-12 bordered">
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["statistical fields"]}</p>
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
@@ -636,7 +628,6 @@ export default () => {
                                                                         <th class="font-weight-bold">{lang["fields name statis"]}</th>
                                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
                                                                         <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -667,16 +658,22 @@ export default () => {
                                             null
                                         )
                                     }
-                                    <div className="mt-2 d-flex justify-content-end ml-auto">
-                                        <button type="button" onClick={addUI} class="btn btn-success mr-2">{lang["btn.create"]}</button>
-                                        <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                        </button>
-                                    </div>
-                                    {/* </>
-                                        ) : (
-                                            null
-                                        )
-                                    } */}
+                                    {tables && tables.length > 0 ? (
+                                        <div className="mt-2 d-flex justify-content-end ml-auto">
+                                            {modalTemp.layout_id == 0 ?
+                                                <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                :
+                                                <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                            }
+                                            <button type="button" onClick={addUI} class="btn btn-success mr-2">{lang["btn.create"]}</button>
+                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                            </button>
+                                        </div>
+
+
+                                    ) : null
+
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -783,34 +780,34 @@ export default () => {
                                         </div>
                                         <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
                                         <div class="table-responsive">
-                                                        {calculates && calculates.length > 0 ? (
-                                                            <table class="table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                        <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                        <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                        <th class="font-weight-bold">{lang["calculations"]}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {modalTemp.calculates.map((calculate, index) => (
-                                                                        <tr key={index}>
-                                                                            <td>{index + 1}</td>
-                                                                            <td>{calculate.display_name}</td>
-                                                                            <td>{calculate.fomular_alias}</td>
-                                                                            <td>{calculate.fomular}</td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                        ) : (
-                                                            <div class="list_cont ">
-                                                                <p>Not found</p>
-                                                            </div>
-                                                        )
-                                                        }
-                                                    </div>
+                                            {calculates && calculates.length > 0 ? (
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {modalTemp.calculates.map((calculate, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{calculate.display_name}</td>
+                                                                <td>{calculate.fomular_alias}</td>
+                                                                <td>{calculate.fomular}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>Not found</p>
+                                                </div>
+                                            )
+                                            }
+                                        </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
@@ -824,7 +821,7 @@ export default () => {
                                             ))}
                                             {calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                  {calculate.display_name}  {calculate.fomular_alias}
+                                                    {calculate.display_name}  {calculate.fomular_alias}
                                                 </option>
                                             ))}
                                         </select>
@@ -1059,8 +1056,8 @@ export default () => {
                                 <form>
                                     <div class="midde_cont">
                                         <>
-                                            {layout === 0 && <Layout1 data={modalTemp} />}
-                                            {layout === 1 && <Layout2 />}
+                                            {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 1 && <Layout2 data={tables} />}
                                         </>
                                     </div>
                                 </form>

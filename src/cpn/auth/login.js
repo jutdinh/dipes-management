@@ -30,50 +30,56 @@ export default () => {
 
     const submit = (e) => {
         e.preventDefault()
-        fetch(`${proxy}/auth/login`, {
-            method: "post",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({ account: auth })
-        }).then(res => res.json()).then((resp) => {
-            const { success, content, data } = resp;
-            console.log(resp)
+        if (!auth.username || !auth.password) {
+            setAuthError(lang["error.login.empty"]);
+        } else {
+            fetch(`${proxy}/auth/login`, {
+                method: "post",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({ account: auth })
+            }).then(res => res.json()).then((resp) => {
+                const { success, content, data } = resp;
+                console.log(resp)
 
-            if (success) {
-                if (rememberMe) {
-                    localStorage.setItem("username", auth.username);
-                    localStorage.setItem("password", auth.password);
-                    localStorage.setItem("remember_me", rememberMe);
+                if (success) {
+                    if (rememberMe) {
+                        localStorage.setItem("username", auth.username);
+                        localStorage.setItem("password", auth.password);
+                        localStorage.setItem("remember_me", rememberMe);
+                    } else {
+                        localStorage.removeItem("username");
+                        localStorage.removeItem("password");
+                        localStorage.removeItem("remember_me");
+                    }
+                    // localStorage.setItem('role', data.data.role)
+                    // localStorage.setItem('username', data.data.username)
+                    localStorage.setItem("username", data.data.username);
+                    localStorage.setItem('_token', data.token)
+
+                    // localStorage.setItem('fullname', data.data.fullname)
+                    const stringifiedUser = JSON.stringify(data.data)
+                    localStorage.setItem('user', stringifiedUser);
+                    // Swal.fire({
+                    //     title: "Đăng nhập thành công!",
+                    //     text: content,
+                    //     icon: "success",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    // }).then(function () {
+
+                    //      window.location = "/projects";
+                    // });
+                    window.location = "/";
+
                 } else {
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("password");
-                    localStorage.removeItem("remember_me");
+                    setAuthError(content);
+
                 }
-                // localStorage.setItem('role', data.data.role)
-                // localStorage.setItem('username', data.data.username)
-                localStorage.setItem('_token', data.token)
+            })
+        }
 
-                // localStorage.setItem('fullname', data.data.fullname)
-                const stringifiedUser = JSON.stringify(data.data)
-                localStorage.setItem('user', stringifiedUser);
-                // Swal.fire({
-                //     title: "Đăng nhập thành công!",
-                //     text: content,
-                //     icon: "success",
-                //     showConfirmButton: false,
-                //     timer: 1500,
-                // }).then(function () {
-
-                //      window.location = "/projects";
-                // });
-                window.location = "/";
-
-            } else {
-                setAuthError(content);
-               
-            }
-        })
     }
     return (
         <div classNameName="inner_page login">
@@ -90,24 +96,20 @@ export default () => {
                                 <form>
                                     <fieldset>
                                         <div className="field">
-
                                             <div class="row">
-                                                <div class="col-md-4">
-                                                   
-                                                </div>
-                                               
+                                                <div class="col-md-4"></div>
                                                 <div class="col-md-8">
-                                                {authError && <span class="error-message error-login">{authError}</span>}
-                                                    
+                                                    <div style={{ minHeight: '20px' }}>
+                                                        {authError && <span class="error-message error-login">{authError}</span>}
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label className="label_field">{lang["account"]}</label>
                                                 </div>
-                                               
                                                 <div class="col-md-8">
-                                               
                                                     <input type="text" onKeyUp={enterTriggered}
                                                         onChange={
                                                             (e) => {
@@ -115,15 +117,9 @@ export default () => {
                                                                 setAuth({ ...auth, username: e.target.value });
                                                             }
                                                         } value={auth.username || ""} placeholder={lang["account"]} />
-                                                 
-                                                   
                                                 </div>
                                             </div>
-
-
-
                                         </div>
-                                        
                                         <div className="field">
                                             <label className="label_field">{lang["password"]}</label>
                                             <input type="password" onKeyUp={enterTriggered} onChange={(e) => { setAuth({ ...auth, password: e.target.value }) }} value={auth.password || ""} placeholder={lang["password"]} />
@@ -138,7 +134,7 @@ export default () => {
                                                     className="form-check-input"
                                                 />
                                                 {lang["remember me"]}</label>
-                                            <a className="forgot" href="">{lang["forgot password"]}</a>
+                                            {/* <a className="forgot" href="">{lang["forgot password"]}</a> */}
                                         </div>
                                         <div className="field margin_0">
                                             <label className="label_field hidden">hidden label</label>

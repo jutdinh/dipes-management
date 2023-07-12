@@ -6,7 +6,7 @@ import { Header } from '../common';
 import $ from 'jquery';
 
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const dispatch = useDispatch()
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
@@ -14,7 +14,8 @@ export default () => {
     const [manager, setManager] = useState("")
     const [selectedProject, setSelectedProject] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
-
+    const stringifiedUser = localStorage.getItem("user");
+    const _users = JSON.parse(stringifiedUser)
     // const showApiResponseMessage = (status) => {
     //     const message = responseMessages[status];
 
@@ -34,26 +35,26 @@ export default () => {
     //         }
     //     });
     // };  
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
-            }
-        });
-    };
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
+    //         }
+    //     });
+    // };
 
 
     const showNoPrivilegeAlarm = () => {
@@ -262,7 +263,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
                 if (success) {
 
 
@@ -333,7 +334,7 @@ export default () => {
                         .then(res => res.json())
                         .then((resp) => {
                             const { success, content, data, status } = resp;
-                            showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
                         });
                 }
             });
@@ -421,14 +422,6 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-
-
-
-
-
-
-
-
                                         <div class="form-group col-lg-6 ">
                                             <label>{lang["projecttype"]}</label>
                                             <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>
@@ -436,9 +429,6 @@ export default () => {
                                                 <option value="api">API</option>
                                             </select>
                                         </div>
-
-
-
                                         {
                                             project.project_type == "api" ?
                                                 <div class="form-group col-lg-6 ml-auto">
@@ -449,11 +439,6 @@ export default () => {
                                                 </div>
                                                 : null
                                         }
-
-
-
-
-
                                         <div className="form-group col-lg-12">
                                             <label htmlFor="sel1">{lang["projectrole"]} <span className="red_star">*</span></label>
                                             <select className="form-control" value={users.username} onChange={(e) => { setManager(e.target.value) }}>
@@ -466,8 +451,6 @@ export default () => {
                                                     // } else {
                                                     //     return null;
                                                     // }
-
-
                                                     return (
                                                         <option key={index} value={user.username}>{user.fullname}</option>
                                                     );
@@ -551,14 +534,18 @@ export default () => {
                                                             return (
                                                                 <div key={user.username} class="user-item">
                                                                     <input
-                                                                        class="user-checkbox"
+                                                                        class="user-checkbox pointer"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                         onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                    <label class= "pointer">
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
                                                                     </span>
+
+                                                                    </label>
+
                                                                 </div>
                                                             )
                                                         }
@@ -579,14 +566,17 @@ export default () => {
                                                             return (
                                                                 <div key={user.username} class="user-item">
                                                                     <input
-                                                                        class="user-checkbox"
+                                                                        class="user-checkbox pointer"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                         onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                    <label class="pointer">
+                                                                        <span class="user-name " onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username} - {user.fullname}
                                                                     </span>
+                                                                    </label>
+                                                                    
                                                                 </div>
                                                             )
                                                         }
@@ -650,94 +640,96 @@ export default () => {
                                     <div class="col-lg-12">
                                         <div class="row">
                                             {projects.map((item) => (
-                                                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-                                                    <div class="card project-block">
-                                                        <div class="card-body">
-                                                            <div class="row project-name-min-height">
-                                                                <div class="col-sm-10" >
+                                                (item.members.find(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && (
+                                                    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                                                        <div class="card project-block">
+                                                            <div class="card-body">
+                                                                <div class="row project-name-min-height">
+                                                                    <div class="col-sm-10" >
 
-                                                                    <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
+                                                                        <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
+                                                                    </div>
+
+                                                                    <div class="col-sm-2 cross-hide pointer scaled-hover">
+                                                                        <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
+
+                                                                    </div>
                                                                 </div>
+                                                                <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
+                                                                <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
 
-                                                                <div class="col-sm-2 cross-hide pointer scaled-hover">
-                                                                    <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
+                                                                <p>{lang["time"]}: {
+                                                                    lang["time"] === "Time" ?
+                                                                        item.create_at.replace("lúc", "at") :
+                                                                        item.create_at
+                                                                }</p>
+                                                                {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
+                                                                <p class="font-weight-bold">{lang["projectmanager"]}</p>
+                                                                <div class="profile_contacts">
+
+                                                                    <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
 
                                                                 </div>
-                                                            </div>
-                                                            <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
-                                                            <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
+                                                                <p class="font-weight-bold">{lang["projectmember"]}</p>
 
-                                                            <p>{lang["time"]}: {
-                                                                lang["time"] === "Time" ?
-                                                                    item.create_at.replace("lúc", "at") :
-                                                                    item.create_at
-                                                            }</p>
-                                                            {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
-                                                            <p class="font-weight-bold">{lang["projectmanager"]}</p>
-                                                            <div class="profile_contacts">
-
-                                                                <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
-
-                                                            </div>
-                                                            <p class="font-weight-bold">{lang["projectmember"]}</p>
-
-                                                            <div class="profile_contacts">
-                                                                {
-                                                                    item.members && item.members.length > 0 ?
-                                                                        item.members.slice(0, 2).map(member => (
-                                                                            <img
-                                                                                class="img-responsive circle-image"
-                                                                                src={proxy + member.avatar}
-                                                                                alt={member.username}
-                                                                            />
-                                                                        )) : <div class="profile_contacts">
-                                                                            <p>{lang["projectempty"]} </p>
-                                                                        </div>
-                                                                }
-                                                                {/* {
+                                                                <div class="profile_contacts">
+                                                                    {
+                                                                        item.members && item.members.length > 0 ?
+                                                                            item.members.slice(0, 2).map(member => (
+                                                                                <img
+                                                                                    class="img-responsive circle-image"
+                                                                                    src={proxy + member.avatar}
+                                                                                    alt={member.username}
+                                                                                />
+                                                                            )) : <div class="profile_contacts">
+                                                                                <p>{lang["projectempty"]} </p>
+                                                                            </div>
+                                                                    }
+                                                                    {/* {
                                                                     item.members.length > 2 &&
                                                                     <div className="img-responsive circle-image extra-images">
                                                                         +{item.members.length - 2}
                                                                     </div>
                                                                 } */
-                                                                }
-                                                                {
-                                                                    item.members.length > 2 &&
-                                                                    <div class="border-custom">
-                                                                        <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
-                                                                            <span> +{item.members.length - 2}</span>
+                                                                    }
+                                                                    {
+                                                                        item.members.length > 2 &&
+                                                                        <div class="border-custom">
+                                                                            <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
+                                                                                <span> +{item.members.length - 2}</span>
+                                                                            </div>
                                                                         </div>
+                                                                    }
+
+                                                                </div>
+                                                                <div className="d-flex position-relative">
+                                                                    <div>
+                                                                        <span className="d-block status-label" style={{
+                                                                            backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                                        }}>
+                                                                            {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                                        </span>
+
                                                                     </div>
-                                                                }
-
-                                                            </div>
-                                                            <div className="d-flex position-relative">
-                                                                <div>
-                                                                    <span className="d-block status-label" style={{
-                                                                        backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
-                                                                    }}>
-                                                                        {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                    </span>
-
+                                                                    <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
                                                                 </div>
-                                                                <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
-                                                            </div>
-                                                            <div class="progress skill-bar mt-3">
-                                                                <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                <div class="progress skill-bar mt-3">
+                                                                    <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
 
-                                                            {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
-                                                            <div class="bottom_list">
-                                                                <div class="right_button">
-                                                                    <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
-                                                                        <i class="fa fa-edit"></i> {lang["buttondetail"]}
-                                                                    </button>
+                                                                {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
+                                                                <div class="bottom_list">
+                                                                    <div class="right_button">
+                                                                        <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
+                                                                            <i class="fa fa-edit"></i> {lang["buttondetail"]}
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                )
                                             ))}
 
                                             {projects.length == 0 ? <p>{lang["projects.noprojectfound"]}</p> : null}

@@ -372,8 +372,9 @@ export default {
     "copy url": "Sao chép URL",
     "high": " Cao",
     "medium": "Trung bình",
-    "low": "Thấp"
-
+    "low": "Thấp",
+    "error.login.empty": "Vui lòng nhập đầy đủ thông tin",
+"preview layout": "Xem trước bố cục"
 
 
 

@@ -367,7 +367,9 @@ export default {
     "copy url": "Copy URL",
     "high": " High",
     "medium": "Medium",
-    "low": "Low"
+    "low": "Low",
+    "error.login.empty": "Please complete the information.",
+    "preview layout": "Preview layout"
 
 }
 
