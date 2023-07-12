@@ -20,4 +20,8 @@ export const StatusAprove = Object.freeze({
     APROVE: { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
     NOTAPROVE: { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
 });
-
+export const Roles = Object.freeze({
+   
+    SUPERVISOR:  { id: 1, label: "supervisor", value: "supervisor" },
+    NORMAL:   { id: 2, label: "deployers", value: "deployer" },
+});

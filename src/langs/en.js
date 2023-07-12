@@ -236,7 +236,7 @@ export default {
     "of": "of",
     "results": "results",
 
-
+    "select.member": "Select members",
     //
     "supervisor": "Supervisor",
     "deployers": "Deployers",
