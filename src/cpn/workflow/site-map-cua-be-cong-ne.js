@@ -134,7 +134,8 @@ export default () => {
             <div className="pot">
                 <div className="root" ref={ rootRef }>
                     { RenderBranch( rootRef, tree, 0 ) }                
-                </div>            
+                </div>    
+
             </div>
         </div>
         </div>        
