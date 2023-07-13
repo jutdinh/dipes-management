@@ -277,7 +277,7 @@ export default () => {
                 const { success, data, status, content } = resp;
 
                 if (success) {
-                    if (data) {
+                    if (data) {                        
                         setAllTable(data.tables);
                         setPossibleTables(data.tables);
                     }
@@ -293,8 +293,7 @@ export default () => {
     console.log(selectedTables)
 
     const handleChange = (e) => {
-        const selectedTableName = e.target.value;
-        console.log(selectedTableName)
+        const selectedTableName = e.target.value;        
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
@@ -440,7 +439,7 @@ export default () => {
 
     const findTableAndFieldInfo = (fieldId) => {
         for (const [tableId, tableInfo] of Object.entries(tableFields)) {
-            const fieldInfo = tableInfo.fields.find((field) => field.id === fieldId);
+            const fieldInfo = tableInfo?.fields.find((field) => field.id === fieldId);
 
             if (fieldInfo) {
                 return { tableId, fieldInfo };

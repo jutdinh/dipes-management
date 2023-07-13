@@ -612,7 +612,7 @@ export default () => {
                                                                 {tables.map((table, index) => (
                                                                     <tr key={index}>
                                                                         <td>{table.table_name}</td>
-                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_by?.fullname}</td>
                                                                         <td>{table.create_at}</td>
                                                                     </tr>
                                                                 ))}

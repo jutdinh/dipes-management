@@ -66,12 +66,37 @@ export default () => {
     const [errorApi, setErrorApi] = useState({});
     const validateApiname = () => {
         let temp = {};
-
         temp.api_name = modalTemp.api_name ? "" : "Trường này không được để trống.";
         temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
-        temp.params = modalTemp.params && modalTemp.params.length > 0 ? "" : "(Đối số không được để trống)";
-        temp.body = modalTemp.body && modalTemp.body.length > 0 ? "" : "(Các trường này dùng để cấu hình biểu mẫu nhập liệu không được để trống)";
+        setErrorApi({
+            ...temp
+        });
 
+        return Object.values(temp).every(x => x === "");
+    }
+
+
+    const validateApiParams = () => {
+        let temp = {};
+        temp.params = modalTemp.params && modalTemp.params.length > 0 ? "" : "(Đối số không được để trống)";
+        setErrorApi({
+            ...temp
+        });
+        return Object.values(temp).every(x => x === "");
+    }
+
+    const validateApiBody = () => {
+        let temp = {};
+        temp.body = modalTemp.body && modalTemp.body.length > 0 ? "" : "(Các trường này dùng để cấu hình biểu mẫu nhập liệu không được để trống)";
+        setErrorApi({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
+    const validateApiFieldShow = () => {
+        let temp = {};
+        temp.fields = modalTemp.fields && modalTemp.fields.length > 0 ? "" : "(Các trường hiển thị không được bỏ trống)";
 
         setErrorApi({
             ...temp
@@ -81,25 +106,42 @@ export default () => {
     }
 
     const handleSubmitModal = () => {
-        if (validateApiname()) {
+        const validator = {
+            "get": [validateApiname, validateApiFieldShow],
+            "post": [validateApiname, validateApiBody],
+            "put": [validateApiname, validateApiBody, validateApiParams],
+            "delete": [validateApiParams]
+        }
+        
+        const validateFunctions = validator[modalTemp.api_method]
+        let valid = true;
+ 
+        for (let i = 0; i < validateFunctions.length; i++) {
+            const checkResult = validateFunctions[i]()
+            if (!checkResult) {
+                valid = false
+          
+                break;
+            }
+        }
+
+        console.log("VALID: ", valid)
+        
+        if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
-
-
             dispatch({
                 branch: "api",
                 type: "addFieldParam",
                 payload: {
                     field: { ...modalTemp }
-
                 }
             })
         }
-
-
     }
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
+            console.log("adddsa")
             addApi();
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
@@ -111,7 +153,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        // console.log(requestBody)
+        console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "POST",
             headers: {
@@ -123,6 +165,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+                console.log(resp)
                 if (success) {
                     showApiResponseMessage(status);
                 } else {
@@ -676,7 +719,8 @@ export default () => {
     console.log(tableFields)
 
 
-    console.log(modalTemp.tables)
+    console.log(modalTemp.fields)
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -894,7 +938,7 @@ export default () => {
                                                                     <tr key={index}>
                                                                         <td>{index + 1}</td>
                                                                         <td>{table.table_name}</td>
-                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_by?.fullname}</td>
                                                                         <td>{table.create_at}</td>
                                                                     </tr>
                                                                 ))}
@@ -1049,6 +1093,7 @@ export default () => {
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["fields display"]} </p><span className='red_star'>*</span>
+                                                            {(modalTemp.api_method === "get") && <p className="text-danger ml-2">{errorApi.fields}</p>}
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
