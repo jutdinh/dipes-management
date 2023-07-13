@@ -550,7 +550,7 @@ export default () => {
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold">{lang["ui.title"]}<span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["ui.title"]}<span className='red_star ml-1'>*</span></label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -572,9 +572,9 @@ export default () => {
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <label class="font-weight-bold">Layout</label>
                                             {modalTemp.layout_id == 0 ?
-                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
+                                                <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
                                                 :
-                                                <i class="fa fa-eye ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
                                             }
                                         </div>
                                         <select

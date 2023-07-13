@@ -66,7 +66,7 @@ export default (props) => {
 
             return tempObject;
         });
-    } 
+    }
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 11;
@@ -141,12 +141,14 @@ export default (props) => {
                                                             </tr>
                                                         ))}
 
-                                                        {statistic && statistic.length > 0 ? (
-                                                            <tr>
-                                                                <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>{statistic[0]?.display_name}: Dữ liệu </td>
+                                                        {statistic && statistic.map((stat, index) => (
+                                                            <tr key={index}>
+                                                                <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>
+                                                                    {stat.display_name}: Dữ liệu
+                                                                </td>
                                                             </tr>
-                                                        ) : null
-                                                        }
+                                                        ))}
+
                                                     </tbody>
                                                 </table>
                                             ) : (

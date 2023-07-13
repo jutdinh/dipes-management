@@ -69,6 +69,8 @@ export default () => {
 
         temp.api_name = modalTemp.api_name ? "" : "Trường này không được để trống.";
         temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
+        temp.params = modalTemp.params && modalTemp.params.length > 0 ? "" : "(Đối số không được để trống)";
+        temp.body = modalTemp.body && modalTemp.body.length > 0 ? "" : "(Các trường này dùng để cấu hình biểu mẫu nhập liệu không được để trống)";
 
 
         setErrorApi({
@@ -609,9 +611,9 @@ export default () => {
     const validateStatistical = () => {
         let temp = {};
 
-        temp.display_name = display_name ? "" : "Trường này không được để trống.";
-        temp.fomular = fomular ? "" : "Trường này không được để trống.";
-        temp.field = field ? "" : "Trường này không được bỏ trống.";
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
+        temp.field = field ? "" : lang["error.input"];
 
         setErrorStatistical({
             ...temp
@@ -714,20 +716,25 @@ export default () => {
                                             <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                             <div class="checkbox-group">
                                                 <div class="checkbox-item">
-                                                    <input
-                                                        type="radio"
-                                                        checked={modalTemp.status === true}
-                                                        onChange={() => setModalTemp({ ...modalTemp, status: true })}
-                                                    />
-                                                    <label class="ml-1">On</label>
+                                                    <label >
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.status === true}
+                                                            onChange={() => setModalTemp({ ...modalTemp, status: true })}
+                                                        />
+                                                        On
+                                                    </label>
                                                 </div>
                                                 <div class="checkbox-item">
-                                                    <input
+                                                    <label> <input
+                                                        class="mr-1"
                                                         type="radio"
                                                         checked={modalTemp.status === false}
                                                         onChange={() => setModalTemp({ ...modalTemp, status: false })}
                                                     />
-                                                    <label class="ml-1">Off</label>
+                                                        Off
+                                                    </label>
                                                 </div>
                                             </div>
 
@@ -737,90 +744,113 @@ export default () => {
                                             <label class="font-weight-bold">{lang["method"]} <span className='red_star'>*</span></label>
                                             <div class="checkbox-group">
                                                 <div class="checkbox-item">
-                                                    <input
-                                                        type="radio"
-                                                        checked={modalTemp.api_method === "get"}
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "get"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "get",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
 
-                                                        onChange={() => {
-                                                            const updatedModalTemp = {
-                                                                ...modalTemp,
-                                                                api_method: "get",
-                                                                tables: [],
-                                                                params: [],
-                                                                fields: [],
-                                                                body: [],
-                                                                calculates: [],
-                                                                statistic: []
-
-                                                            };
-                                                            setModalTemp(updatedModalTemp);
-                                                        }}
-                                                    />
-                                                    <label class="ml-1">GET</label>
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
+                                                            }}
+                                                        />
+                                                        GET
+                                                    </label>
                                                 </div>
                                                 <div class="checkbox-item">
-                                                    <input
-                                                        type="radio"
-                                                        checked={modalTemp.api_method === "post"}
-                                                        onChange={() => {
-                                                            const updatedModalTemp = {
-                                                                ...modalTemp,
-                                                                api_method: "post",
-                                                                tables: [],
-                                                                params: [],
-                                                                fields: [],
-                                                                body: [],
-                                                                calculates: [],
-                                                                statistic: []
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "post"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "post",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
 
-                                                            };
-                                                            setModalTemp(updatedModalTemp);
-                                                        }}
-                                                    />
-                                                    <label class="ml-1">POST</label>
+                                                            }}
+                                                        />
+                                                        POST</label>
                                                 </div>
 
                                                 <div class="checkbox-item round">
-                                                    <input
-                                                        type="radio"
-                                                        checked={modalTemp.api_method === "put"}
-                                                        onChange={() => {
-                                                            const updatedModalTemp = {
-                                                                ...modalTemp,
-                                                                api_method: "put",
-                                                                tables: [],
-                                                                params: [],
-                                                                fields: [],
-                                                                body: [],
-                                                                calculates: [],
-                                                                statistic: []
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "put"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "put",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
 
-                                                            };
-                                                            setModalTemp(updatedModalTemp);
-                                                        }}
-                                                    />
-                                                    <label class="ml-1">PUT</label>
+                                                            }}
+                                                        />
+                                                        PUT
+                                                    </label>
                                                 </div>
                                                 <div class="checkbox-item">
-                                                    <input
-                                                        type="radio"
-                                                        checked={modalTemp.api_method === "delete"}
-                                                        onChange={() => {
-                                                            const updatedModalTemp = {
-                                                                ...modalTemp,
-                                                                api_method: "delete",
-                                                                tables: [],
-                                                                params: [],
-                                                                fields: [],
-                                                                body: [],
-                                                                calculates: [],
-                                                                statistic: []
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "delete"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "delete",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
 
-                                                            };
-                                                            setModalTemp(updatedModalTemp);
-                                                        }}
-                                                    />
-                                                    <label class="ml-1">DELETE</label>
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
+
+                                                            }}
+                                                        />
+                                                        DELETE
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -890,6 +920,10 @@ export default () => {
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["param fields"]} </p>
+
+                                                            {(modalTemp.api_method === "put" || modalTemp.api_method === "delete" && errorApi.params) && <p className="text-danger ml-2">{errorApi.params}</p>}
+
+
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -954,6 +988,8 @@ export default () => {
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["fields data"]} </p>
+                                                            {(modalTemp.api_method === "put" || modalTemp.api_method === "post" && errorApi.body) && <p className="text-danger ml-2">{errorApi.body}</p>}
+
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldBody">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -1273,9 +1309,17 @@ export default () => {
                                                     {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
                                                         // Check if the field is a foreign key
                                                         let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
 
                                                         // Check if the field is of type 'date'
-                                                        let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME';
+                                                        let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
 
                                                         return (
                                                             <div key={fieldIndex}>
@@ -1289,21 +1333,19 @@ export default () => {
                                                                             if (isDateField && e.target.checked) {
                                                                                 Swal.fire({
                                                                                     title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là trường có kiểu dữ liệu là DATE.",
+                                                                                    text: "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL",
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
-                                                                                   
                                                                                 });
                                                                                 e.preventDefault();
                                                                             }
-                                                                            // If more than one table is selected and it's a foreign key, show error and prevent checking
-                                                                            else if (modalTemp.tables?.length > 1 && isForeignKey && e.target.checked) {
+                                                                            // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
+                                                                            else if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
                                                                                 Swal.fire({
                                                                                     title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại",
+                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
-                                                                                   
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {
@@ -1319,6 +1361,7 @@ export default () => {
                                                 </div>
                                             </div>
                                         ))}
+
 
 
 
@@ -1360,9 +1403,14 @@ export default () => {
                                                     {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => {
                                                         // Check if the field is a foreign key
                                                         let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
 
-                                                        // Check if the field is of type 'date'
-                                                     
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
 
                                                         return (
                                                             <div key={fieldIndex}>
@@ -1373,14 +1421,13 @@ export default () => {
                                                                         value={field.id}
                                                                         checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
                                                                         onChange={(e) => {
-                                                                            // If it's a date field, show error and prevent checking
-                                                                            if (modalTemp.tables?.length > 1 && isForeignKey && e.target.checked) {
+                                                                            // If it's a foreign key and corresponding primary key exists, show error and prevent checking
+                                                                            if (isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
                                                                                 Swal.fire({
                                                                                     title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại ",
+                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
-                                                                                    
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {
@@ -1444,21 +1491,49 @@ export default () => {
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
-                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                        <div key={fieldIndex}>
-                                                            <label>
-                                                                <input className="mr-1 "
-                                                                    type="checkbox"
-                                                                    checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
-                                                                    onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
-                                                                />
-                                                                {field.field_name}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
+                                                        // Check if the field is a foreign key
+                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
+
+                                                        return (
+                                                            <div key={fieldIndex}>
+                                                                <label>
+                                                                    <input
+                                                                        className="mr-1"
+                                                                        type="checkbox"
+                                                                        checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
+                                                                        onChange={e => {
+                                                                            // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
+                                                                            if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                                Swal.fire({
+                                                                                    title: "Lỗi!",
+                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            } else {
+                                                                                handleCheckboxChangeBody(tableId, field.id, e.target.checked);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {field.field_name}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         ))}
+
                                         {/* {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>

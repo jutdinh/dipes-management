@@ -643,11 +643,11 @@ const responseMessages =
     "0x4501064": {
         "vi": {
             "description": "Không ai được thêm vào dự án vì họ không tồn tại, không khả dụng hoặc đã có mặt trong dự án từ trước",
-            "type": "Lỗi"
+            "type": "Cảnh báo"
         },
         "en": {
             "description": "No one can be added to the project because they don't exist, are not available, or are already present in the project",
-            "type": "Error"
+            "type": "Warning"
         }
     },
     "0x4501065": {

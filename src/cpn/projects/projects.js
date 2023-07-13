@@ -64,7 +64,7 @@ export default () => {
             text: lang["alarm.message"],
             icon: "warning",
             showConfirmButton: true,
-            
+
         })
     }
 
@@ -345,16 +345,12 @@ export default () => {
         console.log(project)
         window.location.href = `projects/detail/${project.project_id}`;
     };
-
     useEffect(() => {
         const url = new URL(window.location.href);
-
         // Get the search params from the URL
         const searchParams = new URLSearchParams(url.search);
-
         // Access individual parameters
         const action = searchParams.get('action');
-
         switch (action) {
             case "create":
                 console.log("clicked")
@@ -539,10 +535,10 @@ export default () => {
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                         onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <label class= "pointer">
+                                                                    <label class="pointer">
                                                                         <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                    </span>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                        </span>
 
                                                                     </label>
 
@@ -573,10 +569,10 @@ export default () => {
                                                                     />
                                                                     <label class="pointer">
                                                                         <span class="user-name " onClick={() => handleAdminCheck(user, 'deployer')}>
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username} - {user.fullname}
-                                                                    </span>
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username} - {user.fullname}
+                                                                        </span>
                                                                     </label>
-                                                                    
+
                                                                 </div>
                                                             )
                                                         }
@@ -731,8 +727,12 @@ export default () => {
                                                     </div>
                                                 )
                                             ))}
+                                            {projects.length == 0 ?
+                                              <div class="d-flex justify-content-center align-items-center w-100" style={{ height: '80vh' }}>
+                                              {/* {lang["projects.noprojectfound"]} */}
+                                              <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
 
-                                            {projects.length == 0 ? <p>{lang["projects.noprojectfound"]}</p> : null}
+                                          </div>  : null}
                                         </div>
                                     </div>
                                 </div>
@@ -742,8 +742,5 @@ export default () => {
                 </div>
             </div >
         </div >
-
-
-
     )
 }
