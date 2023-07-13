@@ -1757,17 +1757,16 @@ console.log("members", currentMembers)
                                                     (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
                                                 } placeholder={lang["p.taskname"]} />
                                             </div>
-                                            {/* <div class="form-group col-lg-6 ">
+                                            <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
-                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
-                                                    <option value="">Chọn</option>
+                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>                                                    
                                                     {statusPriority.map((status, index) => {
                                                         return (
-                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                            <option key={index} value={status.value} selected = { status.value == updateTaskinfo.task_priority ? true : false } >{lang[status.label]}</option>
                                                         );
                                                     })}
-                                                </select>
-                                            </div> */}
+                                                </select>                                                
+                                            </div>
                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
@@ -1779,6 +1778,8 @@ console.log("members", currentMembers)
                                                     })}
                                                 </select>
                                             </div> */}
+
+
                                             <div class="form-group col-lg-12">
                                                 <label>{lang["projectdescripton"]}</label>
                                                 <textarea rows="4" type="text" class="form-control" value={updateTaskinfo.task_description} onChange={
