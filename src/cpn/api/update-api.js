@@ -1003,7 +1003,7 @@ export default () => {
                                                                     <tr key={index}>
                                                                         <td>{index + 1}</td>
                                                                         <td>{table.table_name}</td>
-                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_by?.fullname}</td>
                                                                         <td>{table.create_at}</td>
                                                                     </tr>
                                                                 ))}
