@@ -299,6 +299,13 @@ export default () => {
             setCalculates([...calculates, newCalculate])
             setDisplayname("");
             setFomular("");
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
     };
 
@@ -312,26 +319,45 @@ export default () => {
         console.log(cal)
         setCalculatesUpdate(cal)
     }
-    console.log(calculatesUpdate)
+    const validateCaculatesUpdate = () => {
+        let temp = {};
+        temp.display_name = calculatesUpdate.display_name ? "" : lang["error.input"];
+        temp.fomular = calculatesUpdate.fomular ? "" : lang["error.input"];
+        setErrorCaculates({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
     const submitupdateFieldCalculates = () => {
-        const updatedCalculates = modalTemp.calculates.map(item =>
-            item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
-        );
-        setCalculates(updatedCalculates);
-        setModalTemp(prev => ({
-            ...prev,
-            calculates: updatedCalculates
-        }));
+        if (validateCaculatesUpdate()) {
+            const updatedCalculates = modalTemp.calculates.map(item =>
+                item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
+            );
+            setCalculates(updatedCalculates);
+            setModalTemp(prev => ({
+                ...prev,
+                calculates: updatedCalculates
+            }));
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+        }
+
     };
 
-    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
-    useEffect(() => {
-        if (calculatesUpdate.fomular_alias) {
-            submitupdateFieldCalculates();
-        }
-    }, [calculatesUpdate]);
-    console.log(calculatesUpdate)
-    console.log(modalTemp.calculates.display_name)
+    // // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
+    // useEffect(() => {
+    //     if (calculatesUpdate.fomular_alias) {
+    //         submitupdateFieldCalculates();
+    //     }
+    // }, [calculatesUpdate]);
+    // console.log(calculatesUpdate)
+    // console.log(modalTemp.calculates.display_name)
 
     const handleDeleteCalculates = (cal) => {
         console.log(cal)
@@ -383,6 +409,13 @@ export default () => {
             setDisplayname("");
             setField("");
             setFomular("");
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
     };
     // console.log(modalTemp)
@@ -397,16 +430,39 @@ export default () => {
         console.log(sta)
         setStatisticalUpdate(sta)
     }
+    const validateStatisticalUpdate = () => {
+        let temp = {};
 
+        temp.display_name = statisticalUpdate.display_name ? "" : lang["error.input"];
+        temp.fomular = statisticalUpdate.fomular ? "" : lang["error.input"];
+        temp.field = statisticalUpdate.field ? "" : lang["error.input"];
+
+        setErrorStatistical({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
     const submitupdateFieldStatistical = () => {
-        const updatedStatistical = modalTemp.statistic_fields.map(item =>
-            item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
-        );
+        if (validateStatisticalUpdate()) {
+            const updatedStatistical = modalTemp.statistic_fields.map(item =>
+                item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
+            );
 
-        setModalTemp(prev => ({
-            ...prev,
-            statistic_fields: updatedStatistical
-        }));
+            setModalTemp(prev => ({
+                ...prev,
+                statistic_fields: updatedStatistical
+            }));
+
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+        }
+
     };
 
     const handleDeleteStatistical = (sta) => {
@@ -908,7 +964,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1009,7 +1065,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1037,7 +1093,7 @@ export default () => {
                                         {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>{lang["fields display"]}</label>
+                                        <label><p class="font-weight-bold">{lang["fields display"]}</p></label>
                                         <div class="table-responsive">
 
                                             <table class="table table-striped">
@@ -1090,7 +1146,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1123,7 +1179,7 @@ export default () => {
                                                             <th class="font-weight-bold">{lang["log.no"]}</th>
                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                             <th class="font-weight-bold">{lang["alias"]}</th>
-                                                            <th class="font-weight-bold">{lang["datatype"]}</th> 
+                                                            <th class="font-weight-bold">{lang["datatype"]}</th>
                                                         </tr>
                                                     </thead>
 
@@ -1160,7 +1216,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldCalculates} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1180,7 +1236,7 @@ export default () => {
                                     <div class="midde_cont">
                                         <>
                                             {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 1 && <Layout2  title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 1 && <Layout2 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>
                                 </form>

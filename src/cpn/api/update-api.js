@@ -10,8 +10,11 @@ import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
 import clipboardCopy from 'clipboard-copy';
 import $ from 'jquery';
+import bootstrap from "bootstrap";
 
-
+var hideModal = hideModalInfo => {
+    $("#addFieldCalculates").modal("hide");
+  };
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -660,7 +663,13 @@ export default () => {
             setDisplayname("");
             setFomular("");
             // $('#addFieldCalculates').modal('hide');
-
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
 
@@ -700,7 +709,13 @@ export default () => {
                 ...prev,
                 calculates: updatedCalculates
             }));
-           
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
 
@@ -785,6 +800,13 @@ export default () => {
                 ...prev,
                 statistic: updatedStatistical
             }));
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
     };
@@ -872,6 +894,14 @@ export default () => {
             setDisplayname("");
             setField("");
             setFomular("");
+            setShowModal(false);
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
 
@@ -887,11 +917,15 @@ export default () => {
         window.location.href = `/projects/${version_id}/apis/create/fieldstatis`;
         // window.location.href = `tables`;
     };
-    const handleCloseModal = () => {
-       
-        setShowModal(false);
-    };
+  
 
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
+  
+    const handleOpenModal = () => {
+      setShowModal(true);
+    };
     //    console.log(modalTemp.calculates)
     // console.log(tempFieldParam)
     // console.log(calculates)
@@ -1640,7 +1674,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">{lang["edit field calculations"]}</h4>
+                                <h4 class="modal-title">{lang["add field calculations"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1721,8 +1755,8 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button"  data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>  
                     </div>
@@ -1818,7 +1852,7 @@ export default () => {
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">{lang["edit statistical fields"]}</h4>
+                                <h4 class="modal-title">{lang["add fields statis"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
@@ -1962,7 +1996,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>

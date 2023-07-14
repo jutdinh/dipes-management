@@ -18,15 +18,17 @@ export default (props) => {
 
 
     if (data[0]?.fields) {
-        uis_temp = data[0].fields.map((field, index) => {
+        let fields_temp = data[0].fields.slice(0, 5); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
+    
+        uis_temp = fields_temp.map((field, index) => {
             const tempObject = {
                 id: index + 1,
             };
-
+    
             for (let f of data[0].fields) {
                 tempObject[f.field_name] = `Dữ liệu ${index + 1} ${f.field_name}`;
             }
-
+    
             return tempObject;
         });
     } else {
@@ -55,7 +57,8 @@ export default (props) => {
 
 
     if (calculate) {
-        uis_temp_cal = calculate.map((field, index) => {
+        let calculate_temp = calculate.slice(0, 5);
+        uis_temp_cal = calculate_temp.map((field, index) => {
             const tempObject = {
                 id: index + 1,
             };
@@ -67,7 +70,6 @@ export default (props) => {
             return tempObject;
         });
     }
-
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 11;
 

@@ -306,6 +306,7 @@ export default {
     "fields name statistic": "Tên trường thống kê",
     "statistical fields": "Danh sách trường thống kê",
     "edit statistical fields": "Chỉnh sửa trường thống kê",
+   
     "select fields": "Chọn trường",
     "edit api": "Chỉnh sửa api",
     "fields data": "Danh sách các trường dữ liệu",
@@ -382,8 +383,10 @@ export default {
 
     "body empty": "Các trường này dùng để cấu hình biểu mẫu nhập liệu không được để trống",
     "show empty": "Các trường hiển thị không được bỏ trống",
-    "not found": "Không tìm thấy"
+    "not found": "Không tìm thấy",
 
+    "success.add":"Thêm mới thành công",
+"success.update":"Cập nhật thành công"
 
 
 

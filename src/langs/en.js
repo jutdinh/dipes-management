@@ -376,7 +376,9 @@ export default {
     "params empty": "The params should not be left blank",
     "body empty": "These fields used to configure the input form must not be left blank",
     "show empty": "Display fields must not flee",
-    "not found": "Not found"
+    "not found": "Not found",
+    "success.add":"Add success data",
+    "success.update":"Update success data"
 
 
 }

@@ -508,6 +508,13 @@ export default () => {
             setCalculates([...calculates, newCalculate])
             setDisplayname("");
             setFomular("");
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
     };
@@ -543,6 +550,13 @@ export default () => {
                 ...prev,
                 calculates: updatedCalculates
             }));
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
     };
 
@@ -623,6 +637,13 @@ export default () => {
                 ...prev,
                 statistic: updatedStatistical
             }));
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
     };
 
@@ -708,6 +729,13 @@ export default () => {
             setDisplayname("");
             setField("");
             setFomular("");
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.add"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
 
     };
@@ -1744,7 +1772,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1830,7 +1858,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldCalculates} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldCalculates}  class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1986,7 +2014,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-dismiss="modal" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button"  onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -2122,7 +2150,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldStatistical} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldStatistical}  class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
