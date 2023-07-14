@@ -668,7 +668,7 @@ export default () => {
                                                             </table>
                                                         ) : (
                                                             <div class="list_cont ">
-                                                                <p>Not found</p>
+                                                                <p>{lang["not found"]}</p>
                                                             </div>
                                                         )
                                                         }
@@ -711,7 +711,7 @@ export default () => {
                                                             </table>
                                                         ) : (
                                                             <div class="list_cont ">
-                                                                <p>Not found</p>
+                                                                <p>{lang["not found"]}</p>
                                                             </div>
                                                         )
                                                         }
@@ -857,7 +857,7 @@ export default () => {
                                                 </table>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
                                             }

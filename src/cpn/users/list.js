@@ -13,38 +13,39 @@ export default (props) => {
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [isDataAdded, setIsDataAdded] = useState(false);
+    const [loaded, setLoaded] = useState(false);
     const roles = [
         { id: 0, label: "administrator", value: "ad" },
         { id: 1, label: "uprojectmanager", value: "pm" },
         { id: 2, label: "normal", value: "pd" },
         // { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
-    
+
 
 
 
     const showApiResponseMessage = (status) => {
-           const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-           const message = responseMessages[status];
-       
-           const title = message?.[langItem]?.type || "Unknown error";
-           const description = message?.[langItem]?.description || "Unknown error";
-           const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-           
-           Swal.fire({
-               title,
-               text: description,
-               icon,
-               showConfirmButton: false,
-               timer: 1500,
-           }).then(() => {
-               if (icon === "success") {
-                   window.location.reload();
-   
-               }
-           });
-       };
-   
+        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+        const message = responseMessages[status];
+
+        const title = message?.[langItem]?.type || "Unknown error";
+        const description = message?.[langItem]?.description || "Unknown error";
+        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+
+        Swal.fire({
+            title,
+            text: description,
+            icon,
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            if (icon === "success") {
+                window.location.reload();
+
+            }
+        });
+    };
+
     const [user, setUser] = useState({});
     const [editUser, setEditUser] = useState({});
     // Close Modal
@@ -85,12 +86,13 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                 console.log(resp)
+                console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProfile(data);
                         // console.log(data)
                     }
+                    setLoaded(true)
                 } else {
                     window.location = "/404-not-found"
                 }
@@ -197,23 +199,23 @@ export default (props) => {
                 // add more custom classes if needed
             }
         })
-        .then((result) => {
-            if (result.isConfirmed) {
-                fetch(`${proxy}/auth/user`, {
-                    method: 'DELETE',
-                    headers: {
-                        "content-type": "application/json",
-                        Authorization: `${_token}`,
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                    .then(res => res.json())
-                    .then((resp) => {
-                        const { success, content, data, status } = resp;
-                        showApiResponseMessage(status);
-                    });
-            }
-        });
+            .then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`${proxy}/auth/user`, {
+                        method: 'DELETE',
+                        headers: {
+                            "content-type": "application/json",
+                            Authorization: `${_token}`,
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                        .then(res => res.json())
+                        .then((resp) => {
+                            const { success, content, data, status } = resp;
+                            showApiResponseMessage(status);
+                        });
+                }
+            });
         // console.log(requestBody)
 
     }
@@ -247,14 +249,14 @@ export default (props) => {
             .then((resp) => {
                 const { success, content, status } = resp;
 
-                const newProfiles = profiles.map( user => {
-                    if( user.username == editUser.username ){
+                const newProfiles = profiles.map(user => {
+                    if (user.username == editUser.username) {
                         return editUser
-                    }else{
+                    } else {
                         return user;
                     }
                 })
-                setProfile( newProfiles )
+                setProfile(newProfiles)
                 // close modal
                 // console.log(resp)
                 showApiResponseMessage(status);
@@ -269,7 +271,7 @@ export default (props) => {
         //         text: "Không có quyền thực hiện thao tác",
         //         icon: "error",
         //         // showConfirmButton: false,
-                
+
         //     }).then(function () {
         //          window.location.reload();
         //         $('.modal-backdrop').remove()
@@ -448,9 +450,9 @@ export default (props) => {
                                                     <div class="form-group col-lg-6">
                                                         <label htmlFor="sel1">{lang["permission"]} <span className='red_star'>*</span></label>
                                                         <select className="form-control" name="role" value={editUser.role} onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}>
-                                                            
+
                                                             {users.role === "ad" ? (
-                                                                roles.slice(0,3).map(role => (
+                                                                roles.slice(0, 3).map(role => (
                                                                     <option key={role.id} value={role.value}>{lang[`${role.label}`]}</option>
                                                                 ))
                                                             ) : (
@@ -489,218 +491,190 @@ export default (props) => {
                                 </div>
                             </div>
                             {/* List user */}
-                            <div class="full price_table padding_infor_info">
-                                <div class="container-fluid">
-                                    {admins.length > 0 && (
-                                        <div class="row group">
-                                            <h5 class="col-lg-12 mb-1">{lang["administrator"]}</h5>
-                                            {admins.map((item) => (
-                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
-                                                    <div class="contact_blog">
-                                                        <div class="contact_inner">
-                                                            <div class="left-cus">
-                                                            <p><strong>{item.fullname}</strong></p>
-                                                                <p>{lang["username"]}: {item.username} </p>
-                                                                <p>{lang["permission"]}:
-                                                                     { item.role === "ad" ? lang["administrator"] :
-                                                                        item.role === "pm" ? lang["uprojectmanager"] :
-                                                                            item.role === "pd" ? lang["normal"] :
-                                                                              
-                                                                                    item.role}</p>
-                                                                <ul class="list-unstyled">
-                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
-                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>{lang["createby"]}: {item.create_by}</li>
-                                                                    <li>
-                                                                        {lang["time"]}: {
-                                                                            lang["time"] === "Time" ?
-                                                                                item.create_at.replace("lúc", "at") :
-                                                                                item.create_at
-                                                                        }
-                                                                    </li>
+                            {
+                                loaded ? (
+                                    <>
+                                        {profiles && profiles.length > 0 ? (
+                                            <div class="full price_table padding_infor_info">
+                                                <div class="container-fluid">
+                                                    {admins.length > 0 && (
+                                                        <div class="row group">
+                                                            <h5 class="col-lg-12 mb-1">{lang["administrator"]}</h5>
+                                                            {admins.map((item) => (
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                                    <div class="contact_blog">
+                                                                        <div class="contact_inner">
+                                                                            <div class="left-cus">
+                                                                                <p><strong>{item.fullname}</strong></p>
+                                                                                <p>{lang["username"]}: {item.username} </p>
+                                                                                <p>{lang["permission"]}:
+                                                                                    {item.role === "ad" ? lang["administrator"] :
+                                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                                            item.role === "pd" ? lang["normal"] :
 
-                                                                </ul>
-                                                            </div>
-                                                            <div class="right">
-                                                                <div class="profile_contacts">
-                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
-                                                                </div>
-                                                            </div>
-                                                            {/* {item.username !== auth.username && item.role !== auth.role && ( */}
-                                                                <div class="bottom_list">
-                                                                    <div class="right_button">
-                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                                                                            <i class="fa fa-trash-o"></i>
-                                                                        </button>
+                                                                                                item.role}</p>
+                                                                                <ul class="list-unstyled">
+                                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                                    <li>
+                                                                                        {lang["time"]}: {
+                                                                                            lang["time"] === "Time" ?
+                                                                                                item.create_at.replace("lúc", "at") :
+                                                                                                item.create_at
+                                                                                        }
+                                                                                    </li>
+
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div class="right">
+                                                                                <div class="profile_contacts">
+                                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                                </div>
+                                                                            </div>
+                                                                            {/* {item.username !== auth.username && item.role !== auth.role && ( */}
+                                                                            <div class="bottom_list">
+                                                                                <div class="right_button">
+                                                                                    <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                                        <i class="fa fa-edit"></i>
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                                        <i class="fa fa-trash-o"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                            {/* )} */}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            {/* )} */}
+                                                            ))}
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {projectManagers.length > 0 && (
-                                        <div class="row group">
-                                            <h5 class="col-lg-12 mb-1">{lang["uprojectmanager"]}</h5>
-                                            {projectManagers.map((item) => (
-                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
-                                                    <div class="contact_blog">
-                                                        <div class="contact_inner">
-                                                            <div class="left-cus">
-                                                            <p><strong>{item.fullname}</strong></p>
-                                                                <p>{lang["username"]}:{item.username} </p>
-                                                                <p>{lang["permission"]}:
-                                                                     { item.role === "ad" ? lang["administrator"] :
-                                                                        item.role === "pm" ? lang["uprojectmanager"] :
-                                                                            item.role === "pd" ? lang["normal"] :
-                                                                              
-                                                                                    item.role}</p>
-                                                                <ul class="list-unstyled">
-                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
-                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>{lang["address"]}: {item.address}</li>
-                                                                    <li>{lang["createby"]}: {item.create_by}</li>
-                                                                    <li>
-                                                                        {lang["time"]}: {
-                                                                            lang["time"] === "Time" ?
-                                                                                item.create_at.replace("lúc", "at") :
-                                                                                item.create_at
-                                                                        }
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="right">
-                                                                <div class="profile_contacts">
-                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
-                                                                </div>
-                                                            </div>
-                                                            <div class="bottom_list">
-                                                                <div class="right_button">
-                                                                    <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
-                                                                        <i class="fa fa-edit"></i>
-                                                                    </button>
-                                                                    <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                                                                        <i class="fa fa-trash-o"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {implementers.length > 0 && (
-                                        <div class="row group">
-                                            <h5 class="col-lg-12 mb-1">{lang["normal"]}</h5>
-                                            {implementers.map((item) => (
-                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
-                                                    <div class="contact_blog">
-                                                        <div class="contact_inner">
-                                                            <div class="left-cus">
-                                                            <p><strong>{item.fullname}</strong></p>
-                                                                <p>{lang["username"]}: {item.username} </p>
-                                                                <p>{lang["permission"]}:
-                                                                     { item.role === "ad" ? lang["administrator"] :
-                                                                        item.role === "pm" ? lang["uprojectmanager"] :
-                                                                            item.role === "pd" ? lang["normal"] :
-                                                                              
-                                                                                    item.role}</p>
-                                                                <ul class="list-unstyled">
-                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
-                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>{lang["address"]}: {item.address}</li>
-                                                                    <li>{lang["createby"]}: {item.create_by}</li>
-                                                                    <li>
-                                                                        {lang["time"]}: {
-                                                                            lang["time"] === "Time" ?
-                                                                                item.create_at.replace("lúc", "at") :
-                                                                                item.create_at
-                                                                        }
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="right">
-                                                                <div class="profile_contacts">
-                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
-                                                                </div>
-                                                            </div>
-                                                            <div class="bottom_list">
-                                                                {item.username !== auth.username && item.role !== auth.role && (
-                                                                    <div class="right_button">
-                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                                                                            <i class="fa fa-trash-o"></i>
-                                                                        </button>
+                                                    )}
+                                                    {projectManagers.length > 0 && (
+                                                        <div class="row group">
+                                                            <h5 class="col-lg-12 mb-1">{lang["uprojectmanager"]}</h5>
+                                                            {projectManagers.map((item) => (
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                                    <div class="contact_blog">
+                                                                        <div class="contact_inner">
+                                                                            <div class="left-cus">
+                                                                                <p><strong>{item.fullname}</strong></p>
+                                                                                <p>{lang["username"]}:{item.username} </p>
+                                                                                <p>{lang["permission"]}:
+                                                                                    {item.role === "ad" ? lang["administrator"] :
+                                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                                            item.role === "pd" ? lang["normal"] :
+
+                                                                                                item.role}</p>
+                                                                                <ul class="list-unstyled">
+                                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                                    <li>{lang["address"]}: {item.address}</li>
+                                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                                    <li>
+                                                                                        {lang["time"]}: {
+                                                                                            lang["time"] === "Time" ?
+                                                                                                item.create_at.replace("lúc", "at") :
+                                                                                                item.create_at
+                                                                                        }
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div class="right">
+                                                                                <div class="profile_contacts">
+                                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="bottom_list">
+                                                                                <div class="right_button">
+                                                                                    <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                                        <i class="fa fa-edit"></i>
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                                        <i class="fa fa-trash-o"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {/* {projectFollowers.length > 0 && (
-                                        <div class="row group">
-                                            <h4 class="col-lg-12">{lang["monitor"]}</h4>
-                                            {projectFollowers.map((item) => (
-                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
-                                                    <div class="contact_blog">
-                                                        <div class="contact_inner">
-                                                            <div class="left-cus">
-                                                                <h4>{item.fullname}</h4>
-                                                                <p><strong>Tài khoản: {item.username} </strong></p>
-                                                                <p><strong>Quyền: </strong>
-                                                                {item.role === "ad" ? "Adminstrator" :
-                                                                        item.role === "pm" ? "Operator" :
-                                                                            item.role === "pd" ? "Normal" :
-                                                                             
-                                                                                    item.role}</p>
-                                                                <ul class="list-unstyled">
-                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
-                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
-                                                                    <li>{lang["address"]}: {item.address}</li>
-                                                                    <li>Tạo bởi: {item.create_by}</li>
-                                                                    <li>Thời gian: {item.create_at}</li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="right">
-                                                                <div class="profile_contacts">
-                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
                                                                 </div>
-                                                            </div>
-                                                            <div class="bottom_list">
-                                                                {item.username !== auth.username && item.role !== auth.role && (
-                                                                    <div class="right_button">
-                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                                                                            <i class="fa fa-trash-o"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                )}
-                                                            </div>
+                                                            ))}
                                                         </div>
-                                                    </div>
+                                                    )}
+                                                    {implementers.length > 0 && (
+                                                        <div class="row group">
+                                                            <h5 class="col-lg-12 mb-1">{lang["normal"]}</h5>
+                                                            {implementers.map((item) => (
+                                                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                                    <div class="contact_blog">
+                                                                        <div class="contact_inner">
+                                                                            <div class="left-cus">
+                                                                                <p><strong>{item.fullname}</strong></p>
+                                                                                <p>{lang["username"]}: {item.username} </p>
+                                                                                <p>{lang["permission"]}:
+                                                                                    {item.role === "ad" ? lang["administrator"] :
+                                                                                        item.role === "pm" ? lang["uprojectmanager"] :
+                                                                                            item.role === "pd" ? lang["normal"] :
+
+                                                                                                item.role}</p>
+                                                                                <ul class="list-unstyled">
+                                                                                    <li><i class="fa fa-envelope-o"></i> {item.email}</li>
+                                                                                    <li><i class="fa fa-phone"></i> {item.phone}</li>
+                                                                                    <li>{lang["address"]}: {item.address}</li>
+                                                                                    <li>{lang["createby"]}: {item.create_by}</li>
+                                                                                    <li>
+                                                                                        {lang["time"]}: {
+                                                                                            lang["time"] === "Time" ?
+                                                                                                item.create_at.replace("lúc", "at") :
+                                                                                                item.create_at
+                                                                                        }
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div class="right">
+                                                                                <div class="profile_contacts">
+                                                                                    <img class="img-responsive" width={100} src={proxy + item.avatar} alt="#" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="bottom_list">
+                                                                                {item.username !== auth.username && item.role !== auth.role && (
+                                                                                    <div class="right_button">
+                                                                                        <button type="button" class="btn btn-primary" onClick={() => handleUpdateUser(item)} data-toggle="modal" data-target="#myEditmodal">
+                                                                                            <i class="fa fa-edit"></i>
+                                                                                        </button>
+                                                                                        <button type="button" class="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                                                                                            <i class="fa fa-trash-o"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            ))}
+                                            </div>
+                                        ) : <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                            {lang["not found user"]}
                                         </div>
-                                    )} */}
-                                </div>
-                            </div>
+
+                                        }
+                                    </>
+                                ) : (
+                                    <div class="d-flex justify-content-center align-items-center w-100 responsive-div" >
+                                        {/* {lang["projects.noprojectfound"]} */}
+                                        <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
+
+                                    </div>
+                                )
+                            }
+
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

@@ -44,7 +44,7 @@ export default () => {
         4: "Tạm dừng"
     };
     const [projects, setProjects] = useState([]);
-    const [task_modify, setTasksModify] = useState([]);
+    const [loaded, setLoaded] = useState(false);
     useEffect(() => {
         fetch(`${proxy}/projects/report/data`, {
             headers: {
@@ -65,7 +65,7 @@ export default () => {
                             projects: data
                         }
                     })
-
+                    setLoaded(true)
                 } else {
                     window.location = "/404-not-found"
                 }
@@ -253,56 +253,64 @@ export default () => {
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full price_table padding_infor_info">
-                                <div className="container-fluid">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <div class="col-sm-2">
-                                            <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
-                                                <option value="">{lang["allstatus"]}</option>
-                                                {statusProject.map(status =>
-                                                    <option value={status.value}>{lang[`${status.label}`]}</option>
-                                                )}
-
-                                            </select>
-                                        </div>
-                                       
-
-
-
-                                    </div>
-                                {
-                                    filteredProjects && filteredProjects.length > 0 ? (
-                                        <>{filteredProjects.map((project) => (
-                                            <div key={project.project_id} class="row group">
-                                                <div class="col-md-12 col-lg-12">
-                                                    <p>{lang["projectname"]}: <b class="font-weight-bold">{project.project_name}</b></p>
-                                                    <p>{lang["projectcode"]}: {project.project_code} </p>
-                                                    <p>{lang["log.create_at"]}: {formatDate(project.create_at)}</p>
-                                                    <p>{lang["projectstatus"]}:
-                                                        <span className="status-label d-inline-block ml-1" style={{
-                                                            backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
-                                                            whiteSpace: "nowrap",
-                                                        }}>
-                                                            {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                        </span>
-                                                    </p>
-                                                    <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => exportToExcel(project)}>
-                                                        {lang["export"]}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        </>
-                                        
-                                    ):(
-                                        <div>
-                                                        <p>Not found</p>
+                            {loaded ? (
+                                <><div class="full price_table padding_infor_info">
+                                    {
+                                        filteredProjects && filteredProjects.length > 0 ? (
+                                            <div className="container-fluid">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <div class="col-sm-2">
+                                                        <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
+                                                            <option value="">{lang["allstatus"]}</option>
+                                                            {statusProject.map(status =>
+                                                                <option value={status.value}>{lang[`${status.label}`]}</option>
+                                                            )}
+                                                        </select>
                                                     </div>
-                                    )
-                                }
-                                  
+                                                </div>
+
+                                                <>{filteredProjects.map((project) => (
+                                                    <div key={project.project_id} class="row group">
+                                                        <div class="col-md-12 col-lg-12">
+                                                            <p>{lang["projectname"]}: <b class="font-weight-bold">{project.project_name}</b></p>
+                                                            <p>{lang["projectcode"]}: {project.project_code} </p>
+                                                            <p>{lang["log.create_at"]}: {formatDate(project.create_at)}</p>
+                                                            <p>{lang["projectstatus"]}:
+                                                                <span className="status-label d-inline-block ml-1" style={{
+                                                                    backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
+                                                                    whiteSpace: "nowrap",
+                                                                }}>
+                                                                    {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                                                </span>
+                                                            </p>
+                                                            <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => exportToExcel(project)}>
+                                                                {lang["export"]}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                </>
+
+
+
+                                            </div>
+                                        ) : (
+                                            <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                            {lang["projects.noprojectfound"]}
+                                        </div>
+                                        )
+                                    }
+
                                 </div>
-                            </div>
+                                </>
+                            ) :
+                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div" >
+                                    {/* {lang["projects.noprojectfound"]} */}
+                                    <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
+
+                                </div>
+                            }
+
                         </div>
                     </div>
                 </div>

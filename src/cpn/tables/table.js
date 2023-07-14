@@ -161,6 +161,7 @@ export default () => {
     const openPageUpdateTable = (tableid) => {
         window.location.href = `/projects/${version_id}/table/${tableid.id}`;
     };
+    console.log(currentTable)
    
     return (
         <div class="midde_cont">
@@ -238,7 +239,7 @@ export default () => {
                                                                                 {table.table_name}
                                                                             </div>
                                                                         </td>
-                                                                        <td>{table.create_by.fullname}</td>
+                                                                        <td>{table.create_by?.fullname}</td>
                                                                         <td>{table.create_at}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                       

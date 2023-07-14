@@ -47,7 +47,7 @@ export default () => {
         let temp = {};
 
         temp.api_name = modalTemp.api_name ? "" : "Trường này không được để trống.";
-        temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
+        temp.tables = tables && tables.length > 0 ? "" : lang["table empty"];
 
 
         setErrorApi({

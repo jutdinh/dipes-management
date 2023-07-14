@@ -333,32 +333,32 @@ export default {
     "flexible.content": "Simulate customer workflow according to necessary modules",
     "dev-staff": "DEVELOPMENT STAFF",
 
-"contact.content":"Any contributions and questions please send us at any time, we try to answer all inquiries within 24 hours on the working day. It is a pleasure to answer your questions.",
-     //notification
-     "error.input":"This field can't be blank",
-     "error.title": "Fail!",
-     "success.title": "Success",
+    "contact.content": "Any contributions and questions please send us at any time, we try to answer all inquiries within 24 hours on the working day. It is a pleasure to answer your questions.",
+    //notification
+    "error.input": "This field can't be blank",
+    "error.title": "Fail!",
+    "success.title": "Success",
 
-     "confirm": "Confirm",
-     "delete.api": "Are you sure you want to remove this api?",
-     "btn.delete": "Delete",
-     "btn.cancel": "Cancel",
-     "delete.field": "Are you sure you want to remove this field?",
-     "delete.success.field": "The field was successfully deleted",
-     "delete.task": "Are you sure you want to remove this task?",
-     "delete.member": "Are you sure you want to remove this member?",
-     "delete.project": "Are you sure you want to delete this project?",
-     "primary-table": "The table must have a primary key",
-     "delete.table": "Are you sure you want to delete this table?",
-     "error.select.table": "You must select the table!",
+    "confirm": "Confirm",
+    "delete.api": "Are you sure you want to remove this api?",
+    "btn.delete": "Delete",
+    "btn.cancel": "Cancel",
+    "delete.field": "Are you sure you want to remove this field?",
+    "delete.success.field": "The field was successfully deleted",
+    "delete.task": "Are you sure you want to remove this task?",
+    "delete.member": "Are you sure you want to remove this member?",
+    "delete.project": "Are you sure you want to delete this project?",
+    "primary-table": "The table must have a primary key",
+    "delete.table": "Are you sure you want to delete this table?",
+    "error.select.table": "You must select the table!",
     "error.select.field": "You have to choose a field!",
-    "error.delete.pramry" : "The primary key field must not be deleted.",
+    "error.delete.pramry": "The primary key field must not be deleted.",
     "delete.ui": "Are you sure you want to remove this UI?",
     "delete.user": "Are you sure you want to delete this user?",
 
 
     "empty.member": "No members yet",
-    
+
 
     "activate.title": "Generate product activation key",
     "activate.mac": "MAC",
@@ -369,7 +369,15 @@ export default {
     "medium": "Medium",
     "low": "Low",
     "error.login.empty": "Please complete the information.",
-    "preview layout": "Preview layout"
+    "preview layout": "Preview layout",
+    "not found user": "No users yet",
+    "table empty": "The table must not be blank",
+
+    "params empty": "The params should not be left blank",
+    "body empty": "These fields used to configure the input form must not be left blank",
+    "show empty": "Display fields must not flee",
+    "not found": "Not found"
+
 
 }
 

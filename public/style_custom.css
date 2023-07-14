@@ -1472,3 +1472,22 @@ h5 {
     font-weight: normal;
   }
   
+
+
+
+  
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% từ trên và căn giữa */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Chiều rộng còn lại */
+  }
+  
+  /* Modal hiển thị */
+  .show1 {
+    display: block;
+  }
+  

@@ -19,3 +19,30 @@
         max-width: 50%; 
     }
 }
+
+@media (min-width: 1200px) {
+    .responsive-div {
+        height: 80vh;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .responsive-div {
+        height: 70vh;
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .responsive-div {
+        height: 60vh;
+    }
+}
+
+
+@media (max-width: 767px) {
+    .responsive-div {
+        height: 50vh;
+    }
+}

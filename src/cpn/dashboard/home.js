@@ -161,7 +161,7 @@ export default () => {
     };
 
     const data = processData(statis);
-    
+
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -335,36 +335,35 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
-                                <div className="row">
-                                    <div className="col-md-5 d-flex justify-content-center">
-                                        <div className="my-auto">
-                                            <PieChart width={300} height={300}>
-                                                <Pie
-                                                    dataKey="value"
-                                                    startAngle={360}
-                                                    endAngle={0}
-                                                    data={outputData}
-                                                    cx="45%"
-                                                    cy="50%"
-                                                    outerRadius={80}
-                                                    fill="#8884d8"
-                                                    label
-                                                    labelLine={{ outerRadius: '90%' }}
-                                                    innerRadius={60}
-                                                >
-                                                    {
-                                                        outputData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
-                                                    }
-                                                </Pie>
-                                                <Tooltip />
-                                                <Legend />
-                                            </PieChart>
+                                {projects && projects.length > 0 ? (
+                                    <div className="row">
+                                        <div className="col-md-5 d-flex justify-content-center">
+                                            <div className="my-auto">
+                                                <PieChart width={300} height={300}>
+                                                    <Pie
+                                                        dataKey="value"
+                                                        startAngle={360}
+                                                        endAngle={0}
+                                                        data={outputData}
+                                                        cx="45%"
+                                                        cy="50%"
+                                                        outerRadius={80}
+                                                        fill="#8884d8"
+                                                        label
+                                                        labelLine={{ outerRadius: '90%' }}
+                                                        innerRadius={60}
+                                                    >
+                                                        {
+                                                            outputData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                                        }
+                                                    </Pie>
+                                                    <Tooltip />
+                                                    <Legend />
+                                                </PieChart>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="col-md-7">
-                                        <div class="table-responsive mt-4">
-                                            {statisStatus && statisStatus.length > 0 ? (
+                                        <div className="col-md-7">
+                                            <div class="table-responsive mt-4">
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
@@ -393,15 +392,15 @@ export default () => {
                                                         ))}
                                                     </tbody>
                                                 </table>
-                                            ) : (
-                                                <div class="list_cont ">
-                                                    <p>Not Found !</p>
-                                                </div>
-                                            )
-                                            }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div class="list_cont ">
+                                        <p>{lang["not found"]}</p>
+                                    </div>
+                                )
+                                }
                             </div>
                         </div>
                     </div>
@@ -413,31 +412,30 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_home">
-                                <div className="row">
-                                    <div className="col-md-5 d-flex justify-content-center">
-                                        <div className="my-auto">
-                                            <PieChart width={250} height={300}>
-                                                <Pie
-                                                    data={outputDataLead}
-                                                    cx="45%"
-                                                    cy="50%"
-                                                    labelLine={false}
-                                                    label={renderCustomizedLabel1}
-                                                    outerRadius={80}
-                                                    fill="#8884d8"
-                                                    dataKey="value"
-                                                >
-                                                    {
-                                                        outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
-                                                    }
-                                                </Pie>
-                                            </PieChart>
+                                {projects && projects.length > 0 ? (
+                                    <div className="row">
+                                        <div className="col-md-5 d-flex justify-content-center">
+                                            <div className="my-auto">
+                                                <PieChart width={250} height={300}>
+                                                    <Pie
+                                                        data={outputDataLead}
+                                                        cx="45%"
+                                                        cy="50%"
+                                                        labelLine={false}
+                                                        label={renderCustomizedLabel1}
+                                                        outerRadius={80}
+                                                        fill="#8884d8"
+                                                        dataKey="value"
+                                                    >
+                                                        {
+                                                            outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
+                                                        }
+                                                    </Pie>
+                                                </PieChart>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="col-md-7">
-                                        <div class="table-responsive mt-4">
-                                            {statisLead && statisLead.length > 0 ? (
+                                        <div className="col-md-7">
+                                            <div class="table-responsive mt-4">
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
@@ -471,15 +469,15 @@ export default () => {
                                                         ))}
                                                     </tbody>
                                                 </table>
-                                            ) : (
-                                                <div class="list_cont ">
-                                                    <p>Not Found !</p>
-                                                </div>
-                                            )
-                                            }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div class="list_cont ">
+                                        <p>{lang["not found"]}</p>
+                                    </div>
+                                )
+                                }
                             </div>
                         </div>
                     </div>

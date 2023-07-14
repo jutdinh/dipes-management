@@ -2296,7 +2296,7 @@ console.log("members", currentMembers)
                                                     </div>
                                                 </>) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
                                         }
@@ -2418,7 +2418,7 @@ console.log("members", currentMembers)
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
 
@@ -2467,7 +2467,7 @@ console.log("members", currentMembers)
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Not found</p>
+                                                                    <p>{lang["not found"]}</p>
                                                                 </div>
                                                             )
                                                         }
@@ -2500,7 +2500,7 @@ console.log("members", currentMembers)
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
                                         }

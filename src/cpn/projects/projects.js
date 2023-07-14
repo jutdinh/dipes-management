@@ -188,6 +188,7 @@ export default () => {
     // const users = JSON.parse(stringifiedUser)
     const [project, setProject] = useState({ project_type: "database" });
     const [projects, setProjects] = useState([]);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         fetch(`${proxy}/projects/all/projects`, {
@@ -210,6 +211,7 @@ export default () => {
                             }
                         })
                     }
+                    setLoaded(true)
                 } else {
                     window.location = "/404-not-found"
                 }
@@ -635,104 +637,118 @@ export default () => {
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="row">
-                                            {projects.map((item) => (
-                                                (item.members.find(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && (
-                                                    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-                                                        <div class="card project-block">
-                                                            <div class="card-body">
-                                                                <div class="row project-name-min-height">
-                                                                    <div class="col-sm-10" >
+                                            {
+                                                loaded ? (
+                                                    <>
+                                                        {
+                                                            projects && projects.length > 0 ? (
+                                                                projects.map((item) => (
+                                                                    (item.members.find(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && (
+                                                                        <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                                                                            <div class="card project-block">
+                                                                                <div class="card-body">
+                                                                                    <div class="row project-name-min-height">
+                                                                                        <div class="col-sm-10" >
 
-                                                                        <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
-                                                                    </div>
+                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
+                                                                                        </div>
 
-                                                                    <div class="col-sm-2 cross-hide pointer scaled-hover">
-                                                                        <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
+                                                                                        <div class="col-sm-2 cross-hide pointer scaled-hover">
+                                                                                            <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
 
-                                                                    </div>
-                                                                </div>
-                                                                <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
-                                                                <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
+                                                                                    <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
 
-                                                                <p>{lang["time"]}: {
-                                                                    lang["time"] === "Time" ?
-                                                                        item.create_at.replace("lúc", "at") :
-                                                                        item.create_at
-                                                                }</p>
-                                                                {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
-                                                                <p class="font-weight-bold">{lang["projectmanager"]}</p>
-                                                                <div class="profile_contacts">
+                                                                                    <p>{lang["time"]}: {
+                                                                                        lang["time"] === "Time" ?
+                                                                                            item.create_at.replace("lúc", "at") :
+                                                                                            item.create_at
+                                                                                    }</p>
+                                                                                    {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
+                                                                                    <p class="font-weight-bold">{lang["projectmanager"]}</p>
+                                                                                    <div class="profile_contacts">
 
-                                                                    <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
+                                                                                        <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
 
-                                                                </div>
-                                                                <p class="font-weight-bold">{lang["projectmember"]}</p>
+                                                                                    </div>
+                                                                                    <p class="font-weight-bold">{lang["projectmember"]}</p>
 
-                                                                <div class="profile_contacts">
-                                                                    {
-                                                                        item.members && item.members.length > 0 ?
-                                                                            item.members.slice(0, 2).map(member => (
-                                                                                <img
-                                                                                    class="img-responsive circle-image"
-                                                                                    src={proxy + member.avatar}
-                                                                                    alt={member.username}
-                                                                                />
-                                                                            )) : <div class="profile_contacts">
-                                                                                <p>{lang["projectempty"]} </p>
-                                                                            </div>
-                                                                    }
-                                                                    {/* {
+                                                                                    <div class="profile_contacts">
+                                                                                        {
+                                                                                            item.members && item.members.length > 0 ?
+                                                                                                item.members.slice(0, 2).map(member => (
+                                                                                                    <img
+                                                                                                        class="img-responsive circle-image"
+                                                                                                        src={proxy + member.avatar}
+                                                                                                        alt={member.username}
+                                                                                                    />
+                                                                                                )) : <div class="profile_contacts">
+                                                                                                    <p>{lang["projectempty"]} </p>
+                                                                                                </div>
+                                                                                        }
+                                                                                        {/* {
                                                                     item.members.length > 2 &&
                                                                     <div className="img-responsive circle-image extra-images">
                                                                         +{item.members.length - 2}
                                                                     </div>
                                                                 } */
-                                                                    }
-                                                                    {
-                                                                        item.members.length > 2 &&
-                                                                        <div class="border-custom">
-                                                                            <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
-                                                                                <span> +{item.members.length - 2}</span>
+                                                                                        }
+                                                                                        {
+                                                                                            item.members.length > 2 &&
+                                                                                            <div class="border-custom">
+                                                                                                <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
+                                                                                                    <span> +{item.members.length - 2}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+
+                                                                                    </div>
+                                                                                    <div className="d-flex position-relative">
+                                                                                        <div>
+                                                                                            <span className="d-block status-label" style={{
+                                                                                                backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                                                            }}>
+                                                                                                {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                                                            </span>
+
+                                                                                        </div>
+                                                                                        <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
+                                                                                    </div>
+                                                                                    <div class="progress skill-bar mt-3">
+                                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
+                                                                                    <div class="bottom_list">
+                                                                                        <div class="right_button">
+                                                                                            <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
+                                                                                                <i class="fa fa-edit"></i> {lang["buttondetail"]}
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    }
+                                                                    )
+                                                                ))
+                                                            ) :
+                                                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                                                    {lang["projects.noprojectfound"]}
+                                                                </div>
+                                                        }
+                                                    </>
+                                                ) : (
+                                                    <div class="d-flex justify-content-center align-items-center w-100 responsive-div" >
+                                                        {/* {lang["projects.noprojectfound"]} */}
+                                                        <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
 
-                                                                </div>
-                                                                <div className="d-flex position-relative">
-                                                                    <div>
-                                                                        <span className="d-block status-label" style={{
-                                                                            backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
-                                                                        }}>
-                                                                            {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                        </span>
-
-                                                                    </div>
-                                                                    <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
-                                                                </div>
-                                                                <div class="progress skill-bar mt-3">
-                                                                    <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
-                                                                    </div>
-                                                                </div>
-
-                                                                {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
-                                                                <div class="bottom_list">
-                                                                    <div class="right_button">
-                                                                        <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
-                                                                            <i class="fa fa-edit"></i> {lang["buttondetail"]}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 )
-                                            ))}
-                                            {projects.length == 0 ?
-                                              <div class="d-flex justify-content-center align-items-center w-100" style={{ height: '80vh' }}>
-                                              {/* {lang["projects.noprojectfound"]} */}
-                                              <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
-
-                                          </div>  : null}
+                                            }
+                                            
                                         </div>
                                     </div>
                                 </div>

@@ -275,7 +275,7 @@ export default () => {
                                             </>
                                         ) : (
                                             <div class="list_cont ">
-                                                <p>Chưa có logs</p>
+                                                <p>{lang["not found"]}</p>
                                             </div>
                                         )
                                     }

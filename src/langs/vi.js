@@ -185,7 +185,7 @@ export default {
     "error.permission": "Vui lòng chọn quyền",
     "error.address": "Vui lòng nhập địa chỉ",
 
-"select.member": "Chọn thành viên",
+    "select.member": "Chọn thành viên",
     // button modal edit user
     "btn.update": "Lưu lại",
     "edituser.title": "Chỉnh sửa người dùng",
@@ -374,7 +374,18 @@ export default {
     "medium": "Trung bình",
     "low": "Thấp",
     "error.login.empty": "Vui lòng nhập đầy đủ thông tin",
-"preview layout": "Xem trước bố cục"
+    "preview layout": "Xem trước bố cục",
+    "not found user": "Chưa có người dùng",
+    "table empty": "Bản này không được bỏ trống",
+    "params empty": "Đối số không được để trống",
+
+
+    "body empty": "Các trường này dùng để cấu hình biểu mẫu nhập liệu không được để trống",
+    "show empty": "Các trường hiển thị không được bỏ trống",
+    "not found": "Không tìm thấy"
+
+
+
 
 
 

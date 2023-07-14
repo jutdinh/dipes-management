@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
 import clipboardCopy from 'clipboard-copy';
-
+import $ from 'jquery';
 
 
 export default () => {
@@ -62,13 +62,15 @@ export default () => {
         });
     };
 
+    const myModal = useRef();
 
+    
     const [errorApi, setErrorApi] = useState({});
     const validateApiname = () => {
         let temp = {};
 
-        temp.api_name = modalTemp.api_name ? "" : "Trường này không được để trống.";
-        temp.tables = tables && tables.length > 0 ? "" : "Bảng không được để trống.";
+        temp.api_name = modalTemp.api_name ? "" : lang["error.input"];
+        temp.tables = tables && tables.length > 0 ? "" : lang["table empty"];
 
 
         setErrorApi({
@@ -77,9 +79,58 @@ export default () => {
 
         return Object.values(temp).every(x => x === "");
     }
+    const validateApiParams = () => {
+        let temp = {};
+        temp.params = modalTemp.params && modalTemp.params.length > 0 ? "" : lang["params empty"];
+        setErrorApi({
+            ...temp
+        });
+        return Object.values(temp).every(x => x === "");
+    }
+
+    const validateApiBody = () => {
+        let temp = {};
+        temp.body = modalTemp.body && modalTemp.body.length > 0 ? "" : lang["body empty"];
+        setErrorApi({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
+    const validateApiFieldShow = () => {
+        let temp = {};
+        temp.fields = modalTemp.fields && modalTemp.fields.length > 0 ? "" : lang["show empty"];
+
+        setErrorApi({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
+
 
     const handleSubmitModal = () => {
-        if (validateApiname()) {
+        const validator = {
+            "get": [validateApiname, validateApiFieldShow],
+            "post": [validateApiname, validateApiBody],
+            "put": [validateApiname, validateApiParams, validateApiBody],
+            "delete": [validateApiParams]
+        }
+
+        const validateFunctions = validator[modalTemp.api_method]
+        let valid = true;
+
+        for (let i = 0; i < validateFunctions.length; i++) {
+            const checkResult = validateFunctions[i]()
+            if (!checkResult) {
+                valid = false
+
+                break;
+            }
+        }
+
+        console.log("VALID: ", valid)
+        if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
 
 
@@ -277,7 +328,7 @@ export default () => {
                 const { success, data, status, content } = resp;
 
                 if (success) {
-                    if (data) {                        
+                    if (data) {
                         setAllTable(data.tables);
                         setPossibleTables(data.tables);
                     }
@@ -293,7 +344,7 @@ export default () => {
     console.log(selectedTables)
 
     const handleChange = (e) => {
-        const selectedTableName = e.target.value;        
+        const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
@@ -584,8 +635,8 @@ export default () => {
     const validateCaculates = () => {
         let temp = {};
 
-        temp.display_name = display_name ? "" : "Trường này không được để trống.";
-        temp.fomular = fomular ? "" : "Trường này không được để trống.";
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
 
 
         setErrorCaculates({
@@ -596,19 +647,22 @@ export default () => {
     }
     const handleSubmitFieldCalculates = async (event) => {
         event.preventDefault();
+        if (validateCaculates()) {
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+            const newCalculate = { display_name, fomular_alias, fomular };
 
-        const fomular_alias = await generateUniqueFormularAlias(display_name);
-        const newCalculate = { display_name, fomular_alias, fomular };
+            // Cập nhật modalTemp
+            setModalTemp(prev => ({
+                ...prev,
+                calculates: [...prev.calculates, newCalculate]
+            }));
+            setCalculates([...calculates, newCalculate])
+            setDisplayname("");
+            setFomular("");
+            // $('#addFieldCalculates').modal('hide');
 
+        }
 
-        // Cập nhật modalTemp
-        setModalTemp(prev => ({
-            ...prev,
-            calculates: [...prev.calculates, newCalculate]
-        }));
-        setCalculates([...calculates, newCalculate])
-        setDisplayname("");
-        setFomular("");
 
 
     };
@@ -619,31 +673,45 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldCalculates = (cal) => {
-        console.log("Log data trường tính toán ",cal)
+        console.log("Log data trường tính toán ", cal)
         setCalculatesUpdate(cal)
+    }
+    const validateCaculatesUpdate = () => {
+        let temp = {};
+
+        temp.display_name = calculatesUpdate.display_name ? "" : lang["error.input"];
+        temp.fomular = calculatesUpdate.fomular ? "" : lang["error.input"];
 
 
+        setErrorCaculates({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
     }
 
-
     const submitupdateFieldCalculates = () => {
-        const updatedCalculates = modalTemp.calculates.map(item =>
-            item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
-        );
-        setCalculates(updatedCalculates);
-        setModalTemp(prev => ({
-            ...prev,
-            calculates: updatedCalculates
-        }));
+        if (validateCaculatesUpdate()) {
+            const updatedCalculates = modalTemp.calculates.map(item =>
+                item.fomular_alias === calculatesUpdate.fomular_alias ? calculatesUpdate : item
+            );
+            setCalculates(updatedCalculates);
+            setModalTemp(prev => ({
+                ...prev,
+                calculates: updatedCalculates
+            }));
+           
+        }
+
 
     };
 
     // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
-    useEffect(() => {
-        if (calculatesUpdate.fomular_alias) {
-            submitupdateFieldCalculates();
-        }
-    }, [calculatesUpdate]);
+    // useEffect(() => {
+    //     if (calculatesUpdate.fomular_alias) {
+    //         submitupdateFieldCalculates();
+    //     }
+    // }, [calculatesUpdate]);
     console.log(calculates)
     console.log(modalTemp.calculates)
 
@@ -672,7 +740,7 @@ export default () => {
                     calculates: newCalculates
                 }));
                 Swal.fire({
-                    title: lang["success"],
+                    title: lang["success.title"],
                     text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
@@ -692,25 +760,41 @@ export default () => {
         console.log(sta)
         setStatisticalUpdate(sta)
     }
+    const validateStatisticalUpdate = () => {
+        let temp = {};
+
+        temp.display_name = statisticalUpdate.display_name ? "" : lang["error.input"];
+        temp.fomular = statisticalUpdate.fomular ? "" : lang["error.input"];
+        temp.field = statisticalUpdate.field ? "" : lang["error.input"];
+
+        setErrorStatistical({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
 
 
     const submitupdateFieldStatistical = () => {
-        const updatedStatistical = modalTemp.statistic.map(item =>
-            item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
-        );
+        if (validateStatisticalUpdate()) {
+            const updatedStatistical = modalTemp.statistic.map(item =>
+                item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
+            );
 
-        setModalTemp(prev => ({
-            ...prev,
-            statistic: updatedStatistical
-        }));
+            setModalTemp(prev => ({
+                ...prev,
+                statistic: updatedStatistical
+            }));
+        }
+
     };
 
     // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
-    useEffect(() => {
-        if (statisticalUpdate.fomular_alias) {
-            submitupdateFieldStatistical();
-        }
-    }, [statisticalUpdate]);
+    // useEffect(() => {
+    //     if (statisticalUpdate.fomular_alias) {
+    //         submitupdateFieldStatistical();
+    //     }
+    // }, [statisticalUpdate]);
 
     console.log(statisticalUpdate)
     console.log(modalTemp.statistic)
@@ -741,7 +825,7 @@ export default () => {
                 }));
 
                 Swal.fire({
-                    title: lang["success"],
+                    title: lang["success.title"],
                     text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
@@ -758,9 +842,9 @@ export default () => {
     const validateStatistical = () => {
         let temp = {};
 
-        temp.display_name = display_name ? "" : "Trường này không được để trống.";
-        temp.fomular = fomular ? "" : "Trường này không được để trống.";
-        temp.field = field ? "" : "Trường này không được bỏ trống.";
+        temp.display_name = display_name ? "" : lang["error.input"];
+        temp.fomular = fomular ? "" : lang["error.input"];
+        temp.field = field ? "" : lang["error.input"];
 
         setErrorStatistical({
             ...temp
@@ -773,21 +857,23 @@ export default () => {
     const [field, setField] = useState("");
     const [statistical, setStatistical] = useState([]);
     const handleSubmitFieldStatistical = async (event) => {
+        if (validateStatistical()) {
+            event.preventDefault();
 
-        event.preventDefault();
+            const fomular_alias = await generateUniqueFormularAlias(display_name);
+            console.log(fomular_alias)
+            const newStatistical = { fomular_alias, display_name, field, fomular };
+            // Cập nhật modalTemp
+            setModalTemp(prev => ({
+                ...prev,
+                statistic: [...prev.statistic, newStatistical]
+            }));
+            setStatistical([...statistical, newStatistical])
+            setDisplayname("");
+            setField("");
+            setFomular("");
+        }
 
-        const fomular_alias = await generateUniqueFormularAlias(display_name);
-        console.log(fomular_alias)
-        const newStatistical = { fomular_alias, display_name, field, fomular };
-        // Cập nhật modalTemp
-        setModalTemp(prev => ({
-            ...prev,
-            statistic: [...prev.statistic, newStatistical]
-        }));
-        setStatistical([...statistical, newStatistical])
-        setDisplayname("");
-        setField("");
-        setFomular("");
 
 
     };
@@ -801,7 +887,10 @@ export default () => {
         window.location.href = `/projects/${version_id}/apis/create/fieldstatis`;
         // window.location.href = `tables`;
     };
-
+    const handleCloseModal = () => {
+       
+        setShowModal(false);
+    };
 
     //    console.log(modalTemp.calculates)
     // console.log(tempFieldParam)
@@ -1011,7 +1100,8 @@ export default () => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Not found</p>
+                                                        <p>{lang["not found"]}</p>
+
                                                     </div>
                                                 )
                                             }
@@ -1027,7 +1117,11 @@ export default () => {
                                                 {(modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["param fields"]} </p>
+                                                            <p class="font-weight-bold">
+                                                                {lang["param fields"]}
+                                                                {(modalTemp.api_method === "put" || modalTemp.api_method === "delete") && <span className='red_star'> *</span>}
+                                                            </p>
+                                                            {(modalTemp.api_method === "put" || modalTemp.api_method === "delete" && errorApi.params) && <p className="text-danger ml-2">{errorApi.params}</p>}
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={initializeCheckboxStateParam} data-toggle="modal" data-target="#addFieldParam">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -1072,7 +1166,7 @@ export default () => {
                                                                     </>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Not found</p>
+                                                                        <p>{lang["not found"]}</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -1125,7 +1219,7 @@ export default () => {
                                                                     </>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Not found</p>
+                                                                        <p>{lang["not found"]}</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -1178,7 +1272,7 @@ export default () => {
                                                                     </table>
                                                                 ) : (
                                                                     <div class="list_cont ">
-                                                                        <p>Not found</p>
+                                                                        <p>{lang["not found"]}</p>
                                                                     </div>
                                                                 )
                                                             }
@@ -1231,7 +1325,7 @@ export default () => {
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Not found</p>
+                                                                    <p>{lang["not found"]}</p>
                                                                 </div>
                                                             )
                                                             }
@@ -1276,7 +1370,7 @@ export default () => {
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Not found</p>
+                                                                    <p>{lang["not found"]}</p>
                                                                 </div>
                                                             )
                                                             }
@@ -1599,7 +1693,7 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Not found</p>
+                                                        <p>{lang["not found"]}</p>
                                                     </div>
                                                 )
                                             }
@@ -1628,13 +1722,13 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" data-dismiss="modal" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button"  data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
-                        </div>
+                        </div>  
                     </div>
                 </div>
                 {/* Edit Field calculates */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="editCalculates">
+                <div class={`modal ${showModal ? 'show1' : ''}`} id="editCalculates">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -1649,8 +1743,10 @@ export default () => {
                                             <input type="text" className="form-control" value={calculatesUpdate.display_name} onChange={
                                                 (e) => { setCalculatesUpdate({ ...calculatesUpdate, display_name: e.target.value }) }
                                             } placeholder="" />
+                                            {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                         </div>
                                         <div class="form-group  col-md-12">
+                                            <label> < p class="font-weight-bold">{lang["fields display"]}</p></label>
                                             <div class="table-responsive">
                                                 {
                                                     modalTemp.fields && modalTemp.fields.length > 0 ? (
@@ -1687,7 +1783,7 @@ export default () => {
                                                         </table>
                                                     ) : (
                                                         <div class="list_cont ">
-                                                            <p>Not found</p>
+                                                            <p>{lang["not found"]}</p>
                                                         </div>
                                                     )
                                                 }
@@ -1704,13 +1800,14 @@ export default () => {
                                                 }
                                                 required
                                             />
+                                            {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                         </div>
                                     </div>
 
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldCalculates} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1749,7 +1846,7 @@ export default () => {
                                         </select>
                                     </div> */}
                                     <div class="form-group col-md-12">
-                                        <label>{lang["fields display"]}</label>
+                                        <label> < p class="font-weight-bold">{lang["fields display"]}</p></label>
                                         <div class="table-responsive">
                                             {
                                                 modalTemp.fields && modalTemp.fields.length > 0 ? (
@@ -1760,7 +1857,6 @@ export default () => {
                                                                 <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                 <th class="font-weight-bold">{lang["alias"]}</th>
                                                                 <td class="font-weight-bold">{lang["table name"]}</td>
-
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -1786,9 +1882,39 @@ export default () => {
                                                     </table>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Not found</p>
+                                                        <p>{lang["not found"]}</p>
                                                     </div>
                                                 )
+                                            }
+                                        </div>
+                                        <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
+                                        <div class="table-responsive">
+                                            {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {modalTemp.calculates.map((calculate, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{calculate.display_name}</td>
+                                                                <td>{calculate.fomular_alias}</td>
+                                                                <td>{calculate.fomular}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>{lang["not found"]}</p>
+                                                </div>
+                                            )
                                             }
                                         </div>
                                     </div>
@@ -1860,6 +1986,7 @@ export default () => {
                                             } placeholder="" />
                                         </div>
                                         <div class="form-group  col-md-12">
+                                            <label> < p class="font-weight-bold">{lang["fields display"]}</p></label>
                                             <div class="table-responsive">
                                                 {
                                                     modalTemp.fields && modalTemp.fields.length > 0 ? (
@@ -1896,9 +2023,39 @@ export default () => {
                                                         </table>
                                                     ) : (
                                                         <div class="list_cont ">
-                                                            <p>Not found</p>
+                                                            <p>{lang["not found"]}</p>
                                                         </div>
                                                     )
+                                                }
+                                            </div>
+                                            <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
+                                            <div class="table-responsive">
+                                                {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {modalTemp.calculates.map((calculate, index) => (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{calculate.display_name}</td>
+                                                                    <td>{calculate.fomular_alias}</td>
+                                                                    <td>{calculate.fomular}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>{lang["not found"]}</p>
+                                                    </div>
+                                                )
                                                 }
                                             </div>
                                         </div>
