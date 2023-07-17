@@ -21,9 +21,9 @@ import { Workflow } from './workflow';
 import "../css/index.scss";
 
 function App() {
-
+  const { lang, proxy, auth } = useSelector(state => state);
   const dispatch = useDispatch()
-
+  const _token = localStorage.getItem("_token");
   useEffect(() => {
     const specialURLs = ["/login", "/signup", "/signout"]
     const url = window.location.pathname;
@@ -48,22 +48,26 @@ function App() {
   }, [])
 
   useEffect(() => {
-    fetch(`${proxy}`, {
-      headers: {
-        Authorization: _token
-      }
-    })
-      .then(res => res.json())
-      .then(resp => {
-        const { success } = resp;
-        console.log(resp)
-        if (success) {
 
-        } else {
-          window.location = "/signout"
+    if(_token != undefined){
+
+      fetch(`${proxy}/auth/token/check`, {
+        headers: {
+          Authorization: _token
         }
       })
-  }, [])
+        .then(res => res.json())
+        .then(resp => {
+          const { success } = resp;
+          console.log(resp)
+          if (success) {
+  
+          } else {
+            window.location = "/signout"
+          }
+        })
+    }
+  }, [_token])
 
 
   return (

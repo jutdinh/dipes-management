@@ -41,7 +41,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setLogs(data);
@@ -53,7 +53,7 @@ export default () => {
                 }
             })
     }, [])
-// console.log(view)
+    // console.log(view)
     const [logDetail, setLogDetail] = useState([]);
     const detailLogs = async (logid) => {
         // console.log(logid)
@@ -102,6 +102,13 @@ export default () => {
                 }
             })
     };
+    const [eventTypeFilter, setEventTypeFilter] = useState('');
+    const [eventTitleFilter, setEventTitleFilter] = useState('');
+    const [descriptionFilter, setDescriptionFilter] = useState('');
+    const [dateFilter, setDateFilter] = useState('');
+
+    console.log(eventTypeFilter)
+
     const [currentPageLogs, setCurrentPageLogs] = useState(1);
     const rowsPerPageLogs = 12;
     const indexOfLastMemberLogs = currentPageLogs * rowsPerPageLogs;
@@ -109,6 +116,8 @@ export default () => {
     const currentMembersLogs = view.slice(indexOfFirstMemberLogs, indexOfLastMemberLogs);
     const paginateLogs = (pageNumber) => setCurrentPageLogs(pageNumber);
     const totalPagesLogs = Math.ceil(view.length / rowsPerPageLogs);
+
+    console.log(currentMembersLogs)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -188,40 +197,56 @@ export default () => {
                                                     <thead>
                                                         <tr>
                                                             <th scope="col">{lang["log.no"]}</th>
-
-                                                            <th scope="col" class="align-center">{lang["log.type"]}</th>
-                                                            <th scope="col">{lang["log.listtitle"]}</th>
-                                                            <th scope="col">{lang["description"]}</th>
-                                                            <th scope="col">{lang["log.dayupdate"]}</th>
+                                                            <th scope="col" class="align-center">{lang["log.type"]}
+                                                                <select value={eventTypeFilter} onChange={e => setEventTypeFilter(e.target.value)}>
+                                                                    <option value={lang["log.information"]}>{lang["log.information"]}</option>
+                                                                    <option value={lang["log.warning"]}>{lang["log.warning"]}</option>
+                                                                    <option value={lang["log.error"]}>{lang["log.error"]}</option>
+                                                                </select>
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["log.listtitle"]}
+                                                                <input value={eventTitleFilter} onChange={e => setEventTitleFilter(e.target.value)} />
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["description"]}
+                                                                <input value={descriptionFilter} onChange={e => setDescriptionFilter(e.target.value)} />
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["log.dayupdate"]}
+                                                                <input type="datetime-local" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />
+                                                            </th>
                                                             <th scope="col" class="align-center">{lang["log.action"]}</th>
                                                         </tr>
+
                                                     </thead>
                                                     <tbody>
-                                                        {currentMembersLogs.map((log, index) => {
-                                                            // Tìm kiểu sự kiện tương ứng trong mảng eventType
-                                                            const event = eventType.find(item => item.label === log.event_type);
 
-                                                            return (
-                                                                <tr key={log.id}>
-                                                                       <td scope="row">{indexOfFirstMemberLogs + index + 1}</td>
+                                                        {currentMembersLogs
+                                                            .filter(log => log.event_type.includes(eventTypeFilter))
+                                                            .filter(log => log.event_title.includes(eventTitleFilter))
+                                                            .filter(log => log.event_description.includes(descriptionFilter))
+                                                            .filter(log => log.raw_date.includes(dateFilter))
+                                                            .map((log, index) => {
+                                                                const event = eventType.find(item => item.label === log.event_type);
+                                                                return (
+                                                                    <tr key={log.id}>
+                                                                        <td scope="row">{indexOfFirstMemberLogs + index + 1}</td>
+                                                                        <td class="align-center">
+                                                                            {event && <>
+                                                                                <i class={`${event.icon}`} style={{ color: event.color }} title={event.label}></i>
+                                                                            </>}
+                                                                        </td>
+                                                                        <td>{log.event_title}</td>
+                                                                        <td>{log.event_description.slice(0, 100)}{log.event_description.length > 100 ? "..." : ""}</td>
+                                                                        <td>{log.create_at}</td>
+                                                                        <td class="align-center">
+                                                                            <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
 
-                                                                    <td class="align-center">
-                                                                        {/* Kiểm tra xem có tìm thấy sự kiện không, nếu có thì hiển thị nhãn và icon */}
-                                                                        {event && <>
-
-                                                                            <i class={`${event.icon}`} style={{ color: event.color }} title={event.label}></i>
-                                                                        </>}
-                                                                    </td>
-                                                                    <td>{log.event_title}</td>
-                                                                    <td>{log.event_description.slice(0, 100)}{ log.event_description.length > 100 ? "...": "" }</td>
-                                                                    <td>{log.create_at}</td>
-                                                                    <td class="align-center">
-                                                                        <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
-
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        })}
+                                                                        </td>
+                                                                    </tr>
+                                                                );
+                                                            })}
                                                     </tbody>
 
                                                 </table>
@@ -233,7 +258,7 @@ export default () => {
                                                         <ul className="pagination mb-0">
                                                             <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
                                                                 <button className="page-link" onClick={() => paginateLogs(1)}>
-                                                                    &#8810; 
+                                                                    &#8810;
                                                                 </button>
                                                             </li>
                                                             <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
@@ -259,12 +284,12 @@ export default () => {
                                                             {currentPageLogs < totalPagesLogs - 2 && <li className="page-item"><span className="page-link">...</span></li>}
                                                             <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
                                                                 <button className="page-link" onClick={() => paginateLogs(currentPageLogs + 1)}>
-                                                                    &raquo; 
+                                                                    &raquo;
                                                                 </button>
                                                             </li>
                                                             <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
                                                                 <button className="page-link" onClick={() => paginateLogs(totalPagesLogs)}>
-                                                                    &#8811; 
+                                                                    &#8811;
                                                                 </button>
                                                             </li>
                                                         </ul>
