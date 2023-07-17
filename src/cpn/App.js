@@ -1,12 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { Home, About } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
@@ -17,9 +12,8 @@ import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
 import { Tables, Field, UpdateField } from './tables';
-import { Apis, CreateApi, UpdateAi,StatisticalField} from './api';
-
-import { UI, CreateUi} from './ui'
+import { Apis, CreateApi, UpdateAi, StatisticalField } from './api';
+import { UI, CreateUi } from './ui'
 import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
@@ -49,15 +43,30 @@ function App() {
             user
           }
         })
-
       }
     }
   }, [])
 
+  useEffect(() => {
+    fetch(`${proxy}`, {
+      headers: {
+        Authorization: _token
+      }
+    })
+      .then(res => res.json())
+      .then(resp => {
+        const { success } = resp;
+        console.log(resp)
+        if (success) {
+
+        } else {
+          window.location = "/signout"
+        }
+      })
+  }, [])
 
 
   return (
-
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -65,7 +74,6 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
-
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />
@@ -74,10 +82,8 @@ function App() {
         <Route path="/projects/:version_id/apis" element={<Navigation Child={Apis} />} />
         <Route path="/projects/:version_id/apis/create" element={<Navigation Child={CreateApi} />} />
         <Route path="/projects/:version_id/apis/update/:api_id" element={<Navigation Child={updateApi} />} />
-
         <Route path="/projects/:version_id/uis" element={<Navigation Child={UI} />} />
         <Route path="/projects/:version_id/uis/create" element={<Navigation Child={CreateUi} />} />
-
         <Route path="/statis" element={<Navigation Child={Statistical} />} />
         <Route path="/report" element={<Navigation Child={Report} />} />
         <Route path="/workflow" element={<Navigation Child={Workflow} />} />
@@ -89,8 +95,6 @@ function App() {
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
-
   );
 }
-
 export default App;
