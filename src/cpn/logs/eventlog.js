@@ -1,31 +1,32 @@
 
-import { useParams } from "react-router-dom";
-import Header from "../common/header"
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
+
+    const MAX_RECORDS_PER_SHEET = 15;
+    const MOVE_STEP = 3
     const [logs, setLogs] = useState([]);
     const [filter, setFilter] = useState({ type: 'info' });
-
+    const [logDetail, setLogDetail] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    // console.log(filter)
-    let langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
+    
+    const [ currentPage, setCurrentPage ] = useState(5)
+    const [ totalPages, setTotalPages ] = useState(0)
 
     const languages = langItem.toLowerCase();
 
     const handleCloseModal = () => {
         setShowModal(false);
     };
-    const eventType = [
-        { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-log " },
-        { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-log " },
-        { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-log " },
-
-    ]
+    const eventType = {}
+    eventType[lang["log.information"]] = { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-log " }
+    eventType[lang["log.warning"]] = { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-log " }
+    eventType[lang["log.error"]] = { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-log " }
 
     useEffect(() => {
 
@@ -40,8 +41,13 @@ export default () => {
                 console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
-                        setLogs(data);
-                        // console.log(data)
+                        const formatedData = data.map(log => {
+                            return { ...log, icon: eventType[log.event_type] }
+                        })
+                        setLogs(formatedData);
+                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET )
+                        console.log(total)
+                        setTotalPages( total )
                     }
                 } else {
                     window.location = "/login"
@@ -49,16 +55,13 @@ export default () => {
             })
     }, [])
     // console.log(view)
-    const [logDetail, setLogDetail] = useState([]);
+    
     const detailLogs = async (logid) => {
         // console.log(logid)
-
-
         setLogDetail(logid)
-
-
-
     };
+
+    
 
     const submitFilter = (e) => {
         e.preventDefault();
@@ -80,7 +83,7 @@ export default () => {
                     const { success, content, data, status } = resp;
                     console.log(resp)
                     if (success) {
-                       
+
                         // window.location.reload();
                         setShowModal(false);
 
@@ -96,6 +99,23 @@ export default () => {
                 }
             })
     };
+
+
+    const getPageData = ( pageIndex ) => {
+        const firstItemIndex = (pageIndex - 1 ) * MAX_RECORDS_PER_SHEET
+        const data = logs.slice( firstItemIndex, firstItemIndex + MAX_RECORDS_PER_SHEET )
+        return data ? data : []
+    }
+
+    const getRelativeIndex = ( currentPage, step = 2 ) => {
+        const indices = []
+        for( let i = currentPage - step ; i < currentPage +step ; i++ ){
+            if( i > 0  && i <= totalPages){
+                indices.push( i )
+            }
+        }
+        return indices
+    }
 
     return (
         <div class="midde_cont">
@@ -146,7 +166,7 @@ export default () => {
                                             <div className="col-lg-3 d-flex align-items-end justify-content-end">
                                                 <button className="btn btn-primary mr-2 mt-2 btn-log" onClick={submitFilter}>{lang["btn.ok"]}</button>
                                                 <button className="btn btn-secondary btn-log" onClick={() => {
-                                                  
+
                                                 }}>{lang["btn.clear"]}</button>
 
 
@@ -170,11 +190,89 @@ export default () => {
                             <div class="table_section padding_infor_info">
                                 <div class="table-responsive">
                                     {/* Qua tr met */}
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style={{ width: 50 }}>{lang["log.no"]}</th>
+                                                <th scope="col" style={{ width: 50 }} class="align-center">{lang["log.type"]}</th>
+                                                <th scope="col">
+                                                    {lang["log.listtitle"]}
+                                                </th>
+                                                <th scope="col">
+                                                    {lang["description"]}
+                                                </th>
+                                                <th scope="col">
+                                                    {lang["log.dayupdate"]}
+                                                </th>
+                                                <th scope="col" class="align-center">{lang["log.action"]}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {getPageData( currentPage ).map((log, index) =>
+                                                <tr key={log.id}>
+                                                    <td scope="row">{ index + 1 }</td>
+                                                    <td class="align-center">
+
+                                                        <i class={`${log.icon?.icon}`} style={{ color: log.icon?.color }} title={log.icon?.label}></i>
+
+                                                    </td>
+                                                    <td>{log.event_title}</td>
+                                                    <td>{log.event_description.slice(0, 100)}{log.event_description.length > 100 ? "..." : ""}</td>
+                                                    <td>{log.create_at}</td>
+                                                    <td class="align-center">
+                                                        <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
+
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div className="d-flex justify-content-between align-items-center">
+
+                    <p>{lang["show"]} { getPageData( currentPage ).length } {lang["of"]} {logs.length} {lang["results"]}</p>
+
+                    <nav aria-label="Page navigation example">
+                        <ul className="pagination mb-0">
+                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => { setCurrentPage( 1 ) }}>
+                                    &#8810;
+                                </button>
+                            </li>
+                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => { setCurrentPage( currentPage - 1 ) }}>
+                                    &laquo;
+                                </button>
+                            </li>   
+
+                            { getRelativeIndex( currentPage, MOVE_STEP ).map( page =>
+                                <li key={ page } className={`page-item ${ page == currentPage ? "disabled": "" }}`}>
+                                    <button className="page-link" onClick={() => { setCurrentPage( page ) } }>
+                                        { page }
+                                    </button>
+                                </li>
+                            ) }
+
+                            <li className={`page-item ${currentPage === totalPages  ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => { setCurrentPage( currentPage + 1 ) }}>
+                                    &raquo;
+                                </button>
+                            </li>                            
+                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => { setCurrentPage( totalPages ) }}>
+                                    &#8811;
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
                 {/* View log */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="viewLog">
                     <div class="modal-dialog modal-dialog-center">
@@ -194,12 +292,7 @@ export default () => {
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["log.type"]}</b> </label>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                {
-                                                    (() => {
-                                                        const event = eventType.find(item => item.label === logDetail.event_type);
-                                                        return event && <i className={` ${event.icon}`} style={{ color: event.color }} title={event.label}></i>
-                                                    })()
-                                                }
+                                                <i className={` ${logDetail.icon?.icon}`} style={{ color: logDetail.icon?.color }} title={logDetail.icon?.label}></i>
                                                 <span className="ml-1"> {logDetail.event_type}</span>
                                             </div>
 
