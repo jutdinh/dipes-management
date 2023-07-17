@@ -45,6 +45,12 @@ export default () => {
                      <span>{lang["projects manager"]}</span>
                   </NavLink>
                </li>
+               <li className="navbar-item">
+                     <NavLink to="/keys" activeClassName="nav-active">
+                        <i class="fa fa-key key_color"></i>
+                        <span>{lang["key manager"]}</span>
+                     </NavLink>
+                  </li>
                {user.role === "ad" || user.role === "uad" ? (
                   <li className="navbar-item">
                      <NavLink to="/users" activeClassName="nav-active">

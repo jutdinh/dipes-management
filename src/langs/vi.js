@@ -386,7 +386,12 @@ export default {
     "not found": "Không tìm thấy",
 
     "success.add":"Thêm mới thành công",
-"success.update":"Cập nhật thành công"
+"success.update":"Cập nhật thành công",
+"key manager": "Quản lý khóa kích hoạt",
+"key manager.title": "Khóa kích hoạt",
+"project manage implement": "Quản lý dự án triển khai"
+
+
 
 
 

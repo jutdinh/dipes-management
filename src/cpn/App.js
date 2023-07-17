@@ -18,6 +18,7 @@ import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
 import { Workflow } from './workflow';
+import Keys  from './keys/keys'
 import "../css/index.scss";
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
+        <Route path="/keys" element={<Navigation Child={Keys} />} />
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />

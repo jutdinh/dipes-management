@@ -986,7 +986,9 @@ h5 {
     border-bottom: solid #f3f3f3 2px;
     padding: 3px 15px 1px;
 }
-
+.key_color {
+    color: #dee03b;
+}
 .plus_green_bt {
     position: absolute;
     right: 0;

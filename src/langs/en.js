@@ -378,7 +378,12 @@ export default {
     "show empty": "Display fields must not flee",
     "not found": "Not found",
     "success.add":"Add success data",
-    "success.update":"Update success data"
+    "success.update":"Update success data",
+    "key manager": "Activation Key Manager",
+    "key manager.title": "Key Manager",
+    "key manager.title": "Activation key",
+
+    "project manage implement": "Implementation Project Management"
 
 
 }
