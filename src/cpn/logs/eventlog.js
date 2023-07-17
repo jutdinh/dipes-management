@@ -8,16 +8,22 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
 
-    const MAX_RECORDS_PER_SHEET = 15;
-    const MOVE_STEP = 3
+    const MAX_RECORDS_PER_SHEET = 10;
+    const MOVE_STEP = 2
     const [logs, setLogs] = useState([]);
+    const [display, setDisplay] = useState([ ])
     const [filter, setFilter] = useState({ type: 'info' });
     const [logDetail, setLogDetail] = useState([]);
     const [showModal, setShowModal] = useState(false);
     
     const [ currentPage, setCurrentPage ] = useState(5)
     const [ totalPages, setTotalPages ] = useState(0)
+    const [ tableFilter, setTableFilter ] = useState({
+        event_type: false,
+        event_title: false,
 
+        event_description: false,
+    })
     const languages = langItem.toLowerCase();
 
     const handleCloseModal = () => {
@@ -45,8 +51,8 @@ export default () => {
                             return { ...log, icon: eventType[log.event_type] }
                         })
                         setLogs(formatedData);
-                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET )
-                        console.log(total)
+                        setDisplay( formatedData )
+                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET )                        
                         setTotalPages( total )
                     }
                 } else {
@@ -61,7 +67,11 @@ export default () => {
         setLogDetail(logid)
     };
 
-    
+    const cancelSearchUI = () => {
+        setDisplay( logs )
+        const total = Math.ceil( logs.length / MAX_RECORDS_PER_SHEET )                        
+        setTotalPages( total )
+    }
 
     const submitFilter = (e) => {
         e.preventDefault();
@@ -81,12 +91,18 @@ export default () => {
             .then((resp) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
-                    console.log(resp)
+                    // console.log(resp)
                     if (success) {
-
-                        // window.location.reload();
-                        setShowModal(false);
-
+                        
+                        // setShowModal(false);
+                        const formatedData = data.map(log => {
+                            return { ...log, icon: eventType[log.event_type] }
+                        })
+                        
+                        setDisplay([...formatedData])
+                        setCurrentPage(1)
+                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET ) 
+                        setTotalPages(total)
                     } else {
                         Swal.fire({
                             title: "Thất bại!",
@@ -103,7 +119,7 @@ export default () => {
 
     const getPageData = ( pageIndex ) => {
         const firstItemIndex = (pageIndex - 1 ) * MAX_RECORDS_PER_SHEET
-        const data = logs.slice( firstItemIndex, firstItemIndex + MAX_RECORDS_PER_SHEET )
+        const data = display.slice( firstItemIndex, firstItemIndex + MAX_RECORDS_PER_SHEET )
         return data ? data : []
     }
 
@@ -166,7 +182,7 @@ export default () => {
                                             <div className="col-lg-3 d-flex align-items-end justify-content-end">
                                                 <button className="btn btn-primary mr-2 mt-2 btn-log" onClick={submitFilter}>{lang["btn.ok"]}</button>
                                                 <button className="btn btn-secondary btn-log" onClick={() => {
-
+                                                    cancelSearchUI()
                                                 }}>{lang["btn.clear"]}</button>
 
 
@@ -193,11 +209,25 @@ export default () => {
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th scope="col" style={{ width: 50 }}>{lang["log.no"]}</th>
-                                                <th scope="col" style={{ width: 50 }} class="align-center">{lang["log.type"]}</th>
-                                                <th scope="col">
-                                                    {lang["log.listtitle"]}
+                                                <th scope="col">{lang["log.no"]}</th>
+                                                <th scope="col" class="align-center pointer"
+                                                    onClick={ () => { setTableFilter({ ...tableFilter, event_type: !tableFilter.event_type }) } }
+                                                >
+                                                    <div className="d-flex align-items-center">{lang["log.type"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto"/></div>                                                     
+                                                    {  tableFilter.event_type  && <div className="position-relative">
+                                                        <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
+                                                            <div className="bg-white " style={{ width: 150, height: 200, padding: "8px 16px" }}>                                                            
+                                                                {}
+                                                            </div>
+                                                        </div>
+                                                    </div>}
                                                 </th>
+
+                                                <th scope="col" class="align-center"
+                                                    onClick={ () => { setTableFilter({ ...tableFilter, event_title: !tableFilter.event_title }) } }
+                                                >
+                                                    <div className="d-flex align-items-center">{lang["log.listtitle"]}  <i className="fa fa-chevron-circle-down icon-view block ml-auto"/></div>                                                     
+                                                </th>                                               
                                                 <th scope="col">
                                                     {lang["description"]}
                                                 </th>
