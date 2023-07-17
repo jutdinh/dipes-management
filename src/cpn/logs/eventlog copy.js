@@ -9,7 +9,11 @@ export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const [logs, setLogs] = useState([]);
+
+    const [view, setView] = useState([])
     const [filter, setFilter] = useState({ type: 'info' });
+
+
 
     const [showModal, setShowModal] = useState(false);
     // console.log(filter)
@@ -41,6 +45,7 @@ export default () => {
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setLogs(data);
+                        setView(data)
                         // console.log(data)
                     }
                 } else {
@@ -80,7 +85,8 @@ export default () => {
                     const { success, content, data, status } = resp;
                     console.log(resp)
                     if (success) {
-                       
+
+                        setView(data)
                         // window.location.reload();
                         setShowModal(false);
 
@@ -96,7 +102,28 @@ export default () => {
                 }
             })
     };
+    const [eventTypeFilter, setEventTypeFilter] = useState('');
+    const [eventTitleFilter, setEventTitleFilter] = useState('');
+    const [descriptionFilter, setDescriptionFilter] = useState('');
+    const [dateFilter, setDateFilter] = useState('');
 
+    console.log(dateFilter)
+
+    const [currentPageLogs, setCurrentPageLogs] = useState(1);
+    const rowsPerPageLogs = 12;
+    const indexOfLastMemberLogs = currentPageLogs * rowsPerPageLogs;
+    const indexOfFirstMemberLogs = indexOfLastMemberLogs - rowsPerPageLogs;
+    let currentMembersLogs;
+    if( eventTypeFilter || eventTitleFilter || descriptionFilter || dateFilter ){
+        currentMembersLogs = view
+    }else{
+        currentMembersLogs = view.slice(indexOfFirstMemberLogs, indexOfLastMemberLogs);
+    }
+
+    const paginateLogs = (pageNumber) => setCurrentPageLogs(pageNumber);
+    const totalPagesLogs = Math.ceil(view.length / rowsPerPageLogs);
+
+    console.log(currentMembersLogs)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -146,7 +173,7 @@ export default () => {
                                             <div className="col-lg-3 d-flex align-items-end justify-content-end">
                                                 <button className="btn btn-primary mr-2 mt-2 btn-log" onClick={submitFilter}>{lang["btn.ok"]}</button>
                                                 <button className="btn btn-secondary btn-log" onClick={() => {
-                                                  
+                                                    setView(logs)
                                                 }}>{lang["btn.clear"]}</button>
 
 
@@ -169,7 +196,120 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="table-responsive">
-                                    {/* Qua tr met */}
+                                    {
+                                        view && view.length > 0 ? (
+                                            <>
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">{lang["log.no"]}</th>
+                                                            <th scope="col" class="align-center">{lang["log.type"]}
+                                                                <select value={eventTypeFilter} onChange={e => setEventTypeFilter(e.target.value)}>
+                                                                    <option value={lang["log.information"]}>{lang["log.information"]}</option>
+                                                                    <option value={lang["log.warning"]}>{lang["log.warning"]}</option>
+                                                                    <option value={lang["log.error"]}>{lang["log.error"]}</option>
+                                                                </select>
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["log.listtitle"]}
+                                                                <input value={eventTitleFilter} onChange={e => setEventTitleFilter(e.target.value)} />
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["description"]}
+                                                                <input value={descriptionFilter} onChange={e => setDescriptionFilter(e.target.value)} />
+                                                            </th>
+                                                            <th scope="col">
+                                                                {lang["log.dayupdate"]}
+                                                                <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />
+                                                            </th>
+                                                            <th scope="col" class="align-center">{lang["log.action"]}</th>
+                                                        </tr>
+
+                                                    </thead>
+                                                    <tbody>
+
+                                                        {currentMembersLogs
+                                                            .filter(log => log.event_type.includes(eventTypeFilter))
+                                                            .filter(log => log.event_title.includes(eventTitleFilter))
+                                                            .filter(log => log.event_description.includes(descriptionFilter))
+                                                            .filter(log => log.raw_date.toString().includes(dateFilter))
+                                                            .map((log, index) => {
+                                                                const event = eventType.find(item => item.label === log.event_type);
+                                                                return (
+                                                                    <tr key={log.id}>
+                                                                        <td scope="row">{indexOfFirstMemberLogs + index + 1}</td>
+                                                                        <td class="align-center">
+                                                                            {event && <>
+                                                                                <i class={`${event.icon}`} style={{ color: event.color }} title={event.label}></i>
+                                                                            </>}
+                                                                        </td>
+                                                                        <td>{log.event_title}</td>
+                                                                        <td>{log.event_description.slice(0, 100)}{log.event_description.length > 100 ? "..." : ""}</td>
+                                                                        <td>{log.create_at}</td>
+                                                                        <td class="align-center">
+                                                                            <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                );
+                                                            })}
+                                                    </tbody>
+
+                                                </table>
+                                                <div className="d-flex justify-content-between align-items-center">
+
+                                                    <p>{lang["show"]} {indexOfFirstMemberLogs + 1}-{Math.min(indexOfLastMemberLogs, logs.length)} {lang["of"]} {logs.length} {lang["results"]}</p>
+
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul className="pagination mb-0">
+                                                            <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(1)}>
+                                                                    &#8810;
+                                                                </button>
+                                                            </li>
+                                                            <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(currentPageLogs - 1)}>
+                                                                    &laquo;
+                                                                </button>
+                                                            </li>
+                                                            {currentPageLogs > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            {Array(totalPagesLogs).fill().map((_, index) => {
+                                                                if (
+                                                                    index + 1 === currentPageLogs ||
+                                                                    (index + 1 >= currentPageLogs - 2 && index + 1 <= currentPageLogs + 2)
+                                                                ) {
+                                                                    return (
+                                                                        <li key={index} className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
+                                                                            <button className="page-link" onClick={() => paginateLogs(index + 1)}>
+                                                                                {index + 1}
+                                                                            </button>
+                                                                        </li>
+                                                                    )
+                                                                }
+                                                            })}
+                                                            {currentPageLogs < totalPagesLogs - 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(currentPageLogs + 1)}>
+                                                                    &raquo;
+                                                                </button>
+                                                            </li>
+                                                            <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(totalPagesLogs)}>
+                                                                    &#8811;
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+
+
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div class="list_cont ">
+                                                <p>{lang["not found"]}</p>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>
