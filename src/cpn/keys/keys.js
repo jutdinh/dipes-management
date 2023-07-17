@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import responseMessages from "../enum/response-code";
+import { StatusEnum, StatusTask } from '../enum/status';
 import Swal from 'sweetalert2';
 import { Header } from '../common';
-import $ from 'jquery';
+import $, { data } from 'jquery';
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -14,9 +15,17 @@ export default () => {
     const [project, setProject] = useState({ project_type: "database" });
     const [projects, setProjects] = useState([]);
     const [loaded, setLoaded] = useState(false);
+    const status = [
+        { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
+        { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
+        { id: 2, label: lang["deploy"], value: 3, color: "#ffc658" },
+        { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
+        { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
+    ]
+
 
     useEffect(() => {
-        fetch(`${proxy}/projects/all/projects`, {
+        fetch(`${proxy}/activation/keys`, {
             headers: {
                 Authorization: _token
             }
@@ -28,13 +37,7 @@ export default () => {
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
-                        dispatch({
-                            branch: "default",
-                            type: "setProjects",
-                            payload: {
-                                projects: data
-                            }
-                        })
+
                     }
                     setLoaded(true)
                 } else {
@@ -46,7 +49,7 @@ export default () => {
     }, [])
 
 
-
+    console.log(projects)
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -77,7 +80,79 @@ export default () => {
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="row">
-                                           
+                                            {
+                                                loaded ? (
+                                                    <>
+                                                        {
+                                                            projects && projects.length > 0 ? (
+                                                                projects.map((item) => (
+
+                                                                    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+                                                                        <div class="card project-block">
+                                                                            <div class="card-body">
+                                                                                <div class="row project-name-min-height">
+                                                                                    <div class="col-sm-10" >
+
+                                                                                        <h5 class="project-name d-flex align-items-center" >{item.project.project_name.slice(0, 55)}{item.project.project_name.length > 55 ? "..." : ""}</h5>
+                                                                                    </div>
+
+                                                                                    <div class="col-sm-2 pointer scaled-hover">
+
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project.project_code}</p>
+                                                                                <p class="card-text">{lang["createby"]}: {item.project.create_by}</p>
+
+                                                                                <p>{lang["time"]}: {
+                                                                                    lang["time"] === "Time" ?
+                                                                                        item.project.create_at.replace("lúc", "at") :
+                                                                                        item.project.create_at
+                                                                                }</p>
+
+
+
+                                                                                <div className="d-flex position-relative">
+                                                                                    <p class="card-title font-weight-bold mt-1 mr-2">{lang["projectstatus"]}: </p>
+                                                                                    <div>
+                                                                                        <span className="d-block status-label" style={{
+                                                                                            backgroundColor: (status.find((s) => s.value === item.project.project_status) || {}).color
+                                                                                        }}>
+                                                                                            {(status.find((s) => s.value === item.project.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                                                        </span>
+
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <p class="card-title font-weight-bold mt-1 mr-2">{lang["activation"]}:  </p>
+                                                                                <p class="mt-1 mr-2">UUID: {item.uuid} </p>
+                                                                                <p class="card-title font-weight-bold mt-1 mr-2">{lang["key"]}:  </p>
+                                                                                <textarea type="text" class="form-control" value={item.key}
+                                                                                    style={{ minHeight: 270 }}
+                                                                                    spellCheck={false}
+                                                                                />
+                                                                                
+
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                ))
+                                                            ) :
+                                                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                                                    {lang["projects.noprojectfound"]}
+                                                                </div>
+                                                        }
+                                                    </>
+                                                ) : (
+                                                    <div class="d-flex justify-content-center align-items-center w-100 responsive-div" >
+                                                        {/* {lang["projects.noprojectfound"]} */}
+                                                        <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
+
+                                                    </div>
+                                                )
+                                            }
 
                                         </div>
                                     </div>

@@ -25,3 +25,9 @@ export const Roles = Object.freeze({
     SUPERVISOR:  { id: 1, label: "supervisor", value: "supervisor" },
     NORMAL:   { id: 2, label: "deployers", value: "deployer" },
 });
+
+export const Activation = Object.freeze({
+   
+    ACTIVATED:  { id: 0, label: "activated", value: "0" },
+    NO_ACTIVATED:  { id: 1, label: "no_activated", value: "1" },
+});

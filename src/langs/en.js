@@ -379,11 +379,13 @@ export default {
     "not found": "Not found",
     "success.add":"Add success data",
     "success.update":"Update success data",
-    "key manager": "Activation Key Manager",
-    "key manager.title": "Key Manager",
-    "key manager.title": "Activation key",
+    "key manager": "Key Manager",
+    "key manager.title": "Activated projects",
 
-    "project manage implement": "Implementation Project Management"
+
+    "project manage implement": "Implementation Project Management",
+    "activation": "Activation"
+
 
 
 }
