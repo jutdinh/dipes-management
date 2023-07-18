@@ -73,7 +73,7 @@ export default () => {
                      </NavLink>
                   </li>
                   <li className="navbar-item">                     
-                     <NavLink to="/workflow" onClick={ () => { openTab('/workflow') } } activeClassName="nav-active">                        
+                     <NavLink to="/workflow" activeClassName="nav-active">                        
                         <i class="fa fa-code-fork"></i>
                         <span>{lang["site-map"]}</span>
                      </NavLink>
