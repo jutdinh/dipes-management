@@ -36,6 +36,8 @@ export default {
     "workflow": "Workflow",
     "site-map": "Site map",
 
+    "profile.error.invaliddata": "Fulfill required data before making submission",
+
     "about us": "About Us",
     "contacts": "Contacts",
     "404": "PAGE NOT FOUND",

@@ -106,7 +106,7 @@ export default () => {
 
                                                                                 <p>{lang["time"]}: {
                                                                                     lang["time"] === "Time" ?
-                                                                                        item.project.create_at.replace("lúc", "at") :
+                                                                                        item.project.create_at?.replace("lúc", "at") :
                                                                                         item.project.create_at
                                                                                 }</p>
 

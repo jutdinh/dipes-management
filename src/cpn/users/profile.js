@@ -95,7 +95,7 @@ export default (props) => {
         if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
             Swal.fire({
                 title: "Lỗi!",
-                text: "Vui lòng điền đầy đủ thông tin",
+                text: lang["profile.error.invaliddata"],
                 icon: "error",
                 showConfirmButton: false,
                 timer: 2000,

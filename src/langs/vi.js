@@ -49,7 +49,7 @@ export default {
     "time change": "Thời gian thay đổi",
     "user chagne": "Người thay đổi",
 
-
+    "profile.error.invaliddata": "Vui lòng điền đầy đủ thông tin",
     //description
     "description": "Mô tả",
 
