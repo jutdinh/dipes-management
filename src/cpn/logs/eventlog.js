@@ -1,38 +1,143 @@
 
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import CheckList from '../common/checkList';
+import FloatingTextBox from '../common/floatingTextBox';
 
 import Swal from 'sweetalert2';
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { removeVietnameseTones } = functions
     const _token = localStorage.getItem("_token");
     const langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
 
-    const MAX_RECORDS_PER_SHEET = 10;
-    const MOVE_STEP = 2
+    const MAX_RECORDS_PER_SHEET = 12;
+    const MOVE_STEP = 3
+
+
     const [logs, setLogs] = useState([]);
-    const [display, setDisplay] = useState([ ])
+    const [display, setDisplay] = useState([])
     const [filter, setFilter] = useState({ type: 'info' });
     const [logDetail, setLogDetail] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    
-    const [ currentPage, setCurrentPage ] = useState(5)
-    const [ totalPages, setTotalPages ] = useState(0)
-    const [ tableFilter, setTableFilter ] = useState({
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(0)
+    const [tableFilter, setTableFilter] = useState({
         event_type: false,
         event_title: false,
-
         event_description: false,
     })
+
+    const [ hotFilter, sethotFilter ] = useState({
+        event_type: [],
+        event_title: [],
+        event_description: ""
+    })
+
+    
+
     const languages = langItem.toLowerCase();
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+    
     const eventType = {}
     eventType[lang["log.information"]] = { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-log " }
     eventType[lang["log.warning"]] = { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-log " }
     eventType[lang["log.error"]] = { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-log " }
+
+
+
+    const typeFilterOptions = [
+        { id: 0, label: lang["log.information"], value: lang["log.information"] },
+        { id: 1, label: lang["log.warning"], value: lang["log.warning"] },
+        { id: 2, label: lang["log.error"], value: lang["log.error"] },
+    ]
+    const [ titleOptions, setTitleOptions ] = useState([])
+
+
+
+    const addOrRemoveEventType = ( item ) => {        
+        const { value } = item;
+        let primalValue = value ? value : " "
+        if( typeof(value) != "string" ){
+            primalValue = primalValue.toString()
+        } 
+        const formatedItem = {...item, formated_value: removeVietnameseTones( primalValue.toLowerCase() )}
+        const { event_type } = hotFilter;
+        let newEventTypes = []
+        const setDataFunction = event_type.find( filter => filter.id == formatedItem.id );
+        if( setDataFunction ){
+            newEventTypes = event_type.filter( filter => filter.id != formatedItem.id );
+        }else{
+            newEventTypes = [ ...event_type, formatedItem ]
+        }
+        // hotFilter.event_type = newEventTypes
+        sethotFilter( {...hotFilter, event_type: newEventTypes} )
+    }
+
+    const addOrRemoveEventTitle = ( item ) => {        
+        const { value } = item;
+        let primalValue = value ? value : " "
+        if( typeof(value) != "string" ){
+            primalValue = primalValue.toString()
+        } 
+        const formatedItem = {...item, formated_value: removeVietnameseTones( primalValue.toLowerCase() )}
+        const { event_title } = hotFilter;
+        let newEventTitles = []
+        const setDataFunction = event_title.find( filter => filter.id == formatedItem.id );
+        if( setDataFunction ){
+            newEventTitles = event_title.filter( filter => filter.id != formatedItem.id );
+        }else{
+            newEventTitles = [ ...event_title, formatedItem ]
+        }       
+        
+        sethotFilter( {...hotFilter, event_title: newEventTitles} )
+    }
+
+    const setDescriptionFilter = (e) => {
+        sethotFilter({...hotFilter, event_description: e.target.value})
+    }
+
+    useEffect(() => {
+        const { event_type, event_title, event_description } = hotFilter;
+        console.log( hotFilter )
+        if( event_type.length > 0 || event_title.length > 0 || event_description.length > 0 ){
+            const types = event_type.map( type => type.value );
+            const titles = event_title.map( title => title.value )
+            const formatedDescription = removeVietnameseTones( event_description.toLowerCase() )
+            const newData = logs.filter( log => {
+                if( types.length > 0 ){
+                    return types.indexOf(log.event_type) != -1 
+                } else {
+                    return true
+                }
+            }).filter( log => {
+                if( titles.length > 0 ){
+                    return titles.indexOf(log.event_title) != -1 
+                }else{
+                    return true
+                }
+            }).filter( log => {
+                if( event_description.length > 0 ){
+                    const removeTones = removeVietnameseTones( log.event_description?.toLowerCase() )
+                    return removeTones.includes( formatedDescription )
+                }else{
+                    return true
+                }
+            })
+            setDisplay( newData )
+            setTotalPages( Math.ceil( newData.length / MAX_RECORDS_PER_SHEET ) )
+            setCurrentPage(1)
+        }else{
+            setDisplay( logs )
+            setTotalPages( Math.ceil( logs.length / MAX_RECORDS_PER_SHEET ) )
+            setCurrentPage(1)
+        }
+    }, [hotFilter])
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
     useEffect(() => {
 
@@ -51,9 +156,9 @@ export default () => {
                             return { ...log, icon: eventType[log.event_type] }
                         })
                         setLogs(formatedData);
-                        setDisplay( formatedData )
-                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET )                        
-                        setTotalPages( total )
+                        setDisplay(formatedData)
+                        const total = Math.ceil(formatedData.length / MAX_RECORDS_PER_SHEET)
+                        setTotalPages(total)
                     }
                 } else {
                     window.location = "/login"
@@ -61,16 +166,29 @@ export default () => {
             })
     }, [])
     // console.log(view)
-    
+
+    useEffect(() => {
+        if( logs.length > 0 ){
+            const titles = logs.map( log => log.event_title );
+            const filtedTitles =  titles.filter((item, index) => {
+                return titles.indexOf(item) == index;
+            })
+            const formatedTitleOptions = filtedTitles.map( (item, index) => {
+                return { id: index, value: item, label: item }
+            })
+            setTitleOptions( formatedTitleOptions )
+        }
+    }, [logs])
+
     const detailLogs = async (logid) => {
         // console.log(logid)
         setLogDetail(logid)
     };
 
     const cancelSearchUI = () => {
-        setDisplay( logs )
-        const total = Math.ceil( logs.length / MAX_RECORDS_PER_SHEET )                        
-        setTotalPages( total )
+        setDisplay(logs)
+        const total = Math.ceil(logs.length / MAX_RECORDS_PER_SHEET)
+        setTotalPages(total)
     }
 
     const submitFilter = (e) => {
@@ -93,15 +211,15 @@ export default () => {
                     const { success, content, data, status } = resp;
                     // console.log(resp)
                     if (success) {
-                        
+
                         // setShowModal(false);
                         const formatedData = data.map(log => {
                             return { ...log, icon: eventType[log.event_type] }
                         })
-                        
+
                         setDisplay([...formatedData])
                         setCurrentPage(1)
-                        const total = Math.ceil( formatedData.length / MAX_RECORDS_PER_SHEET ) 
+                        const total = Math.ceil(formatedData.length / MAX_RECORDS_PER_SHEET)
                         setTotalPages(total)
                     } else {
                         Swal.fire({
@@ -117,17 +235,17 @@ export default () => {
     };
 
 
-    const getPageData = ( pageIndex ) => {
-        const firstItemIndex = (pageIndex - 1 ) * MAX_RECORDS_PER_SHEET
-        const data = display.slice( firstItemIndex, firstItemIndex + MAX_RECORDS_PER_SHEET )
+    const getPageData = (pageIndex) => {
+        const firstItemIndex = (pageIndex - 1) * MAX_RECORDS_PER_SHEET
+        const data = display.slice(firstItemIndex, firstItemIndex + MAX_RECORDS_PER_SHEET)
         return data ? data : []
     }
 
-    const getRelativeIndex = ( currentPage, step = 2 ) => {
+    const getRelativeIndex = (currentPage, step = 2) => {
         const indices = []
-        for( let i = currentPage - step ; i < currentPage +step ; i++ ){
-            if( i > 0  && i <= totalPages){
-                indices.push( i )
+        for (let i = currentPage - step; i < currentPage + step; i++) {
+            if (i > 0 && i <= totalPages) {
+                indices.push(i)
             }
         }
         return indices
@@ -204,32 +322,64 @@ export default () => {
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
-                                <div class="table-responsive">
+                                <div class="table-responsive" style={{ minHeight: "50vh" }}>
                                     {/* Qua tr met */}
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th scope="col">{lang["log.no"]}</th>
-                                                <th scope="col" class="align-center pointer"
-                                                    onClick={ () => { setTableFilter({ ...tableFilter, event_type: !tableFilter.event_type }) } }
-                                                >
-                                                    <div className="d-flex align-items-center">{lang["log.type"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto"/></div>                                                     
-                                                    {  tableFilter.event_type  && <div className="position-relative">
-                                                        <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
-                                                            <div className="bg-white " style={{ width: 150, height: 200, padding: "8px 16px" }}>                                                            
-                                                                {}
-                                                            </div>
+                                                <th scope="col" class="align-center pointer">
+                                                    <div className="d-flex align-items-center" 
+                                                        onClick={() => { setTableFilter({ event_type: !tableFilter.event_type }) }} 
+                                                    >{lang["log.type"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    { tableFilter.event_type && <div className="position-relative">
+                                                        <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
+                                                            <CheckList 
+                                                                title={ lang["log.type"] } 
+                                                                initialData = { hotFilter.event_type }
+                                                                setDataFunction={addOrRemoveEventType}
+                                                                data={ typeFilterOptions } 
+                                                                destructFunction={ () => { setTableFilter({ ...tableFilter, event_type: false }) }  }
+                                                            />
                                                         </div>
                                                     </div>}
                                                 </th>
 
-                                                <th scope="col" class="align-center"
-                                                    onClick={ () => { setTableFilter({ ...tableFilter, event_title: !tableFilter.event_title }) } }
-                                                >
-                                                    <div className="d-flex align-items-center">{lang["log.listtitle"]}  <i className="fa fa-chevron-circle-down icon-view block ml-auto"/></div>                                                     
-                                                </th>                                               
+                                                
+                                                <th scope="col" class="align-center pointer">
+                                                    <div className="d-flex align-items-center" 
+                                                        onClick={() => { setTableFilter({  event_title: !tableFilter.event_title }) }} 
+                                                    
+                                                    >{lang["log.listtitle"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    { tableFilter.event_title && <div className="position-relative">
+                                                        <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
+                                                            <CheckList 
+                                                                title={lang["log.listtitle"]} 
+                                                                initialData = { hotFilter.event_title }
+                                                                setDataFunction={addOrRemoveEventTitle} 
+                                                                data={ titleOptions } 
+                                                                destructFunction={ () => { setTableFilter({ ...tableFilter, event_title: false }) }  }
+                                                            />
+                                                        </div>
+                                                    </div>}
+                                                </th>                                                
+                                                
                                                 <th scope="col">
-                                                    {lang["description"]}
+                                                    
+                                                    <div className="d-flex align-items-center" 
+                                                        onClick={() => { setTableFilter({  event_description: !tableFilter.event_description }) }} 
+                                                    
+                                                    >{lang["description"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    { tableFilter.event_description && <div className="position-relative">
+                                                        <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
+                                                            <FloatingTextBox 
+                                                                title={lang["description"]}
+                                                                initialData = { hotFilter.event_description }
+                                                                setDataFunction={ setDescriptionFilter }                                                                 
+                                                                destructFunction={ () => { setTableFilter({ ...tableFilter, event_description: false }) }  }
+                                                            />
+                                                        </div>
+                                                    </div>}
                                                 </th>
                                                 <th scope="col">
                                                     {lang["log.dayupdate"]}
@@ -238,9 +388,9 @@ export default () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {getPageData( currentPage ).map((log, index) =>
-                                                <tr key={log.id}>
-                                                    <td scope="row">{ index + 1 }</td>
+                                            {getPageData(currentPage).map((log, index) =>
+                                                <tr key={index}>
+                                                    <td scope="row">{index + 1}</td>
                                                     <td class="align-center">
 
                                                         <i class={`${log.icon?.icon}`} style={{ color: log.icon?.color }} title={log.icon?.label}></i>
@@ -266,36 +416,36 @@ export default () => {
 
                 <div className="d-flex justify-content-between align-items-center">
 
-                    <p>{lang["show"]} { getPageData( currentPage ).length } {lang["of"]} {logs.length} {lang["results"]}</p>
+                    <p>{lang["show"]} {(currentPage - 1) * MAX_RECORDS_PER_SHEET  + 1 } - {(currentPage - 1) * MAX_RECORDS_PER_SHEET +  getPageData(currentPage).length}  {lang["of"]} {display.length} {lang["results"]}</p>
 
                     <nav aria-label="Page navigation example">
                         <ul className="pagination mb-0">
                             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => { setCurrentPage( 1 ) }}>
+                                <button className="page-link" onClick={() => { setCurrentPage(1) }}>
                                     &#8810;
                                 </button>
                             </li>
                             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => { setCurrentPage( currentPage - 1 ) }}>
+                                <button className="page-link" onClick={() => { setCurrentPage(currentPage - 1) }}>
                                     &laquo;
                                 </button>
-                            </li>   
+                            </li>
 
-                            { getRelativeIndex( currentPage, MOVE_STEP ).map( page =>
-                                <li key={ page } className={`page-item ${ page == currentPage ? "disabled": "" }}`}>
-                                    <button className="page-link" onClick={() => { setCurrentPage( page ) } }>
-                                        { page }
+                            {getRelativeIndex(currentPage, MOVE_STEP).map(page =>
+                                <li key={page} className={`page-item ${page == currentPage ? "disabled" : ""}}`}>
+                                    <button className="page-link" onClick={() => { setCurrentPage(page) }}>
+                                        {page}
                                     </button>
                                 </li>
-                            ) }
+                            )}
 
-                            <li className={`page-item ${currentPage === totalPages  ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => { setCurrentPage( currentPage + 1 ) }}>
+                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => { setCurrentPage(currentPage + 1) }}>
                                     &raquo;
                                 </button>
-                            </li>                            
+                            </li>
                             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => { setCurrentPage( totalPages ) }}>
+                                <button className="page-link" onClick={() => { setCurrentPage(totalPages) }}>
                                     &#8811;
                                 </button>
                             </li>

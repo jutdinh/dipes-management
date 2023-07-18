@@ -93,7 +93,7 @@ export default () => {
                                                                                 <div class="row project-name-min-height">
                                                                                     <div class="col-sm-10" >
 
-                                                                                        <h5 class="project-name d-flex align-items-center" >{item.project.project_name.slice(0, 55)}{item.project.project_name.length > 55 ? "..." : ""}</h5>
+                                                                                        <h5 class="project-name d-flex align-items-center" >{item.project?.project_name?.slice(0, 55)}{item.project?.project_name?.length > 55 ? "..." : ""}</h5>
                                                                                     </div>
 
                                                                                     <div class="col-sm-2 pointer scaled-hover">

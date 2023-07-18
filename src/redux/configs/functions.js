@@ -2,6 +2,60 @@ import { v4 as uuidv4 } from 'uuid';
 import responseMessages from "../../cpn/enum/response-code"
 import Swal from 'sweetalert2';
 
+
+
+const vietnameseChars = [
+    {
+        base: {
+            base: "a",
+            unicode: ["ă", "â"],
+            unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
+        }
+    },
+    {
+        base: {
+            base: "d",
+            unicode: ["đ"],
+            unicodeWithSound: []
+        }
+    },
+    {
+        base: {
+            base: "e",
+            unicode: ["ê"],
+            unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
+        }
+    },
+    {
+        base: {
+            base: "i",
+            unicode: [],
+            unicodeWithSound: ["í", "ì", "ỉ", "ĩ", "ị"]
+        }
+    },
+    {
+        base: {
+            base: "o",
+            unicode: ["ô", "ơ"],
+            unicodeWithSound: ["ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ"]
+        }
+    },
+    {
+        base: {
+            base: "u",
+            unicode: ["ư"],
+            unicodeWithSound: ["ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự"]
+        }
+    },
+    {
+        base: {
+            base: "y",
+            unicode: [],
+            unicodeWithSound: ["ý", "ỳ", "ỷ", "ỹ", "ỵ"]
+        }
+    }
+];
+
 const dateGenerator = ( dateString ) => {
     const date = new Date( dateString );
     return `${ formatDateNumber(date.getDate()) }/${ formatDateNumber(date.getMonth() + 1) }/${ date.getFullYear() } lúc ${ formatDateNumber(date.getHours()) }:${ formatDateNumber(date.getMinutes()) }`
@@ -80,8 +134,19 @@ const showApiResponseMessage = (status, reload = true) => {
     }
 };
 
+const removeVietnameseTones = (str) => {
+    vietnameseChars.forEach(char => {
+        const { base, unicode, unicodeWithSound } = char.base;
+        const allVariants = [...unicode, ...unicodeWithSound];
+        allVariants.forEach(variant => {
+            const regex = new RegExp(variant, 'g');
+            str = str.replace(regex, base);
+        });
+    });
+    return str;
+}
 
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage
+    showApiResponseMessage, removeVietnameseTones 
 }

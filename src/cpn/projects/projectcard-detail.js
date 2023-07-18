@@ -827,7 +827,7 @@ console.log("members", currentMembers)
             func();
         } else {
             Swal.fire({
-                title: "error.title",
+                title: lang["error.title"],
                 icon: "error",
                 showConfirmButton: true,
                 text: lang["export.error.invalidData"],
@@ -852,7 +852,7 @@ console.log("members", currentMembers)
                     window.open(`${proxy}/versions/d/${version}/whole`)
                 } else {
                     Swal.fire({
-                        title: "Thất bại!",
+                        title: lang["error.title"],
                         icon: "error",
                         showConfirmButton: true,
                         text: lang["export.error.invalidVersionData"],
