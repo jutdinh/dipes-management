@@ -334,8 +334,24 @@ export default () => {
     }, [versions])
     console.log(`${versions[0]?.version_id}`)
 
+    const areTwoArraysEqual = ( arr1, arr2 ) => {
+        let valid = true
+        if( arr1 && arr2 && arr1.length == arr2.length ){
+            
+            for( let i = 0 ;  i < arr1.length; i++ ){
+                if( arr2.indexOf(arr1[i]) == -1 ){
+                    valid = false
+                }
+            }
+        }else{
+            valid = false
+        }
+        return valid
+    }
+
     const addMember = (e) => {
         e.preventDefault();
+
         fetch(`${proxy}/projects/members`, {
             method: "POST",
             headers: {
@@ -392,7 +408,11 @@ export default () => {
         }
 
         // call addMember after submitUpdateProject has completed
-        addMember(e);
+        // if change members then call the api
+        if( !areTwoArraysEqual(uniqueArray, projectmember) ){
+            console.log("UPDATED")
+            addMember(e);
+        }
     };
 
     const submitUpdateManager = async (e) => {
