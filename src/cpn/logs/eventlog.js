@@ -17,7 +17,7 @@ export default () => {
 
     const [logs, setLogs] = useState([]);
     const [display, setDisplay] = useState([])
-    const [filter, setFilter] = useState({ type: 'info' });
+    const [filter, setFilter] = useState({});
     const [logDetail, setLogDetail] = useState([]);
     const [showModal, setShowModal] = useState(false);
 
@@ -278,7 +278,7 @@ export default () => {
                                                 <label>{lang["log.type"]}:</label>
                                                 <select className="form-control" value={filter.type} onChange={(e) => { setFilter({ ...filter, type: e.target.value }) }}>
 
-
+                                                    <option value={undefined}>{lang["choose"]}</option>
                                                     <option value="info">{lang["log.information"]}</option>
                                                     <option value="warn">{lang["log.warning"]}</option>
                                                     <option value="error">{lang["log.error"]}</option>
