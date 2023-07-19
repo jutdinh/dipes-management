@@ -31,7 +31,7 @@ export default () => {
     const [exporter, setExporter] = useState({})
     const [activate, setActivate] = useState({})
 
-    // console.log(selectedMemberTask)
+    // // console.log(selectedMemberTask)
     // Page 
 
     const sortOptions = [
@@ -150,10 +150,10 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // console.log("a", combinedArray)
-    // console.log("admin", selectedUsers)
-    // console.log("imple", selectedImple)
-    // console.log("monitor", selectedMonitor)
+    // // console.log("a", combinedArray)
+    // // console.log("admin", selectedUsers)
+    // // console.log("imple", selectedImple)
+    // // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -230,10 +230,10 @@ export default () => {
                 if (success) {
                     if (data) {
                         setTables(data);
-                        console.log(data)
+                        // console.log(data)
                     }
                 } else {
-                    console.log("data")
+                    // console.log("data")
                     // window.location = "/404-not-found"
                 }
             })
@@ -273,11 +273,11 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                // // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setUsers(data);
-                        console.log(data)
+                        // console.log(data)
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -300,6 +300,17 @@ export default () => {
 
                 if (success) {
                     if (data) {
+
+                        data.sort( (a, b) => {
+                            if( a.task_priority == b.task_priority ){
+                                const aDate = new Date( a.raw_create_at )
+                                const bDate = new Date( b.raw_create_at )
+                                return aDate > b.Date ? -1 : 1
+                            }else{
+                                return a.task_priority > b.task_priority ? 1 : -1
+                            }
+                        })
+
                         setTasks(data);
                         console.log("data task", data)
                     }
@@ -332,7 +343,7 @@ export default () => {
                 }
             })
     }, [versions])
-    console.log(`${versions[0]?.version_id}`)
+    // console.log(`${versions[0]?.version_id}`)
 
     const areTwoArraysEqual = ( arr1, arr2 ) => {
         let valid = true
@@ -410,7 +421,7 @@ export default () => {
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
         if( !areTwoArraysEqual(uniqueArray, projectmember) ){
-            console.log("UPDATED")
+            // console.log("UPDATED")
             addMember(e);
         }
     };
@@ -501,7 +512,7 @@ export default () => {
     }
 
     useEffect(() => {
-        console.log(updateTaskinfo);
+        // console.log(updateTaskinfo);
     }, [updateTaskinfo]);
 
 
@@ -515,7 +526,7 @@ export default () => {
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/info`, {
             method: "PUT",
             headers: {
@@ -555,11 +566,11 @@ export default () => {
             setIsLoading(false);
         } else {
             // Nếu không tìm thấy task, bạn có thể hiển thị thông báo lỗi hoặc xử lý theo cách khác
-            console.error(`Cannot find task with id ${taskid}`);
+            // console.error(`Cannot find task with id ${taskid}`);
         }
 
     };
-    console.log(taskDetail)
+    // console.log(taskDetail)
     const [deleteTask, setDelelteTask] = useState(false);
 
     const handleConfirmTask = (taskid) => {
@@ -569,7 +580,7 @@ export default () => {
             task_id: taskid.task_id,
             task_approve: newTaskApproveStatus
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/approve`, {
             method: 'PUT',
             headers: {
@@ -597,7 +608,7 @@ export default () => {
             task_id: taskid.task_id
 
         };
-        console.log(requestBody)
+        // console.log(requestBody)
 
         Swal.fire({
             title: lang["confirm"],
@@ -729,8 +740,8 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
-    console.log("manger", projectdetail.manager)
-console.log("members", currentMembers)
+    // console.log("manger", projectdetail.manager)
+// console.log("members", currentMembers)
     useEffect(() => {
         if (projectdetail.project_description?.length > 100) {
             setShowViewMore(true);
@@ -761,8 +772,8 @@ console.log("members", currentMembers)
         const role = e.target.value
         const username = e.target.dataset.username;
 
-        console.log(role);
-        console.log(username)
+        // console.log(role);
+        // console.log(username)
         updateRoleMember({ username: username, role: role });
     }
 
@@ -773,13 +784,13 @@ console.log("members", currentMembers)
         } else if (member.role === 'deployer') {
             newRole = 'deployer';
         }
-        console.log(member)
+        // console.log(member)
         const requestBody = {
             project_id: project.project_id,
             username: member.username,
             permission: newRole
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/projects/project/member/privilege`, {
             method: 'PUT',
             headers: {
@@ -800,7 +811,7 @@ console.log("members", currentMembers)
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
-        console.log(taskId);
+        // console.log(taskId);
         updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
     }
 
@@ -811,7 +822,7 @@ console.log("members", currentMembers)
             task_id: taskInfo.task_id,
             task_status: taskInfo.newTaskStatus
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/status`, {
             method: 'PUT',
             headers: {
@@ -1720,13 +1731,13 @@ console.log("members", currentMembers)
                                             </div>
 
                                             <div class="form-group col-lg-12">
-                                                <label>{lang["projectdescripton"]}</label>
+                                                <label>{lang["p.description"]}</label>
                                                 <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
                                                     (e) => { setTask({ ...task, task_description: e.target.value }) }
                                                 } placeholder={lang["p.description"]} />
                                             </div>
                                             <div class="form-group col-lg-12">
-                                                <label>{lang["projectmember"]}</label>
+                                                <label>{lang["taskmember"]}</label>
                                                 <div class="user-checkbox-container">
                                                     {projectdetail.members?.map((user, index) => (
                                                         <div key={index} class="user-checkbox-item">

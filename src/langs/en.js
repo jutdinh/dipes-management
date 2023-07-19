@@ -105,7 +105,7 @@ export default {
     "taskstatus": "Status",
     "task_priority": "Priority",
     "taskmember": "Members",
-    "p.description": "Description of the task",
+    "p.description": "Task description",
     "updatestatus": "Status updates",
     "viewdetail": "View detail",
     "delete": "Delete",
