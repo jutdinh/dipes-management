@@ -132,7 +132,7 @@ export default () => {
             }
         }
 
-        console.log("VALID: ", valid)
+        // console.log("VALID: ", valid)
         if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
 
@@ -180,8 +180,8 @@ export default () => {
                 }
             })
     }, [api_id])
-    console.log(modalTemp.tables)
-    console.log(allApi)
+    // console.log(modalTemp.tables)
+    // console.log(allApi)
 
 
 
@@ -216,7 +216,7 @@ export default () => {
         }
     }, [modalTemp]);
 
-    console.log(data)
+    // console.log(data)
 
 
     const copyToClipboard = () => {
@@ -229,20 +229,20 @@ export default () => {
 
         clipboardCopy(jsonString)
             .then(() => {
-                console.log('Đã sao chép dữ liệu vào clipboard.');
+                // console.log('Đã sao chép dữ liệu vào clipboard.');
             })
             .catch((error) => {
-                console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
+                // console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
             });
     };
     const copyURL = () => {
 
         clipboardCopy(proxy + allApi.url)
             .then(() => {
-                console.log('Đã sao chép dữ liệu vào clipboard.');
+                // console.log('Đã sao chép dữ liệu vào clipboard.');
             })
             .catch((error) => {
-                console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
+                // console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
             });
     };
 
@@ -253,7 +253,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "PUT",
             headers: {
@@ -344,7 +344,7 @@ export default () => {
 
     const [selectedTables, setSelectedTables] = useState([]);
     //luu id bảng được chọn
-    console.log(selectedTables)
+    // console.log(selectedTables)
 
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
@@ -453,15 +453,11 @@ export default () => {
         setSelectedTables(tables);
 
     }, [tables]);
-    console.log(tables)
-    console.log(selectedTables[0]?.table_name)
-    // console.log(tables)
 
 
 
 
     const [tableFields, setTableFields] = useState([]);
-    console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -504,7 +500,6 @@ export default () => {
     };
     // luu truong body 
     const [selectedFieldsBody, setSelectedFieldsBody] = useState({});
-    console.log("fieldBODY", selectedFieldsBody)
     // load dữ liệu checked
     const initializeCheckboxState = () => {
         if (modalTemp.body) {
@@ -542,8 +537,6 @@ export default () => {
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-    console.log("FieldShow", selectedFieldsModal2)
-    console.log(modalTemp.fields)
 
     const initializeCheckboxStateShow = () => {
         if (modalTemp.fields) {
@@ -569,7 +562,7 @@ export default () => {
 
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
-    // console.log("FieldParams", selectedFields)
+
     const initializeCheckboxStateParam = () => {
         if (modalTemp.params) {
             let tempParam = {};
@@ -601,9 +594,7 @@ export default () => {
         }
         setSelectedFields(updatedSelections);
     };
-    // console.log("trường hiển đối số:", selectedFields)
 
-    //console.log(selectedFields)
     //delete selected table 
 
     const [display_name, setDisplayname] = useState("");
@@ -682,7 +673,6 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldCalculates = (cal) => {
-        console.log("Log data trường tính toán ", cal)
         setCalculatesUpdate(cal)
     }
     const validateCaculatesUpdate = () => {
@@ -727,11 +717,9 @@ export default () => {
     //         submitupdateFieldCalculates();
     //     }
     // }, [calculatesUpdate]);
-    console.log(calculates)
-    console.log(modalTemp.calculates)
+
 
     const handleDeleteCalculates = (cal) => {
-        console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -772,7 +760,6 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
         setStatisticalUpdate(sta)
     }
     const validateStatisticalUpdate = () => {
@@ -818,12 +805,10 @@ export default () => {
     //     }
     // }, [statisticalUpdate]);
 
-    console.log(statisticalUpdate)
-    console.log(modalTemp.statistic)
+
 
     const handleDeleteStatistical = (sta) => {
-        console.log(sta)
-        // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+       // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
         //     calculates: newCalculates
@@ -883,7 +868,7 @@ export default () => {
             event.preventDefault();
 
             const fomular_alias = await generateUniqueFormularAlias(display_name);
-            console.log(fomular_alias)
+            // console.log(fomular_alias)
             const newStatistical = { fomular_alias, display_name, field, fomular };
             // Cập nhật modalTemp
             setModalTemp(prev => ({
@@ -907,7 +892,7 @@ export default () => {
 
 
     };
-    console.log(statistical)
+    // console.log(statistical)
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;

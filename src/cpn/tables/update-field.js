@@ -34,7 +34,7 @@ const typenull = [
 ]
 export default () => {
 
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
@@ -44,27 +44,27 @@ export default () => {
     let navigate = useNavigate();
     const [fieldTemp, setFieldTemp] = useState({});
     // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
 
     const defaultValues = {
@@ -437,7 +437,6 @@ export default () => {
             cancelButtonText: lang["btn.cancel"],
             customClass: {
                 confirmButton: 'swal2-confirm my-confirm-button-class',
-                // add more custom classes if needed
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -457,18 +456,17 @@ export default () => {
                             Swal.fire({
                                 title: lang["alarm.alarm"],
                                 text: lang["error.delete.pramry"],
-                                icon: 'warning ',
+                                icon: 'warning',
                                 showConfirmButton: true,
                                 customClass: {
                                     confirmButton: 'swal2-confirm my-confirm-button-class',
-                                    // add more custom classes if needed
                                 }
 
                             })
                             return;
                         }
                         else {
-                            showApiResponseMessage(status);
+                           functions.showApiResponseMessage(status);
                         }
 
                     });
@@ -567,7 +565,7 @@ export default () => {
             })
     }, [])
 
-    console.log(getTableFields)
+    // console.log(getTableFields)
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
@@ -605,14 +603,14 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    console.log(data)
+                    // console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
                 }
             });
     };
-    console.log(selectedTableId)
+    // console.log(selectedTableId)
     const selectDefaultTable = (tableId) => {
         setSelectedTableId(tableId);
         fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
@@ -625,7 +623,7 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    console.log(data)
+                    // console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
@@ -666,7 +664,7 @@ export default () => {
     }
     const [tableUpdate, setUpdateTable] = useState([]);
     useEffect(() => {
-        console.log(tableUpdate);
+        // console.log(tableUpdate);
     }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -675,7 +673,7 @@ export default () => {
             table_id: getTableFields.id,
             table_name: getTableFields.table_name,
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -690,7 +688,7 @@ export default () => {
                 if (success) {
                     updateFields();
                 } else {
-                    showApiResponseMessage(status);
+                   functions.showApiResponseMessage(status);
                 }
             })
     };
@@ -706,7 +704,7 @@ export default () => {
             table_id: getTableFields.id,
             fields: hashedFields,
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table/fields`, {
             method: "PUT",
             headers: {
@@ -719,10 +717,10 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    console.log(data)
+                    // console.log(data)
                     updateKey(data);
                 } else {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             })
     };
@@ -743,7 +741,7 @@ export default () => {
             primary_key: primaryKey,
             foreign_keys: foreignKeys
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -756,7 +754,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     };
 
@@ -769,7 +767,7 @@ export default () => {
                 ...tempFields
             ],
         };
-        console.log("field", fieldRequestBody)
+        // console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -782,12 +780,12 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                console.log(data)
+                // console.log(data)
                 if (success) {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             });
     };
@@ -811,7 +809,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: newForeignKey
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -824,7 +822,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     };
     const [currentPageTable, setCurrentPageTable] = useState(1);
@@ -852,14 +850,14 @@ export default () => {
 
 
     // console.log(tempFields)
-    console.log(primaryKey)
-    console.log(foreignKeys)
+    // console.log(primaryKey)
+    // console.log(foreignKeys)
     // console.log("FK", getTableFields.foreign_keys)
 
     // console.log(getTableFields.fields)
     // console.log(getTableFields.primary_key)
-    console.log(tempFields)
-    console.log(fieldNew)
+    // console.log(tempFields)
+    // console.log(fieldNew)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

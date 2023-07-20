@@ -41,7 +41,7 @@ export default () => {
                 body: JSON.stringify({ account: auth })
             }).then(res => res.json()).then((resp) => {
                 const { success, content, data } = resp;
-                console.log(resp)
+                // console.log(resp)
 
                 if (success) {
                     if (rememberMe) {

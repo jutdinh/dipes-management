@@ -130,6 +130,9 @@ const showApiResponseMessage = (status, reload = true) => {
             text: description,
             icon,
             showConfirmButton: true,
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
         });
     }
 };

@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { Tables } from ".";
 import Diagram from './diagram/digram';
 import responseMessages from "../enum/response-code";
+import functions from "../../redux/configs/functions";
 const TABLES = "tables";
 const DIAGRAM = "diagram"
 
@@ -26,27 +27,27 @@ export default () => {
     };
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
     
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
         
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
     const [ section, setSection ] = useState(DIAGRAM)
 
     useEffect(() => {
@@ -107,7 +108,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             })
 
 
@@ -140,7 +141,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        showApiResponseMessage(status);
+                       functions.showApiResponseMessage(status);
                     });
             }
         });
@@ -161,7 +162,7 @@ export default () => {
     const openPageUpdateTable = (tableid) => {
         window.location.href = `/projects/${version_id}/table/${tableid.id}`;
     };
-    console.log(currentTable)
+    // console.log(currentTable)
    
     return (
         <div class="midde_cont">

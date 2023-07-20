@@ -25,7 +25,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
@@ -73,8 +73,8 @@ export default () => {
                 // console.log(resp)
                 if (success) {
 
-                    console.log(data.annualStatistic)
-                    setStatis(data.annualStatistic);
+                    // console.log(data.annualStatistic)
+                    // setStatis(data.annualStatistic);
 
 
                 } else {
@@ -82,7 +82,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statis)
+    // console.log(statis)
 
     const [statisStatus, setStatisStatus] = useState([]);
 
@@ -109,7 +109,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statisStatus)
+    // console.log(statisStatus)
 
     const [statisLead, setStatisLead] = useState([]);
 
@@ -131,7 +131,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statisLead)
+    // console.log(statisLead)
     const mapStatus = {
         "1": lang["initialization"],
         "2": lang["implement"],
@@ -233,7 +233,7 @@ export default () => {
         value: statisLead[key].total,
         avatar: statisLead[key].avatar
     }));
-    console.log(outputDataLead)
+    // console.log(outputDataLead)
     let totalSumLead = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
 
 
@@ -253,7 +253,7 @@ export default () => {
             </text>
         );
     };
-    console.log(outputDataLead)
+    // console.log(outputDataLead)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

@@ -13,7 +13,7 @@ import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
 
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
@@ -40,27 +40,27 @@ export default () => {
         statistic_fields: [],
         calculates: []
     };
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
 
     const [errorUi, setErrorUi] = useState({});
@@ -119,7 +119,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 })
         }
     };
@@ -190,7 +190,7 @@ export default () => {
     const [selectedTables, setSelectedTables] = useState(null);
     //  hiển thị các tường của bảng được chọn
     const [tables, setTables] = useState([]);
-    console.log("table", tables)
+    // console.log("table", tables)
     useEffect(() => {
         const fetchTable = (tableId) => {
             return fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -316,7 +316,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldCalculates = (cal) => {
-        console.log(cal)
+        // console.log(cal)
         setCalculatesUpdate(cal)
     }
     const validateCaculatesUpdate = () => {
@@ -360,7 +360,7 @@ export default () => {
     // console.log(modalTemp.calculates.display_name)
 
     const handleDeleteCalculates = (cal) => {
-        console.log(cal)
+        // console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -427,7 +427,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         setStatisticalUpdate(sta)
     }
     const validateStatisticalUpdate = () => {
@@ -466,7 +466,7 @@ export default () => {
     };
 
     const handleDeleteStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
 
         Swal.fire({
             title: lang["confirm"],

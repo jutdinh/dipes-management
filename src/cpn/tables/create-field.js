@@ -32,7 +32,7 @@ const typenull = [
 
 ]
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
@@ -58,27 +58,27 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
     
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
         
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
@@ -192,8 +192,8 @@ export default () => {
                 DEFAULT_FALSE: ''
             });
 
-            console.log(tempFields)
-            console.log(primaryKey)
+            // console.log(tempFields)
+            // console.log(primaryKey)
            
 
         }
@@ -232,7 +232,7 @@ export default () => {
         }));
     };
 
-    console.log(modalTemp)
+    // console.log(modalTemp)
 
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
     useEffect(() => {
@@ -253,7 +253,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    console.log(fieldTempUpdate)
+    // console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -264,7 +264,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        console.log(fieldId)
+        // console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -343,7 +343,7 @@ export default () => {
                 if (success) {
                     if (data) {
                         setFields(data);
-                        console.log(data)
+                        // console.log(data)
                     }
                 } else {
                     // Xử lý lỗi ở đây
@@ -352,7 +352,7 @@ export default () => {
             });
     };
 
-    console.log(tempFields)
+    // console.log(tempFields)
     // console.log(table)
     const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
@@ -384,7 +384,7 @@ export default () => {
                             const tableId = data.table.id; // Lấy id bảng vừa tạo
                             addField(tableId);
                         } else {
-                            showApiResponseMessage(status);
+                           functions.showApiResponseMessage(status);
 
                         }
                     });
@@ -413,7 +413,7 @@ export default () => {
                     ...tempFields
                 ],
             };
-            console.log("field", fieldRequestBody)
+            // console.log("field", fieldRequestBody)
 
             fetch(`${proxy}/db/fields/fields`, {
                 method: "POST",
@@ -426,13 +426,13 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    console.log(data)
+                    // console.log(data)
                     if (success) {
 
                         addKey({ tableId, data });
                         // handleClickPrimary(fieldId);
                     } else {
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
 
                     }
                 });
@@ -457,7 +457,7 @@ export default () => {
             primary_key: primaryKeyid,
             foreign_keys: foreignKeys
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -470,7 +470,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     };
 
@@ -521,7 +521,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "POST",
             headers: {
@@ -533,7 +533,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
 
             })
         // Sau khi thành công, có thể xóa bảng tạm thời
@@ -541,7 +541,7 @@ export default () => {
     };
 
     useEffect(() => {
-        console.log(tableUpdate);
+        // console.log(tableUpdate);
     }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -551,7 +551,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -563,7 +563,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                showApiResponseMessage(status);
+               functions.showApiResponseMessage(status);
 
             })
 
@@ -599,7 +599,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
 
                     });
             }
@@ -617,8 +617,8 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    console.log("p key", primaryKey)
-    console.log("f key", foreignKeys)
+    // console.log("p key", primaryKey)
+    // console.log("f key", foreignKeys)
     // console.log(tables)
     return (
         <div class="midde_cont">
@@ -841,7 +841,7 @@ export default () => {
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["fields name"]} <span className='red_star'>*</span></label>
                                             <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
-                                                console.log(e.target.value);
+                                                // console.log(e.target.value);
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                 if (e.target.value !== "") {
                                                     setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi

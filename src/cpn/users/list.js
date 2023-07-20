@@ -4,7 +4,7 @@ import $ from 'jquery';
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 export default (props) => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
 
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
@@ -24,27 +24,27 @@ export default (props) => {
 
 
 
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
     const [user, setUser] = useState({});
     const [editUser, setEditUser] = useState({});
@@ -86,7 +86,7 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProfile(data);
@@ -170,12 +170,12 @@ export default (props) => {
                 .then((resp) => {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                         setUser({});
                         setShowModal(false);
                         setIsDataAdded(true);
                     } else {
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                     }
                 });
         }
@@ -212,7 +212,7 @@ export default (props) => {
                         .then(res => res.json())
                         .then((resp) => {
                             const { success, content, data, status } = resp;
-                            showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
                         });
                 }
             });
@@ -259,11 +259,11 @@ export default (props) => {
                 setProfile(newProfiles)
                 // close modal
                 // console.log(resp)
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     }
     const handleUpdateUser = (editUser) => {
-        console.log("Thông tin người dùng:", editUser.role);
+        // console.log("Thông tin người dùng:", editUser.role);
         setEditUser(editUser)
         // if (editUser.role === users.role) {
         //     Swal.fire({
