@@ -10,7 +10,7 @@ import { Tables } from ".";
 import { data } from "jquery";
 import responseMessages from "../enum/response-code";
 import { formatDate } from '../../redux/configs/format-date';
-
+import $ from 'jquery'
 const types = [
     ValidTypeEnum.INT,
     ValidTypeEnum.INT_UNSIGNED,
@@ -61,11 +61,11 @@ export default () => {
     // const showApiResponseMessage = (status) => {
     //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
     //     const message = responseMessages[status];
-    
+
     //     const title = message?.[langItem]?.type || "Unknown error";
     //     const description = message?.[langItem]?.description || "Unknown error";
     //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
+
     //     Swal.fire({
     //         title,
     //         text: description,
@@ -138,7 +138,6 @@ export default () => {
     const [errorTable, setErrorTable] = useState({});
     const validateTablename = () => {
         let temp = {};
-
         temp.table_name = table.table_name ? "" : lang["error.input"];
 
 
@@ -146,7 +145,6 @@ export default () => {
         setErrorTable({
             ...temp
         });
-
         return Object.values(temp).every(x => x === "");
     }
 
@@ -192,44 +190,62 @@ export default () => {
                 DEFAULT_FALSE: ''
             });
 
-            // console.log(tempFields)
-            // console.log(primaryKey)
-           
+            // Swal.fire({
+            //     title: lang["success.title"],
+            //     text: lang["success.update"],
+            //     icon: 'success',
+            //     showConfirmButton: false,
+            //     timer: 1500,
+            // })
+            // $("#closeAddField").click()
 
         }
 
     };
 
     const handleUpdatetModal = () => {
-        if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
-            const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
-            setPrimaryKey(newPrimaryKey);
-        }
-        if (isOn) {
-            const newPrimaryKey = new Set([...primaryKey, fieldTempUpdate.index]);
-            const uniquePrimaryKey = [...newPrimaryKey];
-            setPrimaryKey(uniquePrimaryKey)
-        }
-        if (isOnforenkey) {
-            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
-            updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index });
-            setForeignKeys(updatedForeignKeys);
-        } else {
-            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
-            setForeignKeys(updatedForeignKeys);
-        }
-        dispatch({
-            branch: "db",
-            type: "updateField",
-            payload: {
-                field: { ...modalTemp }
-
+        if (validate()) {
+            if (!isOn && primaryKey.includes(fieldTempUpdate.index)) {
+                const newPrimaryKey = primaryKey.filter(index => index !== fieldTempUpdate.index);
+                setPrimaryKey(newPrimaryKey);
             }
-        })
-        setModalTemp((prevModalTemp) => ({
-            ...prevModalTemp,
-            ...defaultValues,
-        }));
+            if (isOn) {
+                const newPrimaryKey = new Set([...primaryKey, fieldTempUpdate.index]);
+                const uniquePrimaryKey = [...newPrimaryKey];
+                setPrimaryKey(uniquePrimaryKey)
+            }
+            if (isOnforenkey) {
+                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
+                updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index });
+                setForeignKeys(updatedForeignKeys);
+            } else {
+                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
+                setForeignKeys(updatedForeignKeys);
+            }
+            dispatch({
+                branch: "db",
+                type: "updateField",
+                payload: {
+                    field: { ...modalTemp }
+
+                }
+            })
+            setModalTemp((prevModalTemp) => ({
+                ...prevModalTemp,
+                ...defaultValues,
+            }));
+
+            Swal.fire({
+                title: lang["success.title"],
+                text: lang["success.update"],
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+
+            $('#closeEditField').click()
+        }
+
     };
 
     // console.log(modalTemp)
@@ -280,29 +296,29 @@ export default () => {
             }
         })
 
-       .then((result) => {
-            if (result.isConfirmed) {
-                const tempFieldsUpdate = tempFields.filter((field) => field.index !== fieldId.index);
-                const newPrimaryKey = primaryKey.filter(index => index !== fieldId.index);
-                setPrimaryKey(newPrimaryKey);
+            .then((result) => {
+                if (result.isConfirmed) {
+                    const tempFieldsUpdate = tempFields.filter((field) => field.index !== fieldId.index);
+                    const newPrimaryKey = primaryKey.filter(index => index !== fieldId.index);
+                    setPrimaryKey(newPrimaryKey);
 
-                dispatch({
-                    branch: "db",
-                    type: "updateFields",
-                    payload: {
-                        tempFieldsUpdate
-                    }
-                })
+                    dispatch({
+                        branch: "db",
+                        type: "updateFields",
+                        payload: {
+                            tempFieldsUpdate
+                        }
+                    })
 
-                Swal.fire({
-                    title: lang["success"],
-                    text: lang["delete.success.field"],
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500,
-                })
-            }
-        });
+                    Swal.fire({
+                        title: lang["success"],
+                        text: lang["delete.success.field"],
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    })
+                }
+            });
     }
 
     useEffect(() => {
@@ -384,7 +400,7 @@ export default () => {
                             const tableId = data.table.id; // Lấy id bảng vừa tạo
                             addField(tableId);
                         } else {
-                           functions.showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
 
                         }
                     });
@@ -395,7 +411,7 @@ export default () => {
                     text: lang["primary-table"],
                     icon: "error",
                     showConfirmButton: true,
-                    
+
                 });
                 return;
             }
@@ -563,7 +579,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-               functions.showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
 
             })
 
@@ -574,7 +590,7 @@ export default () => {
         const requestBody = {
             table_id: parseInt(tableid.id)
         };
-       
+
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.api"],
@@ -636,7 +652,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                   
+
                                     <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create table"]}
                                     </label> </h5>
                                 </div>
@@ -870,7 +886,6 @@ export default () => {
                                         <div class="form-group col-lg-12">
                                             <label>{lang["null"]} </label>
                                             <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
-
                                                 {typenull.map((item, index) => {
                                                     return (
                                                         <option key={index} value={item.value} >
@@ -880,7 +895,6 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-
                                         <div class={`form-group col-lg-12`}>
                                             <label> {lang["datatype"]} </label>
                                             <select
@@ -889,26 +903,21 @@ export default () => {
                                                 onChange={(e) => {
                                                     const selectedDataType = e.target.value;
                                                     const selectedType = types.find((type) => type.name === selectedDataType);
-
                                                     if (selectedType) {
                                                         setModalTemp(prevModalTemp => {
                                                             const updateValues = {
                                                                 DATATYPE: selectedDataType
                                                             };
-
                                                             // Nếu có giới hạn, gán giá trị min, max tương ứng
-
                                                             if (selectedType.limit) {
                                                                 const { min, max } = selectedType.limit;
                                                                 updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.MIN;
                                                                 updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.MAX;
                                                             }
-
                                                             // Nếu là kiểu date, gán định dạng ngày
                                                             if (selectedType.type === 'date' || selectedType.type === 'datetime') {
                                                                 updateValues.FORMAT = selectedType.format;
                                                             }
-
                                                             return {
                                                                 ...prevModalTemp,
                                                                 ...updateValues
@@ -998,7 +1007,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitModal} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddField" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1021,10 +1030,9 @@ export default () => {
                                                 className="form-control"
                                                 value={modalTemp.field_name}
                                                 onChange={(e) => setModalTemp({ ...modalTemp, field_name: e.target.value })}
-
-
                                                 placeholder=""
                                             />
+                                            {errors.field_name && <p className="text-danger">{errors.field_name}</p>}
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label>{lang["key"]} <span className='red_star'>*</span></label>
@@ -1066,6 +1074,7 @@ export default () => {
                                                 })}
 
                                             </select>
+                                            {errors.table_id && <p className="text-danger">{errors.table_id}</p>}
                                         </div>
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["fields name"]} <span className='red_star'>*</span></label>
@@ -1090,6 +1099,7 @@ export default () => {
                                                     })
                                                 }
                                             </select>
+                                            {errors.ref_field_id && <p className="text-danger">{errors.ref_field_id}</p>}
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>{lang["null"]} <span className='red_star'>*</span></label>
@@ -1152,6 +1162,7 @@ export default () => {
                                                     </option>
                                                 ))}
                                             </select>
+                                            {errors.DATATYPE && <p className="text-danger">{errors.DATATYPE}</p>}
                                         </div>
                                         <div class="form-group col-lg-12 ml-2">
                                             {types.map((type) => {
@@ -1224,8 +1235,8 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={handleUpdatetModal} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleUpdatetModal} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" id="closeEditField" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
