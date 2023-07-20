@@ -94,9 +94,8 @@ export default () => {
         const requestBody = {
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
-
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {

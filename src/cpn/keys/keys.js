@@ -33,7 +33,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
@@ -49,7 +49,7 @@ export default () => {
     }, [])
 
 
-    console.log(projects)
+    // console.log(projects)
     return (
         <div className="container-fluid">
             <div class="midde_cont">

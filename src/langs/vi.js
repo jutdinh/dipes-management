@@ -306,7 +306,7 @@ export default {
     "fields name statistic": "Tên trường thống kê",
     "statistical fields": "Danh sách trường thống kê",
     "edit statistical fields": "Chỉnh sửa trường thống kê",
-   
+
     "select fields": "Chọn trường",
     "edit api": "Chỉnh sửa api",
     "fields data": "Danh sách các trường dữ liệu",
@@ -385,12 +385,13 @@ export default {
     "show empty": "Các trường hiển thị không được bỏ trống",
     "not found": "Không tìm thấy",
 
-    "success.add":"Thêm mới thành công",
-"success.update":"Cập nhật thành công",
-"key manager": "Quản lý khóa kích hoạt",
-"key manager.title": "Danh sách các dự án đã kích hoạt",
-"project manage implement": "Quản lý dự án triển khai",
-"activation": "Kích hoạt"
+    "success.add": "Thêm mới thành công",
+    "success.update": "Cập nhật thành công",
+    "key manager": "Quản lý khóa kích hoạt",
+    "key manager.title": "Danh sách các dự án đã kích hoạt",
+    "project manage implement": "Quản lý dự án triển khai",
+    "activation": "Kích hoạt",
+    "sitemap.title": "Sơ đồ website"
 
 
 

@@ -37,7 +37,7 @@ export default () => {
                 // console.log(resp)
                 if (success) {
 
-                    console.log(data.annualStatistic)
+                    // console.log(data.annualStatistic)
                     setStatis(data.annualStatistic);
                     setData(processData(data.annualStatistic))
 
@@ -46,7 +46,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statis)
+    // console.log(statis)
    
     const mapStatus = {
         "1": lang["initialization"],

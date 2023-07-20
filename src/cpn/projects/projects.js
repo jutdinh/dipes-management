@@ -139,13 +139,6 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    console.log("a", combinedArray)
-    console.log("b", uniqueArray)
-
-
-    // console.log("admin", selectedUsers)
-    // console.log("imple", selectedImple)
-    // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -199,7 +192,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
@@ -344,7 +337,7 @@ export default () => {
     }
     const detailProject = (project) => {
         setSelectedProject(project);
-        console.log(project)
+        // console.log(project)
         window.location.href = `projects/detail/${project.project_id}`;
     };
     useEffect(() => {
@@ -355,11 +348,11 @@ export default () => {
         const action = searchParams.get('action');
         switch (action) {
             case "create":
-                console.log("clicked")
+    
                 $('#create-btn').click()
                 break;
             case "export":
-                console.log("clicked")
+              
                 $('#create-btn-export').click()
                 break;
             default:

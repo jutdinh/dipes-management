@@ -153,73 +153,100 @@ export default () => {
         // console.log(primaryKey)
 
     };
+    const [errors, setErrors] = useState({});
 
-    const handleUpdatetModal = () => {
+    const validate = () => {
+        let temp = {};
 
-        let newPrimaryKey = [...primaryKey];
-        // console.log(newPrimaryKey)
-        if (isOn) {
-            if (!newPrimaryKey.includes(fieldTempUpdate.id)) {
-                newPrimaryKey.push(fieldTempUpdate.id);
-            }
-        } else {
-            newPrimaryKey = newPrimaryKey.filter(index => index !== fieldTempUpdate.id);
-        }
-        setPrimaryKey(newPrimaryKey);
+        temp.field_name = fieldTempUpdate.field_name ? "" : lang["error.input"];
+        temp.DATATYPE = fieldTempUpdate.DATATYPE ? "" : lang["error.input"];
 
-        setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
-
-
-        // let newForeignKeys = [...getTableFields.foreign_keys];
-        // if (isOnforenkey) {
-        //     if (!newForeignKeys.includes(fieldTempUpdate.id)) {
-        //         newForeignKeys.push(fieldTempUpdate.id);
-        //     }
-        // } else {
-        //     newForeignKeys = newForeignKeys.filter(index => index !== fieldTempUpdate.id);
-        // }
-        // setForeignKeys(newForeignKeys);
-
-        // setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
-
-        // let newForeignKeys = [...getTableFields.foreign_keys];
-        // const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
-
-        // if (isOnforenkey) {
-        //     if (currentForeignKeyIndex === -1) { // nếu không tìm thấy khóa ngoại trong mảng
-        //         newForeignKeys.push(fieldTempUpdate); // thêm khóa ngoại mới
-        //     }
-        // } else {
-        //     if (currentForeignKeyIndex !== -1) { // nếu tìm thấy khóa ngoại trong mảng
-        //         newForeignKeys.splice(currentForeignKeyIndex, 1); // xóa khóa ngoại khỏi mảng
-        //     }
-        // }
-        // setForeignKeys(newForeignKeys);
         if (isOnforenkey) {
-            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
-            updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
-            setForeignKeys(updatedForeignKeys);
-            setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
-        } else {
-            const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
-            setForeignKeys(updatedForeignKeys);
-            setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
+            if (!foreignKey.table_id) {
+                temp.table_id = lang["error.select.table"];
+            } else {
+                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+            }
+
+            if (!foreignKey.ref_field_id) {
+                temp.ref_field_id = lang["error.select.field"];
+            } else {
+                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+            }
         }
 
-        const newfIELDS = getTableFields.fields.map(field => {
-            if (field.id == fieldTempUpdate.id) {
-                return fieldTempUpdate
-            }
-            return field
+        setErrors({
+            ...temp
         });
 
-        setTableFields({ ...getTableFields, fields: newfIELDS });
-        setIsOn(!isOn);
-        setModalTemp((prevModalTemp) => ({
-            ...prevModalTemp,
-            ...defaultValues,
-        }));
-
+        return Object.values(temp).every(x => x === "");
+    }
+    const handleUpdatetModal = () => {
+        if (validate()) {
+            let newPrimaryKey = [...primaryKey];
+            // console.log(newPrimaryKey)
+            if (isOn) {
+                if (!newPrimaryKey.includes(fieldTempUpdate.id)) {
+                    newPrimaryKey.push(fieldTempUpdate.id);
+                }
+            } else {
+                newPrimaryKey = newPrimaryKey.filter(index => index !== fieldTempUpdate.id);
+            }
+            setPrimaryKey(newPrimaryKey);
+    
+            setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
+    
+    
+            // let newForeignKeys = [...getTableFields.foreign_keys];
+            // if (isOnforenkey) {
+            //     if (!newForeignKeys.includes(fieldTempUpdate.id)) {
+            //         newForeignKeys.push(fieldTempUpdate.id);
+            //     }
+            // } else {
+            //     newForeignKeys = newForeignKeys.filter(index => index !== fieldTempUpdate.id);
+            // }
+            // setForeignKeys(newForeignKeys);
+    
+            // setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
+    
+            // let newForeignKeys = [...getTableFields.foreign_keys];
+            // const currentForeignKeyIndex = newForeignKeys.findIndex(fk => fk.field_id === fieldTempUpdate.id);
+    
+            // if (isOnforenkey) {
+            //     if (currentForeignKeyIndex === -1) { // nếu không tìm thấy khóa ngoại trong mảng
+            //         newForeignKeys.push(fieldTempUpdate); // thêm khóa ngoại mới
+            //     }
+            // } else {
+            //     if (currentForeignKeyIndex !== -1) { // nếu tìm thấy khóa ngoại trong mảng
+            //         newForeignKeys.splice(currentForeignKeyIndex, 1); // xóa khóa ngoại khỏi mảng
+            //     }
+            // }
+            // setForeignKeys(newForeignKeys);
+            if (isOnforenkey) {
+                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
+                updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
+                setForeignKeys(updatedForeignKeys);
+                setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
+            } else {
+                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
+                setForeignKeys(updatedForeignKeys);
+                setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
+            }
+    
+            const newfIELDS = getTableFields.fields.map(field => {
+                if (field.id == fieldTempUpdate.id) {
+                    return fieldTempUpdate
+                }
+                return field
+            });
+    
+            setTableFields({ ...getTableFields, fields: newfIELDS });
+            setIsOn(!isOn);
+            setModalTemp((prevModalTemp) => ({
+                ...prevModalTemp,
+                ...defaultValues,
+            }));
+        }
     };
     const handleAddNewField = () => {
 
@@ -427,7 +454,7 @@ export default () => {
             table_id: fieldId.table_id,
             field_ids: [fieldId.id]
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -451,7 +478,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        console.log(resp)
+                        // console.log(resp)
                         if (data.failFields?.length > 0) {
                             Swal.fire({
                                 title: lang["alarm.alarm"],
@@ -466,7 +493,7 @@ export default () => {
                             return;
                         }
                         else {
-                           functions.showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
                         }
 
                     });
@@ -688,7 +715,7 @@ export default () => {
                 if (success) {
                     updateFields();
                 } else {
-                   functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             })
     };
@@ -858,6 +885,7 @@ export default () => {
     // console.log(getTableFields.primary_key)
     // console.log(tempFields)
     // console.log(fieldNew)
+    // console.log(fieldTempUpdate)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -875,7 +903,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                           
+
                                     <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit table"]}
                                     </label> </h5>
                                 </div>
@@ -1765,7 +1793,6 @@ export default () => {
                         </div>
                     </div>
                 </div>
-
                 {/* Edit table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="editTable">
                     <div class="modal-dialog modal-dialog-center">

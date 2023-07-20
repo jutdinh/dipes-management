@@ -48,7 +48,7 @@ export default ( props ) => {
     const setCurrentTable = () => {
         const table_id = table.id;
         
-        console.log(table_id)
+        // console.log(table_id)
         window.location = `/projects/${ version_id }/table/${table_id}`
     }
 

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
-
+import $ from "jquery"
 
 
 export default () => {
@@ -515,6 +515,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddCalculates").click()
         }
 
     };
@@ -557,6 +558,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditCalculates").click()
         }
     };
 
@@ -644,6 +646,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditStatis").click()
         }
     };
 
@@ -736,6 +739,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddStatis").click()
         }
 
     };
@@ -761,7 +765,15 @@ export default () => {
 
         return { tableId: null, fieldInfo: null };
     };
-
+    const handleCloseModal = () => {
+        setErrorStatistical({});
+        setDisplayname("");
+        setField("");
+        setFomular("");
+        // console.log(errorStatistical)
+        setErrorCaculates({})
+        // console.log(errorCaculates)
+    };
     // console.log(modalTemp)
     // console.log(tempFieldParam)
     // console.log(calculates)
@@ -1773,7 +1785,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1854,12 +1866,11 @@ export default () => {
                                             {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldCalculates}  class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2015,7 +2026,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button"  onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2151,7 +2162,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldStatistical}  class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>

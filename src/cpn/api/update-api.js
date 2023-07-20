@@ -661,6 +661,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $('#closeAddCalculates').click()
         }
 
 
@@ -706,6 +707,8 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+
+            $('#closeEditCalculates').click()
         }
 
 
@@ -794,6 +797,8 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+
+            $('#closeEditStatis').click()
         }
 
     };
@@ -887,6 +892,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $('#closeAddStatis').click()
         }
 
 
@@ -904,17 +910,20 @@ export default () => {
     };
   
 
-    const handleCloseModal = () => {
-      setShowModal(false);
-    };
-  
-    const handleOpenModal = () => {
-      setShowModal(true);
-    };
+ 
     //    console.log(modalTemp.calculates)
     // console.log(tempFieldParam)
     // console.log(calculates)
     // console.log(selectedFieldsModal2)
+    const handleCloseModal = () => {
+        setErrorStatistical({});
+        setDisplayname("");
+        setField("");
+        setFomular("");
+        // console.log(errorStatistical)
+        setErrorCaculates({})
+        // console.log(errorCaculates)
+    };
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1741,7 +1750,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>  
                     </div>
@@ -1826,8 +1835,8 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button"  onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" id="closeEditCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1882,11 +1891,11 @@ export default () => {
                                                             {modalTemp.fields.map((field, index) => {
                                                                 const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
                                                                 if (!tableId || !fieldInfo) {
-                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                    return null; 
                                                                 }
                                                                 const tableInfo = tableFields[tableId];
                                                                 if (!tableInfo) {
-                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                    return null;
                                                                 }
                                                                 return (
                                                                     <tr key={`${tableId}-${field.id}`}>
@@ -1982,7 +1991,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2003,6 +2012,7 @@ export default () => {
                                             <input type="text" className="form-control" value={statisticalUpdate.display_name} onChange={
                                                 (e) => { setStatisticalUpdate({ ...statisticalUpdate, display_name: e.target.value }) }
                                             } placeholder="" />
+                                             {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                         </div>
                                         <div class="form-group  col-md-12">
                                             <label> < p class="font-weight-bold">{lang["fields display"]}</p></label>
@@ -2016,18 +2026,17 @@ export default () => {
                                                                     <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                     <th class="font-weight-bold">{lang["alias"]}</th>
                                                                     <td class="font-weight-bold">{lang["table name"]}</td>
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {modalTemp.fields.map((field, index) => {
                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
                                                                     if (!tableId || !fieldInfo) {
-                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                        return null; 
                                                                     }
                                                                     const tableInfo = tableFields[tableId];
                                                                     if (!tableInfo) {
-                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                        return null; 
                                                                     }
                                                                     return (
                                                                         <tr key={`${tableId}-${field.id}`}>
@@ -2116,8 +2125,8 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldStatistical} data-dismiss="modal" class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>

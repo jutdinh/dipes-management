@@ -100,7 +100,7 @@ export default () => {
 
     useEffect(() => {
         const { event_type, event_title, event_description } = hotFilter;
-        console.log( hotFilter )
+        // console.log( hotFilter )
         if( event_type.length > 0 || event_title.length > 0 || event_description.length > 0 ){
             const types = event_type.map( type => type.value );
             const titles = event_title.map( title => title.value )
@@ -149,7 +149,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         const formatedData = data.map(log => {
