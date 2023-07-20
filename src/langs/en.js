@@ -386,8 +386,8 @@ export default {
 
 
     "project manage implement": "Implementation Project Management",
-    "activation": "Activation"
-
+    "activation": "Activation",
+    "sitemap.title": "Site map"
 
 
 }

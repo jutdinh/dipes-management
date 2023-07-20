@@ -79,8 +79,8 @@ export default (props) => {
 
     const paginateUi = (pageNumber) => setCurrentPageUi(pageNumber);
     const totalPagesUi = Math.ceil(uis_temp.length / rowsPerPageUi);
-    console.log("statistic", statistic)
-    console.log("cal", uis_temp_cal)
+    // console.log("statistic", statistic)
+    // console.log("cal", uis_temp_cal)
 
 
     return (

@@ -4,7 +4,7 @@ import $ from 'jquery';
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 export default (props) => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
 
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
@@ -24,27 +24,27 @@ export default (props) => {
 
 
 
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
     const [user, setUser] = useState({});
     const [editUser, setEditUser] = useState({});
@@ -86,7 +86,7 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProfile(data);
@@ -170,12 +170,12 @@ export default (props) => {
                 .then((resp) => {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                         setUser({});
                         setShowModal(false);
                         setIsDataAdded(true);
                     } else {
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                     }
                 });
         }
@@ -212,7 +212,7 @@ export default (props) => {
                         .then(res => res.json())
                         .then((resp) => {
                             const { success, content, data, status } = resp;
-                            showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
                         });
                 }
             });
@@ -222,14 +222,43 @@ export default (props) => {
     // Update user
     const submitUpdate = (e) => {
         e.preventDefault();
-        if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
-            Swal.fire({
-                title: "Lỗi!",
-                text: "Vui lòng điền đầy đủ thông tin",
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            });
+        // if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
+        //     Swal.fire({
+        //         title: "Lỗi!",
+        //         text: "Vui lòng điền đầy đủ thông tin",
+        //         icon: "error",
+        //         showConfirmButton: false,
+        //         timer: 2000,
+        //     });
+        //     return;
+        // }
+       
+        const errors = {};
+        
+        if (!editUser.fullname) {
+            errors.fullname = lang["error.fullname"];
+        }
+        if (!editUser.role) {
+            errors.role = lang["error.permission"];
+        }
+
+        if (!editUser.email) {
+            errors.email = lang["error.email"];
+        } else if (!isValidEmail(editUser.email)) {
+            errors.email = lang["error.vaildemail"];
+        }
+        if (!editUser.phone) {
+            errors.phone = lang["error.phone"];
+        }
+        else if (!isValidPhone(editUser.phone)) {
+            errors.phone = lang["error.vaildphone"];
+        }
+        if (!editUser.address) {
+            errors.address = lang["error.address"];
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesedit(errors);
             return;
         }
         const requestBody = {
@@ -259,11 +288,11 @@ export default (props) => {
                 setProfile(newProfiles)
                 // close modal
                 // console.log(resp)
-                showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     }
     const handleUpdateUser = (editUser) => {
-        console.log("Thông tin người dùng:", editUser.role);
+        // console.log("Thông tin người dùng:", editUser.role);
         setEditUser(editUser)
         // if (editUser.role === users.role) {
         //     Swal.fire({
@@ -420,7 +449,6 @@ export default (props) => {
                                     <div class="modal-content p-md-3">
                                         <div class="modal-header">
                                             <h4 class="modal-title">{lang["edituser.title"]} </h4>
-
                                             <button class="close" type="button" onClick={handleCloseModal} data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                         </div>
                                         <div class="modal-body">
@@ -431,7 +459,7 @@ export default (props) => {
                                                         <input type="text" class="form-control" value={editUser.fullname} onChange={
                                                             (e) => { setEditUser({ ...editUser, fullname: e.target.value }) }
                                                         } placeholder={lang["p.fullname"]} />
-                                                        {errorMessagesedit.username && <span class="error-message">{errorMessagesedit.fullname}</span>}
+                                                        {errorMessagesedit.fullname && <span class="error-message">{errorMessagesedit.fullname}</span>}
                                                     </div>
                                                     <div class="form-group col-lg-12">
                                                         <label class="font-weight-bold text-small" for="email">{lang["email"]}<span class="red_star ml-1">*</span></label>

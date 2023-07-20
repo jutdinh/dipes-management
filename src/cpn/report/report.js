@@ -54,7 +54,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
 
                     setProjects(data.projects);
@@ -73,12 +73,9 @@ export default () => {
     }, [])
     // console.log(projects.tasks.hitory)
     const exportToExcel = (dataExport) => {
-        console.log(dataExport)
+        // console.log(dataExport)
         const projectTasks = dataExport.tasks.filter((task) => task.project_id === dataExport.project_id);
-
-        console.log(projectTasks)
-
-
+        // console.log(projectTasks)
         // if (!projectTasks || projectTasks.length === 0) {
         //     console.error(`No tasks found for project ID: ${projectId}`);
         //     return;

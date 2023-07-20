@@ -312,7 +312,7 @@ export default () => {
                         })
 
                         setTasks(data);
-                        console.log("data task", data)
+                        // console.log("data task", data)
                     }
                 } else {
                     // window.location = "/404-not-found"

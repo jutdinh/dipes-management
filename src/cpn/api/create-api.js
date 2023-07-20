@@ -8,11 +8,11 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
-
+import $ from "jquery"
 
 
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
@@ -40,27 +40,27 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
 
     const [errorApi, setErrorApi] = useState({});
@@ -125,7 +125,7 @@ export default () => {
             }
         }
 
-        console.log("VALID: ", valid)
+        // console.log("VALID: ", valid)
 
         if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -141,7 +141,7 @@ export default () => {
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
-            console.log("adddsa")
+            // console.log("adddsa")
             addApi();
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
@@ -153,7 +153,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "POST",
             headers: {
@@ -165,11 +165,11 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 } else {
-                    showApiResponseMessage(status);
+                   functions.showApiResponseMessage(status);
                 }
             })
     };
@@ -259,7 +259,7 @@ export default () => {
     }, [])
 
     const [selectedTables, setSelectedTables] = useState([]);
-    console.log(selectedTables)
+    // console.log(selectedTables)
 
     // lưu id bảng được chọn
     // useEffect(() => {
@@ -361,7 +361,7 @@ export default () => {
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
-    console.log(tableFields)
+    // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -417,10 +417,10 @@ export default () => {
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-    console.log("FieldShow", selectedFieldsModal2)
+    // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
-    console.log("FieldParams", selectedFields)
+    // console.log("FieldParams", selectedFields)
 
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         // Sao chép state hiện tại
@@ -438,7 +438,7 @@ export default () => {
         }
         setSelectedFields(updatedSelections);
     };
-    console.log("trường hiển thị:", selectedFieldsModal2)
+    // console.log("trường hiển thị:", selectedFieldsModal2)
     const getFieldDetails = (tableId, fieldId) => {
         const tableInfo = tableFields[tableId];
         const fieldInfo = tableInfo?.fields.find(field => field.id === fieldId);
@@ -454,7 +454,7 @@ export default () => {
     const [fomular, setFomular] = useState("");
 
     const [calculates, setCalculates] = useState([]);
-    console.log("calustasud", calculates)
+    // console.log("calustasud", calculates)
     const [aliasCalculates, setaliasCalculates] = useState([]);
 
     const generateUniqueFormularAlias = async (display_name) => {
@@ -515,6 +515,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddCalculates").click()
         }
 
     };
@@ -557,6 +558,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditCalculates").click()
         }
     };
 
@@ -566,11 +568,11 @@ export default () => {
     //         submitupdateFieldCalculates();
     //     }
     // }, [calculatesUpdate]);
-    console.log(calculates)
-    console.log(modalTemp.calculates)
+    // console.log(calculates)
+    // console.log(modalTemp.calculates)
 
     const handleDeleteCalculates = (cal) => {
-        console.log(cal)
+        // console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -611,7 +613,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         setStatisticalUpdate(sta)
     }
     const validateStatisticalUpdate = () => {
@@ -644,6 +646,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditStatis").click()
         }
     };
 
@@ -657,7 +660,7 @@ export default () => {
 
 
     const handleDeleteStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -736,10 +739,11 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddStatis").click()
         }
 
     };
-    console.log(modalTemp)
+    // console.log(modalTemp)
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
@@ -761,14 +765,22 @@ export default () => {
 
         return { tableId: null, fieldInfo: null };
     };
-
+    const handleCloseModal = () => {
+        setErrorStatistical({});
+        setDisplayname("");
+        setField("");
+        setFomular("");
+        // console.log(errorStatistical)
+        setErrorCaculates({})
+        // console.log(errorCaculates)
+    };
     // console.log(modalTemp)
     // console.log(tempFieldParam)
-    console.log(calculates)
-    console.log(tableFields)
+    // console.log(calculates)
+    // console.log(tableFields)
 
 
-    console.log(modalTemp.fields)
+    // console.log(modalTemp.fields)
 
     return (
         <div class="midde_cont">
@@ -1773,7 +1785,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1854,12 +1866,11 @@ export default () => {
                                             {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldCalculates}  class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2015,7 +2026,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button"  onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2151,7 +2162,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldStatistical}  class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>

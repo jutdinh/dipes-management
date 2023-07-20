@@ -60,7 +60,7 @@ function App() {
         .then(res => res.json())
         .then(resp => {
           const { success } = resp;
-          console.log(resp)
+          // console.log(resp)
           if (success) {
   
           } else {

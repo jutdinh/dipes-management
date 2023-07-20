@@ -45,16 +45,16 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { data } = resp;
-                console.log(resp)
+       
                 if (data != undefined) {
                     setProfile(data);
                     setEditUser(data)
-                    console.log(data)
+              
                 }
             })
     }, [])
     useEffect(() => {
-        console.log(profile)
+      
     }, [profile])
     const fileInputRef = useRef(null);
     const handleClick = () => {
@@ -90,16 +90,55 @@ export default (props) => {
             };
         }
     };
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+    const isValidPhone = (phone) => {
+        const phoneRegex = /^[0-9]{10}$/; // Kiểm tra 10 chữ số
+        return phoneRegex.test(phone);
+    };
     const submitUpdate = (e) => {
         e.preventDefault();
-        if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
-            Swal.fire({
-                title: "Lỗi!",
-                text: lang["profile.error.invaliddata"],
-                icon: "error",
-                showConfirmButton: false,
-                timer: 2000,
-            });
+        // if (!editUser.fullname || !editUser.role || !editUser.email || !editUser.phone || !editUser.address) {
+        //     Swal.fire({
+        //         title: "Lỗi!",
+        //         text: lang["profile.error.invaliddata"],
+        //         icon: "error",
+        //         showConfirmButton: false,
+        //         timer: 2000,
+        //     });
+        //     return;
+        // }
+
+        const errors = {};
+
+        if (!editUser.fullname) {
+            errors.fullname = lang["error.fullname"];
+        }
+        if (!editUser.role) {
+            errors.role = lang["error.permission"];
+        }
+
+        if (!editUser.email) {
+            errors.email = lang["error.email"];
+        } else if (!isValidEmail(editUser.email)) {
+            errors.email = lang["error.vaildemail"];
+        }
+        if (!editUser.phone) {
+            errors.phone = lang["error.phone"];
+        }
+        else if (!isValidPhone(editUser.phone)) {
+            errors.phone = lang["error.vaildphone"];
+        }
+        if (!editUser.address) {
+            errors.address = lang["error.address"];
+        }
+
+
+
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesedit(errors);
             return;
         }
         const requestBody = {
@@ -107,7 +146,7 @@ export default (props) => {
                 ...editUser
             }
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/auth/self/info`, {
             method: 'PUT',
             headers: {
@@ -120,7 +159,7 @@ export default (props) => {
             .then(res => res.json())
             .then((resp) => {
                 const { success, content, status } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     const stringifiedUser = JSON.stringify(requestBody.account)
                     localStorage.setItem("user", stringifiedUser)
@@ -149,7 +188,12 @@ export default (props) => {
                                     <div className="heading1 margin_0">
                                         <h5>{lang["profile user"]}</h5>
                                     </div>
-                                    <i className="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i>
+                                    {user.role !== "uad" ? (
+                                        <i className="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i>
+                                    ) : null
+
+                                    }
+
                                 </div>
                                 <div class="modal fade" tabindex="-1" role="dialog" id="editMember" aria-labelledby="edit" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-center" role="document">
@@ -167,7 +211,7 @@ export default (props) => {
                                                             <input type="text" class="form-control" value={editUser.fullname} onChange={
                                                                 (e) => { setEditUser({ ...editUser, fullname: e.target.value }) }
                                                             } placeholder={lang["p.fullname"]} />
-                                                            {errorMessagesedit.username && <span class="error-message">{errorMessagesedit.fullname}</span>}
+                                                            {errorMessagesedit.fullname && <span class="error-message">{errorMessagesedit.fullname}</span>}
                                                         </div>
 
 
@@ -245,10 +289,10 @@ export default (props) => {
                                                         <li class="mt-2">{lang["note"]}: {profile.note || lang["note"]}</li>
                                                     </ul>
                                                 </div>
-                                               
+
                                             </div>
                                         </div>
-                                        
+
                                     </div>
 
 

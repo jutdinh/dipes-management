@@ -93,7 +93,7 @@ export default () => {
                 }
             }).then(res => res.json()).then(res => {
                 const { success, data, status, content } = res;
-                console.log(res)
+                // console.log(res)
                 if (success) {
                     setLoaded(true)
                 }
@@ -134,7 +134,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center">
-                            <h4>{lang["report"]}</h4>
+                            <h4>{lang["sitemap.title"]}</h4>
                             {/* <img className="ml-auto mr-2" width={36} src="/assets/icon/viewmode/data-analytics.png" /> */}
                         </div>
                     </div>

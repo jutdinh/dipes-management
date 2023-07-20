@@ -10,31 +10,31 @@ import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 import { Tables } from ".";
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
     const [apis, setApis] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/apis/v/${version_id}`, {
@@ -56,14 +56,14 @@ export default () => {
                 }
             })
     }, [])
-    console.log(apis)
+    // console.log(apis)
 
     const handleGetApi = (apiid) => {
-        console.log("api", apiid)
+        // console.log("api", apiid)
     }
 
     const downloadAPI = () => {
-        console.log(apis);
+        // console.log(apis);
       
         const header = ["API ID", "Tên API", "Phương thức API", "Ngày tạo"];
       
@@ -144,14 +144,14 @@ export default () => {
 
 
     const handleUpdateStatus = (apiid) => {
-        console.log("api", apiid)
+        // console.log("api", apiid)
         const newStatus = !apiid.status;
         const requestBody = {
             version_id: version_id,
             api: { ...apiid, status: newStatus }
         };
 
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: 'PUT',
             headers: {
@@ -164,21 +164,21 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 } else {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             });
 
 
     }
     const handleDeleteApi = (apiid) => {
-        console.log(apiid)
+        // console.log(apiid)
         const requestBody = {
             version_id: version_id,
             api_id: apiid.api_id
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.api"],
@@ -204,7 +204,7 @@ export default () => {
                         .then(res => res.json())
                         .then((resp) => {
                             const { success, content, data, status } = resp;
-                            showApiResponseMessage(status);
+                            functions.showApiResponseMessage(status);
 
                         });
                 }
@@ -226,7 +226,7 @@ export default () => {
         // window.location.href = `tables`;
     };
     const updateApi = (apiData) => {
-        console.log(apiData)
+        // console.log(apiData)
         window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };

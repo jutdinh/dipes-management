@@ -11,9 +11,9 @@ import Layout1 from './view_layout1'
 import responseMessages from "../enum/response-code";
 import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
-
+import $ from 'jquery'
 export default () => {
-    const { lang, proxy, auth } = useSelector(state => state);
+    const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
@@ -30,7 +30,7 @@ export default () => {
     const handleClickLayout = (layoutNumber) => {
         setLayout(layoutNumber);
     }
-
+    
     const defaultValues = {
         title: "",
         status: true,
@@ -40,27 +40,27 @@ export default () => {
         statistic_fields: [],
         calculates: []
     };
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
 
     const [errorUi, setErrorUi] = useState({});
@@ -119,7 +119,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 })
         }
     };
@@ -190,7 +190,7 @@ export default () => {
     const [selectedTables, setSelectedTables] = useState(null);
     //  hiển thị các tường của bảng được chọn
     const [tables, setTables] = useState([]);
-    console.log("table", tables)
+    // console.log("table", tables)
     useEffect(() => {
         const fetchTable = (tableId) => {
             return fetch(`${proxy}/db/tables/table/${tableId}`, {
@@ -306,6 +306,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddCalculates").click()
         }
     };
 
@@ -316,7 +317,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldCalculates = (cal) => {
-        console.log(cal)
+        // console.log(cal)
         setCalculatesUpdate(cal)
     }
     const validateCaculatesUpdate = () => {
@@ -346,6 +347,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditCalculates").click()
         }
 
     };
@@ -360,7 +362,7 @@ export default () => {
     // console.log(modalTemp.calculates.display_name)
 
     const handleDeleteCalculates = (cal) => {
-        console.log(cal)
+        // console.log(cal)
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -416,6 +418,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeAddStatis").click()
         }
     };
     // console.log(modalTemp)
@@ -427,7 +430,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         setStatisticalUpdate(sta)
     }
     const validateStatisticalUpdate = () => {
@@ -461,12 +464,13 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+            $("#closeEditStatis").click()
         }
 
     };
 
     const handleDeleteStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
 
         Swal.fire({
             title: lang["confirm"],
@@ -583,6 +587,13 @@ export default () => {
         });
         return str;
     }
+  
+    const handleCloseModal = () => {
+        setErrorStatistical({});
+        // console.log(errorStatistical)
+        setErrorCaculates({})
+        // console.log(errorCaculates)
+    };
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -819,9 +830,6 @@ export default () => {
                                             ))}
                                         </select>
                                         {errorTable.selectedTables && <p className="text-danger">{errorTable.selectedTables}</p>}
-
-
-
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>{lang["creator"]}</label>
@@ -861,8 +869,6 @@ export default () => {
                                         />
                                         {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                     </div>
-
-
                                     <div class="form-group col-md-12">
                                         <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
                                         <div class="table-responsive">
@@ -882,7 +888,6 @@ export default () => {
                                                             <td>{field.field_name}</td>
                                                             <td>{field.fomular_alias}</td>
                                                             <td>{field.props.DATATYPE}</td>
-
                                                         </tr>
                                                     )}
                                                 </tbody>
@@ -923,7 +928,6 @@ export default () => {
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
                                             <option value="">{lang["select fields"]}</option>
-
                                             {getAllField.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
                                                     {field.field_name} - {field.fomular_alias}
@@ -965,7 +969,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldStatistical} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -991,12 +995,9 @@ export default () => {
                                         />
                                         {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                     </div>
-
-
                                     <div class="form-group col-md-12">
                                         <label> < p class="font-weight-bold">{getAllField.table_name}</p> </label>
                                         <div class="table-responsive">
-
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
@@ -1004,11 +1005,8 @@ export default () => {
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
                                                         <th class="font-weight-bold">{lang["datatype"]}</th>
-
-
                                                     </tr>
                                                 </thead>
-
                                                 <tbody>
                                                     {getAllField.fields?.map((field, index) =>
                                                         <tr key={index}>
@@ -1019,10 +1017,8 @@ export default () => {
 
                                                         </tr>
                                                     )}
-
                                                 </tbody>
                                             </table>
-
                                         </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
@@ -1038,7 +1034,6 @@ export default () => {
                                         </select>
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
-
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["fomular"]}<span className='red_star'>*</span></label>
                                         <select
@@ -1066,7 +1061,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1103,11 +1098,8 @@ export default () => {
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
                                                         <th class="font-weight-bold">{lang["datatype"]}</th>
-
-
                                                     </tr>
                                                 </thead>
-
                                                 <tbody>
                                                     {getAllField.fields?.map((field, index) =>
                                                         <tr key={index}>
@@ -1115,13 +1107,10 @@ export default () => {
                                                             <td>{field.field_name}</td>
                                                             <td>{field.fomular_alias}</td>
                                                             <td>{field.props.DATATYPE}</td>
-
                                                         </tr>
                                                     )}
-
                                                 </tbody>
                                             </table>
-
                                         </div>
                                     </div>
                                     <div className={`form-group col-lg-12`}>
@@ -1147,7 +1136,7 @@ export default () => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeAddCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1168,11 +1157,11 @@ export default () => {
                                             <input type="text" className="form-control" value={calculatesUpdate.display_name} onChange={
                                                 (e) => { setCalculatesUpdate({ ...calculatesUpdate, display_name: e.target.value }) }
                                             } placeholder="" />
+                                             {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                         </div>
                                         <div class="form-group col-md-12">
                                             <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
                                             <div class="table-responsive">
-
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -1182,7 +1171,6 @@ export default () => {
                                                             <th class="font-weight-bold">{lang["datatype"]}</th>
                                                         </tr>
                                                     </thead>
-
                                                     <tbody>
                                                         {getAllField.fields?.map((field, index) =>
                                                             <tr key={index}>
@@ -1193,10 +1181,8 @@ export default () => {
 
                                                             </tr>
                                                         )}
-
                                                     </tbody>
                                                 </table>
-
                                             </div>
                                         </div>
                                         <div className={`form-group col-lg-12`}>
@@ -1210,19 +1196,18 @@ export default () => {
                                                 }
                                                 required
                                             />
+                                             {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" id="closeEditCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 {/*Preview */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="preview">
                     <div class="modal-dialog modal-dialog-center">
