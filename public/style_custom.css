@@ -694,6 +694,21 @@ h5 {
     transform: scale(1.1);
 }
 
+/* PROCESSING CIRCLE FADEIN */
+img[class="scaled-hover-target"]{
+    animation-name: fadeIn;
+    animation-duration: 2s;
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    0%{
+        opacity: 0;
+    }
+    50%{
+        opacity: 1;
+    }
+}
 
 .icon-hover:hover .scaled-hover-target {
     transform: scale(1.1);
