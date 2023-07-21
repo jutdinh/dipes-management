@@ -348,11 +348,11 @@ export default () => {
         const action = searchParams.get('action');
         switch (action) {
             case "create":
-    
+
                 $('#create-btn').click()
                 break;
             case "export":
-              
+
                 $('#create-btn-export').click()
                 break;
             default:
@@ -741,7 +741,7 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </div>

@@ -256,9 +256,10 @@ export default () => {
                                                     </div>
                                                 </>
                                             ) : (
-                                                <div class="list_cont ">
+                                                <div>
                                                     <p>{lang["not found"]}</p>
                                                 </div>
+                                                
                                             )
                                         }
                                     </div>

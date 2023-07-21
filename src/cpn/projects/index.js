@@ -1,9 +1,9 @@
 import Projects from "./projects";
-
-import ProjectDetail from "./projectcard-detail"
+import ProjectDetail from "./projectcard-detail";
+import TaskDetail from "./task-detail";
 
 export {
     Projects,
-
-    ProjectDetail
+    ProjectDetail,
+    TaskDetail
 }

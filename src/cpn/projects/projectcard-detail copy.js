@@ -12,6 +12,9 @@ import responseMessages from "../enum/response-code";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const stringifiedUser = localStorage.getItem("user");
+    const _users = JSON.parse(stringifiedUser)
+
     const { showApiResponseMessage } = functions
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [showAdminPopup, setShowAdminPopup] = useState(false);
@@ -28,7 +31,7 @@ export default () => {
     const [exporter, setExporter] = useState({})
     const [activate, setActivate] = useState({})
 
-    // console.log(selectedMemberTask)
+    // // console.log(selectedMemberTask)
     // Page 
 
     const sortOptions = [
@@ -109,8 +112,7 @@ export default () => {
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
     const [tempSelectedMonitor, setTempSelectedMonitor] = useState([]);
-console.log(selectedUsers)
-console.log(selectedImple)
+
     const handleAdminCheck = (user, role) => {
         const userWithRole = { username: user.username, role };
         setTempSelectedUsers(prevTempSelectedUsers => {
@@ -148,10 +150,10 @@ console.log(selectedImple)
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // console.log("a", combinedArray)
-    // console.log("admin", selectedUsers)
-    // console.log("imple", selectedImple)
-    // console.log("monitor", selectedMonitor)
+    // // console.log("a", combinedArray)
+    // // console.log("admin", selectedUsers)
+    // // console.log("imple", selectedImple)
+    // // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -228,10 +230,10 @@ console.log(selectedImple)
                 if (success) {
                     if (data) {
                         setTables(data);
-                        console.log(data)
+                        // console.log(data)
                     }
                 } else {
-                    console.log("data")
+                    // console.log("data")
                     // window.location = "/404-not-found"
                 }
             })
@@ -271,11 +273,11 @@ console.log(selectedImple)
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                // // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setUsers(data);
-                        console.log(data)
+                        // console.log(data)
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -298,8 +300,19 @@ console.log(selectedImple)
 
                 if (success) {
                     if (data) {
+
+                        data.sort( (a, b) => {
+                            if( a.task_priority == b.task_priority ){
+                                const aDate = new Date( a.raw_create_at )
+                                const bDate = new Date( b.raw_create_at )
+                                return aDate > b.Date ? -1 : 1
+                            }else{
+                                return a.task_priority > b.task_priority ? 1 : -1
+                            }
+                        })
+
                         setTasks(data);
-                        console.log("data task", data)
+                        // console.log("data task", data)
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -330,10 +343,26 @@ console.log(selectedImple)
                 }
             })
     }, [versions])
-    console.log(`${versions[0]?.version_id}`)
-    console.log(uis)
+    // console.log(`${versions[0]?.version_id}`)
+
+    const areTwoArraysEqual = ( arr1, arr2 ) => {
+        let valid = true
+        if( arr1 && arr2 && arr1.length == arr2.length ){
+            
+            for( let i = 0 ;  i < arr1.length; i++ ){
+                if( arr2.indexOf(arr1[i]) == -1 ){
+                    valid = false
+                }
+            }
+        }else{
+            valid = false
+        }
+        return valid
+    }
+
     const addMember = (e) => {
         e.preventDefault();
+
         fetch(`${proxy}/projects/members`, {
             method: "POST",
             headers: {
@@ -390,7 +419,11 @@ console.log(selectedImple)
         }
 
         // call addMember after submitUpdateProject has completed
-        addMember(e);
+        // if change members then call the api
+        if( !areTwoArraysEqual(uniqueArray, projectmember) ){
+            // console.log("UPDATED")
+            addMember(e);
+        }
     };
 
     const submitUpdateManager = async (e) => {
@@ -479,7 +512,7 @@ console.log(selectedImple)
     }
 
     useEffect(() => {
-        console.log(updateTaskinfo);
+        // console.log(updateTaskinfo);
     }, [updateTaskinfo]);
 
 
@@ -493,7 +526,7 @@ console.log(selectedImple)
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/info`, {
             method: "PUT",
             headers: {
@@ -533,11 +566,11 @@ console.log(selectedImple)
             setIsLoading(false);
         } else {
             // Nếu không tìm thấy task, bạn có thể hiển thị thông báo lỗi hoặc xử lý theo cách khác
-            console.error(`Cannot find task with id ${taskid}`);
+            // console.error(`Cannot find task with id ${taskid}`);
         }
 
     };
-    console.log(taskDetail)
+    // console.log(taskDetail)
     const [deleteTask, setDelelteTask] = useState(false);
 
     const handleConfirmTask = (taskid) => {
@@ -547,7 +580,7 @@ console.log(selectedImple)
             task_id: taskid.task_id,
             task_approve: newTaskApproveStatus
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/approve`, {
             method: 'PUT',
             headers: {
@@ -575,7 +608,7 @@ console.log(selectedImple)
             task_id: taskid.task_id
 
         };
-        console.log(requestBody)
+        // console.log(requestBody)
 
         Swal.fire({
             title: lang["confirm"],
@@ -665,6 +698,7 @@ console.log(selectedImple)
         setUniqueUsers(duplicateUsers);
     }, [users, projectmember]);
 
+
     const getStatusLabel = (statusId) => {
         const status = statusTask.find(st => st.id === statusId);
         return status ? status.label : 'N/A';
@@ -707,8 +741,8 @@ console.log(selectedImple)
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
-
-
+    // console.log("manger", projectdetail.manager)
+// console.log("members", currentMembers)
     useEffect(() => {
         if (projectdetail.project_description?.length > 100) {
             setShowViewMore(true);
@@ -739,25 +773,25 @@ console.log(selectedImple)
         const role = e.target.value
         const username = e.target.dataset.username;
 
-        console.log(role);
-        console.log(username)
+        // console.log(role);
+        // console.log(username)
         updateRoleMember({ username: username, role: role });
     }
 
     const updateRoleMember = (member) => {
         let newRole = '';
         if (member.role === 'supervisor') {
-            newRole = 'pd';
+            newRole = 'supervisor';
         } else if (member.role === 'deployer') {
-            newRole = 'ps';
+            newRole = 'deployer';
         }
-        console.log(member)
+        // console.log(member)
         const requestBody = {
             project_id: project.project_id,
             username: member.username,
             permission: newRole
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/projects/project/member/privilege`, {
             method: 'PUT',
             headers: {
@@ -778,7 +812,7 @@ console.log(selectedImple)
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
-        console.log(taskId);
+        // console.log(taskId);
         updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
     }
 
@@ -789,7 +823,7 @@ console.log(selectedImple)
             task_id: taskInfo.task_id,
             task_status: taskInfo.newTaskStatus
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/tasks/task/status`, {
             method: 'PUT',
             headers: {
@@ -825,7 +859,7 @@ console.log(selectedImple)
             func();
         } else {
             Swal.fire({
-                title: "error.title",
+                title: lang["error.title"],
                 icon: "error",
                 showConfirmButton: true,
                 text: lang["export.error.invalidData"],
@@ -850,7 +884,7 @@ console.log(selectedImple)
                     window.open(`${proxy}/versions/d/${version}/whole`)
                 } else {
                     Swal.fire({
-                        title: "Thất bại!",
+                        title: lang["error.title"],
                         icon: "error",
                         showConfirmButton: true,
                         text: lang["export.error.invalidVersionData"],
@@ -986,11 +1020,9 @@ console.log(selectedImple)
         }
         return result
     }
-selectedUsers.push(selectedImple)
-selectedUsers.push(projectdetail.manager)
-    console.log(selectedUsers)
-    
-
+    const openDetailTask = () => {
+        window.location.href = `/projects/detail/task/${project_id}`;
+    };
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1063,9 +1095,9 @@ selectedUsers.push(projectdetail.manager)
                                 </div>
                                 <div class="d-flex align-items-center mb-1">
                                     <p class="font-weight-bold">{lang["projectmember"]}: </p>
-                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                    {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
                                         <i class="fa fa-edit"></i>
-                                    </button>
+                                    </button> */}
                                 </div>
                                 <div class="table-responsive">
                                     {
@@ -1092,37 +1124,35 @@ selectedUsers.push(projectdetail.manager)
                                                                 <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
                                                                 <td>{member.fullname}</td>
                                                                 {
-                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
-                                                                    <>
-                                                                        <td class="align-center" style={{ minWidth: "130px" }} >
-
-                                                                            <select
-                                                                                className="form-control"
-                                                                                value={member.permission}
-                                                                                onChange={handleSelectChangeMember}
-                                                                                data-username={member.username}
-
-                                                                            >
-
-                                                                                {RolesMember.map((role, index) => {
-                                                                                    return (
-                                                                                        <option key={index} value={role.value} data-taskid={member.permission}>
-                                                                                            {lang[role.label]}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </select>
-
-                                                                        </td>
-                                                                    </>
+                                                                   (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
+                                                                    <td className="align-center" style={{ minWidth: "130px" }}>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={member.permission}
+                                                                            onChange={handleSelectChangeMember}
+                                                                            data-username={member.username}
+                                                                        >
+                                                                            {RolesMember.map((role, index) => {
+                                                                                return (
+                                                                                    <option key={index} value={role.value} data-taskid={member.permission}>
+                                                                                        {lang[role.label]}
+                                                                                    </option>
+                                                                                );
+                                                                            })}
+                                                                        </select>
+                                                                    </td>
+                                                                ) : (
+                                                                    <td style={{ minWidth: "80px" }}>
+                                                                        {
+                                                                            member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                member.permission === "deployer" ? lang["deployers"] :
+                                                                                    "Khác"
+                                                                        }
+                                                                    </td>
+                                                                )
+                                                                
                                                                 }
-                                                                <td style={{ minWidth: "80px" }}>
-                                                                    {
-                                                                        member.permission === "supervisor" ? lang["supervisor"] :
-                                                                            member.permission === "deployer" ? lang["deployers"] :
-                                                                                "Khác"
-                                                                    }
-                                                                </td>
+
 
 
 
@@ -1400,7 +1430,7 @@ selectedUsers.push(projectdetail.manager)
                                             </div>
                                             <div className="form-group col-lg-12">
                                                 <label>{lang["projectmember"]}</label>
-                                                {/* <div class="options-container">
+                                                <div class="options-container">
                                                     <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                         <h5>{lang["supervisor"]}</h5>
                                                         <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
@@ -1440,8 +1470,7 @@ selectedUsers.push(projectdetail.manager)
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </div>
-                                                </div> */}
-
+                                                </div>
                                             </div>
                                             {showAdminPopup && (
                                                 <div class="user-popup4">
@@ -1616,7 +1645,7 @@ selectedUsers.push(projectdetail.manager)
                                                                     <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
 
                                                                     {
-                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                       (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                         <>
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                                             {task.task_approve
@@ -1705,13 +1734,13 @@ selectedUsers.push(projectdetail.manager)
                                             </div>
 
                                             <div class="form-group col-lg-12">
-                                                <label>{lang["projectdescripton"]}</label>
+                                                <label>{lang["p.description"]}</label>
                                                 <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
                                                     (e) => { setTask({ ...task, task_description: e.target.value }) }
                                                 } placeholder={lang["p.description"]} />
                                             </div>
                                             <div class="form-group col-lg-12">
-                                                <label>{lang["projectmember"]}</label>
+                                                <label>{lang["taskmember"]}</label>
                                                 <div class="user-checkbox-container">
                                                     {projectdetail.members?.map((user, index) => (
                                                         <div key={index} class="user-checkbox-item">
@@ -1762,17 +1791,16 @@ selectedUsers.push(projectdetail.manager)
                                                     (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
                                                 } placeholder={lang["p.taskname"]} />
                                             </div>
-                                            {/* <div class="form-group col-lg-6 ">
+                                            <div class="form-group col-lg-6 ">
                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
-                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
-                                                    <option value="">Chọn</option>
+                                                <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>                                                    
                                                     {statusPriority.map((status, index) => {
                                                         return (
-                                                            <option key={index} value={status.value}>{status.label}</option>
+                                                            <option key={index} value={status.value} selected = { status.value == updateTaskinfo.task_priority ? true : false } >{lang[status.label]}</option>
                                                         );
                                                     })}
-                                                </select>
-                                            </div> */}
+                                                </select>                                                
+                                            </div>
                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
                                                 <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
@@ -1784,6 +1812,8 @@ selectedUsers.push(projectdetail.manager)
                                                     })}
                                                 </select>
                                             </div> */}
+
+
                                             <div class="form-group col-lg-12">
                                                 <label>{lang["projectdescripton"]}</label>
                                                 <textarea rows="4" type="text" class="form-control" value={updateTaskinfo.task_description} onChange={
@@ -1879,7 +1909,8 @@ selectedUsers.push(projectdetail.manager)
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>{lang["task_priority"]}</b></label>
-                                                <span className="d-block"> {taskDetail.task_priority} </span>
+                                                <span className="d-block"> {lang[`${(statusPriority.find((s) => s.value === Number(taskDetail.task_priority)) || {}).label || taskDetail.task_priority}`]} </span>
+
                                             </div>
                                             <div class="form-group col-lg-4">
                                                 <label><b>{lang["confirm"]}</b></label>
@@ -2299,7 +2330,7 @@ selectedUsers.push(projectdetail.manager)
                                                     </div>
                                                 </>) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
                                         }
@@ -2421,7 +2452,7 @@ selectedUsers.push(projectdetail.manager)
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
 
@@ -2470,7 +2501,7 @@ selectedUsers.push(projectdetail.manager)
                                                                 </table>
                                                             ) : (
                                                                 <div class="list_cont ">
-                                                                    <p>Not found</p>
+                                                                    <p>{lang["not found"]}</p>
                                                                 </div>
                                                             )
                                                         }
@@ -2503,7 +2534,7 @@ selectedUsers.push(projectdetail.manager)
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
-                                                    <p>Not found</p>
+                                                    <p>{lang["not found"]}</p>
                                                 </div>
                                             )
                                         }

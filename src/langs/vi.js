@@ -391,7 +391,8 @@ export default {
     "key manager.title": "Danh sách các dự án đã kích hoạt",
     "project manage implement": "Quản lý dự án triển khai",
     "activation": "Kích hoạt",
-    "sitemap.title": "Sơ đồ website"
+    "sitemap.title": "Sơ đồ website",
+    "modify_what": "Đối tượng thay đổi"
 
 
 

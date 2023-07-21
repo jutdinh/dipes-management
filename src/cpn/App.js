@@ -7,7 +7,7 @@ import { Home, About } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
 import { Login, SignUp, SignOut } from './auth';
 import { Settings } from './settings';
-import { Projects, ProjectsCard, ProjectDetail } from './projects';
+import { Projects, ProjectsCard, ProjectDetail, TaskDetail } from './projects';
 import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
@@ -79,9 +79,10 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
-        <Route path="/keys" element={<Navigation Child={Keys} />} />
+        <Route path="/keyss" element={<Navigation Child={Keys} />} />
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
+        <Route path="/projects/detail/task/:project_id" element={<Navigation Child={TaskDetail} />} />
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />
         <Route path="/projects/:version_id/tables/field" element={<Navigation Child={Field} />} />
         <Route path="/projects/:version_id/table/:table_id" element={<Navigation Child={UpdateField} />} />

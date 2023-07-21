@@ -45,12 +45,12 @@ export default () => {
                      <span>{lang["projects manager"]}</span>
                   </NavLink>
                </li>
-               <li className="navbar-item">
-                     <NavLink to="/keys" activeClassName="nav-active">
-                        <i class="fa fa-key key_color"></i>
-                        <span>{lang["key manager"]}</span>
-                     </NavLink>
-                  </li>
+               {/* <li className="navbar-item">
+                  <NavLink to="/keys" activeClassName="nav-active">
+                     <i class="fa fa-key key_color"></i>
+                     <span>{lang["key manager"]}</span>
+                  </NavLink>
+               </li> */}
                {user.role === "ad" || user.role === "uad" ? (
                   <li className="navbar-item">
                      <NavLink to="/users" activeClassName="nav-active">
@@ -59,41 +59,41 @@ export default () => {
                      </NavLink>
                   </li>
                ) : null}
-              
-                  <li className="navbar-item">
-                     <NavLink to="/statis" activeClassName="nav-active">
-                        <i class="fa fa-bar-chart-o blue2_color"></i>
-                        <span>{lang["statistic"]}</span>
-                     </NavLink>
-                  </li>
-                  <li className="navbar-item">
-                     <NavLink to="/report" activeClassName="nav-active">
-                        <i class="fa fa-file-excel-o green_color"></i>
-                        <span>{lang["report"]}</span>
-                     </NavLink>
-                  </li>
-                  <li className="navbar-item">                     
-                     <NavLink to="/workflow" activeClassName="nav-active">                        
-                        <i class="fa fa-code-fork"></i>
-                        <span>{lang["site-map"]}</span>
-                     </NavLink>
-                    
-                  </li>
-                  <li className="navbar-item">
-                     <NavLink to="/about" activeClassName="nav-active">
-                        <i class="fa fa-paper-plane red_color"></i>
-                        <span>{lang["about us"]}</span>
-                     </NavLink>
-                  </li>
-   
-            
+
+               <li className="navbar-item">
+                  <NavLink to="/statis" activeClassName="nav-active">
+                     <i class="fa fa-bar-chart-o blue2_color"></i>
+                     <span>{lang["statistic"]}</span>
+                  </NavLink>
+               </li>
+               <li className="navbar-item">
+                  <NavLink to="/report" activeClassName="nav-active">
+                     <i class="fa fa-file-excel-o green_color"></i>
+                     <span>{lang["report"]}</span>
+                  </NavLink>
+               </li>
+               <li className="navbar-item">
+                  <NavLink to="/workflow" activeClassName="nav-active">
+                     <i class="fa fa-code-fork"></i>
+                     <span>{lang["site-map"]}</span>
+                  </NavLink>
+
+               </li>
+               <li className="navbar-item">
+                  <NavLink to="/about" activeClassName="nav-active">
+                     <i class="fa fa-paper-plane red_color"></i>
+                     <span>{lang["about us"]}</span>
+                  </NavLink>
+               </li>
+
+
                {/* <li>
                   <a href="/contacts">
                      <i class="fa fa-paper-plane red_color"></i> <span>{lang["contacts"]}</span></a>
                </li> */}
                {/* <li><a href="/about"><i class="fa fa-info purple_color2"></i> <span>{lang["about us"]}</span></a></li> */}
                {/* <li><a href="/settings"><i class="fa fa-cog yellow_color"></i> <span>{lang["settings"]}</span></a></li> */}
-               { user.role === "uad" ? (
+               {user.role === "uad" ? (
                   <li className="navbar-item">
                      <NavLink to="/logs" activeClassName="nav-active">
                         <i class="fa fa-shield"></i>

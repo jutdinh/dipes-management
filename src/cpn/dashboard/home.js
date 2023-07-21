@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from "react-router-dom";
+import { StatusEnum, StatusTask, Roles } from '../enum/status';
 import {
     ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Label, LabelList, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
@@ -225,7 +226,13 @@ export default () => {
 
 
 
-    const COLORS = ['#1ed085', '#8884d8', '#ffc658', '#ff8042', "#FF0000"];
+    const COLORS = [
+        StatusEnum.INITIALIZATION.color,
+        StatusEnum.IMPLEMENT.color,
+        StatusEnum.DEPLOY.color,
+        StatusEnum.COMPLETE.color,
+        StatusEnum.PAUSE.color
+        ];
 
 
     let outputDataLead = Object.keys(statisLead).map(key => ({
@@ -237,8 +244,14 @@ export default () => {
     let totalSumLead = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
 
 
-
-    const COLORSLEAD = ['#1ed085', '#8884d8', '#ffc658', '#ff8042', "#FF0000"];
+    const COLORSLEAD = [
+        StatusEnum.INITIALIZATION.color,
+        StatusEnum.IMPLEMENT.color,
+        StatusEnum.DEPLOY.color,
+        StatusEnum.COMPLETE.color,
+        StatusEnum.PAUSE.color
+        ];
+   
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel1 = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
