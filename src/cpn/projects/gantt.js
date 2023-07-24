@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Timeline from "react-timelines";
 import moment from 'moment';
-
+import { useState, useEffect, useRef } from 'react';
 import "react-timelines/lib/css/style.css";
 
 // eslint-disable-next-line no-alert
@@ -14,6 +14,8 @@ const MAX_ZOOM = 14;
 class TimelineChart extends Component {
     constructor(props) {
         super(props);
+        const {  data } = props;
+        console.log(data)
         const buildTimebar = () => {
             const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
             const months = moment.months();
@@ -66,38 +68,23 @@ class TimelineChart extends Component {
         };
         
         const currentQuarter = moment().quarter();
+        const tracks = data.map((task, index) => ({
+            id: index + 1,
+            title: `Member ${index + 1}`,
+            elements: task.members.map((member, memberIndex) => ({
+                id: memberIndex + 1,
+                title: task.task_name,
+                start: moment(task.start).toDate(),
+                end: moment(task.end).toDate(),
+            })),
+        }));
         this.state = {
             open: false,
             zoom: MAX_ZOOM, // Set initial zoom level to the maximum, adjust accordingly to show the current quarter only
             start: moment().startOf('quarter').toDate(),
             end: moment().quarter(currentQuarter).endOf('quarter').toDate(),
             
-            tracks: [
-                {
-                    id: 1,
-                    title: 'Member 1',
-                    elements: [
-                        {
-                            id: 1,
-                            title: 'Task 1',
-                            start: moment('2023-07-24').toDate(),
-                            end: moment('2023-08-05').toDate(),
-                        },
-                    ],
-                },
-                {
-                    id: 2,
-                    title: 'Member 2',
-                    elements: [
-                        {
-                            id: 2,
-                            title: 'Task 2',
-                            start: moment('2023-08-06').toDate(),
-                            end: moment('2023-08-10').toDate(),
-                        },
-                    ],
-                },
-            ],
+            tracks,
             timebar: buildTimebar(),
         };
     }

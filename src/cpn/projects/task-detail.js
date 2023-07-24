@@ -120,6 +120,7 @@ export default () => {
                 }
             })
     }, [])
+    console.log(tasks)
     const handleCloseModal = () => {
         setShowModal(false);
     };
@@ -550,7 +551,7 @@ export default () => {
                                             <p class="font-weight-bold">{lang["timeline"]}: </p>
 
                                         </div>
-                                        <Gantt />
+                                        <Gantt data={tasks}/>
                                     </div>
 
                                     {/* Add Progress */}

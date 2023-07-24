@@ -1026,13 +1026,8 @@ export default () => {
         StatusStatisticalTask.LATE.color,
     ];
 
-    
-    const data = [
-        { name: 'Task hoàn thành', value: 60 },
-        { name: 'Task cần thực hiện', value: 20 },
-        { name: 'Task đang trễ', value: 0 },
 
-    ];
+
 
     const [statisTask, setStatisTask] = useState([]);
     useEffect(() => {
@@ -1045,37 +1040,40 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content, statistic } = resp;
-
+                console.log(resp)
                 if (!success) {
-                  
-                        const data = Object.entries(statistic).map(([key, { percentage }]) => {
-                            let name;
-                            switch (key) {
-                                case 'completed':
-                                    name = 'Task hoàn thành';
-                                    break;
-                                case 'inProgress':
-                                    name = 'Task cần thực hiện';
-                                    break;
-                                case 'expired':
-                                    name = 'Task đang trễ';
-                                    break;
-                                default:
-                                    name = '';
-                            }
-                            return { name, value: percentage };
-                        });
-                     
-                        setStatisTask(data)
-                  
+
+                    const data = Object.entries(statistic).map(([key, { percentage, amount }]) => {
+                        let name;
+                        switch (key) {
+                            case 'completed':
+                                name = 'Task hoàn thành';
+
+                                break;
+                            case 'inProgress':
+                                name = 'Task cần thực hiện';
+                                break;
+                            case 'expired':
+                                name = 'Task đang trễ';
+                                break;
+                            default:
+                                name = '';
+                        }
+                        return { name, value: percentage, total: amount };
+                    });
+
+                    setStatisTask(data)
+
                 } else {
                     // window.location = "/404-not-found"
                 }
             })
     }, [])
+    const totalOfAllTasks = statisTask.reduce((total, task) => total + task.total, 0);
 
-   
+    // Đây là màu mà bạn cung cấp
 
+    console.log(statisTask)
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
     }) => {
@@ -1184,7 +1182,6 @@ export default () => {
                                                                 ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                 <th class="font-weight-bold">{lang["log.action"]}</th>
                                                             }
-
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1220,13 +1217,7 @@ export default () => {
                                                                             }
                                                                         </td>
                                                                     )
-
                                                                 }
-
-
-
-
-
                                                                 {
                                                                     ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                     <td class="align-center">
@@ -1625,20 +1616,23 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div className="d-flex">
-                                    <div>
-                                        <span className="status-label d-block" style={{
-                                            backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
-                                            whiteSpace: "nowrap"
-                                        }}>
-                                            {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                        </span>
-                                    </div>
+
                                     <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                 </div>
                                 <div class="progress skill-bar ">
                                     <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                     </div>
                                 </div>
+                                <div class="d-flex align-items-center mt-2">
+                                    <p class="font-weight-bold"> </p>
+                                    <span className="status-label ml-auto" style={{
+                                        backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
+                                        whiteSpace: "nowrap"
+                                    }}>
+                                        {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                    </span>
+                                </div>
+
 
                                 <div style={{ display: 'flex', height: '400px', width: '100%' }}>
                                     <ResponsiveContainer width="60%">
@@ -1647,7 +1641,7 @@ export default () => {
                                                 data={statisTask}
                                                 cx="50%"
                                                 cy="50%"
-                                                outerRadius={80 + '%'}
+                                                outerRadius={90 + '%'}
                                                 fill="#8884d8"
                                                 dataKey="value"
                                                 label={renderCustomizedLabel}
@@ -1660,43 +1654,19 @@ export default () => {
                                             <Tooltip />
                                         </PieChart>
                                     </ResponsiveContainer>
-                                    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                            <div style={{
-                                                display: 'inline-block',
-                                                width: '25px',
-                                                height: '15px',
-                                                // borderRadius: '50%',
-                                                backgroundColor: StatusStatisticalTask.DONE.color,
-                                                marginRight: '10px'
-                                            }}></div>
-                                            <p>Task1</p>
-                                        </div>
-
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                            <div style={{
-                                                display: 'inline-block',
-                                                width: '25px',
-                                                height: '15px',
-                                                // borderRadius: '50%',
-                                                backgroundColor: StatusStatisticalTask.NEED.color,
-                                                marginRight: '10px'
-                                            }}></div>
-                                            <p>Task2</p>
-                                        </div>
-
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                            <div style={{
-                                                display: 'inline-block',
-                                                width: '25px',
-                                                height: '15px',
-                                                // borderRadius: '50%',
-                                                backgroundColor: StatusStatisticalTask.LATE.color,
-                                                marginRight: '10px'
-                                            }}></div>
-                                            <p>Task3</p>
-                                        </div>
+                                    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center' }}>
+                                        {statisTask.map((task, index) => (
+                                            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                                <div style={{
+                                                    display: 'inline-block',
+                                                    width: '25px',
+                                                    height: '15px',
+                                                    backgroundColor: COLORS[index % COLORS.length],  // Lấy màu từ mảng COLORS dựa trên chỉ số của task
+                                                    marginRight: '10px'
+                                                }}></div>
+                                                <p>{`${task.name}: ${task.value}% (${task.total}/${totalOfAllTasks})`}</p>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                                 {/* <div className="row">

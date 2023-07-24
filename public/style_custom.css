@@ -1074,7 +1074,7 @@ img[class="scaled-hover-target"]{
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 560px;
+    min-height: 500px;
 
 }
 .padding_infor_info_home {
@@ -1362,7 +1362,13 @@ img[class="scaled-hover-target"]{
   .circle2 {
     fill: rgb(231, 85, 85)
   }
-  
+  .skill {
+    font-size: 14px;
+    color: #455a64;
+    margin-top: 0px;
+    font-weight: 500;
+    width: 100%;
+}
   .link {
     fill: none;
     stroke: #2c0808;
