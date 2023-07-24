@@ -818,7 +818,6 @@ export default () => {
     }
 
     const updateStatusTask = (taskInfo) => {
-
         const requestBody = {
             project_id: project.project_id,
             task_id: taskInfo.task_id,
@@ -864,7 +863,6 @@ export default () => {
                 icon: "error",
                 showConfirmButton: true,
                 text: lang["export.error.invalidData"],
-
             }).then(function () {
                 // Không cần reload trang
             });
@@ -889,7 +887,6 @@ export default () => {
                         icon: "error",
                         showConfirmButton: true,
                         text: lang["export.error.invalidVersionData"],
-
                     })
                 }
             })
@@ -974,7 +971,6 @@ export default () => {
         })
     }
 
-
     //page table
     const [currentPageTable, setCurrentPageTable] = useState(1);
     const rowsPerPageTable = 3;
@@ -1017,7 +1013,6 @@ export default () => {
                 }
                 return ""
             }).join(' ')
-
         }
         return result
     }
@@ -1031,22 +1026,63 @@ export default () => {
         StatusStatisticalTask.LATE.color,
     ];
 
-
-
+    
     const data = [
         { name: 'Task hoàn thành', value: 60 },
         { name: 'Task cần thực hiện', value: 20 },
-        { name: 'Task đang trễ', value:  0},
+        { name: 'Task đang trễ', value: 0 },
 
     ];
+
+    const [statisTask, setStatisTask] = useState([]);
+    useEffect(() => {
+
+        fetch(`${proxy}/tasks/${project_id}/statistic`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content, statistic } = resp;
+
+                if (!success) {
+                  
+                        const data = Object.entries(statistic).map(([key, { percentage }]) => {
+                            let name;
+                            switch (key) {
+                                case 'completed':
+                                    name = 'Task hoàn thành';
+                                    break;
+                                case 'inProgress':
+                                    name = 'Task cần thực hiện';
+                                    break;
+                                case 'expired':
+                                    name = 'Task đang trễ';
+                                    break;
+                                default:
+                                    name = '';
+                            }
+                            return { name, value: percentage };
+                        });
+                     
+                        setStatisTask(data)
+                  
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
+
+   
 
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
     }) => {
         const RADIAN = Math.PI / 180;
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-        const x  = cx + radius * Math.cos(-midAngle * RADIAN);
-        const y = cy  + radius * Math.sin(-midAngle * RADIAN);
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
         if (percent === 0) {
             return;
         }
@@ -1057,67 +1093,6 @@ export default () => {
         );
     };
 
-    const PieChartWithCustomizedLabel = () => (
-        <div style={{ display: 'flex', height: '400px', width: '100%' }}>
-            <ResponsiveContainer width="60%">
-                <PieChart>
-                    <Pie
-                        data={data}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80 + '%'}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label={renderCustomizedLabel}
-                        labelLine={false}
-                    >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                    </Pie>
-                    <Tooltip />
-                </PieChart>
-            </ResponsiveContainer>
-            <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        display: 'inline-block',
-                        width: '25px',
-                        height: '15px',
-                        // borderRadius: '50%',
-                        backgroundColor: StatusStatisticalTask.DONE.color,
-                        marginRight: '10px'
-                    }}></div>
-                    <p>Task1</p>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        display: 'inline-block',
-                        width: '25px',
-                        height: '15px',
-                        // borderRadius: '50%',
-                        backgroundColor: StatusStatisticalTask.NEED.color,
-                        marginRight: '10px'
-                    }}></div>
-                    <p>Task2</p>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        display: 'inline-block',
-                        width: '25px',
-                        height: '15px',
-                        // borderRadius: '50%',
-                        backgroundColor: StatusStatisticalTask.LATE.color,
-                        marginRight: '10px'
-                    }}></div>
-                    <p>Task3</p>
-                </div>
-            </div>
-        </div>
-    );
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1132,7 +1107,7 @@ export default () => {
                 </div>
                 <div class="row">
                     {/* Detail */}
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
@@ -1635,9 +1610,9 @@ export default () => {
                         </div>
                     </div>
                     {/* Progress */}
-                    <div class="col-md-7">
+                    <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
-                           
+
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["projectprocess"]}</h5>
@@ -1664,8 +1639,66 @@ export default () => {
                                     <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                     </div>
                                 </div>
-                               
-                                <PieChartWithCustomizedLabel />
+
+                                <div style={{ display: 'flex', height: '400px', width: '100%' }}>
+                                    <ResponsiveContainer width="60%">
+                                        <PieChart>
+                                            <Pie
+                                                data={statisTask}
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius={80 + '%'}
+                                                fill="#8884d8"
+                                                dataKey="value"
+                                                label={renderCustomizedLabel}
+                                                labelLine={false}
+                                            >
+                                                {statisTask.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                            <div style={{
+                                                display: 'inline-block',
+                                                width: '25px',
+                                                height: '15px',
+                                                // borderRadius: '50%',
+                                                backgroundColor: StatusStatisticalTask.DONE.color,
+                                                marginRight: '10px'
+                                            }}></div>
+                                            <p>Task1</p>
+                                        </div>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                            <div style={{
+                                                display: 'inline-block',
+                                                width: '25px',
+                                                height: '15px',
+                                                // borderRadius: '50%',
+                                                backgroundColor: StatusStatisticalTask.NEED.color,
+                                                marginRight: '10px'
+                                            }}></div>
+                                            <p>Task2</p>
+                                        </div>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                            <div style={{
+                                                display: 'inline-block',
+                                                width: '25px',
+                                                height: '15px',
+                                                // borderRadius: '50%',
+                                                backgroundColor: StatusStatisticalTask.LATE.color,
+                                                marginRight: '10px'
+                                            }}></div>
+                                            <p>Task3</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 {/* <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">

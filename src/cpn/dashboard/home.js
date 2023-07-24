@@ -16,7 +16,7 @@ export default () => {
 
     const [users, setUsers] = useState([]);
     const [projects, setProjects] = useState([]);
-
+    const [data, setData] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/projects/all/projects`, {
             headers: {
@@ -75,8 +75,8 @@ export default () => {
                 if (success) {
 
                     // console.log(data.annualStatistic)
-                    // setStatis(data.annualStatistic);
-
+                    setStatis(data.annualStatistic);
+                    setData(processData(data.annualStatistic))
 
                 } else {
                     // window.location = "/404-not-found"
@@ -96,7 +96,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, statistic, status, content } = resp;
-                // console.log(resp)
+                console.log(resp)
                 if (success) {
                     const dataArray = Object.keys(statistic).map((key) => {
                         return {
@@ -110,7 +110,7 @@ export default () => {
                 }
             })
     }, [])
-    // console.log(statisStatus)
+    console.log(statisStatus)
 
     const [statisLead, setStatisLead] = useState([]);
 
@@ -161,7 +161,7 @@ export default () => {
         });
     };
 
-    const data = processData(statis);
+
 
 
     const CustomTooltip = ({ active, payload, label }) => {
@@ -190,20 +190,21 @@ export default () => {
     const renderCustomizedLabel = (props) => {
         const { x, y, width, height, value, dataKey } = props;
         let labelValue;
-        let yPos;// Vị trí y nằm giữa cột
-        if (dataKey != 'y') {
-            labelValue = value === 0 ? '' : value;
-            yPos = y + height / 2; // Giữ nhãn ở giữa thanh
-        } else {
-            labelValue = `${value} dự án`;
-            yPos = y - 20; // Di chuyển nhãn lên phía trên thanh. Bạn có thể điều chỉnh giá trị này nếu cần.
-        }
+        let yPos;
+    
+        // Đặt nhãn ở phía trên cột
+        
+            labelValue = `${value} ${lang["projects"]}`;
+            yPos = y - 5;
+        
+    
         return (
             <text x={x + width / 2} y={yPos} fill="#ffffff" fontSize={18} fontWeight={10} textAnchor="middle" dominantBaseline="middle">
                 {labelValue}
             </text>
         );
     };
+    
     // const status = [
     //     { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
     //     { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
@@ -232,7 +233,7 @@ export default () => {
         StatusEnum.DEPLOY.color,
         StatusEnum.COMPLETE.color,
         StatusEnum.PAUSE.color
-        ];
+    ];
 
 
     let outputDataLead = Object.keys(statisLead).map(key => ({
@@ -250,8 +251,8 @@ export default () => {
         StatusEnum.DEPLOY.color,
         StatusEnum.COMPLETE.color,
         StatusEnum.PAUSE.color
-        ];
-   
+    ];
+
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel1 = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
@@ -266,6 +267,7 @@ export default () => {
             </text>
         );
     };
+
     // console.log(outputDataLead)
     return (
         <div class="midde_cont">
@@ -278,69 +280,53 @@ export default () => {
                     </div>
                 </div>
                 <div class="row column1">
-                    <div class="col-md-6 col-lg-6">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-briefcase purple_color2"></i>
+                    <div class="col-md-2 col-lg-2">
+                        <div class="row">
+                            <div class="full counter_section_cus margin_bottom_30">
+                                <div class="couter_icon">
+                                    <div>
+                                        <i class="fa fa-briefcase purple_color2"></i>
+                                    </div>
+                                </div>
+                                <div class="counter_no">
+                                    <div>
+                                        <p class="total_no">{projects.length}</p>
+                                        <p class="head_couter_cus">{lang["projects"]}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{projects.length}</p>
-                                    <p class="head_couter">{lang["projects"]}</p>
+                            <div class="full counter_section_cus margin_bottom_30">
+                                <div class="couter_icon">
+                                    <div>
+                                        <i class="fa fa-briefcase blue1_color"></i>
+                                    </div>
+                                </div>
+                                <div class="counter_no">
+                                    <div>
+                                        <p class="total_no">{statisStatus?.[2]?.total || 0}</p>
+                                        <p class="head_couter_cus">{lang["deploy"]}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="full counter_section_cus margin_bottom_30">
+                                <div class="couter_icon">
+                                    <div>
+                                        <i class="fa fa-users green_color3"></i>
+                                    </div>
+                                </div>
+                                <div class="counter_no">
+                                    <div>
+                                        <p class="total_no">{users.length}</p>
+                                        <p class="head_couter_cus">{lang["account"]}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-users blue1_color"></i>
-                                </div>
-                            </div>
-                            <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{users.length}</p>
-                                    <p class="head_couter">Member</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <div class="col-md-6 col-lg-3">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-cloud-download green_color"></i>
-                                </div>
-                            </div>
-                            <div class="counter_no">
-                                <div>
-                                    <p class="total_no">1,805</p>
-                                    <p class="head_couter">Collections</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-comments-o red_color"></i>
-                                </div>
-                            </div>
-                            <div class="counter_no">
-                                <div>
-                                    <p class="total_no">54</p>
-                                    <p class="head_couter">Comments</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
-                </div>
-                <div class="row column1">
-                    <div class="col-lg-6 col-lg-3">
+                    <div class="col-md-3 col-lg-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -358,7 +344,7 @@ export default () => {
                                                         startAngle={360}
                                                         endAngle={0}
                                                         data={outputData}
-                                                        cx="45%"
+                                                        cx="55%"
                                                         cy="50%"
                                                         outerRadius={80}
                                                         fill="#8884d8"
@@ -371,11 +357,13 @@ export default () => {
                                                         }
                                                     </Pie>
                                                     <Tooltip />
-                                                    <Legend />
+                                                    {/* <Legend /> */}
                                                 </PieChart>
+
                                             </div>
+
                                         </div>
-                                        <div className="col-md-7">
+                                        <div className="col-md-6 ml-2">
                                             <div class="table-responsive mt-4">
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
@@ -417,7 +405,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-lg-3">
+                    <div class="col-md-5 col-lg-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -495,6 +483,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
+
                 <div class="row column1">
                     <div class="col-lg-12 col-lg-3">
                         <div class="white_shd full margin_bottom_30">
@@ -503,12 +492,12 @@ export default () => {
                                     <h5>{lang["project-status-chart-year"]}</h5>
                                 </div>
                             </div>
-                            <div class="map_section padding_infor_info">
-                                <ResponsiveContainer width="95%" height={500}>
+                            <div class="map_section padding_infor_info_statis">
+                                <ResponsiveContainer width="90%" height={350}>
                                     <BarChart
                                         style={{ margin: 'auto', display: 'block' }}
                                         width={1100}
-                                        height={700}
+                                        height={300}
                                         data={data}
                                         margin={{
                                             top: 25, right: 30, left: 20, bottom: 5,
@@ -518,37 +507,42 @@ export default () => {
                                             <Label value={lang["year"]} fontSize={16} position="insideBottomRight" />
                                         </XAxis>
                                         <YAxis
-
-                                        >
+                                            domain={[0, 'dataMax + 1']}
+                                            tickFormatter={(value) => Math.floor(value)}
+                                            allowDecimals={false}
+                                            tickCount={5}>
+                                            
                                             <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
                                         </YAxis>
+
                                         <Tooltip
                                             content={<CustomTooltip />}
                                             cursor={{ fill: "transparent" }}
                                             isAnimationActive={true}
                                             animationEasing="ease-out"
-                                            position={{ x: 1100, y: 10 }}
+                                            position={{ x: 1300, y: 20 }}
                                         />
                                         <Legend />
                                         {/* <Bar barSize={70} dataKey="z" fill="transparent">
                                                 <LabelList dataKey="displayY" position="top" fill="#000000" />
                                             </Bar> */}
 
-                                        <Bar barSize={100} dataKey={lang["initialization"]} fill="#1ed085" >
-                                            <LabelList dataKey={lang["initialization"]} position="inside" content={renderCustomizedLabel} />
+                                        <Bar barSize={60} dataKey={lang["initialization"]} fill="#1ed085" >
+                                            <LabelList dataKey={lang["initialization"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
-                                        <Bar barSize={100} dataKey={lang["implement"]} fill="#8884d8"  >
-                                            <LabelList dataKey={lang["implement"]} position="inside" content={renderCustomizedLabel} />
+                                        <Bar barSize={60} dataKey={lang["implement"]} fill="#8884d8"  >
+                                            <LabelList dataKey={lang["implement"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
-                                        <Bar barSize={100} dataKey={lang["deploy"]} fill="#ffc658" >
-                                            <LabelList dataKey={lang["deploy"]} position="inside" content={renderCustomizedLabel} />
+                                        <Bar barSize={60} dataKey={lang["deploy"]} fill="#ffc658" >
+                                            <LabelList dataKey={lang["deploy"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
-                                        <Bar barSize={100} dataKey={lang["complete"]} fill="#ff8042" >
-                                            <LabelList dataKey={lang["complete"]} position="inside" content={renderCustomizedLabel} />
+                                        <Bar barSize={60} dataKey={lang["complete"]} fill="#ff8042" >
+                                            <LabelList dataKey={lang["complete"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
-                                        <Bar barSize={100} dataKey={lang["pause"]} fill="#FF0000" >
-                                            <LabelList dataKey={lang["pause"]} position="inside" content={renderCustomizedLabel} />
+                                        <Bar barSize={60} dataKey={lang["pause"]} fill="#FF0000" >
+                                            <LabelList dataKey={lang["pause"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
+                                       
 
                                     </BarChart>
                                 </ResponsiveContainer>

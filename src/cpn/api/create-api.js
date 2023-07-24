@@ -568,8 +568,7 @@ export default () => {
     //         submitupdateFieldCalculates();
     //     }
     // }, [calculatesUpdate]);
-    // console.log(calculates)
-    // console.log(modalTemp.calculates)
+
 
     const handleDeleteCalculates = (cal) => {
         // console.log(cal)
@@ -743,7 +742,7 @@ export default () => {
         }
 
     };
-    // console.log(modalTemp)
+
 
     const fieldShow = (project) => {
         window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
@@ -770,17 +769,9 @@ export default () => {
         setDisplayname("");
         setField("");
         setFomular("");
-        // console.log(errorStatistical)
         setErrorCaculates({})
-        // console.log(errorCaculates)
     };
-    // console.log(modalTemp)
-    // console.log(tempFieldParam)
-    // console.log(calculates)
-    // console.log(tableFields)
-
-
-    // console.log(modalTemp.fields)
+   
 
     return (
         <div class="midde_cont">

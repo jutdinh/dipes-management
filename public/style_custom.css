@@ -1016,7 +1016,28 @@ img[class="scaled-hover-target"]{
     line-height: normal;
     font-weight: 300;
 }
-
+.counter_section_cus {
+    min-height: auto;
+    display: block;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    border: 0px solid #e7e7e7;
+    padding: 10px 15px;
+    background: #fff;
+    border-radius: 5px;
+    min-height: 116px;
+    display: flex;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+.counter_no .head_couter_cus {
+    float: left;
+    width: 100%;
+    color: #99abb4;
+    font-weight: 300;
+    margin: 0px 0 0 0;
+    font-size: 16px;
+    text-align: right;
+}
 .plus_green_bt a {
     background: #bff3de;
     color: #fff;
@@ -1029,7 +1050,12 @@ img[class="scaled-hover-target"]{
     font-size: 28px;
     font-weight: 500;
 }
-
+.padding_infor_info_statis {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    
+}
 .progress.skill-bar {
     background: #e9ecef;
     border-radius: 0;

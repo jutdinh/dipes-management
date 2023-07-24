@@ -392,8 +392,10 @@ export default {
     "project manage implement": "Quản lý dự án triển khai",
     "activation": "Kích hoạt",
     "sitemap.title": "Sơ đồ website",
-    "modify_what": "Đối tượng thay đổi"
-
+    "modify_what": "Đối tượng thay đổi",
+    "timeline": "Lịch trình công việc",
+    "account": "Tài khoản",
+    "back": "Quay về"
 
 
 

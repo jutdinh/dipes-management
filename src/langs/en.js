@@ -388,7 +388,10 @@ export default {
     "project manage implement": "Implementation Project Management",
     "activation": "Activation",
     "sitemap.title": "Site map",
-    "modify_what": "Object changes"
+    "modify_what": "Object changes",
+    "timeline": "Task Schedule(Gantt Chart)",
+    "account": "Accounts",
+    "back": "Back"
 
 
 }

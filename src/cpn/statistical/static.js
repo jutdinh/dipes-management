@@ -89,19 +89,13 @@ export default () => {
         });
     };
 
-
-
-
-
-
-
     const CustomTooltipStack = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
             const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
             if (filteredPayload.length > 0) {
                 return (
-                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
+                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#e9eef4', padding: '10px' }}>
                           <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
@@ -118,14 +112,13 @@ export default () => {
         return null;
     };
 
-
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             const filteredPayload = payload.filter((pld) => pld.dataKey !== 'z');
             const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
             if (filteredPayload.length > 0) {
                 return (
-                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
+                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#e9eef4', padding: '10px' }}>
                         <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
@@ -144,6 +137,7 @@ export default () => {
 
     const renderCustomizedLabel = (props) => {
         const { x, y, width, height, value, dataKey } = props;
+        console.log(props)
         let labelValue;
         let yPos;// Vị trí y nằm giữa cột
         if (dataKey != 'y') {
@@ -251,10 +245,13 @@ export default () => {
                                                     <Label value={lang["year"]} fontSize={16} position="insideBottomRight" />
                                                 </XAxis>
                                                 <YAxis
-
-                                                >
-                                                    <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
-                                                </YAxis>
+                                            domain={[0, 'dataMax + 1']}
+                                            tickFormatter={(value) => Math.floor(value)}
+                                            allowDecimals={false}
+                                            tickCount={5}>
+                                            
+                                            <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
+                                        </YAxis>
                                                 <Tooltip
                                                     content={<CustomTooltip />}
                                                     cursor={{ fill: "transparent" }}

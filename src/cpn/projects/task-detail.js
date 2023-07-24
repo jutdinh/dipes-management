@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import responseMessages from "../enum/response-code";
+
+import Gantt from "./gantt"
+
+
+
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -14,6 +18,7 @@ export default () => {
     const _users = JSON.parse(stringifiedUser)
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
+
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [projectmember, setProjectMember] = useState([]);
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
@@ -75,9 +80,7 @@ export default () => {
                     if (data) {
                         setProjectDetail(data);
                         setProject(data);
-
                         setProcess(data)
-
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -95,7 +98,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
+                console.log(resp)
                 if (success) {
                     if (data) {
 
@@ -125,7 +128,6 @@ export default () => {
         e.preventDefault();
         task.members = selectedMemberTask.map(user => user.username);
 
-
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
             headers: {
@@ -136,6 +138,7 @@ export default () => {
         })
             .then(res => res && res.json())
             .then((resp) => {
+
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
@@ -156,7 +159,6 @@ export default () => {
     }, [projectmember]);
 
     const [updateTaskinfo, setUpdateTask] = useState({});
-
     const getIdTask = (taskid) => {
         setUpdateTask(taskid);
     }
@@ -165,14 +167,15 @@ export default () => {
         // console.log(updateTaskinfo);
     }, [updateTaskinfo]);
 
-
-
     const updateTask = (e) => {
         e.preventDefault();
         const requestBody = {
             project_id: project.project_id,
             task_id: updateTaskinfo.task_id,
             task_name: updateTaskinfo.task_name,
+            start: updateTaskinfo.start,
+            end: updateTaskinfo.end,
+
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
         };
@@ -194,8 +197,6 @@ export default () => {
                     functions.showApiResponseMessage(status);
                 }
             })
-
-
     };
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
@@ -353,6 +354,7 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -369,7 +371,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2 "></i>Timeline
+                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>Timeline
                                     </label> </h5>
                                 </div>
                                 {/* <div class="ml-auto">
@@ -377,6 +379,11 @@ export default () => {
                                 </div> */}
                             </div>
                             <div class="table_section padding_infor_info">
+                                <div calss="row column1">
+                                    <div class="col-md-12">
+                                        <h4 class="font-weight-bold ml-2">{lang["projectname"]}: {project.project_name} </h4>
+                                    </div>
+                                </div>
                                 <div class="row column1">
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info">
@@ -398,7 +405,7 @@ export default () => {
                                         <div class="d-flex align-items-center mt-2">
                                             <p class="font-weight-bold">{lang["tasklist"]}: </p>
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                <i class="fa fa-plus"></i>
+                                                <i class="fa fa-plus" title={lang["btn.create"]}></i>
                                             </button>
                                         </div>
                                         <div class="table-responsive">
@@ -413,6 +420,8 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                                 </tr>
                                                             </thead>
@@ -473,6 +482,12 @@ export default () => {
                                                                         <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                             {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                         </td>
+                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                            {task.start}
+                                                                        </td>
+                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                        {task.end}
+                                                                            </td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                             {
@@ -529,157 +544,14 @@ export default () => {
                                         </div>
                                     </div>
                                     {/* Gantt */}
-                                    {/* <div class="table_section padding_infor_info">
-                                        <div className="d-flex">
-                                            <div>
-                                                <span className="status-label d-block" style={{
-                                                    backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
-                                                    whiteSpace: "nowrap"
-                                                }}>
-                                                    {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                </span>
-                                            </div>
-                                            <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
-                                        </div>
-                                        <div class="progress skill-bar ">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
-                                            </div>
-                                        </div>
+                                    <div class="table_section padding_infor_info">
+
                                         <div class="d-flex align-items-center mt-2">
-                                            <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
+                                            <p class="font-weight-bold">{lang["timeline"]}: </p>
+
                                         </div>
-                                        <div class="table-responsive">
-                                            {
-                                                sortedMembers && sortedMembers.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["task"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {currentMembersTask.map((task, index) => (
-                                                                    <tr key={task.id}>
-                                                                        <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
-
-                                                                        <td style={{ maxWidth: "100px" }}>
-                                                                            <div style={{
-                                                                                width: "100%",
-                                                                                overflow: "hidden",
-                                                                                textOverflow: "ellipsis",
-                                                                                whiteSpace: "nowrap"
-                                                                            }}>
-                                                                                {task.task_name}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style={{ width: "170px" }} >
-                                                                            {
-                                                                                task.members && task.members.length > 0 ?
-                                                                                    task.members.slice(0, 2).map(member => (
-                                                                                        <img
-                                                                                            class="img-responsive circle-image-cus"
-                                                                                            src={proxy + member.avatar}
-                                                                                            alt={member.username}
-                                                                                        />
-                                                                                    )) :
-                                                                                    <p>{lang["projectempty"]} </p>
-                                                                            }
-                                                                            {
-                                                                                task.members.length > 2 &&
-                                                                                <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
-                                                                                    <span>+{task.members.length - 3}</span>
-                                                                                </div>
-                                                                            }
-                                                                        </td>
-                                                                        <td class="align-center" style={{ minWidth: "130px" }} >
-
-
-                                                                            <select
-                                                                                className="form-control"
-                                                                                value={task.task_status}
-                                                                                onChange={handleSelectChange}
-                                                                                disabled={task.task_approve}
-                                                                            >
-
-                                                                                {statusTaskView.map((status, index) => {
-                                                                                    return (
-                                                                                        <option key={index} value={status.value} data-taskid={task.task_id}>
-                                                                                            {lang[status.label]}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </select>
-
-                                                                        </td>
-                                                                        <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
-                                                                            {getStatusLabel(task.task_approve ? 1 : 0)}
-                                                                        </td>
-                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
-
-                                                                            {
-                                                                                (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                                                <>
-                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
-                                                                                    {task.task_approve
-                                                                                        ? (task.task_status !== StatusTask.NOT_APPROVED
-                                                                                            ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                            : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                                        : (task.task_status === StatusTask.COMPLETE.value
-                                                                                            ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                            : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                                    }
-                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
-                                                                                </>
-                                                                            }
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["empty.member"]}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
-                                            <nav aria-label="Page navigation example">
-                                                <ul className="pagination mb-0">
-                                                    <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
-                                                            &laquo;
-                                                        </button>
-                                                    </li>
-                                                    {Array(totalPagesTask).fill().map((_, index) => (
-                                                        <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateTask(index + 1)}>
-                                                                {index + 1}
-                                                            </button>
-                                                        </li>
-                                                    ))}
-                                                    <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
-                                                            &raquo;
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </nav>
-                                        </div>
-                                    </div> */}
+                                        <Gantt />
+                                    </div>
 
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
@@ -699,7 +571,7 @@ export default () => {
                                                                 } placeholder={lang["p.taskname"]} />
                                                             </div>
 
-                                                            <div class="form-group col-lg-6 ">
+                                                            <div class="form-group col-lg-4 ">
                                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                                 <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
                                                                     <option value="">{lang["choose"]}</option>
@@ -712,6 +584,18 @@ export default () => {
                                                                 <input type="hidden" class="form-control" value={task.task_status} onChange={
                                                                     (e) => { setTask({ ...task, task_status: e.target.value }) }
                                                                 } placeholder={lang["p.taskname"]} />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label>{lang["log.daystart"]}:</label>
+                                                                <input type="date" className="form-control" value={task.start} onChange={
+                                                                    (e) => { setTask({ ...task, start: e.target.value }) }
+                                                                } />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label>{lang["log.dayend"]}:</label>
+                                                                <input type="date" className="form-control" value={task.end} onChange={
+                                                                    (e) => { setTask({ ...task, end: e.target.value }) }
+                                                                } />
                                                             </div>
 
                                                             <div class="form-group col-lg-12">
@@ -772,7 +656,7 @@ export default () => {
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
                                                                 } placeholder={lang["p.taskname"]} />
                                                             </div>
-                                                            <div class="form-group col-lg-6 ">
+                                                            <div class="form-group col-lg-4 ">
                                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                                 <select className="form-control" value={updateTaskinfo.task_priority} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_priority: e.target.value }) }}>
                                                                     {statusPriority.map((status, index) => {
@@ -781,6 +665,19 @@ export default () => {
                                                                         );
                                                                     })}
                                                                 </select>
+                                                            </div>
+
+                                                            <div className="col-lg-4">
+                                                                <label>{lang["log.daystart"]}:</label>
+                                                                <input type="date" className="form-control" value={updateTaskinfo.start} onChange={
+                                                                    (e) => { setUpdateTask({ ...updateTaskinfo, start: e.target.value }) }
+                                                                } />
+                                                            </div>
+                                                            <div className="col-lg-4">
+                                                                <label>{lang["log.dayend"]}:</label>
+                                                                <input type="date" className="form-control" value={updateTaskinfo.end} onChange={
+                                                                    (e) => { setUpdateTask({ ...updateTaskinfo, end: e.target.value }) }
+                                                                } />
                                                             </div>
                                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
@@ -870,6 +767,15 @@ export default () => {
                                                                 <span className="d-block"> {taskDetail.task_name} </span>
                                                             </div>
                                                             <div class="form-group col-lg-4">
+                                                                <label><b>{lang["log.daystart"]}</b></label>
+                                                                <span className="d-block"> {taskDetail.start} </span>
+                                                            </div>
+                                                            <div class="form-group col-lg-4">
+                                                                <label><b>{lang["log.dayend"]}</b></label>
+                                                                <span className="d-block"> {taskDetail.end} </span>
+                                                            </div>
+                                                            <div class="form-group col-lg-4"></div>
+                                                            <div class="form-group col-lg-4">
                                                                 <label><b>{lang["taskstatus"]}</b></label>
                                                                 <div>
                                                                     <span className="status-label" style={{
@@ -919,7 +825,7 @@ export default () => {
                                                                         </div>
                                                                     }</span>
                                                             </div>
-                                                           
+
 
                                                             <div class="form-group col-lg-12">
                                                                 <label><b>{lang["description"]}</b></label>
@@ -1020,7 +926,7 @@ export default () => {
                                                                                                 </td>
                                                                                                 <td scope="row">
                                                                                                     {
-                                                                                                        task.old_value === "true" ?  lang["approved"]:
+                                                                                                        task.old_value === "true" ? lang["approved"] :
                                                                                                             task.old_value === "false" ? lang["await"] :
                                                                                                                 !isNaN(task.old_value) ?
                                                                                                                     lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
