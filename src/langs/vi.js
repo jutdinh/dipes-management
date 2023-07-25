@@ -395,9 +395,38 @@ export default {
     "modify_what": "Đối tượng thay đổi",
     "timeline": "Lịch trình công việc",
     "account": "Tài khoản",
-    "back": "Quay về"
+    "back": "Quay về",
+    "task.complete": "Task đã hoàn thành",
+    "task.expired": "Task đang trễ",
+    "task.inprogress": "Task cần thực hiện",
+    "read more": "Xem thêm",
+    "error.taskname": "Vui lòng nhập tên yêu cầu công việc",
+    "error.start": "Vui lòng chọn ngày bắt đầu",
+    "error.end": "Vui lòng chọn ngày kết thúc",
+    "error.checkday": "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu",
+    "error.task_description": "Vui lòng nhập mô tả cho yêu cầu công việc",
+    "error.members": "Vui lòng chọn người thực hiện yêu cầu",
+    "error.task_priority":" Vui lòng chọn mức độ ưu tiên",
 
+    "gantt.year": "Năm",
+    "gantt.quarters": "Quý",
+    "gantt.months": "Tháng",
+    "gantt.day": "Ngày",
+    "january":'Tháng 1',
+    "february":'Tháng 2',
+    "march":'Tháng 3',
+    "april":'Tháng 4',
+    "may":'Tháng 5',
+    "june":'Tháng 6',
+    "july":'Tháng 7',
+    "august":'Tháng 8',
+    "september":'Tháng 9',
+    "october":'Tháng 10',
+    "november":'Tháng 11',
+    "december":'Tháng 12',
 
+    
+   
 
 
 

@@ -18,7 +18,7 @@ export default () => {
     const _users = JSON.parse(stringifiedUser)
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-
+    const [errorMessagesadd, setErrorMessagesadd] = useState({});
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [projectmember, setProjectMember] = useState([]);
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
@@ -120,14 +120,45 @@ export default () => {
                 }
             })
     }, [])
-    console.log(tasks)
+
     const handleCloseModal = () => {
         setShowModal(false);
+        setErrorMessagesadd({})
     };
-
+    console.log(selectedMemberTask)
     const submitAddTask = (e) => {
+
         e.preventDefault();
         task.members = selectedMemberTask.map(user => user.username);
+
+        const errors = {};
+        if (!task.task_name) {
+            errors.task_name = lang["error.taskname"];
+        }
+        if (!task.task_priority) {
+            errors.task_priority = lang["error.task_priority"];
+        }
+        if (!task.start) {
+            errors.start = lang["error.start"];
+        }
+        if (!task.end) {
+            errors.end = lang["error.end"];
+        }
+        if (new Date(task.start) > new Date(task.end)) {
+            errors.checkday = lang["error.checkday"];
+        }
+
+        if (!task.task_description) {
+            errors.task_description = lang["error.task_description"];
+        }
+        if (!task.members || task.members.length === 0) {
+            errors.members = lang["error.members"];
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesadd(errors);
+            return;
+        }
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -163,20 +194,51 @@ export default () => {
     const getIdTask = (taskid) => {
         setUpdateTask(taskid);
     }
-
+    console.log(updateTaskinfo)
     useEffect(() => {
-        // console.log(updateTaskinfo);
+        if (updateTaskinfo && updateTaskinfo.members) {
+            setSelectedMemberTask(updateTaskinfo.members);
+        }
     }, [updateTaskinfo]);
+
+
 
     const updateTask = (e) => {
         e.preventDefault();
+        const errors = {};
+        if (!updateTaskinfo.task_name) {
+            errors.task_name = lang["error.taskname"];
+        }
+
+        if (!updateTaskinfo.start) {
+            errors.start = lang["error.start"];
+        }
+        if (!updateTaskinfo.end) {
+            errors.end = lang["error.end"];
+        }
+        if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.end)) {
+            errors.checkday = lang["error.checkday"];
+        }
+
+        if (!updateTaskinfo.task_description) {
+            errors.task_description = lang["error.task_description"];
+        }
+        // if (!task.members || task.members.length === 0) {
+        //     errors.members = lang["error.members"];
+        // }
+
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesadd(errors);
+            return;
+        }
+
         const requestBody = {
             project_id: project.project_id,
             task_id: updateTaskinfo.task_id,
             task_name: updateTaskinfo.task_name,
             start: updateTaskinfo.start,
             end: updateTaskinfo.end,
-
+            // members: selectedMemberTask,
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
         };
@@ -198,6 +260,8 @@ export default () => {
                     functions.showApiResponseMessage(status);
                 }
             })
+
+        setErrorMessagesadd({})
     };
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
@@ -296,6 +360,8 @@ export default () => {
         // console.log(taskId);
         updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
     }
+
+
     const updateStatusTask = (taskInfo) => {
 
         const requestBody = {
@@ -420,6 +486,7 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["task"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
+                                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
@@ -480,6 +547,9 @@ export default () => {
                                                                             </select>
 
                                                                         </td>
+                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                            <input style={{ maxWidth: 75 }} className="form-control" value={ task.task_progress } />
+                                                                        </td>
                                                                         <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                             {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                         </td>
@@ -487,8 +557,8 @@ export default () => {
                                                                             {task.start}
                                                                         </td>
                                                                         <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                        {task.end}
-                                                                            </td>
+                                                                            {task.end}
+                                                                        </td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                             {
@@ -551,7 +621,12 @@ export default () => {
                                             <p class="font-weight-bold">{lang["timeline"]}: </p>
 
                                         </div>
-                                        <Gantt data={tasks}/>
+                                        {
+                                            tasks && tasks.length > 0 ? (
+                                                <Gantt data={tasks} />
+                                            ) : null
+                                        }
+
                                     </div>
 
                                     {/* Add Progress */}
@@ -570,9 +645,13 @@ export default () => {
                                                                 <input type="text" class="form-control" value={task.task_name} onChange={
                                                                     (e) => { setTask({ ...task, task_name: e.target.value }) }
                                                                 } placeholder={lang["p.taskname"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.task_name && <span class="error-message">{errorMessagesadd.task_name}</span>}
+                                                                </div>
                                                             </div>
 
-                                                            <div class="form-group col-lg-4 ">
+
+                                                            <div class="form-group col-lg-12 ">
                                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
                                                                 <select className="form-control" value={task.task_priority} onChange={(e) => { setTask({ ...task, task_priority: e.target.value }) }}>
                                                                     <option value="">{lang["choose"]}</option>
@@ -582,31 +661,57 @@ export default () => {
                                                                         );
                                                                     })}
                                                                 </select>
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.task_priority && <span class="error-message">{errorMessagesadd.task_priority}</span>}
+                                                                </div>
                                                                 <input type="hidden" class="form-control" value={task.task_status} onChange={
                                                                     (e) => { setTask({ ...task, task_status: e.target.value }) }
-                                                                } placeholder={lang["p.taskname"]} />
-                                                            </div>
-                                                            <div className="col-lg-4">
-                                                                <label>{lang["log.daystart"]}:</label>
-                                                                <input type="date" className="form-control" value={task.start} onChange={
-                                                                    (e) => { setTask({ ...task, start: e.target.value }) }
-                                                                } />
-                                                            </div>
-                                                            <div className="col-lg-4">
-                                                                <label>{lang["log.dayend"]}:</label>
-                                                                <input type="date" className="form-control" value={task.end} onChange={
-                                                                    (e) => { setTask({ ...task, end: e.target.value }) }
                                                                 } />
                                                             </div>
 
+                                                            <div className="col-lg-6">
+                                                                <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" className="form-control" value={task.start} onChange={
+                                                                    (e) => { setTask({ ...task, start: e.target.value }) }
+                                                                } />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.start && <span class="error-message">{errorMessagesadd.start}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" className="form-control" value={task.end} onChange={
+                                                                    (e) => { setTask({ ...task, end: e.target.value }) }
+                                                                } />
+                                                                {!errorMessagesadd.checkday ? (
+                                                                    <div style={{ minHeight: '20px' }}>
+                                                                        {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
+                                                                    </div>
+                                                                ) : null
+
+                                                                }
+
+                                                            </div>
+                                                            <div class="form-group col-lg-6"></div>
+                                                            <div class="form-group col-lg-6">
+                                                                {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
+                                                            </div>
+
                                                             <div class="form-group col-lg-12">
-                                                                <label>{lang["p.description"]}</label>
+                                                                <label>{lang["p.description"]} <span className='red_star'>*</span></label>
                                                                 <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
                                                                     (e) => { setTask({ ...task, task_description: e.target.value }) }
                                                                 } placeholder={lang["p.description"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.task_description && <span class="error-message">{errorMessagesadd.task_description}</span>}
+                                                                </div>
                                                             </div>
                                                             <div class="form-group col-lg-12">
-                                                                <label>{lang["taskmember"]}</label>
+
+                                                                <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+
+                                                                {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
+
                                                                 <div class="user-checkbox-container">
                                                                     {projectdetail.members?.map((user, index) => (
                                                                         <div key={index} class="user-checkbox-item">
@@ -656,6 +761,9 @@ export default () => {
                                                                 <input type="text" class="form-control" value={updateTaskinfo.task_name} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, task_name: e.target.value }) }
                                                                 } placeholder={lang["p.taskname"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.task_name && <span class="error-message">{errorMessagesadd.task_name}</span>}
+                                                                </div>
                                                             </div>
                                                             <div class="form-group col-lg-4 ">
                                                                 <label>{lang["task_priority"]} <span className='red_star'>*</span></label>
@@ -666,19 +774,33 @@ export default () => {
                                                                         );
                                                                     })}
                                                                 </select>
-                                                            </div>
+                                                            </div>  <div class="form-group col-lg-8"></div>
 
-                                                            <div className="col-lg-4">
+                                                            <div className="col-lg-6">
                                                                 <label>{lang["log.daystart"]}:</label>
                                                                 <input type="date" className="form-control" value={updateTaskinfo.start} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, start: e.target.value }) }
                                                                 } />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.start && <span class="error-message">{errorMessagesadd.start}</span>}
+                                                                </div>
                                                             </div>
-                                                            <div className="col-lg-4">
+                                                            <div className="col-lg-6">
                                                                 <label>{lang["log.dayend"]}:</label>
                                                                 <input type="date" className="form-control" value={updateTaskinfo.end} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, end: e.target.value }) }
                                                                 } />
+                                                                {!errorMessagesadd.checkday ? (
+                                                                    <div style={{ minHeight: '20px' }}>
+                                                                        {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
+                                                                    </div>
+                                                                ) : null
+
+                                                                }
+                                                            </div>
+                                                            <div class="form-group col-lg-6"></div>
+                                                            <div class="form-group col-lg-6">
+                                                                {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                                             </div>
                                                             {/* <div class="form-group col-lg-6 ">
                                                 <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
@@ -700,10 +822,10 @@ export default () => {
                                                                 } placeholder={lang["p.description"]} />
                                                             </div>
                                                             <div class="form-group col-lg-12">
-                                                                <label><b>Thành viên</b></label>
+                                                                <label>{lang["taskmember"]}</label>
                                                                 <span className="d-block"> {
                                                                     updateTaskinfo.members && updateTaskinfo.members.length > 0 ?
-                                                                        updateTaskinfo.members.slice(0, 5).map(member => (
+                                                                        updateTaskinfo.members.map(member => (
                                                                             <img
                                                                                 class="img-responsive circle-image-cus"
                                                                                 src={proxy + member.avatar}
@@ -712,13 +834,39 @@ export default () => {
                                                                         )) :
                                                                         <p>{lang["projectempty"]} </p>
                                                                 }
-                                                                    {
-                                                                        updateTaskinfo.members?.length > 5 &&
-                                                                        <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + updateTaskinfo.members[5].avatar})` }}>
-                                                                            <span>+{updateTaskinfo.members.length - 5}</span>
-                                                                        </div>
-                                                                    }</span>
+                                                                </span>
                                                             </div>
+                                                            {/* <div class="form-group col-lg-12">
+                                                                <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+
+                                                                {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
+
+                                                                <div class="user-checkbox-container">
+                                                                    {projectdetail.members?.map((user, index) => (
+                                                                        <div key={index} class="user-checkbox-item">
+                                                                            <label>
+                                                                                <input
+                                                                                    type="checkbox" class="mr-1"
+                                                                                    value={JSON.stringify(user)}
+                                                                                    checked={selectedMemberTask.find(u => u.username === user.username) ? true : false} // this line checks if the user was previously selected
+                                                                                    onChange={(e) => {
+                                                                                        let selectedUser = JSON.parse(e.target.value);
+                                                                                        let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                                        if (alreadySelected) {
+                                                                                            setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                                        } else {
+                                                                                            setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                                {user.fullname}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div> */}
+
+
                                                             {/* <div class="form-group col-lg-12">
                                                 <label>Quản lý</label>
                                                 <div class="user-checkbox-container">
@@ -807,6 +955,25 @@ export default () => {
                                                                 </td>
                                                             </div>
                                                             <div class="form-group col-lg-4">
+
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label><b>{lang["members"]}</b></label>
+                                                                <span className="d-block"> {
+                                                                    taskDetail.members && taskDetail.members.length > 0 ?
+                                                                        taskDetail.members.map(member => (
+                                                                            <img
+                                                                                class="img-responsive circle-image-cus"
+                                                                                src={proxy + member.avatar}
+                                                                                alt={member.username}
+                                                                            />
+                                                                        )) :
+                                                                        <p>{lang["projectempty"]} </p>
+                                                                }
+                                                                </span>
+                                                            </div>
+
+                                                            {/* <div class="form-group col-lg-12">
                                                                 <label><b>{lang["members"]}</b></label>
                                                                 <span className="d-block"> {
                                                                     taskDetail.members && taskDetail.members.length > 0 ?
@@ -825,8 +992,7 @@ export default () => {
                                                                             <span>+{taskDetail.members.length - 4}</span>
                                                                         </div>
                                                                     }</span>
-                                                            </div>
-
+                                                            </div> */}
 
                                                             <div class="form-group col-lg-12">
                                                                 <label><b>{lang["description"]}</b></label>

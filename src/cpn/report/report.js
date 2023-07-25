@@ -252,20 +252,20 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             {loaded ? (
                                 <><div class="full price_table padding_infor_info">
-                                    {
-                                        filteredProjects && filteredProjects.length > 0 ? (
-                                            <div className="container-fluid">
-                                                <div class="d-flex align-items-center mb-1">
-                                                    <div class="col-sm-2">
-                                                        <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
-                                                            <option value="">{lang["allstatus"]}</option>
-                                                            {statusProject.map(status =>
-                                                                <option value={status.value}>{lang[`${status.label}`]}</option>
-                                                            )}
-                                                        </select>
-                                                    </div>
-                                                </div>
 
+                                    <div className="container-fluid">
+                                        <div class="d-flex align-items-center mb-4">
+                                            <div class="col-sm-2">
+                                                <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
+                                                    <option value="">{lang["allstatus"]}</option>
+                                                    {statusProject.map(status =>
+                                                        <option value={status.value}>{lang[`${status.label}`]}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {
+                                            filteredProjects && filteredProjects.length > 0 ? (
                                                 <>{filteredProjects.map((project) => (
                                                     <div key={project.project_id} class="row group">
                                                         <div class="col-md-12 col-lg-12">
@@ -286,18 +286,13 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 ))}
-                                                </>
-
-
-
-                                            </div>
-                                        ) : (
-                                            <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
-                                            {lang["projects.noprojectfound"]}
-                                        </div>
-                                        )
-                                    }
-
+                                                </>) : (
+                                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                                    {lang["projects.noprojectfound"]}
+                                                </div>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                                 </>
                             ) :

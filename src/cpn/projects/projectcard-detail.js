@@ -1047,14 +1047,14 @@ export default () => {
                         let name;
                         switch (key) {
                             case 'completed':
-                                name = 'Task hoàn thành';
+                                name = lang["task.complete"];
 
                                 break;
                             case 'inProgress':
-                                name = 'Task cần thực hiện';
+                                name = lang["task.expired"];
                                 break;
                             case 'expired':
-                                name = 'Task đang trễ';
+                                name = lang["task.inprogress"];
                                 break;
                             default:
                                 name = '';
@@ -1150,7 +1150,7 @@ export default () => {
                                         {showViewMore && (
                                             <div className="view-more-link">
                                                 <a href="#" data-toggle="modal" data-target="#viewDescription">
-                                                    <b>Xem thêm</b>
+                                                    <b>{lang["read more"]}</b>
                                                 </a>
                                             </div>
                                         )}
@@ -1632,9 +1632,7 @@ export default () => {
                                         {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
                                     </span>
                                 </div>
-
-
-                                <div style={{ display: 'flex', height: '400px', width: '100%' }}>
+                                <div style={{ display: 'flex', height: '425px', width: '100%' }}>
                                     <ResponsiveContainer width="60%">
                                         <PieChart>
                                             <Pie

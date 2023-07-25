@@ -391,7 +391,36 @@ export default {
     "modify_what": "Object changes",
     "timeline": "Task Schedule(Gantt Chart)",
     "account": "Accounts",
-    "back": "Back"
+    "back": "Back",
+    "task.complete": "Task completed",
+    "task.expired": "Task is overdue",
+    "task.inprogress":"Task needs to be done",
+    "read more": "Read more",
+    "error.taskname": "Please enter the name of the task",
+    "error.start": "Please select a start date",
+    "error.end": "Please select an end date",
+    "error.checkday": "The end date must be greater than or equal to the start date",
+    "error.task_description": "Please enter a description",
+    "error.members": "Please select the person to carry out the task",
+    "error.task_priority":" Please choose a priority",
+
+    "gantt.year": "Year",
+    "gantt.quarters": "Quarters",
+    "gantt.months": "Months",
+    "gantt.day": "Day",
+    "january":'January',
+    "february":'February',
+    "march":'March',
+    "april":'April',
+    "may":'May',
+    "june":'June',
+    "july":'July',
+    "august":'August',
+    "september":'September',
+    "october":'October',
+    "november":'November',
+    "december":'December',
+
 
 
 }

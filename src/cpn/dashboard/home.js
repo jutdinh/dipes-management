@@ -326,7 +326,7 @@ export default () => {
 
 
                     </div>
-                    <div class="col-md-3 col-lg-5">
+                    <div class="col-md-5 col-lg-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -338,7 +338,7 @@ export default () => {
                                     <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">
-                                                <PieChart width={300} height={300}>
+                                                <PieChart width={300} height={260}>
                                                     <Pie
                                                         dataKey="value"
                                                         startAngle={360}
@@ -415,9 +415,9 @@ export default () => {
                             <div class="map_section padding_infor_info_home">
                                 {projects && projects.length > 0 ? (
                                     <div className="row">
-                                        <div className="col-md-5 d-flex justify-content-center">
+                                        <div className="col-md-4 d-flex justify-content-center">
                                             <div className="my-auto">
-                                                <PieChart width={250} height={300}>
+                                                <PieChart width={250} height={260}>
                                                     <Pie
                                                         data={outputDataLead}
                                                         cx="45%"
@@ -435,7 +435,7 @@ export default () => {
                                                 </PieChart>
                                             </div>
                                         </div>
-                                        <div className="col-md-7">
+                                        <div className="col-md-8">
                                             <div class="table-responsive mt-4">
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
@@ -493,7 +493,7 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_statis">
-                                <ResponsiveContainer width="90%" height={350}>
+                                <ResponsiveContainer width="90%" height={365}>
                                     <BarChart
                                         style={{ margin: 'auto', display: 'block' }}
                                         width={1100}

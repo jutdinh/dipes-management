@@ -18,9 +18,9 @@ export const StatusTask = Object.freeze({
 
 export const StatusStatisticalTask = Object.freeze({
     
-    DONE: { id: 0, label: "task.done", value: 1, color: "#1ed085" },
-    NEED: { id: 1, label: "taks.need", value: 2, color: "#8884d8" },
-    LATE: { id: 2, label: "taks.late", value: 3, color: "#ff8028" },
+    DONE: { id: 0, label: "complete", value: 1, color: "#1ed085" },
+    NEED: { id: 1, label: "task.exipred", value: 2, color: "#8884d8" },
+    LATE: { id: 2, label: "task.inprogress", value: 3, color: "#ff8028" },
  
 });
 export const StatusAprove = Object.freeze({
