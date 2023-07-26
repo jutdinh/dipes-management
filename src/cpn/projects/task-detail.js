@@ -61,7 +61,10 @@ export default () => {
         const status = statusTask.find(st => st.id === statusId);
         return status ? status.color : 'N/A';
     };
+
     const [tasks, setTasks] = useState([]);
+    const [fakeTasks, setFakeTasks] = useState([]);
+
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
     const [process, setProcess] = useState({});
@@ -113,6 +116,7 @@ export default () => {
                         })
 
                         setTasks(data);
+                        setFakeTasks( data )
                         // console.log("data task", data)
                     }
                 } else {
@@ -125,6 +129,35 @@ export default () => {
         setShowModal(false);
         setErrorMessagesadd({})
     };
+
+    const getCorespondingValue = ( task ) => {
+        console.log(task)
+        const corespondingTask = fakeTasks.find(t => t.task_id == task.task_id)
+        return corespondingTask["task_progress"]
+    }
+
+    const changeProgress = (e, task) => {
+        const progress = e.target.value;
+        const newFakeTasks = fakeTasks.map( t => {
+            if( t.task_id == task.task_id ){
+                t.task_progress =  progress                
+            }
+            return t
+        })
+        const currentUpdateTask = newFakeTasks.find( t => t.task_id == task.task_id )
+        setUpdateTask(currentUpdateTask)
+        setFakeTasks(newFakeTasks)
+    }
+
+    const blurHandle = (task) => {
+        console.log("BLUR")
+        const corespondingData = getCorespondingValue( task )
+        updateTask(false)
+        if( corespondingData != task.task_progress ){
+        }
+    }
+
+
     console.log(selectedMemberTask)
     const submitAddTask = (e) => {
 
@@ -203,8 +236,8 @@ export default () => {
 
 
 
-    const updateTask = (e) => {
-        e.preventDefault();
+    const updateTask = ( reload = true ) => {        
+
         const errors = {};
         if (!updateTaskinfo.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -241,6 +274,7 @@ export default () => {
             // members: selectedMemberTask,
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
+            task_progress: updateTaskinfo.task_progress
         };
         // console.log(requestBody)
         fetch(`${proxy}/tasks/task/info`, {
@@ -255,9 +289,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, reload);
                 } else {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, reload);
                 }
             })
 
@@ -453,7 +487,7 @@ export default () => {
                                 </div>
                                 <div class="row column1">
                                     {/* Progresss */}
-                                    <div class="table_section padding_infor_info">
+                                    <div class="table_section padding_infor_info_list_task ">
                                         <div className="d-flex">
                                             <div>
                                                 <span className="status-label d-block" style={{
@@ -486,7 +520,7 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["task"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">% {lang["complete"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
@@ -548,7 +582,14 @@ export default () => {
 
                                                                         </td>
                                                                         <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                            <input style={{ maxWidth: 75 }} className="form-control" value={ task.task_progress } />
+                                                                            <input 
+                                                                                style={{ maxWidth: 65 }} 
+                                                                                className="form-control" 
+                                                                                value={ getCorespondingValue(task) } 
+                                                                                onChange={(e) => { changeProgress(e, task) }}
+                                                                                onBlur={() => { blurHandle(task) }}
+
+                                                                            />
                                                                         </td>
                                                                         <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
                                                                             {getStatusLabel(task.task_approve ? 1 : 0)}

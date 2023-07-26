@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Timeline from "react-timelines";
 import moment from 'moment';
 import "react-timelines/lib/css/style.css";
@@ -22,10 +22,11 @@ const TimelineChart = ({ data }) => {
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
     const [selectedMonth, setSelectedMonth] = useState(moment().month());
-    useLayoutEffect(() => {
+    useEffect(() => {
         setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
         setEnd(moment({ year: selectedYear, month: selectedMonth }).endOf('month').toDate());
     }, [selectedYear, selectedMonth]);
+    
     const months = [
         lang["january"],
         lang["february"],
@@ -132,22 +133,10 @@ const TimelineChart = ({ data }) => {
             //     </div>),
 
             title: `Task ${index + 1}`,
+
             elements: [{
                 id: 0,
-                title: (
-                    <div className="task-name" style={{
-                        width: "100%",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                    }}>
-                        {task.task_name}
-                    </div>
-                    
-                    
-                ),
-
-
+                title: task.task_name,
                 start: moment(task.start).toDate(),
                 end: moment(task.end).toDate(),
                 // img: <img class="img-responsive circle-image" src={proxy + tasks.members?.avatar} alt="#" />,
@@ -188,32 +177,23 @@ const TimelineChart = ({ data }) => {
     }, [selectedYear, selectedMonth]);
     return (
         <div className="app app1">
-            <div class="d-flex align-items-center mb-1">
-                <div class="row">
-                    <div class="col-md-12">
-                        <select class="form-control mt-1"
-                            value={selectedYear}
-                            onChange={(e) => {
-                                const newYear = parseInt(e.target.value);
-                                setSelectedYear(newYear);
-                                setSelectedMonth(0); // Reset month to January when year changes
-                                setStart(moment({ year: newYear }).startOf('year').toDate());
-                                setEnd(moment({ year: newYear }).endOf('year').toDate());
-                            }}
-                        >
-                            {Array.from({ length: 5 }, (_, i) => 2021 + i).map((year) => (
-                                <option key={year} value={year}>
-                                    {year}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                    </div>
-                </div>
-            </div>
-
-
+          
+            <select
+                value={selectedYear}
+                onChange={(e) => {
+                    const newYear = parseInt(e.target.value);
+                    setSelectedYear(newYear);
+                    setSelectedMonth(0); // Reset month to January when year changes
+                    setStart(moment({ year: newYear }).startOf('year').toDate());
+                    setEnd(moment({ year: newYear }).endOf('year').toDate());
+                }}
+            >
+                {Array.from({ length: 5 }, (_, i) => 2021 + i).map((year) => (
+                    <option key={year} value={year}>
+                        {year}
+                    </option>
+                ))}
+            </select>
 
             <select
                 value={selectedMonth}

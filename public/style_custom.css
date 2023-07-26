@@ -273,7 +273,26 @@
     color: #000;
     font-weight: 600;
 }
+.app1 .rt-layout__side {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    width: 200px;
+    vertical-align: top;
+}
+.app1 .rt {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    font-family: "UTM Avo", sans-serif !important;
+    color: #4c4c4c;
+}
 
+.app1 .rt-layout__main {
+    display: inline-block;
+    width: calc(100% - 200px) !important;
+    vertical-align: top;
+}
 
 .circle-image-projectdetail::before {
     content: "";
@@ -1072,6 +1091,18 @@ img[class="scaled-hover-target"]{
 }
 
 .padding_infor_info {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    min-height: 500px;
+
+}
+
+.rt-element__title{
+    display: contents !important;
+}
+
+.padding_infor_info_list_task {
     padding: 10px 35px;
     float: left;
     width: 100%;
