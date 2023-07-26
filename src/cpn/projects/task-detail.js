@@ -581,11 +581,11 @@ export default () => {
                                                                             </select>
 
                                                                         </td>
-                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                        <td class="font-weight-bold align-center" style={{ textAlign: "center" }}>
                                                                             <input 
                                                                                 style={{ maxWidth: 65 }} 
-                                                                                className="form-control" 
-                                                                                value={ getCorespondingValue(task) } 
+                                                                                className="form-control align-center" 
+                                                                                value={ getCorespondingValue(task) + "%" } 
                                                                                 onChange={(e) => { changeProgress(e, task) }}
                                                                                 onBlur={() => { blurHandle(task) }}
 
