@@ -204,6 +204,7 @@
     position: sticky;
     top: 0;
     z-index: 1;
+    
 }
 
 .table-body {
@@ -311,7 +312,8 @@
 
 .circle-image-gantt {
     border-radius: 100%;
-    width: 22px;
+    width: 26px;
+    height: 26px;
     display: inline-block;
     line-height: 28px;
     text-align: center;
@@ -359,7 +361,36 @@
     width: calc(100% - 200px) !important;
     vertical-align: top;
 }
-
+.app1 .rt-timebar-key {
+    height: 41px;
+    padding-right: 20px;
+    line-height: 40px;
+    text-align: right;
+    font-weight: bold;
+    
+    border: 1px solid #dee2e6;
+}
+.app1 .rt-timebar__cell {
+    position: absolute;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+.app1 .rt-track-key__entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 61px;
+    line-height: 60px;
+    font-weight: bold;
+    text-align: left;
+    border: 1px solid #dee2e6;
+}
+.app1 .rt-track__elements {
+    position: relative;
+    height: 61px;
+    border: 1px solid #dee2e6;
+}
 .circle-image-projectdetail::before {
     content: "";
     display: block;

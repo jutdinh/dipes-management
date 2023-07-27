@@ -115,7 +115,7 @@ const TimelineChart = ({ data }) => {
             title:
                 (<div style={styles.container}>
                     <div style={styles.images}>
-                        {task.members.slice(0, 1).map(mem =>
+                        {task.members.slice(0, 2).map(mem =>
                             <img style={{ width: "26px" }} class="img-responsive circle-image mt-1 ml-1" src={proxy + mem.avatar} alt="#" />
                         )}
 
@@ -125,13 +125,13 @@ const TimelineChart = ({ data }) => {
 
                        
                         {
-                            task.members.length > 1 &&
-                            <div className="img-responsive circle-image-gantt  ml-1" style={{ backgroundImage: `url(${proxy + task.members[1].avatar})` }}>
+                            task.members.length > 2 &&
+                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{width: "25px", backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
                                 <span>+{task.members.length - 1}</span>
                             </div>
                         }
                     </div>
-                    <span> {lang["task"]} {index + 1}</span>
+                    <span> {lang["task"]} {index + 2}</span>
 
                 </div>),
             // title: `Task ${index + 1}`,

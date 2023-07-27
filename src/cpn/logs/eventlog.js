@@ -331,7 +331,7 @@ export default () => {
                                                 <th scope="col" class="align-center pointer">
                                                     <div className="d-flex align-items-center" 
                                                         onClick={() => { setTableFilter({ event_type: !tableFilter.event_type }) }} 
-                                                    >{lang["log.type"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    >{lang["log.type"]} <i className="fa fa-filter icon-view block ml-auto" /></div>
                                                     { tableFilter.event_type && <div className="position-relative">
                                                         <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
                                                             <CheckList 
@@ -350,7 +350,7 @@ export default () => {
                                                     <div className="d-flex align-items-center" 
                                                         onClick={() => { setTableFilter({  event_title: !tableFilter.event_title }) }} 
                                                     
-                                                    >{lang["log.listtitle"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    >{lang["log.listtitle"]} <i className="fa fa-filter icon-view block ml-auto" /></div>
                                                     { tableFilter.event_title && <div className="position-relative">
                                                         <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
                                                             <CheckList 
@@ -364,12 +364,12 @@ export default () => {
                                                     </div>}
                                                 </th>                                                
                                                 
-                                                <th scope="col">
+                                                <th scope="col" class="pointer">
                                                     
                                                     <div className="d-flex align-items-center" 
                                                         onClick={() => { setTableFilter({  event_description: !tableFilter.event_description }) }} 
                                                     
-                                                    >{lang["description"]} <i className="fa fa-chevron-circle-down icon-view block ml-auto" /></div>
+                                                    >{lang["description"]} <i className="fa fa-filter icon-view block ml-auto" /></div>
                                                     { tableFilter.event_description && <div className="position-relative">
                                                         <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>                                                          
                                                             <FloatingTextBox 

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-
+import FloatingTextBox from '../common/floatingTextBox';
 import Gantt from "./gantt"
 
 
@@ -17,6 +17,7 @@ export default () => {
     const stringifiedUser = localStorage.getItem("user");
     const _users = JSON.parse(stringifiedUser)
     const { project_id, version_id } = useParams();
+    const { removeVietnameseTones } = functions
     let navigate = useNavigate();
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
@@ -463,7 +464,31 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
+    const [tableFilter, setTableFilter] = useState({ task_name: false });
+    const handleTaskNameFilterChange = (e) => {
+        setTaskNameFilter({ name: e.target.value });
+    }
+    // State để lưu giá trị lọc
+    const [taskNameFilter, setTaskNameFilter] = useState("");
+    const resetTaskNameFilter = () => {
+        setTaskNameFilter({ name: "" });
+    }
+    const [statusFilter, setStatusFilter] = useState([]);
 
+    const statusFilterOptions = statusTaskView.map(status => ({ label: lang[status.label], value: status.value }));
+    const addOrRemoveStatus = (status) => {
+        const newFilter = [...statusFilter];
+        const index = newFilter.findIndex(item => item.value === status.value);
+      
+        if (index !== -1) {
+          newFilter.splice(index, 1);
+        } else {
+          newFilter.push(status);
+        }
+      
+        setStatusFilter(newFilter);
+      };
+      
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -523,10 +548,31 @@ export default () => {
                                         </div>
 
                                         <div class="table-outer">
-                                            <table class="table-head mb-4">
+                                            <table class="table-head mb-2">
                                                 <thead>
                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                    <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                    <th class="font-weight-bold" scope="col">
+                                                        {lang["task"]}
+                                                        <div className="d-flex align-items-center"
+                                                            onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }}
+                                                        >
+                                                            <i className="fa fa-filter icon-view block ml-auto" />
+                                                        </div>
+                                                        {tableFilter.task_name &&
+                                                            <div className="position-relative">
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
+                                                                    <FloatingTextBox
+                                                                        title={lang["task"]}
+                                                                        initialData={taskNameFilter.name}
+                                                                        setDataFunction={handleTaskNameFilterChange}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_name: false }); resetTaskNameFilter(); }}
+                                                                    />
+
+
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </th>
                                                     <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
                                                     <th class="font-weight-bold align-center" scope="col">% {lang["complete"]}</th>
                                                     <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
@@ -540,7 +586,12 @@ export default () => {
                                             <div class="table-body">
                                                 <table class="table table-striped">
                                                     <tbody>
-                                                        {currentMembersTask.map((task, index) => (
+
+                                                        {currentMembersTask.filter((task) => {
+                                                            let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
+                                                            let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
+                                                            return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText));
+                                                        }).map((task, index) => (
                                                             <tr key={task.id}>
                                                                 <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
 
