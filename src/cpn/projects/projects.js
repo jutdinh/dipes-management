@@ -359,7 +359,7 @@ export default () => {
                 break;
         }
     }, [projects])
-
+console.log(projects)
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -636,7 +636,10 @@ export default () => {
                                                         {
                                                             projects && projects.length > 0 ? (
                                                                 projects.map((item) => (
-                                                                    (item.members.find(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && (
+                                                                    (item.members.find(member => member.username === _users.username)
+                                                                        || item.manager.username === _users.username
+                                                                        || ["ad", "uad"].indexOf(auth.role) !== -1)
+                                                                    && (
                                                                         <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                                                                             <div class="card project-block">
                                                                                 <div class="card-body">

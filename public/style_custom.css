@@ -187,9 +187,39 @@
 
 
 .table-scrollable tbody {
-  display: block;
-  height: 250px; /* Adjust as necessary for 5 lines to display */
-  overflow-y: auto;
+    display: block;
+    height: 270px;
+    overflow-y: auto;
+    padding-right: 20px;  /* Giá trị này có thể cần điều chỉnh */
+    box-sizing: content-box;
+  }
+  
+  
+  .table-outer {
+    position: relative;
+    padding-bottom: 20px; /* Depends on your scrollbar width */
+}
+
+.table-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table-body {
+    max-height: 270px;
+    overflow-y: auto;
+}
+
+.table-head,
+.table-body table {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+.scrollbar-measure {
+    width: 20px;  /* Depends on your scrollbar width */
 }
 
 .table-scrollable thead,
@@ -199,6 +229,11 @@
   table-layout: fixed;
 }
 
+.table-scrollable thead th, .table-scrollable tbody td {
+    display: table-cell;
+    width: 20%; /* adjust as necessary */
+  }
+  
 
 
 .view-more-link a {
@@ -273,6 +308,37 @@
     color: #000;
     font-weight: 600;
 }
+
+.circle-image-gantt {
+    border-radius: 100%;
+    width: 22px;
+    display: inline-block;
+    line-height: 28px;
+    text-align: center;
+    /* Căn giữa văn bản theo chiều ngang */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  
+
+    position: relative;
+    padding: 0px 0px;
+    color: #000;
+    font-weight: 600;
+}
+.circle-image-gantt::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+    border-radius: 50%;
+}
+
 .app1 .rt-layout__side {
     position: relative;
     z-index: 2;
@@ -1098,6 +1164,13 @@ img[class="scaled-hover-target"]{
 
 }
 
+.padding_infor_info_detail {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    min-height: 500px;
+
+}
 .rt-element__title{
     display: contents !important;
 }
@@ -1106,7 +1179,7 @@ img[class="scaled-hover-target"]{
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 500px;
+    min-height: 300px;
 
 }
 .padding_infor_info_home {

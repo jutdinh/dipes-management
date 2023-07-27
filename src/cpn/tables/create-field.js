@@ -118,13 +118,13 @@ export default () => {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.table_id = ""; 
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.ref_field_id = ""; 
             }
         }
 
@@ -843,7 +843,7 @@ export default () => {
                                                     }
                                                 }}
                                                 disabled={!isOnforenkey}>
-                                                <option value="">{lang["choose"]} </option>
+                                                <option value={""}>{lang["choose"]} </option>
                                                 {tables.tables?.map((table, index) => {
                                                     return (
                                                         <option key={index} value={table.id}>

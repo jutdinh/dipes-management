@@ -399,7 +399,7 @@ export default {
     "error.taskname": "Please enter the name of the task",
     "error.start": "Please select a start date",
     "error.end": "Please select an end date",
-    "error.checkday": "The end date must be greater than or equal to the start date",
+    "error.checkday": "The end date must be greater than to the start date",
     "error.task_description": "Please enter a description",
     "error.members": "Please select the person to carry out the task",
     "error.task_priority":" Please choose a priority",

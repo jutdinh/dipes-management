@@ -52,6 +52,11 @@ export default () => {
         { id: 2, label: "low", value: 3, color: "#ffc658" },
 
     ]
+    function onlyContainsNumbers(inputString) {
+        const value = parseInt(inputString, 10);
+        return !isNaN(value) && value >= 0 && value <= 100;
+    }
+
     const getStatusLabel = (statusId) => {
         const status = statusTask.find(st => st.id === statusId);
         return status ? status.label : 'N/A';
@@ -104,7 +109,6 @@ export default () => {
                 console.log(resp)
                 if (success) {
                     if (data) {
-
                         data.sort((a, b) => {
                             if (a.task_priority == b.task_priority) {
                                 const aDate = new Date(a.raw_create_at)
@@ -114,51 +118,62 @@ export default () => {
                                 return a.task_priority > b.task_priority ? 1 : -1
                             }
                         })
-
                         setTasks(data);
-                        setFakeTasks( data )
-                        // console.log("data task", data)
+                        setFakeTasks(data)
+
                     }
                 } else {
                     // window.location = "/404-not-found"
                 }
             })
     }, [])
+    const filteredTasks = tasks.filter(task =>
+        task.members?.some(member => member.username === _users.username) ||
+        ["ad", "uad"].indexOf(auth.role) !== -1
+    );
+    console.log(filteredTasks)
+
+
+
+
+
+
+
 
     const handleCloseModal = () => {
         setShowModal(false);
         setErrorMessagesadd({})
     };
 
-    const getCorespondingValue = ( task ) => {
+    const getCorespondingValue = (task) => {
         console.log(task)
         const corespondingTask = fakeTasks.find(t => t.task_id == task.task_id)
         return corespondingTask["task_progress"]
     }
 
-    const changeProgress = (e, task) => {
-        const progress = e.target.value;
-        const newFakeTasks = fakeTasks.map( t => {
-            if( t.task_id == task.task_id ){
-                t.task_progress =  progress                
+    const changeProgress = (value, task) => {
+        // const progress = e.target.value;
+        const newFakeTasks = fakeTasks.map(t => {
+            if (t.task_id == task.task_id) {
+                t.task_progress = value
             }
             return t
         })
-        const currentUpdateTask = newFakeTasks.find( t => t.task_id == task.task_id )
+        const currentUpdateTask = newFakeTasks.find(t => t.task_id == task.task_id)
         setUpdateTask(currentUpdateTask)
         setFakeTasks(newFakeTasks)
     }
 
     const blurHandle = (task) => {
-        console.log("BLUR")
-        const corespondingData = getCorespondingValue( task )
+
+        const corespondingData = getCorespondingValue(task)
         updateTask(false)
-        if( corespondingData != task.task_progress ){
+        if (corespondingData != task.task_progress) {
         }
     }
 
 
-    console.log(selectedMemberTask)
+    // console.log(selectedMemberTask)
     const submitAddTask = (e) => {
 
         e.preventDefault();
@@ -233,10 +248,7 @@ export default () => {
             setSelectedMemberTask(updateTaskinfo.members);
         }
     }, [updateTaskinfo]);
-
-
-
-    const updateTask = ( reload = true ) => {        
+    const updateTask = (reload = true) => {
 
         const errors = {};
         if (!updateTaskinfo.task_name) {
@@ -359,7 +371,6 @@ export default () => {
 
         };
         // console.log(requestBody)
-
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.task"],
@@ -397,7 +408,6 @@ export default () => {
 
 
     const updateStatusTask = (taskInfo) => {
-
         const requestBody = {
             project_id: project.project_id,
             task_id: taskInfo.task_id,
@@ -433,8 +443,6 @@ export default () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const totalPages = Math.ceil(sortedMembers.length / rowsPerPage);
 
-
-
     const [currentPageTask, setCurrentPageTask] = useState(1);
     const rowsPerPageTask = 7;
 
@@ -462,7 +470,11 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4>{lang["projectprocess"]}</h4>
+                            <h4>
+                                <label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
+                                    {lang["projectprocess"]}
+                                </label>
+                            </h4>
                         </div>
                     </div>
                 </div>
@@ -472,19 +484,16 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>Timeline
-                                    </label> </h5>
+                                    <h5>
+                                        {lang["project"]}: {project.project_name}
+                                    </h5>
                                 </div>
                                 {/* <div class="ml-auto">
                                     <i class="fa fa-newspaper-o icon-ui"></i>
                                 </div> */}
                             </div>
                             <div class="table_section padding_infor_info">
-                                <div calss="row column1">
-                                    <div class="col-md-12">
-                                        <h4 class="font-weight-bold ml-2">{lang["projectname"]}: {project.project_name} </h4>
-                                    </div>
-                                </div>
+
                                 <div class="row column1">
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
@@ -504,172 +513,155 @@ export default () => {
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center mt-2">
-                                            <p class="font-weight-bold">{lang["tasklist"]}: </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
-                                                <i class="fa fa-plus" title={lang["btn.create"]}></i>
-                                            </button>
-                                        </div>
-                                        <div class="table-responsive">
+                                            <p class="font-weight-bold mb-4">{lang["tasklist"]}: </p>
                                             {
-                                                sortedMembers && sortedMembers.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["task"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.create_user"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">% {lang["complete"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {currentMembersTask.map((task, index) => (
-                                                                    <tr key={task.id}>
-                                                                        <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
-
-                                                                        <td style={{ maxWidth: "100px" }}>
-                                                                            <div style={{
-                                                                                width: "100%",
-                                                                                overflow: "hidden",
-                                                                                textOverflow: "ellipsis",
-                                                                                whiteSpace: "nowrap"
-                                                                            }}>
-                                                                                {task.task_name}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style={{ width: "170px" }} >
-                                                                            {
-                                                                                task.members && task.members.length > 0 ?
-                                                                                    task.members.slice(0, 2).map(member => (
-                                                                                        <img
-                                                                                            class="img-responsive circle-image-cus"
-                                                                                            src={proxy + member.avatar}
-                                                                                            alt={member.username}
-                                                                                        />
-                                                                                    )) :
-                                                                                    <p>{lang["projectempty"]} </p>
-                                                                            }
-                                                                            {
-                                                                                task.members.length > 2 &&
-                                                                                <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
-                                                                                    <span>+{task.members.length - 2}</span>
-                                                                                </div>
-                                                                            }
-                                                                        </td>
-                                                                        <td class="align-center" style={{ minWidth: "130px" }} >
-
-
-                                                                            <select
-                                                                                className="form-control"
-                                                                                value={task.task_status}
-                                                                                onChange={handleSelectChange}
-                                                                                disabled={task.task_approve}
-                                                                            >
-
-                                                                                {statusTaskView.map((status, index) => {
-                                                                                    return (
-                                                                                        <option key={index} value={status.value} data-taskid={task.task_id}>
-                                                                                            {lang[status.label]}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </select>
-
-                                                                        </td>
-                                                                        <td class="font-weight-bold align-center" style={{ textAlign: "center" }}>
-                                                                            <input 
-                                                                                style={{ maxWidth: 65 }} 
-                                                                                className="form-control align-center" 
-                                                                                value={ getCorespondingValue(task) + "%" } 
-                                                                                onChange={(e) => { changeProgress(e, task) }}
-                                                                                onBlur={() => { blurHandle(task) }}
-
-                                                                            />
-                                                                        </td>
-                                                                        <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
-                                                                            {getStatusLabel(task.task_approve ? 1 : 0)}
-                                                                        </td>
-                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                            {task.start}
-                                                                        </td>
-                                                                        <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                            {task.end}
-                                                                        </td>
-                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
-                                                                            {
-                                                                                (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                                                <>
-                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
-                                                                                    {task.task_approve
-                                                                                        ? (task.task_status !== StatusTask.NOT_APPROVED
-                                                                                            ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                            : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                                        : (task.task_status === StatusTask.COMPLETE.value
-                                                                                            ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                            : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                                    }
-                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
-                                                                                </>
-                                                                            }
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["empty.member"]}</p>
-                                                    </div>
-                                                )
+                                                (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                    <i class="fa fa-plus" title={lang["btn.create"]}></i>
+                                                </button>
                                             }
                                         </div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <p>{lang["show"]} {indexOfFirstMemberTask + 1}-{Math.min(indexOfLastMemberTask, tasks.length)} {lang["of"]} {tasks.length} {lang["results"]}</p>
-                                            <nav aria-label="Page navigation example">
-                                                <ul className="pagination mb-0">
-                                                    <li className={`page-item ${currentPageTask === 1 ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateTask(currentPageTask - 1)}>
-                                                            &laquo;
-                                                        </button>
-                                                    </li>
-                                                    {Array(totalPagesTask).fill().map((_, index) => (
-                                                        <li className={`page-item ${currentPageTask === index + 1 ? 'active' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginateTask(index + 1)}>
-                                                                {index + 1}
-                                                            </button>
-                                                        </li>
-                                                    ))}
-                                                    <li className={`page-item ${currentPageTask === totalPagesTask ? 'disabled' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginateTask(currentPageTask + 1)}>
-                                                            &raquo;
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </nav>
+
+                                        <div class="table-outer">
+                                            <table class="table-head mb-4">
+                                                <thead>
+                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                    <th class="font-weight-bold" scope="col">{lang["task"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col">% {lang["complete"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col">{lang["log.create_user"]}</th>
+                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                    <th class="scrollbar-measure"></th>
+                                                </thead>
+                                            </table>
+                                            <div class="table-body">
+                                                <table class="table table-striped">
+                                                    <tbody>
+                                                        {currentMembersTask.map((task, index) => (
+                                                            <tr key={task.id}>
+                                                                <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
+
+                                                                <td style={{ maxWidth: "100px" }}>
+                                                                    <div style={{
+                                                                        width: "100%",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                        whiteSpace: "nowrap"
+                                                                    }}>
+                                                                        {task.task_name}
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="align-center" >
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={task.task_status}
+                                                                        onChange={handleSelectChange}
+                                                                        disabled={
+                                                                            task.task_approve ||
+                                                                            !(_users.username === projectdetail.manager?.username || task.members?.some(member => member.username === _users.username) || (["ad", "uad"].indexOf(auth.role) !== -1))
+                                                                        }
+                                                                    >
+                                                                        {statusTaskView.map((status, index) => {
+                                                                            return (
+                                                                                <option key={index} value={status.value} data-taskid={task.task_id}>
+                                                                                    {lang[status.label]}
+                                                                                </option>
+                                                                            );
+                                                                        })}
+                                                                    </select>
+                                                                </td>
+                                                                <td class="font-weight-bold">
+                                                                    {
+                                                                        (_users.username === projectdetail.manager?.username || task.members?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) ?
+                                                                            <div style={{ display: 'inline-block', position: 'relative' }}>
+                                                                                <input
+                                                                                    type="text"
+                                                                                    style={{ textAlign: "center", paddingRight: '20px' }}
+                                                                                    className="form-control"
+                                                                                    value={getCorespondingValue(task) === '' ? '0' : getCorespondingValue(task)}
+                                                                                    onChange={(e) => {
+                                                                                        const value = e.target.value;
+                                                                                        if (value === '' || onlyContainsNumbers(value)) {
+                                                                                            const normalizedValue = value === '' ? 0 : parseInt(value, 10);
+                                                                                            changeProgress(normalizedValue, task);
+                                                                                        }
+                                                                                    }}
+                                                                                    onBlur={() => { blurHandle(task) }}
+                                                                                />
+                                                                                <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
+                                                                            </div>
+                                                                            :
+                                                                            <div style={{ display: 'inline-block', position: 'relative' }}>
+                                                                                <input
+                                                                                    style={{ textAlign: "center", paddingRight: '20px' }}
+                                                                                    className="form-control"
+                                                                                    value={getCorespondingValue(task)}
+                                                                                    readOnly
+                                                                                />
+                                                                                <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
+                                                                            </div>
+                                                                    }
+                                                                </td>
+                                                                <td class="font-weight-bold" style={{ color: getStatusColor(task.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                                    {getStatusLabel(task.task_approve ? 1 : 0)}
+                                                                </td>
+                                                                <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                    {task.start}
+                                                                </td>
+                                                                <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                    {task.end}
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        task.members && task.members.length > 0 ?
+                                                                            task.members.slice(0, 2).map(member => (
+                                                                                <img
+
+                                                                                    class="img-responsive circle-image-cus"
+                                                                                    src={proxy + member.avatar}
+                                                                                    alt={member.username}
+                                                                                />
+                                                                            )) :
+                                                                            <p>{lang["projectempty"]} </p>
+                                                                    }
+                                                                    {
+                                                                        task.members.length > 2 &&
+                                                                        <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
+                                                                            <span>+{task.members.length - 2}</span>
+                                                                        </div>
+                                                                    }
+                                                                </td>
+                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                                    {
+                                                                        (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                                        <>
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                                                                            {task.task_approve
+                                                                                ? (task.task_status !== StatusTask.NOT_APPROVED
+                                                                                    ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                                : (task.task_status === StatusTask.COMPLETE.value
+                                                                                    ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            }
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
+                                                                        </>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {/* Gantt */}
-                                    <div class="table_section padding_infor_info">
 
-                                        <div class="d-flex align-items-center mt-2">
-                                            <p class="font-weight-bold">{lang["timeline"]}: </p>
-
-                                        </div>
-                                        {
-                                            tasks && tasks.length > 0 ? (
-                                                <Gantt data={tasks} />
-                                            ) : null
-                                        }
 
                                     </div>
-
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
                                         <div class="modal-dialog modal-dialog-center">
@@ -1181,14 +1173,44 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="white_shd full margin_bottom_30">
+                            <div class="full graph_head d-flex">
+                                <div class="heading1 margin_0 ">
+                                    <h5>
+                                        {lang["timeline"]}
+                                    </h5>
+                                </div>
+                                {/* <div class="ml-auto">
+                                    <i class="fa fa-newspaper-o icon-ui"></i>
+                                </div> */}
+                            </div>
+                            <div class="table_section padding_infor_info">
+
+                                <div class="row column1">
+
+
+                                    {/* Gantt */}
+                                    <div class="table_section padding_infor_info">
+                                        {/* <div class="d-flex align-items-center mt-2">
+                                            <p class="font-weight-bold">{lang["timeline"]}: </p>
+                                        </div> */}
+                                        {
+                                            filteredTasks && filteredTasks.length > 0 ? (
+                                                <Gantt data={filteredTasks} />
+                                            ) : null
+                                        }
+                                    </div>
 
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </div >
         </div >
     )

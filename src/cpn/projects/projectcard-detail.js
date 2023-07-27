@@ -1106,163 +1106,165 @@ export default () => {
                 <div class="row">
                     {/* Detail */}
                     <div class="col-md-6">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head d-flex justify-content-between align-items-center">
-                                <div class="heading1 margin_0">
-                                    <h5>{lang["project.info"]}</h5>
-                                </div>
-                                <div>
-                                    <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
-                                        <i class="fa fa-edit size pointer" ></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="table_section padding_infor_info">
-                                <p class="font-weight-bold">{lang["projectname"]}:</p>
-                                <p class="mb-2">{projectdetail.project_name}</p>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
-                                        <p class="mb-2">{projectdetail.project_code}</p>
+                        <div class="full" style={{ height: "100%", paddingBottom: 15 }}>
+                            <div className="white_shd full"  style={{ height: "100%" }}>
+                                <div class="full graph_head d-flex justify-content-between align-items-center">
+                                    <div class="heading1 margin_0">
+                                        <h5>{lang["project.info"]}</h5>
                                     </div>
                                     <div>
-                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
-                                        {versions.map(version => (
-                                            <p class="mb-2">{version.version_name}</p>
-                                        ))}
-                                    </div>
-                                    <div>
-                                        <p class="font-weight-bold">{lang["projecttype"]}:</p>
-                                        <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
+                                        <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
+                                            <i class="fa fa-edit size pointer" ></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div>
-                                    <p className="font-weight-bold">{lang["description"]}: </p>
-                                    <div className="description-container">
-                                        <div style={{
-                                            width: "100%",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap"
-                                        }}>
-                                            {projectdetail.project_description}
+                                <div class="table_section padding_infor_info">
+                                    <p class="font-weight-bold">{lang["projectname"]}:</p>
+                                    <p class="mb-2">{projectdetail.project_name}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                            <p class="mb-2">{projectdetail.project_code}</p>
                                         </div>
-                                        {showViewMore && (
-                                            <div className="view-more-link">
-                                                <a href="#" data-toggle="modal" data-target="#viewDescription">
-                                                    <b>{lang["read more"]}</b>
-                                                </a>
-                                            </div>
-                                        )}
+                                        <div>
+                                            <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                            {versions.map(version => (
+                                                <p class="mb-2">{version.version_name}</p>
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <p class="font-weight-bold">{lang["projecttype"]}:</p>
+                                            <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
-                                <div class="profile_contacts">
-                                    <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
-                                    {projectdetail.manager?.fullname}
-                                </div>
-                                <div class="d-flex align-items-center mb-1">
-                                    <p class="font-weight-bold">{lang["projectmember"]}: </p>
-                                    {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
-                                        <i class="fa fa-edit"></i>
-                                    </button> */}
-                                </div>
-                                <div class="table-responsive">
-                                    {
-                                        sortedMembers && sortedMembers.length > 0 ? (
-                                            <>
-                                                <table class="table table-striped ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                            <th class="font-weight-bold" scope="col">{lang["members"]}</th>
-                                                            <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
-                                                            <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
-                                                            {
-                                                                ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
-                                                                <th class="font-weight-bold">{lang["log.action"]}</th>
-                                                            }
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {currentMembers.map((member, index) => (
-                                                            <tr key={member.username}>
-                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
-                                                                <td>{member.fullname}</td>
-                                                                {
-                                                                    (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
-                                                                        <td className="align-center" style={{ minWidth: "130px" }}>
-                                                                            <select
-                                                                                className="form-control"
-                                                                                value={member.permission}
-                                                                                onChange={handleSelectChangeMember}
-                                                                                data-username={member.username}
-                                                                            >
-                                                                                {RolesMember.map((role, index) => {
-                                                                                    return (
-                                                                                        <option key={index} value={role.value} data-taskid={member.permission}>
-                                                                                            {lang[role.label]}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </select>
-                                                                        </td>
-                                                                    ) : (
-                                                                        <td style={{ minWidth: "80px" }}>
-                                                                            {
-                                                                                member.permission === "supervisor" ? lang["supervisor"] :
-                                                                                    member.permission === "deployer" ? lang["deployers"] :
-                                                                                        "Khác"
-                                                                            }
-                                                                        </td>
-                                                                    )
-                                                                }
+                                    <div>
+                                        <p className="font-weight-bold">{lang["description"]}: </p>
+                                        <div className="description-container">
+                                            <div style={{
+                                                width: "100%",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap"
+                                            }}>
+                                                {projectdetail.project_description}
+                                            </div>
+                                            {showViewMore && (
+                                                <div className="view-more-link">
+                                                    <a href="#" data-toggle="modal" data-target="#viewDescription">
+                                                        <b>{lang["read more"]}</b>
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
+                                    <div class="profile_contacts">
+                                        <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
+                                        {projectdetail.manager?.fullname}
+                                    </div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <p class="font-weight-bold">{lang["projectmember"]}: </p>
+                                        {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">
+                                            <i class="fa fa-edit"></i>
+                                        </button> */}
+                                    </div>
+                                    <div class="table-responsive">
+                                        {
+                                            sortedMembers && sortedMembers.length > 0 ? (
+                                                <>
+                                                    <table class="table table-striped ">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                                <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+                                                                <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
                                                                 {
                                                                     ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
-                                                                    <td class="align-center">
-                                                                        <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
-                                                                    </td>
+                                                                    <th class="font-weight-bold">{lang["log.action"]}</th>
                                                                 }
                                                             </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            {currentMembers.map((member, index) => (
+                                                                <tr key={member.username}>
+                                                                    <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                    <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                    <td>{member.fullname}</td>
+                                                                    {
+                                                                        (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
+                                                                            <td className="align-center" style={{ minWidth: "130px" }}>
+                                                                                <select
+                                                                                    className="form-control"
+                                                                                    value={member.permission}
+                                                                                    onChange={handleSelectChangeMember}
+                                                                                    data-username={member.username}
+                                                                                >
+                                                                                    {RolesMember.map((role, index) => {
+                                                                                        return (
+                                                                                            <option key={index} value={role.value} data-taskid={member.permission}>
+                                                                                                {lang[role.label]}
+                                                                                            </option>
+                                                                                        );
+                                                                                    })}
+                                                                                </select>
+                                                                            </td>
+                                                                        ) : (
+                                                                            <td style={{ minWidth: "80px" }}>
+                                                                                {
+                                                                                    member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                        member.permission === "deployer" ? lang["deployers"] :
+                                                                                            "Khác"
+                                                                                }
+                                                                            </td>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                        <td class="align-center">
+                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
+                                                                        </td>
+                                                                    }
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
 
 
-                                            </>
-                                        ) : (
-                                            <div class="list_cont ">
-                                                <p>{lang["empty.member"]}</p>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <p>{lang["show"]} {indexOfFirstMember + 1} - {Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
-                                    <nav aria-label="Page navigation example">
-                                        <ul className="pagination mb-0">
-                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                                    &laquo;
-                                                </button>
-                                            </li>
-                                            {Array(totalPages).fill().map((_, index) => (
-                                                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                        {index + 1}
+                                                </>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>{lang["empty.member"]}</p>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <p>{lang["show"]} {indexOfFirstMember + 1} - {Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
+                                        <nav aria-label="Page navigation example">
+                                            <ul className="pagination mb-0">
+                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                        &laquo;
                                                     </button>
                                                 </li>
-                                            ))}
-                                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                                    &raquo;
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                                {Array(totalPages).fill().map((_, index) => (
+                                                    <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                            {index + 1}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                        &raquo;
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
                     </div>

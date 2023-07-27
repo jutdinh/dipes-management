@@ -403,7 +403,7 @@ export default {
     "error.taskname": "Vui lòng nhập tên yêu cầu công việc",
     "error.start": "Vui lòng chọn ngày bắt đầu",
     "error.end": "Vui lòng chọn ngày kết thúc",
-    "error.checkday": "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu",
+    "error.checkday": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
     "error.task_description": "Vui lòng nhập mô tả cho yêu cầu công việc",
     "error.members": "Vui lòng chọn người thực hiện yêu cầu",
     "error.task_priority":" Vui lòng chọn mức độ ưu tiên",

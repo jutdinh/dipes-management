@@ -166,13 +166,13 @@ export default () => {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.table_id = ""; 
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.ref_field_id = "";
             }
         }
 
@@ -184,24 +184,20 @@ export default () => {
     }
     const validateUpdate = () => {
         let temp = {};
-
         temp.field_name = fieldTempUpdate.field_name ? "" : lang["error.input"];
-
-
         if (isOnforenkey) {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.table_id = ""; 
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.ref_field_id = ""; 
             }
         }
-
         setErrors({
             ...temp
         });
@@ -288,13 +284,13 @@ export default () => {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.table_id = ""; 
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.ref_field_id = ""; 
             }
         }
 
@@ -356,13 +352,13 @@ export default () => {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.table_id = "";
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; // Xóa thông báo lỗi nếu có dữ liệu
+                temp.ref_field_id = ""; 
             }
         }
 
@@ -497,7 +493,7 @@ export default () => {
         }
     }
     const [fieldNew, setFieldNew] = useState([]);
-    console.log(fieldNew)
+    // console.log(fieldNew)
     const [fieldNewTemp, setFieldNewTemp] = useState([]);
     const getIdFieldTempNew = (fieldId) => {
   
@@ -899,7 +895,7 @@ export default () => {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
-                    functions.showApiResponseMessage(status);
+                    // functions.showApiResponseMessage(status, false);
                 }
             });
     };
@@ -970,7 +966,7 @@ export default () => {
 
     // console.log(getTableFields.fields)
     // console.log(getTableFields.primary_key)
-    console.log(tempFields)
+    // console.log(tempFields)
     // console.log(fieldNew)
     // console.log(getTableFields)
     return (
