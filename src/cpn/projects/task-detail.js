@@ -1,14 +1,13 @@
-
 import { useParams } from "react-router-dom";
 import Header from "../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask } from '../enum/status';
+import { StatusEnum, StatusTask, StatusAprove } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import FloatingTextBox from '../common/floatingTextBox';
+import CheckList from '../common/checkList';
 import Gantt from "./gantt"
-
 
 
 export default () => {
@@ -33,26 +32,27 @@ export default () => {
         StatusEnum.DEPLOY,
         StatusEnum.COMPLETE,
         StatusEnum.PAUSE
-
     ]
+
     const statusTaskView = [
         StatusTask.INITIALIZATION,
         StatusTask.IMPLEMENT,
         StatusTask.COMPLETE,
         StatusTask.PAUSE
     ]
+
     const statusTask = [
-        { id: 0, label: lang["await"], value: 0, color: "#1ed085" },
-        { id: 1, label: lang["approved"], value: 1, color: "#181dd4" },
-
-
+        StatusAprove.APROVE,
+        StatusAprove.NOTAPROVE
     ]
+
     const statusPriority = [
         { id: 0, label: "high", value: 1, color: "#1ed085" },
         { id: 1, label: "medium", value: 2, color: "#8884d8" },
         { id: 2, label: "low", value: 3, color: "#ffc658" },
 
     ]
+
     function onlyContainsNumbers(inputString) {
         const value = parseInt(inputString, 10);
         return !isNaN(value) && value >= 0 && value <= 100;
@@ -60,7 +60,7 @@ export default () => {
 
     const getStatusLabel = (statusId) => {
         const status = statusTask.find(st => st.id === statusId);
-        return status ? status.label : 'N/A';
+        return status ? lang[status.label] : 'N/A';
     };
 
     const getStatusColor = (statusId) => {
@@ -70,7 +70,6 @@ export default () => {
 
     const [tasks, setTasks] = useState([]);
     const [fakeTasks, setFakeTasks] = useState([]);
-
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
     const [process, setProcess] = useState({});
@@ -84,7 +83,6 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
                         setProjectDetail(data);
@@ -98,7 +96,6 @@ export default () => {
     }, [])
 
     useEffect(() => {
-
         fetch(`${proxy}/projects/project/${project_id}/tasks`, {
             headers: {
                 Authorization: _token
@@ -121,7 +118,6 @@ export default () => {
                         })
                         setTasks(data);
                         setFakeTasks(data)
-
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -133,14 +129,6 @@ export default () => {
         ["ad", "uad"].indexOf(auth.role) !== -1
     );
     console.log(filteredTasks)
-
-
-
-
-
-
-
-
     const handleCloseModal = () => {
         setShowModal(false);
         setErrorMessagesadd({})
@@ -173,10 +161,8 @@ export default () => {
         }
     }
 
-
     // console.log(selectedMemberTask)
     const submitAddTask = (e) => {
-
         e.preventDefault();
         task.members = selectedMemberTask.map(user => user.username);
 
@@ -196,14 +182,12 @@ export default () => {
         if (new Date(task.start) > new Date(task.end)) {
             errors.checkday = lang["error.checkday"];
         }
-
         if (!task.task_description) {
             errors.task_description = lang["error.task_description"];
         }
         if (!task.members || task.members.length === 0) {
             errors.members = lang["error.members"];
         }
-
         if (Object.keys(errors).length > 0) {
             setErrorMessagesadd(errors);
             return;
@@ -219,7 +203,6 @@ export default () => {
         })
             .then(res => res && res.json())
             .then((resp) => {
-
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
@@ -236,7 +219,6 @@ export default () => {
 
         setSelectedUsers(pm);
         setSelectedImple(pd);
-
     }, [projectmember]);
 
     const [updateTaskinfo, setUpdateTask] = useState({});
@@ -244,18 +226,19 @@ export default () => {
         setUpdateTask(taskid);
     }
     console.log(updateTaskinfo)
+
     useEffect(() => {
         if (updateTaskinfo && updateTaskinfo.members) {
             setSelectedMemberTask(updateTaskinfo.members);
         }
     }, [updateTaskinfo]);
-    const updateTask = (reload = true) => {
 
+
+    const updateTask = (reload = true) => {
         const errors = {};
         if (!updateTaskinfo.task_name) {
             errors.task_name = lang["error.taskname"];
         }
-
         if (!updateTaskinfo.start) {
             errors.start = lang["error.start"];
         }
@@ -265,19 +248,16 @@ export default () => {
         if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.end)) {
             errors.checkday = lang["error.checkday"];
         }
-
         if (!updateTaskinfo.task_description) {
             errors.task_description = lang["error.task_description"];
         }
         // if (!task.members || task.members.length === 0) {
         //     errors.members = lang["error.members"];
         // }
-
         if (Object.keys(errors).length > 0) {
             setErrorMessagesadd(errors);
             return;
         }
-
         const requestBody = {
             project_id: project.project_id,
             task_id: updateTaskinfo.task_id,
@@ -307,21 +287,20 @@ export default () => {
                     functions.showApiResponseMessage(status, reload);
                 }
             })
-
         setErrorMessagesadd({})
     };
+
+
     // Sort 
     let projectManagerMembers = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'supervisor') : [];
+
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
 
     let sortedMembers = [...projectManagerMembers, ...projectImpli];
+
     const [isLoading, setIsLoading] = useState(false);
-
     const detailTask = async (taskid) => {
-
         setIsLoading(true);
-
-
         const taskDetail = tasks.find(task => task.task_id === taskid.task_id);
         if (taskDetail) {
             // Nếu tìm thấy task, cập nhật state taskDetail
@@ -331,10 +310,11 @@ export default () => {
             // Nếu không tìm thấy task, bạn có thể hiển thị thông báo lỗi hoặc xử lý theo cách khác
             // console.error(`Cannot find task with id ${taskid}`);
         }
-
     };
     // console.log(taskDetail)
+
     const [deleteTask, setDelelteTask] = useState(false);
+
 
     const handleConfirmTask = (taskid) => {
         const newTaskApproveStatus = !taskid.task_approve;
@@ -361,17 +341,15 @@ export default () => {
                     functions.showApiResponseMessage(status);
                 }
             });
-
-
     }
+
+
+
     const handleDeleteTask = (taskid) => {
         const requestBody = {
-
             project_id: project.project_id,
             task_id: taskid.task_id
-
         };
-        // console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.task"],
@@ -403,7 +381,6 @@ export default () => {
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
-        // console.log(taskId);
         updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
     }
 
@@ -433,6 +410,7 @@ export default () => {
                 }
             });
     }
+
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 4;
@@ -464,6 +442,7 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
+
     const [tableFilter, setTableFilter] = useState({ task_name: false });
     const handleTaskNameFilterChange = (e) => {
         setTaskNameFilter({ name: e.target.value });
@@ -475,20 +454,34 @@ export default () => {
     }
     const [statusFilter, setStatusFilter] = useState([]);
 
-    const statusFilterOptions = statusTaskView.map(status => ({ label: lang[status.label], value: status.value }));
+    const statusFilterOptions = statusTaskView.map(status => ({ label: lang[status.label], value: status.value, id: status.id }));
+
     const addOrRemoveStatus = (status) => {
         const newFilter = [...statusFilter];
-        const index = newFilter.findIndex(item => item.value === status.value);
-      
+        const index = newFilter.findIndex(item => item.id === status.id);
+
         if (index !== -1) {
-          newFilter.splice(index, 1);
+            newFilter.splice(index, 1);
         } else {
-          newFilter.push(status);
+            newFilter.push(status);
         }
-      
+
         setStatusFilter(newFilter);
-      };
-      
+    };
+
+    const [confirmFilter, setConfrimFilter] = useState([]);
+    const confirmFilterOptions = statusTask.map(status => ({ label: status.label, value: status.value, id: status.id }));
+    const addOrRemoveConfirm = (status) => {
+        const newFilter = [...confirmFilter];
+        const index = newFilter.findIndex(item => item.id === status.id);
+        if (index !== -1) {
+            newFilter.splice(index, 1);
+        } else {
+            newFilter.push(status);
+        }
+        setConfrimFilter(newFilter);
+    };
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -497,7 +490,7 @@ export default () => {
                         <div class="page_title">
                             <h4>
                                 <label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
-                                    {lang["projectprocess"]}
+                                    {lang["projectprocess"]}: {project.project_name}
                                 </label>
                             </h4>
                         </div>
@@ -510,15 +503,11 @@ export default () => {
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>
-                                        {lang["project"]}: {project.project_name}
+                                        {lang["listtask"]}
                                     </h5>
                                 </div>
-                                {/* <div class="ml-auto">
-                                    <i class="fa fa-newspaper-o icon-ui"></i>
-                                </div> */}
                             </div>
-                            <div class="table_section padding_infor_info">
-
+                            <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
@@ -538,7 +527,6 @@ export default () => {
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center mt-2">
-                                            <p class="font-weight-bold mb-4">{lang["tasklist"]}: </p>
                                             {
                                                 (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                 <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
@@ -546,18 +534,15 @@ export default () => {
                                                 </button>
                                             }
                                         </div>
-
                                         <div class="table-outer">
-                                            <table class="table-head mb-2">
+                                            <table class="table-head">
                                                 <thead>
-                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                    <th class="font-weight-bold" scope="col">
+                                                    <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">
+                                                        {lang["log.no"]}
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col">
                                                         {lang["task"]}
-                                                        <div className="d-flex align-items-center"
-                                                            onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }}
-                                                        >
-                                                            <i className="fa fa-filter icon-view block ml-auto" />
-                                                        </div>
+                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
                                                         {tableFilter.task_name &&
                                                             <div className="position-relative">
                                                                 <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
@@ -565,36 +550,80 @@ export default () => {
                                                                         title={lang["task"]}
                                                                         initialData={taskNameFilter.name}
                                                                         setDataFunction={handleTaskNameFilterChange}
-                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_name: false }); resetTaskNameFilter(); }}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_name: false }); }}
                                                                     />
-
-
                                                                 </div>
                                                             </div>
                                                         }
                                                     </th>
-                                                    <th class="font-weight-bold align-center" scope="col">{lang["taskstatus"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col">% {lang["complete"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col" >{lang["confirm"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.daystart"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.dayend"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col">{lang["log.create_user"]}</th>
-                                                    <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+                                                    <th class="font-weight-bold align-center position-relative" scope="col">
+                                                        {lang["taskstatus"]}
+                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_status: !tableFilter.task_status }) }} />
+                                                        {tableFilter.task_status &&
+                                                            <div className="position-relative">
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                    <CheckList
+                                                                        title={lang["taskstatus"]}
+                                                                        initialData={statusFilter}
+                                                                        setDataFunction={addOrRemoveStatus}
+                                                                        data={statusFilterOptions}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_status: false }); }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col">%
+                                                        {lang["complete"]}
+                                                    </th>
+                                                    <th class="font-weight-bold align-center position-relative" scope="col">
+                                                        {lang["confirm"]}
+                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} />
+                                                        {tableFilter.task_approve &&
+                                                            <div className="position-relative">
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                    <CheckList
+                                                                        title={lang["confirm"]}
+                                                                        initialData={confirmFilter}
+                                                                        setDataFunction={addOrRemoveConfirm}
+                                                                        data={confirmFilterOptions}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_approve: false }); }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        {lang["log.daystart"]}
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        {lang["log.dayend"]}
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col">
+                                                        {lang["log.create_user"]}
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col">
+                                                        {lang["log.action"]}
+                                                    </th>
                                                     <th class="scrollbar-measure"></th>
                                                 </thead>
                                             </table>
                                             <div class="table-body">
                                                 <table class="table table-striped">
                                                     <tbody>
-
                                                         {currentMembersTask.filter((task) => {
                                                             let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
                                                             let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
-                                                            return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText));
+                                                            let filterStatusValues = statusFilter.map(item => item.value);
+                                                            let taskStatus = task && task.task_status ? task.task_status : '';
+                                                            let filterConfirmValues = confirmFilter.map(item => item.value);
+                                                            let taskConfirm = task && task.task_approve ? 1 : 0; // Change here
+                                                            return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
+                                                                (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
+                                                                (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
                                                         }).map((task, index) => (
                                                             <tr key={task.id}>
-                                                                <td scope="row">{indexOfFirstMemberTask + index + 1}</td>
-
+                                                                <td style={{ width: "45px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
                                                                 <td style={{ maxWidth: "100px" }}>
                                                                     <div style={{
                                                                         width: "100%",
@@ -605,7 +634,6 @@ export default () => {
                                                                         {task.task_name}
                                                                     </div>
                                                                 </td>
-
                                                                 <td class="align-center" >
                                                                     <select
                                                                         className="form-control"
@@ -710,8 +738,6 @@ export default () => {
                                                 </table>
                                             </div>
                                         </div>
-
-
                                     </div>
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
@@ -1154,58 +1180,63 @@ export default () => {
                                                                     {
                                                                         taskDetail.history && taskDetail.history.length > 0 ? (
                                                                             <>
-                                                                                <table class="table table-striped table-rounded table-scrollable ">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th class="font-weight-bold" scope="col" style={{ maxWidth: "80px" }} >{lang["log.no"]}</th>
-                                                                                            <th class="font-weight-bold" scope="col">{lang["modify_what"]}</th>
-                                                                                            <th class="font-weight-bold" scope="col">{lang["oldvalue"]}</th>
-                                                                                            <th class="font-weight-bold" scope="col">{lang["newvalue"]}</th>
-                                                                                            <th class="font-weight-bold" scope="col">{lang["time"]}</th>
-                                                                                            <th class="font-weight-bold" scope="col">{lang["user change"]}</th>
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        {taskDetail.history.reverse().map((task, index) => (
-                                                                                            <tr key={task.id}>
-                                                                                                <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
-                                                                                                <td scope="row">
-                                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                                        task.modified_what === "infor" ? lang["log.information"] :
-                                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
-                                                                                                                task.modified_what}
-                                                                                                </td>
-                                                                                                <td scope="row">
-                                                                                                    {
-                                                                                                        task.old_value === "true" ? lang["approved"] :
-                                                                                                            task.old_value === "false" ? lang["await"] :
-                                                                                                                !isNaN(task.old_value) ?
-                                                                                                                    lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                    :
-                                                                                                                    `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+                                                                                <div class="table-outer">
+                                                                                    <table class="table-head">
+                                                                                        <thead>
+                                                                                            <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
+                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
+                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
+                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
+                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
+                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
+                                                                                            <th class="scrollbar-measure"></th>
+                                                                                        </thead>
+                                                                                    </table>
+                                                                                    <div class="table-body">
+                                                                                        <table class="table table-striped">
+                                                                                            <tbody>
+                                                                                                {taskDetail.history.reverse().map((task, index) => (
+                                                                                                    <tr key={task.id}>
+                                                                                                        <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
+                                                                                                        <td scope="row">
+                                                                                                            {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                                                task.modified_what === "infor" ? lang["log.information"] :
+                                                                                                                    task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                                        task.modified_what}
+                                                                                                        </td>
+                                                                                                        <td scope="row">
+                                                                                                            {
+                                                                                                                task.old_value === "true" ? lang["approved"] :
+                                                                                                                    task.old_value === "false" ? lang["await"] :
+                                                                                                                        !isNaN(task.old_value) ?
+                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                            :
+                                                                                                                            `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
 
-                                                                                                    }
-                                                                                                </td>
-                                                                                                <td scope="row">
-                                                                                                    {
-                                                                                                        task.new_value === "true" ? lang["approved"] :
-                                                                                                            task.new_value === "false" ? lang["await"] :
-                                                                                                                !isNaN(task.new_value) ?
-                                                                                                                    lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                    :
-                                                                                                                    `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
-                                                                                                    }
-                                                                                                </td>
+                                                                                                            }
+                                                                                                        </td>
+                                                                                                        <td scope="row">
+                                                                                                            {
+                                                                                                                task.new_value === "true" ? lang["approved"] :
+                                                                                                                    task.new_value === "false" ? lang["await"] :
+                                                                                                                        !isNaN(task.new_value) ?
+                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                            :
+                                                                                                                            `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                                            }
+                                                                                                        </td>
 
-                                                                                                <td scope="row">{task.modified_at}</td>
-                                                                                                <td scope="row">
-                                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
-                                                                                                    {task.modified_by?.fullname}
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        ))}
-                                                                                    </tbody>
-                                                                                </table>
+                                                                                                        <td scope="row">{task.modified_at}</td>
+                                                                                                        <td scope="row">
+                                                                                                            <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                                            {task.modified_by?.fullname}
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                ))}
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                </div>
                                                                             </>
                                                                         ) : (
                                                                             <div class="list_cont ">
@@ -1236,27 +1267,17 @@ export default () => {
                                         {lang["timeline"]}
                                     </h5>
                                 </div>
-                                {/* <div class="ml-auto">
-                                    <i class="fa fa-newspaper-o icon-ui"></i>
-                                </div> */}
                             </div>
                             <div class="table_section padding_infor_info">
-
                                 <div class="row column1">
-
-
                                     {/* Gantt */}
                                     <div class="table_section padding_infor_info">
-                                        {/* <div class="d-flex align-items-center mt-2">
-                                            <p class="font-weight-bold">{lang["timeline"]}: </p>
-                                        </div> */}
                                         {
                                             filteredTasks && filteredTasks.length > 0 ? (
-                                                <Gantt data={filteredTasks} />
+                                                <Gantt data={filteredTasks} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
                                     </div>
-
                                 </div>
                             </div>
                         </div>

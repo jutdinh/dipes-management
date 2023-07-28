@@ -424,11 +424,7 @@ export default {
     "october":'Tháng 10',
     "november":'Tháng 11',
     "december":'Tháng 12',
-
-    
-   
-
-
+    "listtask": "Danh sách công việc"
 
 
 

@@ -4,13 +4,13 @@ import moment from 'moment';
 import "react-timelines/lib/css/style.css";
 import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
 import { useDispatch, useSelector } from 'react-redux';
-import tasks from "../tasks/tasks";
+
 
 const clickElement = element => alert(`Clicked element\n${JSON.stringify(element, null, 2)}`);
 const MIN_ZOOM = 30;
 const MAX_ZOOM = 37;
 
-const TimelineChart = ({ data }) => {
+const TimelineChart = ({ data, project }) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const [open, setOpen] = useState(false);
     const [zoom, setZoom] = useState(MAX_ZOOM);
@@ -20,10 +20,12 @@ const TimelineChart = ({ data }) => {
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
     const [selectedMonth, setSelectedMonth] = useState(moment().month());
-    // useEffect(() => {
-    //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
-    //     setEnd(moment({ year: selectedYear, month: selectedMonth }).endOf('month').toDate());
-    // }, [selectedYear, selectedMonth]);
+
+    // ///focus đến tháng hiện tại
+        useEffect(() => {
+            setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
+            setEnd(moment({ year: selectedYear, month: selectedMonth }).endOf('month').toDate());
+        }, [selectedYear, selectedMonth]);
     const months = [
         lang["january"],
         lang["february"],
@@ -38,6 +40,13 @@ const TimelineChart = ({ data }) => {
         lang["november"],
         lang["december"],
     ];
+    const statusProject = [
+        StatusEnum.INITIALIZATION,
+        StatusEnum.IMPLEMENT,
+        StatusEnum.DEPLOY,
+        StatusEnum.COMPLETE,
+        StatusEnum.PAUSE
+    ]
 
     useEffect(() => {
         const buildTimebar = () => {
@@ -118,20 +127,14 @@ const TimelineChart = ({ data }) => {
                         {task.members.slice(0, 2).map(mem =>
                             <img style={{ width: "26px" }} class="img-responsive circle-image mt-1 ml-1" src={proxy + mem.avatar} alt="#" />
                         )}
-
-
-
-
-
-                       
                         {
                             task.members.length > 2 &&
-                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{width: "25px", backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
-                                <span>+{task.members.length - 1}</span>
+                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{ width: "25px", backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
+                                <span>+{task.members.length - 2}</span>
                             </div>
                         }
                     </div>
-                    <span> {lang["task"]} {index + 2}</span>
+                    <span> {lang["task"]} {index + 1}</span>
 
                 </div>),
             // title: `Task ${index + 1}`,
@@ -150,7 +153,6 @@ const TimelineChart = ({ data }) => {
                 start: moment(task.start).toDate(),
                 // end: moment(task.end).toDate(),
                 end: moment(task.end).add(1, 'days').toDate(),
-
                 style: {
                     backgroundColor: `${statusTaskView[task.task_status - 1]}`,
                     borderRadius: `4px`,
@@ -172,7 +174,6 @@ const TimelineChart = ({ data }) => {
         setEnd(moment().add(4, 'year').endOf('year').toDate());
         setZoom(newZoom);
     }
-
     const now = moment().toDate();
     // useEffect(() => {
     //     // Điều chỉnh vị trí cuộn sau khi chọn một năm và tháng.
@@ -184,15 +185,25 @@ const TimelineChart = ({ data }) => {
     //         container.scrollLeft = scrollPosition;
     //     }
     // }, [selectedYear, selectedMonth]);
-
+    useEffect(() => {
+        const container = document.getElementById("timeline-container");
+        if (container) {
+            const startYear = moment(start).year();
+            const endYear = moment(end).year();
+            const totalMonthsInTimeline = (endYear - startYear + 1) * 12;
+            const selectedYearMonth = (selectedYear - startYear) * 12 + selectedMonth;
+            const scrollPosition = (selectedYearMonth / totalMonthsInTimeline) * container.scrollWidth;
+            container.scrollLeft = scrollPosition;
+        }
+    }, [selectedYear, selectedMonth, start, end]);
+    
     return (
         <div className="app app1">
-
             <div class="row">
                 <div class="col-md-6">
                     <div class="row mt-2">
                         <div class="col-sm-6 col-md-4">
-                            <select class="form-control mt-1"
+                            <select class="form-control mt-1 ml-1"
                                 value={selectedYear}
                                 onChange={(e) => {
                                     const newYear = parseInt(e.target.value);
@@ -226,37 +237,39 @@ const TimelineChart = ({ data }) => {
                                 ))}
                             </select>
                         </div>
+
                     </div>
                 </div>
                 <div class="col-md-6">
                 </div>
             </div>
-
-            <Timeline
-                scale={{
-                    start,
-                    end,
-                    zoom,
-                    zoomMin: MIN_ZOOM,
-                    zoomMax: MAX_ZOOM,
-                }}
-                isOpen={open}
-                toggleOpen={handleToggleOpen}
-                //   zoomIn={handleZoomIn}
-                //   zoomOut={handleZoomOut}
-                // clickElement={clickElement}
-                timebar={timebar}
-                tracks={tracks}
-                now={now}
-                enableSticky
-                scrollToNow
-                renderElementTooltip={({ element }) => (
-                    <div>
-                        <div>{element.data.customStart}</div>
-                        <div>{element.data.customEnd}</div>
-                    </div>
-                )}
-            />
+            <div id="timeline-container">
+                <Timeline
+                    scale={{
+                        start,
+                        end,
+                        zoom,
+                        zoomMin: MIN_ZOOM,
+                        zoomMax: MAX_ZOOM,
+                    }}
+                    isOpen={open}
+                    toggleOpen={handleToggleOpen}
+                    //   zoomIn={handleZoomIn}
+                    //   zoomOut={handleZoomOut}
+                    // clickElement={clickElement}
+                    timebar={timebar}
+                    tracks={tracks}
+                    now={now}
+                    enableSticky
+                    scrollToNow
+                    renderElementTooltip={({ element }) => (
+                        <div>
+                            <div>{element.data.customStart}</div>
+                            <div>{element.data.customEnd}</div>
+                        </div>
+                    )}
+                />
+            </div>
         </div>
     );
 }

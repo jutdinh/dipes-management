@@ -771,7 +771,7 @@ export default () => {
         setFomular("");
         setErrorCaculates({})
     };
-   
+   console.log(selectedFieldsModal2)
 
     return (
         <div class="midde_cont">
@@ -1978,12 +1978,12 @@ export default () => {
                                             <option value="">{lang["choose"]}</option>
                                             {Object.values(selectedFieldsModal2).flat().map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.fomular_alias}
+                                                  {field.display_name}--({field.fomular_alias})
                                                 </option>
                                             ))}
                                             {modalTemp.calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                    {calculate.fomular_alias}
+                                                    {calculate.display_name}--{calculate.fomular_alias}
                                                 </option>
                                             ))}
                                         </select>

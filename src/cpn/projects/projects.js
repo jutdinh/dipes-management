@@ -359,7 +359,7 @@ export default () => {
                 break;
         }
     }, [projects])
-console.log(projects)
+    console.log(projects)
     return (
         <div className="container-fluid">
             <div class="midde_cont">

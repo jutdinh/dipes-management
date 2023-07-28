@@ -190,26 +190,31 @@
     display: block;
     height: 270px;
     overflow-y: auto;
-    padding-right: 20px;  /* Giá trị này có thể cần điều chỉnh */
+    
     box-sizing: content-box;
   }
   
   
   .table-outer {
     position: relative;
-    padding-bottom: 20px; /* Depends on your scrollbar width */
+   
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
 .table-head {
     position: sticky;
     top: 0;
     z-index: 1;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
     
 }
 
 .table-body {
-    max-height: 270px;
+    min-height: 292px;
+    height: 292px;
     overflow-y: auto;
+    
 }
 
 .table-head,
@@ -217,6 +222,7 @@
     width: 100%;
     display: table;
     table-layout: fixed;
+    margin: 0;
 }
 
 .scrollbar-measure {
@@ -391,6 +397,20 @@
     height: 61px;
     border: 1px solid #dee2e6;
 }
+.app1 .rt-layout{
+    position: relative;
+}
+
+.app1 .rt-layout::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: calc(100% - 12px);
+    border-right: 1px solid #dee2e6;;
+}
+
+
 .circle-image-projectdetail::before {
     content: "";
     display: block;
@@ -1181,6 +1201,10 @@ img[class="scaled-hover-target"]{
     margin-bottom: 3px;
     border-radius: 10px;
 }
+.progress.skill-bar .progress-bar {
+  
+    box-shadow: none;
+}
 
 .dash_blog {
     min-height: 280px;
@@ -1210,7 +1234,8 @@ img[class="scaled-hover-target"]{
     padding: 10px 35px;
     float: left;
     width: 100%;
-    min-height: 300px;
+    min-height: 400px;
+    margin-bottom: 1rem;
 
 }
 .padding_infor_info_home {

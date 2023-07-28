@@ -24,9 +24,11 @@ export const StatusStatisticalTask = Object.freeze({
  
 });
 export const StatusAprove = Object.freeze({
-    APROVE: { id: 0, label: "Chờ duyệt", value: 0, color: "#1ed085" },
-    NOTAPROVE: { id: 1, label: "Đã duyệt", value: 1, color: "#181dd4" },
+    APROVE: { id: 0, label: "await", value: 0, color: "#FF8551" },
+    NOTAPROVE: { id: 1, label: "approved", value: 1, color: "#1ed085" },
+
 });
+
 export const Roles = Object.freeze({
    
     SUPERVISOR:  { id: 1, label: "supervisor", value: "supervisor" },

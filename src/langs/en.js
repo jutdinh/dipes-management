@@ -420,7 +420,7 @@ export default {
     "october":'October',
     "november":'November',
     "december":'December',
-
+    "listtask": 'Tasks'
 
 
 }

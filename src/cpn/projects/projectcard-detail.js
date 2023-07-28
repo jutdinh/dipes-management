@@ -1838,10 +1838,10 @@ export default () => {
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
                                 <div class="ml-auto pointer" type="button" data-toggle="modal" data-target="#generateActivationKey" >
-                                    <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }}></i>
+                                    <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }} title={lang["activate.key"]}></i>
                                 </div>
                                 <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
-                                    <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }}></i>
+                                    <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }} title={lang["export"]}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
