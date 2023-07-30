@@ -43,31 +43,27 @@ const TimelineChart = ({ data }) => {
     ];
 
     useEffect(() => {
-        const buildTimebar = () => {
-            // ...your timebar initialization...
-
+          const buildTimebar = () => {
             const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-
-
             const years = Array.from({ length: 4 }, (_, i) => {
                 const year = selectedYear;
                 const quartersCells = quarters.map((q, j) => {
                     return {
-                        id: `${year}-${q}`,
+                        id: `${year}-${q}-${i}-${j}`,
                         title: `${year} ${q}`,
                         start: moment({ year }).quarter(j + 1).startOf('quarter').toDate(),
                         end: moment({ year }).quarter(j + 1).endOf('quarter').toDate(),
                         children: Array.from({ length: 3 }, (_, k) => {
                             const month = j * 3 + k;
                             return {
-                                id: `${year}-${month + 1}`,
+                                id: `${year}-${month + 1}-${i}-${j}`,
                                 title: months[month],
                                 start: moment({ year, month }).startOf('month').toDate(),
                                 end: moment({ year, month }).endOf('month').toDate(),
                                 children: Array.from({ length: moment({ year, month }).daysInMonth() }, (_, d) => {
                                     const day = d + 1;
                                     return {
-                                        id: `${year}-${month + 1}-${day}`,
+                                        id: `${year}-${month + 1}-${day}-${i}-${j}-${k}-${d}`,
                                         title: `${day}`,
                                         start: moment({ year, month, day }).startOf('day').toDate(),
                                         end: moment({ year, month, day }).endOf('day').toDate(),
@@ -77,9 +73,8 @@ const TimelineChart = ({ data }) => {
                         }),
                     };
                 });
-
                 return {
-                    id: `${year}`,
+                    id: `${year}-${i}`,
                     title: `${year}`,
                     start: moment({ year }).startOf('year').toDate(),
                     end: moment({ year }).endOf('year').toDate(),

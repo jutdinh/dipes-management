@@ -22,10 +22,10 @@ const TimelineChart = ({ data, project }) => {
     const [selectedMonth, setSelectedMonth] = useState(moment().month());
 
     // ///focus đến tháng hiện tại
-        useEffect(() => {
-            setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
-            setEnd(moment({ year: selectedYear, month: selectedMonth }).endOf('month').toDate());
-        }, [selectedYear, selectedMonth]);
+    // useEffect(() => {
+    //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
+    //     setEnd(moment({ year: selectedYear, month: selectedMonth }).endOf('month').toDate());
+    // }, [selectedYear, selectedMonth]);
     const months = [
         lang["january"],
         lang["february"],
@@ -49,34 +49,71 @@ const TimelineChart = ({ data, project }) => {
     ]
 
     useEffect(() => {
+        // const buildTimebar = () => {
+        //     const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+        //     const years = Array.from({ length: 4 }, (_, i) => {
+        //         const year = selectedYear;
+        //         const quartersCells = quarters.map((q, j) => {
+        //             return {
+        //                 id: `${year}-${q}-${i}-${j}`,
+        //                 title: `${year} ${q}`,
+        //                 start: moment({ year }).quarter(j + 1).startOf('quarter').toDate(),
+        //                 end: moment({ year }).quarter(j + 1).endOf('quarter').toDate(),
+        //                 children: Array.from({ length: 3 }, (_, k) => {
+        //                     const month = j * 3 + k;
+        //                     return {
+        //                         id: `${year}-${month + 1}-${i}-${j}`,
+        //                         title: months[month],
+        //                         start: moment({ year, month }).startOf('month').toDate(),
+        //                         end: moment({ year, month }).endOf('month').toDate(),
+        //                         children: Array.from({ length: moment({ year, month }).daysInMonth() }, (_, d) => {
+        //                             const day = d + 1;
+        //                             return {
+        //                                 id: `${year}-${month + 1}-${day}-${i}-${j}-${k}-${d}`,
+        //                                 title: `${day}`,
+        //                                 start: moment({ year, month, day }).startOf('day').toDate(),
+        //                                 end: moment({ year, month, day }).endOf('day').toDate(),
+        //                             };
+        //                         })
+        //                     };
+        //                 }),
+        //             };
+        //         });
+        //         return {
+        //             id: `${year}-${i}`,
+        //             title: `${year}`,
+        //             start: moment({ year }).startOf('year').toDate(),
+        //             end: moment({ year }).endOf('year').toDate(),
+        //             cells: quartersCells,
+        //         };
+        //     });
+
+        //     return [
+        //         { id: 'years', title: lang["gantt.year"], cells: years },
+        //         { id: 'quarters', title: lang["gantt.quarters"], cells: years.flatMap(year => year.cells) },
+        //         { id: 'months', title: lang["gantt.months"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children)) },
+        //         { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children.flatMap(month => month.children))) },
+        //     ];
+        // };
+
         const buildTimebar = () => {
-            const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
             const years = Array.from({ length: 4 }, (_, i) => {
                 const year = selectedYear;
-                const quartersCells = quarters.map((q, j) => {
+                const monthsCells = months.map((m, j) => {
                     return {
-                        id: `${year}-${q}-${i}-${j}`,
-                        title: `${year} ${q}`,
-                        start: moment({ year }).quarter(j + 1).startOf('quarter').toDate(),
-                        end: moment({ year }).quarter(j + 1).endOf('quarter').toDate(),
-                        children: Array.from({ length: 3 }, (_, k) => {
-                            const month = j * 3 + k;
+                        id: `${year}-${m}-${i}-${j}`,
+                        title: `${year} ${m}`,
+                        start: moment({ year, month: j }).startOf('month').toDate(),
+                        end: moment({ year, month: j }).endOf('month').toDate(),
+                        children: Array.from({ length: moment({ year, month: j }).daysInMonth() }, (_, d) => {
+                            const day = d + 1;
                             return {
-                                id: `${year}-${month + 1}-${i}-${j}`,
-                                title: months[month],
-                                start: moment({ year, month }).startOf('month').toDate(),
-                                end: moment({ year, month }).endOf('month').toDate(),
-                                children: Array.from({ length: moment({ year, month }).daysInMonth() }, (_, d) => {
-                                    const day = d + 1;
-                                    return {
-                                        id: `${year}-${month + 1}-${day}-${i}-${j}-${k}-${d}`,
-                                        title: `${day}`,
-                                        start: moment({ year, month, day }).startOf('day').toDate(),
-                                        end: moment({ year, month, day }).endOf('day').toDate(),
-                                    };
-                                })
+                                id: `${year}-${m}-${day}-${i}-${j}-${d}`,
+                                title: `${day}`,
+                                start: moment({ year, month: j, day }).startOf('day').toDate(),
+                                end: moment({ year, month: j, day }).endOf('day').toDate(),
                             };
-                        }),
+                        })
                     };
                 });
                 return {
@@ -84,18 +121,16 @@ const TimelineChart = ({ data, project }) => {
                     title: `${year}`,
                     start: moment({ year }).startOf('year').toDate(),
                     end: moment({ year }).endOf('year').toDate(),
-                    cells: quartersCells,
+                    cells: monthsCells,
                 };
             });
-
+        
             return [
-                { id: 'years', title: lang["gantt.year"], cells: years },
-                { id: 'quarters', title: lang["gantt.quarters"], cells: years.flatMap(year => year.cells) },
-                { id: 'months', title: lang["gantt.months"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children)) },
-                { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children.flatMap(month => month.children))) },
+                { id: 'yearMonths', title: lang["gantt.yearmonths"], cells: years.flatMap(year => year.cells) },
+                { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(month => month.children)) },
             ];
         };
-
+        
         const statusTaskView = [
             StatusTask.INITIALIZATION.color,
             StatusTask.IMPLEMENT.color,
@@ -175,28 +210,22 @@ const TimelineChart = ({ data, project }) => {
         setZoom(newZoom);
     }
     const now = moment().toDate();
-    // useEffect(() => {
-    //     // Điều chỉnh vị trí cuộn sau khi chọn một năm và tháng.
-    //     const container = document.getElementById("timeline-container");
-    //     if (container) {
-    //         const currentDay = moment().date();
-    //         const totalDays = moment({ year: selectedYear, month: selectedMonth }).daysInMonth();
-    //         const scrollPosition = (currentDay / totalDays) * container.scrollWidth;
-    //         container.scrollLeft = scrollPosition;
-    //     }
-    // }, [selectedYear, selectedMonth]);
+
     useEffect(() => {
-        const container = document.getElementById("timeline-container");
-        if (container) {
-            const startYear = moment(start).year();
-            const endYear = moment(end).year();
-            const totalMonthsInTimeline = (endYear - startYear + 1) * 12;
-            const selectedYearMonth = (selectedYear - startYear) * 12 + selectedMonth;
-            const scrollPosition = (selectedYearMonth / totalMonthsInTimeline) * container.scrollWidth;
-            container.scrollLeft = scrollPosition;
-        }
+        setTimeout(() => {
+            const container = document.querySelector(".rt-layout__timeline");
+            if (container) {
+                const startYear = moment(start).year();
+                const endYear = moment(end).year();
+                const totalMonthsInTimeline = (endYear - startYear + 1) * 12;
+                const selectedYearMonth = (selectedYear - startYear) * 12 + selectedMonth;
+                const scrollPosition = (selectedYearMonth / totalMonthsInTimeline) * container.scrollWidth;
+                container.scrollLeft = scrollPosition;
+            }
+        }, 20);
     }, [selectedYear, selectedMonth, start, end]);
-    
+
+
     return (
         <div className="app app1">
             <div class="row">
@@ -227,15 +256,21 @@ const TimelineChart = ({ data, project }) => {
                                 onChange={(e) => {
                                     const newMonth = parseInt(e.target.value);
                                     setSelectedMonth(newMonth);
-                                    setStart(moment({ year: selectedYear, month: newMonth }).startOf('month').toDate());
-                                    setEnd(moment({ year: selectedYear, month: newMonth }).endOf('month').toDate());
-                                }}>
+                                    const timeline = document.querySelector(".rt-layout__timeline");
+                                    const monthElements = timeline.getElementsByClassName("month");
+                                    if (newMonth < monthElements.length) {
+                                        const newScrollPosition = monthElements[newMonth].offsetLeft;
+                                        timeline.scrollLeft = newScrollPosition;
+                                    }
+                                }}
+                                >
                                 {months.map((month, i) => (
                                     <option key={i} value={i}>
                                         {month}
                                     </option>
                                 ))}
                             </select>
+
                         </div>
 
                     </div>

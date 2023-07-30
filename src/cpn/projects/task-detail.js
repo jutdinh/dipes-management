@@ -470,7 +470,7 @@ export default () => {
     };
 
     const [confirmFilter, setConfrimFilter] = useState([]);
-    const confirmFilterOptions = statusTask.map(status => ({ label: status.label, value: status.value, id: status.id }));
+    const confirmFilterOptions = statusTask.map(status => ({ label:  lang[status.label], value: status.value, id: status.id }));
     const addOrRemoveConfirm = (status) => {
         const newFilter = [...confirmFilter];
         const index = newFilter.findIndex(item => item.id === status.id);

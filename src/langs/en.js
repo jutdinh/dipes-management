@@ -420,7 +420,8 @@ export default {
     "october":'October',
     "november":'November',
     "december":'December',
-    "listtask": 'Tasks'
+    "listtask": 'Tasks',
+    "gantt.yearmonths":"Year and Month"
 
 
 }

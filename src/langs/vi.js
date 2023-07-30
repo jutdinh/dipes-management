@@ -424,7 +424,8 @@ export default {
     "october":'Tháng 10',
     "november":'Tháng 11',
     "december":'Tháng 12',
-    "listtask": "Danh sách công việc"
+    "listtask": "Danh sách công việc",
+    "gantt.yearmonths":"Năm và tháng"
 
 
 
