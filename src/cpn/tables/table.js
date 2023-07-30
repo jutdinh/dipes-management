@@ -93,6 +93,7 @@ export default () => {
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
+            version_id,
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
         };
@@ -115,6 +116,7 @@ export default () => {
     };
     const handleDeleteTable = (tableid) => {
         const requestBody = {
+            version_id,
             table_id: parseInt(tableid.id)
         };
         Swal.fire({

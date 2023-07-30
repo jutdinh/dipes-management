@@ -534,10 +534,11 @@ export default () => {
     }, [fieldNew]);
     const deleteField = (fieldId) => {
         const requestBody = {
-            table_id: fieldId.table_id,
-            field_ids: [fieldId.id]
+            table_id: table_id,
+            field_ids: [fieldId.id],
+            version_id
         };
-        // console.log(requestBody)
+        console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -654,7 +655,7 @@ export default () => {
     const [getTableFields, setTableFields] = useState({});
 
     useEffect(() => {
-        fetch(`${proxy}/db/tables/table/${table_id}`, {
+        fetch(`${proxy}/db/tables/v/${ version_id }/table/${table_id}`, {
             headers: {
                 Authorization: _token
             }
@@ -703,7 +704,7 @@ export default () => {
         const tableId = event.target.value;
         setSelectedTableId(tableId);
 
-        fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
+        fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
             }
@@ -723,7 +724,7 @@ export default () => {
     // console.log(selectedTableId)
     const selectDefaultTable = (tableId) => {
         setSelectedTableId(tableId);
-        fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
+        fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
             }
@@ -780,6 +781,7 @@ export default () => {
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
+            version_id,
             table_id: getTableFields.id,
             table_name: getTableFields.table_name,
         };
@@ -811,6 +813,7 @@ export default () => {
         })
 
         const requestBody = {
+            version_id,
             table_id: getTableFields.id,
             fields: hashedFields,
         };
@@ -847,6 +850,7 @@ export default () => {
         //     }
         // }
         const KeyRequestBody = {
+            version_id,
             table_id: getTableFields.id,
             primary_key: primaryKey,
             foreign_keys: foreignKeys
@@ -872,6 +876,7 @@ export default () => {
 
     const addField = (tableId) => {
         const fieldRequestBody = {
+            version_id,
             table_id: getTableFields.id,
             fields: [
                 ...tempFields
@@ -915,6 +920,7 @@ export default () => {
         const newForeignKey = [...getTableFields.foreign_keys, ...foreignKeys]
 
         const KeyRequestBody = {
+            version_id,
             table_id: getTableFields.id,
             primary_key: newPrimaryKey,
             foreign_keys: newForeignKey

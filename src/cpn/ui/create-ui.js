@@ -142,7 +142,7 @@ export default () => {
             }));
 
             if (selectedTables) {
-                fetch(`${proxy}/db/tables/table/${selectedTables}`, {
+                fetch(`${proxy}/db/tables/v/${version_id}/table/${selectedTables}`, {
                     headers: {
                         Authorization: _token
                     }
@@ -193,7 +193,7 @@ export default () => {
     // console.log("table", tables)
     useEffect(() => {
         const fetchTable = (tableId) => {
-            return fetch(`${proxy}/db/tables/table/${tableId}`, {
+            return fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}`, {
                 headers: {
                     Authorization: _token
                 }
@@ -213,7 +213,7 @@ export default () => {
     const [tableFields, setTableFields] = useState([]);
     useEffect(() => {
         const fetchFields = async (tableId) => {
-            const res = await fetch(`${proxy}/db/tables/table/${tableId}`, {
+            const res = await fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}`, {
                 headers: {
                     Authorization: _token
                 }
@@ -237,7 +237,7 @@ export default () => {
     const [aliasCalculates, setaliasCalculates] = useState([]);
     const generateUniqueFormularAlias = async (display_name) => {
 
-        const requestBody = { field_name: display_name };
+        const requestBody = { field_name: display_name, version_id };
         const response = await fetch(`${proxy}/apis/make/alias`, {
             method: "POST",
             headers: {

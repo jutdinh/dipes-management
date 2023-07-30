@@ -348,7 +348,7 @@ export default () => {
         const tableId = event.target.value;
         setSelectedTableId(tableId);
         // Fetch fields for the selected table
-        fetch(`${proxy}/db/tables/table/${tableId}/fields`, {
+        fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
             }
@@ -424,6 +424,7 @@ export default () => {
     const addField = (tableId) => {
         if (primaryKey.length !== 0) {
             const fieldRequestBody = {
+                version_id,
                 table_id: tableId,
                 fields: [
                     ...tempFields
@@ -469,6 +470,7 @@ export default () => {
         }
 
         const KeyRequestBody = {
+            version_id,
             table_id: tableId,
             primary_key: primaryKeyid,
             foreign_keys: foreignKeys
@@ -533,6 +535,7 @@ export default () => {
         // Gửi temporaryData lên server để thêm dữ liệu vào cơ sở dữ liệu
         e.preventDefault();
         const requestBody = {
+            version_id,
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
 
@@ -563,6 +566,7 @@ export default () => {
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
+            version_id,
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
 
@@ -588,6 +592,7 @@ export default () => {
 
     const handleDeleteTask = (tableid) => {
         const requestBody = {
+            version_id,
             table_id: parseInt(tableid.id)
         };
 
