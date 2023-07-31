@@ -58,28 +58,8 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
-    // const showApiResponseMessage = (status) => {
-    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-    //     const message = responseMessages[status];
 
-    //     const title = message?.[langItem]?.type || "Unknown error";
-    //     const description = message?.[langItem]?.description || "Unknown error";
-    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-
-    //     Swal.fire({
-    //         title,
-    //         text: description,
-    //         icon,
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //     }).then(() => {
-    //         if (icon === "success") {
-    //             window.location.reload();
-
-    //         }
-    //     });
-    // };
-
+    // console.log(modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
@@ -104,10 +84,14 @@ export default () => {
         });
         setShowModal(false);
 
+        setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
+
+
+
     };
 
     const [errors, setErrors] = useState({});
-
+    console.log(modalTemp)
     const validate = () => {
         let temp = {};
 
@@ -118,13 +102,13 @@ export default () => {
             if (!foreignKey.table_id) {
                 temp.table_id = lang["error.select.table"];
             } else {
-                temp.table_id = ""; 
+                temp.table_id = "";
             }
 
             if (!foreignKey.ref_field_id) {
                 temp.ref_field_id = lang["error.select.field"];
             } else {
-                temp.ref_field_id = ""; 
+                temp.ref_field_id = "";
             }
         }
 
@@ -162,13 +146,13 @@ export default () => {
 
             setIsOn(false)
             setIsOnforenkey(false)
+            setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
 
             dispatch({
                 branch: "db",
                 type: "addField",
                 payload: {
                     field: { ...modalTemp, index: tempCounter }
-
                 }
             })
             setModalTemp((prevModalTemp) => ({
@@ -264,6 +248,8 @@ export default () => {
 
         if (foreignKeys.some((fk) => fk.index === fieldTempUpdate.index)) {
             setIsOnforenkey(true);
+
+
         }
         else {
             setIsOnforenkey(false);
@@ -280,7 +266,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        // console.log(fieldId)
+        console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -347,8 +333,9 @@ export default () => {
     const handleSelectTable = async (event) => {
         const tableId = event.target.value;
         setSelectedTableId(tableId);
+
         // Fetch fields for the selected table
-        fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}/fields`, {
+        fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}/fields`, {
             headers: {
                 Authorization: _token
             }
@@ -359,10 +346,8 @@ export default () => {
                 if (success) {
                     if (data) {
                         setFields(data);
-                        // console.log(data)
                     }
                 } else {
-                    // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
                 }
             });
@@ -374,8 +359,17 @@ export default () => {
     const addTable = (e) => {
         e.preventDefault();
         if (!isTableCreated) {
-            if (validateTablename() && primaryKey.length !== 0) {
+            if(primaryKey.length === 0){
+                Swal.fire({
+                    title: lang["error.title"],
+                    text: lang["primary-table"],
+                    icon: "error",
+                    showConfirmButton: true,
 
+                });
+                return;
+            }
+            if (validateTablename()) {
                 // console.log( table )
                 const tableRequestBody = {
                     version_id: version_id,
@@ -401,20 +395,10 @@ export default () => {
                             addField(tableId);
                         } else {
                             functions.showApiResponseMessage(status);
-
                         }
                     });
             }
-            else {
-                Swal.fire({
-                    title: lang["error.title"],
-                    text: lang["primary-table"],
-                    icon: "error",
-                    showConfirmButton: true,
-
-                });
-                return;
-            }
+            
             setTableCreated(true);
         }
 
@@ -527,9 +511,17 @@ export default () => {
     }
     const autoType = (field_id) => {
         const field = fields.find(f => f.id == field_id);
-        setModalTemp({
-            ...modalTemp, ...field.props
-        });
+
+        if (field) {
+            // console.log(field)
+            setModalTemp({
+                ...modalTemp, ...field.props
+            });
+            // console.log(modalTemp)
+
+        }
+
+
     }
     const handleSubmit = (e) => {
         // Gửi temporaryData lên server để thêm dữ liệu vào cơ sở dữ liệu
@@ -559,9 +551,9 @@ export default () => {
         setFieldTemp([]);
     };
 
-    useEffect(() => {
-        // console.log(tableUpdate);
-    }, [tableUpdate]);
+    // useEffect(() => {
+    //     // console.log(tableUpdate);
+    // }, [tableUpdate]);
 
     const updateTable = (e) => {
         e.preventDefault();
@@ -626,8 +618,6 @@ export default () => {
             }
         });
     }
-
-
     const [currentPageTable, setCurrentPageTable] = useState(1);
     const rowsPerPageTable = 7;
 
@@ -640,7 +630,9 @@ export default () => {
 
     // console.log("p key", primaryKey)
     // console.log("f key", foreignKeys)
-    // console.log(tables)
+    console.log(modalTemp)
+
+    // console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -683,6 +675,8 @@ export default () => {
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            {/* setIsOn(false)
+                                                    setIsOnforenkey(false) */}
                                         </div>
                                         <div class="table-responsive">
                                             {
@@ -840,6 +834,7 @@ export default () => {
                                             <label>{lang["table name"]} <span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
+                                                value={foreignKey.table_id}
                                                 onChange={(e) => {
                                                     handleSelectTable(e);
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
@@ -861,15 +856,19 @@ export default () => {
                                         </div>
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["fields name"]} <span className='red_star'>*</span></label>
-                                            <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
-                                                // console.log(e.target.value);
-                                                setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
-                                                if (e.target.value !== "") {
-                                                    setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
-                                                }
-                                                autoType(e.target.value) // ? type
-                                            }}
-                                            > <option value="">{lang["choose"]} </option>
+                                            <select className="form-control"
+                                                value={foreignKey.ref_field_id}
+                                                disabled={!isOnforenkey}
+                                                onChange={(e) => {
+                                                    // console.log(e.target.value);
+                                                    setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                    if (e.target.value !== "") {
+                                                        setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
+                                                    }
+                                                    autoType(e.target.value) // ? type
+                                                }}>
+
+                                                <option value={""}>{lang["choose"]} </option>
                                                 {
                                                     fields.filter(field => {
                                                         const selectedTableIdAsNumber = Number(selectedTableId);
@@ -878,7 +877,6 @@ export default () => {
                                                     }).map((field, index) => {
                                                         return (
                                                             <option key={index} value={field.id}>
-
                                                                 {field.field_name}
                                                             </option>
                                                         );
@@ -1059,53 +1057,90 @@ export default () => {
                                                 onClick={handleClickForenkey}
                                             ></i>
                                         </div>
+                                
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["table name"]} <span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
-                                                value={foreignKeys.table_id}
                                                 onChange={(e) => {
                                                     handleSelectTable(e);
+                                                    
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
+                                                    if (e.target.value !== "") {
+                                                        setErrors({ ...errors, table_id: "" }); // Xóa thông báo lỗi
+                                                    }
                                                 }}
                                                 disabled={!isOnforenkey}>
-
+                                                <option value="">{lang["choose"]}</option>
                                                 {tables.tables?.map((table, index) => {
-                                                    return (
-                                                        <option key={index} value={table.id}>
-                                                            {table.table_name}
-                                                        </option>
-                                                    );
+                                                    const field_id = fieldTempUpdate.id;
+                                            
+                                                    const foreignKey = foreignKeys.find(key => key.field_id == field_id);
+                                                    if (foreignKey && foreignKey.table_id == table.id) {
+                                                        <option value={""}>{lang["choose"]}</option>
+                                                        return (
+                                                            <option selected="selected" key={index} value={table.id}>
+                                                                {table.table_name}
+                                                            </option>
+                                                        );
+                                                    } else {
+                                                        <option value={""}>{lang["choose"]}</option>
+                                                        return (
+                                                            <option key={index} value={table.id}>
+                                                                {table.table_name}
+                                                            </option>
+                                                        );
+                                                    }
                                                 })}
-
                                             </select>
                                             {errors.table_id && <p className="text-danger">{errors.table_id}</p>}
                                         </div>
+
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["fields name"]} <span className='red_star'>*</span></label>
-
                                             <select className="form-control"
-                                                value={foreignKeys.ref_field_id}
-                                                disabled={!isOnforenkey} onChange={(e) => {
+                                             
+                                                disabled={!isOnforenkey}
+                                                onChange={(e) => {
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
+                                                    if (e.target.value !== "") {
+                                                        setErrors({ ...errors, ref_field_id: "" })
+                                                    }
+                                                    autoType(e.target.value) // ? type
                                                 }}
-                                            >
-                                                {
+                                            > <option>{lang["choose"]}</option>
+                                                
+                                                {fields && fields.length > 0 && (
+
                                                     fields.filter(field => {
                                                         const selectedTableIdAsNumber = Number(selectedTableId);
                                                         const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
                                                         return selectedTable?.primary_key.includes(field.id);
                                                     }).map((field, index) => {
-                                                        return (
-                                                            <option key={index} value={field.id}>
-                                                                {field.field_name}
-                                                            </option>
-                                                        );
+                                                        const field_id = fieldTempUpdate.id;
+                                                   
+                                                        const foreignKey = foreignKeys.find(key => key.field_id == field_id);
+                                                        if (foreignKey && foreignKey.ref_field_id == field.id) {
+                                                            return (
+                                                                <option selected="selected" key={index} value={field.id}>
+                                                                    {field.field_name}
+                                                                </option>
+                                                            );
+                                                        } else {
+                                                            return (
+                                                                <option key={index} value={field.id}>
+                                                                    {field.field_name}
+                                                                </option>
+                                                            );
+                                                        }
                                                     })
-                                                }
+                                                )}
                                             </select>
                                             {errors.ref_field_id && <p className="text-danger">{errors.ref_field_id}</p>}
+
                                         </div>
+
+                                      
                                         <div class="form-group col-lg-12">
                                             <label>{lang["null"]} <span className='red_star'>*</span></label>
                                             <select className="form-control" value={modalTemp.NULL} onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
@@ -1121,46 +1156,42 @@ export default () => {
                                         </div>
 
                                         <div class={`form-group col-lg-12`}>
+                                            <label> {lang["datatype"]} </label>
                                             <select
                                                 className="form-control"
                                                 value={modalTemp.DATATYPE}
-                                                // onChange={(e) => {
-                                                //     const selectedDataType = e.target.value;
-                                                //     const selectedType = types.find((type) => type.name === selectedDataType);
-
-                                                //     if (selectedType) {
-                                                //         setModalTemp(prevModalTemp => {
-                                                //             const updateValues = {
-                                                //                 DATATYPE: selectedDataType
-                                                //             };
-
-                                                //             // Nếu có giới hạn, gán giá trị min, max tương ứng
-                                                //             if (selectedType.limit) {
-                                                //                 const { min, max } = selectedType.limit;
-                                                //                 updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.MIN;
-                                                //                 updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.MAX;
-                                                //             }
-
-                                                //             // Nếu là kiểu date, gán định dạng ngày
-                                                //             if (selectedType.type === 'date' || selectedType.type === 'datetime') {
-                                                //                 updateValues.FORMAT = selectedType.format;
-                                                //             }
-
-                                                //             return {
-                                                //                 ...prevModalTemp,
-                                                //                 ...updateValues
-                                                //             };
-                                                //         });
-                                                //     } else {
-                                                //         setModalTemp(prevModalTemp => ({
-                                                //             ...prevModalTemp,
-                                                //             DATATYPE: selectedDataType,
-                                                //         }));
-                                                //     }
-                                                // }}
-                                                onChange={(e) => setModalTemp({ ...modalTemp, DATATYPE: e.target.value })}
+                                                onChange={(e) => {
+                                                    const selectedDataType = e.target.value;
+                                                    const selectedType = types.find((type) => type.name === selectedDataType);
+                                                    if (selectedType) {
+                                                        setModalTemp(prevModalTemp => {
+                                                            const updateValues = {
+                                                                DATATYPE: selectedDataType
+                                                            };
+                                                            // Nếu có giới hạn, gán giá trị min, max tương ứng
+                                                            if (selectedType.limit) {
+                                                                const { min, max } = selectedType.limit;
+                                                                updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.MIN;
+                                                                updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.MAX;
+                                                            }
+                                                            // Nếu là kiểu date, gán định dạng ngày
+                                                            if (selectedType.type === 'date' || selectedType.type === 'datetime') {
+                                                                updateValues.FORMAT = selectedType.format;
+                                                            }
+                                                            return {
+                                                                ...prevModalTemp,
+                                                                ...updateValues
+                                                            };
+                                                        });
+                                                    } else {
+                                                        setModalTemp(prevModalTemp => ({
+                                                            ...prevModalTemp,
+                                                            DATATYPE: selectedDataType,
+                                                        }));
+                                                    }
+                                                }}
                                             >
-
+                                                <option value="">{lang["choose"]} </option>
                                                 {types.map((type, index) => (
                                                     <option key={index} value={type.name}>
                                                         {type.name}
@@ -1181,13 +1212,12 @@ export default () => {
                                                             let defaultValue = modalTemp[prop.name];
 
                                                             if (inputType === "int") {
-                                                                if (prop.name === 'MIN') defaultValue = modalTemp.MIN;
-                                                                if (prop.name === 'MAX') defaultValue = modalTemp.MAX;
+                                                                if (prop.name === 'MIN') defaultValue = type.limit.min;
+                                                                if (prop.name === 'MAX') defaultValue = type.limit.max;
                                                             }
-
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
-                                                                    <label>{prop.label} <span className='red_star'>*</span></label>
+                                                                    <label>{prop.label} </label>
                                                                     {isBoolType ? (
                                                                         <select
                                                                             className="form-control"
@@ -1206,7 +1236,7 @@ export default () => {
                                                                         <input
                                                                             className="form-control"
                                                                             type={inputType === "int" ? "number" : inputType}
-                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            defaultValue={defaultValue}  // Sử dụng defaultValue thay vì value
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,
@@ -1218,15 +1248,10 @@ export default () => {
                                                                 </div>
                                                             );
                                                         })}
-
-
                                                     </div>
                                                 );
                                             })}
                                         </div>
-
-
-
                                         <div class="form-group col-lg-6">
                                             <label>{lang["creator"]} <span className='red_star'>*</span></label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />

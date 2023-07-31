@@ -326,7 +326,7 @@ const responseMessages =
             "type": "Lỗi"
         },
         "en": {
-            "description": "Account does not exist or is deleted",
+            "description": "Account does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -636,7 +636,7 @@ const responseMessages =
             "type": "Cảnh báo"
         },
         "en": {
-            "description": "Some users are not added to the project because they do not exist, are not available, or are already present in the project",
+            "description": "Some users are not added to the project because they do not exist, are not available, or are already present in the project.",
             "type": "Warning"
         }
     },
@@ -2046,7 +2046,7 @@ const responseMessages =
             "type": "Lỗi"
         },
         "en": {
-            "description": "There is no permission to change because you are not part of the group making the request",
+            "description": "There is no permission to change because you are not part of the requesting team",
             "type": "Error"
         }
     },
@@ -2067,6 +2067,16 @@ const responseMessages =
         },
         "en": {
             "description": "No field found in request body",
+            "type": "Error"
+        }
+    },
+    "0x4501206A": {
+        "vi": {
+            "description": "Bảng không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Table does not exist",
             "type": "Error"
         }
     },
@@ -2132,11 +2142,11 @@ const responseMessages =
     },
     "0x4501213": {
         "vi": {
-            "description": "Dự án khum tồn tại",
+            "description": "Dự án không tồn tại",
             "type": "Lỗi"
         },
         "en": {
-            "description": "The camber project exists",
+            "description": "Project does not exist",
             "type": "Error"
         }
     },
@@ -2272,11 +2282,11 @@ const responseMessages =
     },
     "0x4501227": {
         "vi": {
-            "description": "Bảng không hợp lệ vì khum có trường nào khác ngoài khóa chính",
+            "description": "Bảng không hợp lệ vì không có trường nào khác ngoài khóa chính",
             "type": "Lỗi"
         },
         "en": {
-            "description": "The table is invalid because the camber has no field other than the primary key",
+            "description": "The table is invalid because there are no fields other than the primary key",
             "type": "Error"
         }
     },
@@ -2438,6 +2448,16 @@ const responseMessages =
         "en": {
             "description": "Invalid activation key",
             "type": "Error"
+        }
+    },
+    "0x4501244": {
+        "vi": {
+            "description": "Kích hoạt khóa thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Key activation successful",
+            "type": "Success"
         }
     }
 }

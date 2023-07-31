@@ -1268,10 +1268,10 @@ export default () => {
                                     </h5>
                                 </div>
                             </div>
-                            <div class="table_section padding_infor_info">
+                            <div class="table_section padding_infor_info_gantt_chart">
                                 <div class="row column1">
                                     {/* Gantt */}
-                                    <div class="table_section padding_infor_info">
+                                    <div class="table_section padding_infor_info_gantt_chart">
                                         {
                                             filteredTasks && filteredTasks.length > 0 ? (
                                                 <Gantt data={filteredTasks} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt

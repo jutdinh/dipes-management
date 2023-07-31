@@ -72,17 +72,19 @@ export default () => {
             })
     }, [])
     // console.log(projects.tasks.hitory)
-    const exportToExcel = (dataExport) => {
+    const exportToExcel = ( project ) => {
         // console.log(dataExport)
-        const projectTasks = dataExport.tasks.filter((task) => task.project_id === dataExport.project_id);
+        const projectTasks = project.tasks;
         // console.log(projectTasks)
         // if (!projectTasks || projectTasks.length === 0) {
         //     console.error(`No tasks found for project ID: ${projectId}`);
         //     return;
         // }
 
-        const projectName = projects.find((project) => project.project_id === dataExport.project_id)?.project_name || 'Unknown Project';
-        const projectMaster = projects.find((project) => project.project_id === dataExport.project_id)?.create_by;
+        const dataExport = project
+
+        const projectName = project.project_name
+        const projectMaster = project.manager;
         const header = [
             "STT",
             "Yêu cầu",
@@ -227,6 +229,21 @@ export default () => {
         setFilterStatus(event.target.value);
     }
 
+    const onClickTrigger = (project) => {
+        fetch(`${ proxy }/projects/p/${ project.project_id }/report/data`,{
+            headers: {
+                Authorization: _token
+            }
+        }).then( res => res.json() ).then( res => {
+            const { success } = res;
+            if( success ){
+                const { data } = res;
+                const { project } = data                
+                exportToExcel( project )
+            }
+        })
+    }
+
     const filteredProjects = projects.filter(project => {
         // Nếu không có trạng thái nào được chọn, hiển thị tất cả dự án
         if (!filterStatus) {
@@ -280,7 +297,7 @@ export default () => {
                                                                     {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
                                                                 </span>
                                                             </p>
-                                                            <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => exportToExcel(project)}>
+                                                            <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => onClickTrigger(project)}>
                                                                 {lang["export"]}
                                                             </button>
                                                         </div>

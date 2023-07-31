@@ -213,26 +213,7 @@ export default () => {
             body: allSelectedFieldBody,
         }));
     };
-    const [getAllField, setAllField] = useState([]);
-    useEffect(() => {
-        fetch(`${proxy}/db/tables/v/${ version_id }/table/27/fields`, {
-            headers: {
-                Authorization: _token
-            }
-        })
-            .then(res => res.json())
-            .then(resp => {
-                const { success, data, status, content } = resp;
-
-                if (success) {
-                    if (data) {
-                        setAllField(data)
-                    }
-                } else {
-                    // window.location = "/404-not-found"
-                }
-            })
-    }, [])
+    
 
     // console.log(getAllField)
     const [allTable, setAllTable] = useState([]);
