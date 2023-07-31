@@ -85,9 +85,6 @@ export default () => {
         setShowModal(false);
 
         setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
-
-
-
     };
 
     const [errors, setErrors] = useState({});
@@ -359,7 +356,7 @@ export default () => {
     const addTable = (e) => {
         e.preventDefault();
         if (!isTableCreated) {
-            if(primaryKey.length === 0){
+            if (primaryKey.length === 0) {
                 Swal.fire({
                     title: lang["error.title"],
                     text: lang["primary-table"],
@@ -398,7 +395,7 @@ export default () => {
                         }
                     });
             }
-            
+
             setTableCreated(true);
         }
 
@@ -814,7 +811,7 @@ export default () => {
                                             <label>{lang["key"]} <span className='red_star'>*</span></label>
                                         </div>
                                         <div class="form-group col-lg-6"></div>
-                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                        {/* <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["pkey"]} </label>
                                             <i
                                                 className={`fa fa-toggle-${isOn ? 'on icon-toggle' : 'off'} fa-2x`}
@@ -829,7 +826,38 @@ export default () => {
                                                 aria-hidden="true"
                                                 onClick={handleClickForenkey}
                                             ></i>
+                                        </div> */}
+                                          <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                            <label class="mr-2">{lang["pkey"]}</label>
+                                            <img
+                                                src={isOn ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickPrimary}
+                                                tabindex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickPrimary();
+                                                    }
+                                                }}
+                                            />
                                         </div>
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                            <label class="mr-2">{lang["fkey"]} </label>
+                                            <img
+                                                src={isOnforenkey ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickForenkey}
+                                                tabIndex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickForenkey();
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["table name"]} <span className='red_star'>*</span></label>
                                             <select
@@ -899,7 +927,7 @@ export default () => {
                                             </select>
                                         </div>
                                         <div class={`form-group col-lg-12`}>
-                                            <label> {lang["datatype"]} </label>
+                                            <label> {lang["datatype"]}  <span className='red_star'>*</span> </label>
                                             <select
                                                 className="form-control"
                                                 value={modalTemp.DATATYPE}
@@ -952,11 +980,11 @@ export default () => {
                                                         {type.props.map((prop, index) => {
                                                             let inputType = prop.type;
                                                             let isBoolType = prop.type === "bool";
-                                                            let defaultValue = modalTemp[prop.name];
+                                                            let value = modalTemp[prop.name];
 
                                                             if (inputType === "int") {
-                                                                if (prop.name === 'MIN') defaultValue = type.limit.min;
-                                                                if (prop.name === 'MAX') defaultValue = type.limit.max;
+                                                                if (prop.name === 'MIN') value = type.limit.min;
+                                                                if (prop.name === 'MAX') value = type.limit.max;
                                                             }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
@@ -964,7 +992,7 @@ export default () => {
                                                                     {isBoolType ? (
                                                                         <select
                                                                             className="form-control"
-                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            value={value}
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,
@@ -979,7 +1007,7 @@ export default () => {
                                                                         <input
                                                                             className="form-control"
                                                                             type={inputType === "int" ? "number" : inputType}
-                                                                            defaultValue={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            value={value}
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,
@@ -995,6 +1023,7 @@ export default () => {
                                                 );
                                             })}
                                         </div>
+
 
 
                                         <div class="form-group col-lg-6">
@@ -1042,29 +1071,44 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-6"></div>
                                         <div class="form-group col-lg-12 d-flex align-items-center ml-4">
-                                            <label class="mr-2">{lang["pkey"]} </label>
-                                            <i
-                                                className={`fa fa-toggle-${isOn ? 'on icon-toggle' : 'off'} fa-2x`}
-                                                aria-hidden="true"
+                                            <label class="mr-2">{lang["pkey"]}</label>
+                                            <img
+                                                src={isOn ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
                                                 onClick={handleClickPrimary}
-                                            ></i>
+                                                tabindex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickPrimary();
+                                                    }
+                                                }}
+                                            />
                                         </div>
-                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4 ">
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["fkey"]} </label>
-                                            <i
-                                                className={`fa fa-toggle-${isOnforenkey ? 'on icon-toggle' : 'off'} fa-2x`}
-                                                aria-hidden="true"
+                                            <img
+                                                src={isOnforenkey ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
                                                 onClick={handleClickForenkey}
-                                            ></i>
+                                                tabIndex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickForenkey();
+                                                    }
+                                                }}
+                                            />
                                         </div>
-                                
+
+
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["table name"]} <span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
                                                 onChange={(e) => {
                                                     handleSelectTable(e);
-                                                    
+
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, table_id: "" }); // Xóa thông báo lỗi
@@ -1074,7 +1118,7 @@ export default () => {
                                                 <option value="">{lang["choose"]}</option>
                                                 {tables.tables?.map((table, index) => {
                                                     const field_id = fieldTempUpdate.id;
-                                            
+
                                                     const foreignKey = foreignKeys.find(key => key.field_id == field_id);
                                                     if (foreignKey && foreignKey.table_id == table.id) {
                                                         <option value={""}>{lang["choose"]}</option>
@@ -1099,7 +1143,7 @@ export default () => {
                                         <div className={`form-group col-lg-6`}>
                                             <label>{lang["fields name"]} <span className='red_star'>*</span></label>
                                             <select className="form-control"
-                                             
+
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
@@ -1109,7 +1153,7 @@ export default () => {
                                                     autoType(e.target.value) // ? type
                                                 }}
                                             > <option>{lang["choose"]}</option>
-                                                
+
                                                 {fields && fields.length > 0 && (
 
                                                     fields.filter(field => {
@@ -1118,7 +1162,7 @@ export default () => {
                                                         return selectedTable?.primary_key.includes(field.id);
                                                     }).map((field, index) => {
                                                         const field_id = fieldTempUpdate.id;
-                                                   
+
                                                         const foreignKey = foreignKeys.find(key => key.field_id == field_id);
                                                         if (foreignKey && foreignKey.ref_field_id == field.id) {
                                                             return (
@@ -1140,7 +1184,7 @@ export default () => {
 
                                         </div>
 
-                                      
+
                                         <div class="form-group col-lg-12">
                                             <label>{lang["null"]} <span className='red_star'>*</span></label>
                                             <select className="form-control" value={modalTemp.NULL} onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
@@ -1209,11 +1253,11 @@ export default () => {
                                                         {type.props.map((prop, index) => {
                                                             let inputType = prop.type;
                                                             let isBoolType = prop.type === "bool";
-                                                            let defaultValue = modalTemp[prop.name];
+                                                            let value = modalTemp[prop.name];
 
                                                             if (inputType === "int") {
-                                                                if (prop.name === 'MIN') defaultValue = type.limit.min;
-                                                                if (prop.name === 'MAX') defaultValue = type.limit.max;
+                                                                if (prop.name === 'MIN') value = type.limit.min;
+                                                                if (prop.name === 'MAX') value = type.limit.max;
                                                             }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
@@ -1221,7 +1265,7 @@ export default () => {
                                                                     {isBoolType ? (
                                                                         <select
                                                                             className="form-control"
-                                                                            value={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            value={value}
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,
@@ -1236,7 +1280,7 @@ export default () => {
                                                                         <input
                                                                             className="form-control"
                                                                             type={inputType === "int" ? "number" : inputType}
-                                                                            defaultValue={defaultValue}  // Sử dụng defaultValue thay vì value
+                                                                            value={value}
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,

@@ -59,8 +59,8 @@ export const ValidTypeEnum = Object.freeze({
    
     DATE: { id: 8, name: "DATE", type: "date", format: "dd/MM/yyyy", props: [{ name: "FORMAT", type: "text", label: "Định dạng" }] },
     DATETIME: { id: 10, name: "DATETIME", type: "datetime", format: "dd/MM/yyyy hh:mm:ss", props: [{ name: "FORMAT", type: "text", label: "Định dạng" }] },
-    TEXT: { id: 11, name: "TEXT", type: "text",  name: "TEXT", props: [{ name: "LENGTH", label: "Độ dài tối đa", type: "int" }] },
+    TEXT: { id: 11, name: "TEXT", type: "text",  props: [{ name: "LENGTH", label: "Độ dài tối đa", type: "int" }] },
     CHAR: { id: 12, name: "CHAR", type: "char", props: [] }, /* Char( 255 ) */
-    EMAIL: { id: 14, name: "EMAIL", type: "char", format: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, props: [] },
+    EMAIL: { id: 13, name: "EMAIL", type: "char", format: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, props: [] },
     PHONE: { id: 14, name: "PHONE", type: "char", format: /^\d{10,15}$/, props: [] },
 });

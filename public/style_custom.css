@@ -1708,4 +1708,15 @@ img[class="scaled-hover-target"]{
   .show1 {
     display: block;
   }
-  
+  .toggle-icon {
+    width: 50px;
+    height: 28px;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.toggle-icon:focus {
+    background-color: #80bdff;
+    border-radius: 16px; 
+    border: 2px solid #4795e9 ;
+}
