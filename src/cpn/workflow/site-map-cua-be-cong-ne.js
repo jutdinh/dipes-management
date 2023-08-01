@@ -8,23 +8,23 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const [isLoaded, setLoaded] = useState(false)
     const [tree, setTree] = useState({
-        leaf: "DIPES",
+        leaf: "DIPES Management",
         background: "#ff6655",
         foreground: "#ffffff",
         vine: "red",
         children: [
-            { leaf: "Dashboard", link: "/", },
+            { leaf: lang["home"], link: "/", },
             {
-                leaf: "Account",
+                leaf: lang["account"],
                 link: "/users",
                 vine: "blue",
                 children: [
-                    { leaf: "Create Account", link: "/users?action=create" }
+                    { leaf: lang["create account"], link: "/users?action=create" }
                 ]
             },
-            { leaf: "Statistic", link: "/statis", },
-            { leaf: "Report", link: "/report", },
-            { leaf: "About Us", link: "/about", }
+            { leaf: lang["statistic"], link: "/statis", },
+            { leaf: lang["report"], link: "/report", },
+            { leaf: lang["about us"], link: "/about", }
         ]
     })
 
@@ -99,7 +99,7 @@ export default () => {
                 }
                 const projects = data;
                 const branch = {
-                    leaf: "Projects",
+                    leaf: lang["project"],
                     background: "purple",
                     foreground: "#ffffff",
                     vine: "blue",

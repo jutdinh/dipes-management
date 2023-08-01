@@ -421,7 +421,8 @@ export default {
     "november":'November',
     "december":'December',
     "listtask": 'Tasks',
-    "gantt.yearmonths":"Year and Month"
+    "gantt.yearmonths":"Year and Month",
+    "create account": "Create Account"
 
 
 }

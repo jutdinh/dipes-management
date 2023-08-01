@@ -26,7 +26,7 @@ export default (props) => {
             };
     
             for (let f of data[0].fields) {
-                tempObject[f.field_name] = `Dữ liệu ${index + 1} ${f.field_name}`;
+                tempObject[f.field_name] = `  ${f.field_name} ${index + 1}`;
             }
     
             return tempObject;
@@ -64,7 +64,7 @@ export default (props) => {
             };
 
             for (let f of calculate) {
-                tempObject[f.display_name] = `Dữ liệu ${index + 1} ${f.display_name}`;
+                tempObject[f.display_name] = ` ${f.display_name} ${index + 1}`;
             }
 
             return tempObject;

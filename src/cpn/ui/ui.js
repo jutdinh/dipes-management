@@ -90,7 +90,7 @@ export default () => {
         // console.log(uiid)
         const requestBody = {
             version_id: version_id,
-            ui_id: uiid.id
+            ui_id: uiid.ui_id
         };
         // console.log(requestBody)
         Swal.fire({

@@ -87,7 +87,7 @@ export default () => {
         setShowModal(false);
         setErrors({})
     };
-    console.log(tables)
+    // console.log(tables)
     const handleDelete = () => {
         dispatch({
             branch: "db",
@@ -158,19 +158,19 @@ export default () => {
     const validateUpdate = () => {
         let temp = {};
         temp.field_name = fieldTempUpdate.field_name ? "" : lang["error.input"];
-        if (isOnforenkey) {
-            if (!foreignKey.table_id) {
-                temp.table_id = lang["error.select.table"];
-            } else {
-                temp.table_id = "";
-            }
+        // if (isOnforenkey) {
+        //     if (!foreignKey.table_id) {
+        //         temp.table_id = lang["error.select.table"];
+        //     } else {
+        //         temp.table_id = "";
+        //     }
 
-            if (!foreignKey.ref_field_id) {
-                temp.ref_field_id = lang["error.select.field"];
-            } else {
-                temp.ref_field_id = "";
-            }
-        }
+        //     if (!foreignKey.ref_field_id) {
+        //         temp.ref_field_id = lang["error.select.field"];
+        //     } else {
+        //         temp.ref_field_id = "";
+        //     }
+        // }
         setErrors({
             ...temp
         });
@@ -194,12 +194,14 @@ export default () => {
             setTableFields({ ...getTableFields, primary_key: newPrimaryKey })
 
             if (isOnforenkey) {
-                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
+                // const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
+                const updatedForeignKeys = foreignKeys
                 updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
+                // console.log(updatedForeignKeys)
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             } else {
-                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id !== fieldTempUpdate.id);
+                const updatedForeignKeys = foreignKeys
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             }
@@ -276,6 +278,7 @@ export default () => {
 
             setIsOn(false)
             setIsOnforenkey(false)
+              setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
             dispatch({
                 branch: "db",
                 type: "addField",
@@ -437,9 +440,9 @@ export default () => {
         });
     }
 
-    // console.log(fieldTempUpdate)
+    console.log(fieldTempUpdate)
     const getIdField = (fieldId) => {
-        console.log(fieldId)
+        // console.log(fieldId)
         const updatedField = {
             ...fieldId,
             ...fieldId.props
@@ -457,7 +460,7 @@ export default () => {
 
         const foreignKeys = getTableFields.foreign_keys ? getTableFields.foreign_keys : [];
         const foreignKey = foreignKeys.find(key => key.field_id == field_id);
-        setForeignKey({ ...foreignKey, field_id: field_id })
+     
         if (foreignKey) {
             const foreignTable = tables.tables?.find(tb => tb.id == foreignKey.table_id);
             if (foreignTable) {
@@ -468,7 +471,7 @@ export default () => {
         }
     }
     const [fieldNew, setFieldNew] = useState([]);
-    console.log(fieldNew)
+    // console.log(fieldNew)
     const [fieldNewTemp, setFieldNewTemp] = useState([]);
     const getIdFieldTempNew = (fieldId) => {
 
@@ -513,7 +516,7 @@ export default () => {
             field_ids: [fieldId.id],
             version_id
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -616,7 +619,7 @@ export default () => {
                     }
                 })
                 Swal.fire({
-                    title: lang["success"],
+                    title: lang["success.title"],
                     text: lang["delete.success.field"],
                     icon: 'success',
                     showConfirmButton: false,
@@ -637,7 +640,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log("data", data)
+                console.log("data", data)
                 if (success) {
                     if (data) {
                         setTableFields(data);
@@ -736,7 +739,7 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            console.log(field)
+            // console.log(field)
             setFieldTempupdate({
                 ...fieldTempUpdate, ...field.props
             });
@@ -763,7 +766,7 @@ export default () => {
     useEffect(() => {
         // console.log(tableUpdate);
     }, [tableUpdate]);
-    console.log(fieldTempUpdate)
+    // console.log(fieldTempUpdate)
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
@@ -891,27 +894,31 @@ export default () => {
             });
     };
 
-    const addKey = ({ data, tableId }) => {
+    const addKey = ({ tableId, data }) => {
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
         const newPrimaryKey = [...getTableFields.primary_key, ...primaryKeyid]
+        
+        // console.log( foreignKeys )
 
         for (let i = 0; i < foreignKeys.length; i++) {
             for (let j = 0; j < data.length; j++) {
-                if (foreignKeys[i].index === data[j].index) {
-                    foreignKeys[i].field_id = data[j].id
+                if( data[j].index != undefined ){
+                    if (foreignKeys[i].index === data[j].index) {
+                        foreignKeys[i].field_id = data[j].id
+                    }
                 }
             }
         }
-        const newForeignKey = [...getTableFields.foreign_keys, ...foreignKeys]
+   
 
         const KeyRequestBody = {
             version_id,
             table_id: getTableFields.id,
             primary_key: newPrimaryKey,
-            foreign_keys: newForeignKey
+            foreign_keys: foreignKeys
         };
-        // console.log("KLey", KeyRequestBody)
+        console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -924,6 +931,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+                console.log(resp)
                 // functions.showApiResponseMessage(status);
             });
     };
@@ -950,8 +958,8 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    // console.log("p key", primaryKey)
-    // console.log("f key", foreignKeys)
+    console.log("p key", foreignKey)
+    console.log("f key", foreignKeys)
     // console.log(foreignKey)
     // console.log(tempFields)
     // console.log(primaryKey)
@@ -981,7 +989,6 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-
                                     <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit table"]}
                                     </label> </h5>
                                 </div>
@@ -1245,6 +1252,11 @@ export default () => {
                                                 alt='toggle'
                                                 onClick={handleClickPrimary}
                                                 tabindex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickPrimary();
+                                                    }
+                                                }}
                                             />
                                         </div>
                                         <div class="form-group col-lg-12 d-flex align-items-center ml-4">
@@ -1254,7 +1266,12 @@ export default () => {
                                                 className='toggle-icon'
                                                 alt='toggle'
                                                 onClick={handleClickForenkey}
-                                                tabindex="0"
+                                                tabIndex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickForenkey();
+                                                    }
+                                                }}
                                             />
                                         </div>
                                         <div className={`form-group col-lg-6`}>
@@ -1494,9 +1511,7 @@ export default () => {
                                                     handleSelectTable(e);
 
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
-                                                    if (e.target.value !== "") {
-                                                        setErrors({ ...errors, table_id: "" }); // Xóa thông báo lỗi
-                                                    }
+                                                   
                                                 }}
                                                 disabled={!isOnforenkey}>
                                                 <option value="">{lang["choose"]}</option>
@@ -1530,9 +1545,7 @@ export default () => {
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
-                                                    if (e.target.value !== "") {
-                                                        setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
-                                                    }
+                                                   
                                                     autoType(e.target.value) // ? type
                                                 }}
                                             > <option>{lang["choose"]}</option>
@@ -1794,9 +1807,9 @@ export default () => {
                                                         );
                                                     } else {
                                                         <option value={""}>{lang["choose"]}</option>
-                                                        return (
+                                                     return (
                                                             <option key={index} value={table.id}>
-                                                                {table.table_name}
+                                                             {table.table_name}
                                                             </option>
                                                         );
                                                     }
@@ -1971,8 +1984,6 @@ export default () => {
                                                 (e) => { setUpdateTable({ ...tableUpdate, table_name: e.target.value }) }
                                             } placeholder="" />
                                         </div>
-
-
                                     </div>
                                 </form>
                             </div>

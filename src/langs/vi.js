@@ -425,7 +425,9 @@ export default {
     "november":'Tháng 11',
     "december":'Tháng 12',
     "listtask": "Danh sách công việc",
-    "gantt.yearmonths":"Năm và tháng"
+    "gantt.yearmonths":"Năm và tháng",
+
+    "create account": "Tạo tài khoản"
 
 
 

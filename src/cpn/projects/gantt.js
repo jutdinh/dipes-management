@@ -148,7 +148,7 @@ const TimelineChart = ({ data, project }) => {
                 right: 0,
                 top: 0,
                 padding: "0 8px",
-                margin: '8px',
+                margin: '15px 0px 10px 0px',
                 display: 'flex',
                 flexWrap: 'wrap',
                 maxWidth: '110px'

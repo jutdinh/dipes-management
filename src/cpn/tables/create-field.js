@@ -39,7 +39,7 @@ export default () => {
     let navigate = useNavigate();
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
-
+    const [statusCreate, setStatusCreate] = useState({});
     const [fieldTemp, setFieldTemp] = useState({});
     // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
     const defaultValues = {
@@ -84,7 +84,7 @@ export default () => {
         });
         setShowModal(false);
 
-        setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
+        // setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
     };
 
     const [errors, setErrors] = useState({});
@@ -95,19 +95,19 @@ export default () => {
         temp.field_name = modalTemp.field_name ? "" : lang["error.input"];
         temp.DATATYPE = modalTemp.DATATYPE ? "" : lang["error.input"];
 
-        if (isOnforenkey) {
-            if (!foreignKey.table_id) {
-                temp.table_id = lang["error.select.table"];
-            } else {
-                temp.table_id = "";
-            }
+        // if (isOnforenkey) {
+        //     if (!foreignKey.table_id) {
+        //         temp.table_id = lang["error.select.table"];
+        //     } else {
+        //         temp.table_id = "";
+        //     }
 
-            if (!foreignKey.ref_field_id) {
-                temp.ref_field_id = lang["error.select.field"];
-            } else {
-                temp.ref_field_id = "";
-            }
-        }
+        //     if (!foreignKey.ref_field_id) {
+        //         temp.ref_field_id = lang["error.select.field"];
+        //     } else {
+        //         temp.ref_field_id = "";
+        //     }
+        // }
 
         setErrors({
             ...temp
@@ -143,7 +143,7 @@ export default () => {
 
             setIsOn(false)
             setIsOnforenkey(false)
-            setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
+            // setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
 
             dispatch({
                 branch: "db",
@@ -252,7 +252,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    // console.log(fieldTempUpdate)
+    console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -387,9 +387,11 @@ export default () => {
                     .then((resp) => {
                         const { success, content, data, status } = resp;
                         if (success) {
-                            // console.log(data)
+                   console.log(resp)
+                           
+                           
                             const tableId = data.table.id; // Lấy id bảng vừa tạo
-                            addField(tableId);
+                            addField(tableId, status);
                         } else {
                             functions.showApiResponseMessage(status);
                         }
@@ -402,7 +404,8 @@ export default () => {
 
     };
 
-    const addField = (tableId) => {
+      
+    const addField = (tableId, prevStatus = undefined) => {
         if (primaryKey.length !== 0) {
             const fieldRequestBody = {
                 version_id,
@@ -427,7 +430,7 @@ export default () => {
                     // console.log(data)
                     if (success) {
 
-                        addKey({ tableId, data });
+                        addKey({ tableId, data }, prevStatus);
                         // handleClickPrimary(fieldId);
                     } else {
                         functions.showApiResponseMessage(status);
@@ -438,7 +441,7 @@ export default () => {
 
     };
 
-    const addKey = ({ data, tableId }) => {
+    const addKey = ({ data, tableId }, prevStatus) => {
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
 
@@ -469,7 +472,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                functions.showApiResponseMessage(status);
+                functions.showApiResponseMessage(prevStatus);
+             
             });
     };
 
@@ -625,11 +629,11 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    // console.log("p key", primaryKey)
-    // console.log("f key", foreignKeys)
-    console.log(modalTemp)
+    console.log("p key", primaryKey)
+    console.log("f key", foreignKeys)
+    // console.log(modalTemp)
 
-    // console.log(tempFields)
+    console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1117,9 +1121,9 @@ export default () => {
                                                 disabled={!isOnforenkey}>
                                                 <option value="">{lang["choose"]}</option>
                                                 {tables.tables?.map((table, index) => {
-                                                    const field_id = fieldTempUpdate.id;
+                                                    const field_id = fieldTempUpdate.index;
 
-                                                    const foreignKey = foreignKeys.find(key => key.field_id == field_id);
+                                                    const foreignKey = foreignKeys.find(key => key.index == field_id);
                                                     if (foreignKey && foreignKey.table_id == table.id) {
                                                         <option value={""}>{lang["choose"]}</option>
                                                         return (
@@ -1161,9 +1165,9 @@ export default () => {
                                                         const selectedTable = tables.tables.find(table => table.id === selectedTableIdAsNumber);
                                                         return selectedTable?.primary_key.includes(field.id);
                                                     }).map((field, index) => {
-                                                        const field_id = fieldTempUpdate.id;
+                                                        const field_id = fieldTempUpdate.index;
 
-                                                        const foreignKey = foreignKeys.find(key => key.field_id == field_id);
+                                                        const foreignKey = foreignKeys.find(key => key.index == field_id);
                                                         if (foreignKey && foreignKey.ref_field_id == field.id) {
                                                             return (
                                                                 <option selected="selected" key={index} value={field.id}>
@@ -1200,7 +1204,7 @@ export default () => {
                                         </div>
 
                                         <div class={`form-group col-lg-12`}>
-                                            <label> {lang["datatype"]} </label>
+                                            <label> {lang["datatype"]}<span className='red_star'>*</span></label>
                                             <select
                                                 className="form-control"
                                                 value={modalTemp.DATATYPE}

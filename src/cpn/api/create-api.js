@@ -110,7 +110,7 @@ export default () => {
             "get": [validateApiname, validateApiFieldShow],
             "post": [validateApiname, validateApiBody],
             "put": [validateApiname, validateApiParams, validateApiBody],
-            "delete": [validateApiParams]
+            "delete": [validateApiname, validateApiParams]
         }
 
         const validateFunctions = validator[modalTemp.api_method]
@@ -932,7 +932,7 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="font-weight-bold">{lang["api.description"]}</label>
                                             <textarea rows={7}

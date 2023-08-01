@@ -117,7 +117,7 @@ export default () => {
             "get": [validateApiname, validateApiFieldShow],
             "post": [validateApiname, validateApiBody],
             "put": [validateApiname, validateApiParams, validateApiBody],
-            "delete": [validateApiParams]
+            "delete": [validateApiname,validateApiParams]
         }
 
         const validateFunctions = validator[modalTemp.api_method]
@@ -1142,7 +1142,7 @@ export default () => {
                                         tables && tables.length > 0 ? (
                                             <>
                                                 {/* Chọn đối số */}
-                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post" || modalTemp.api_method === "put") && (
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">

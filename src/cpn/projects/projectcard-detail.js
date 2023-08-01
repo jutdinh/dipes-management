@@ -963,7 +963,7 @@ export default () => {
                 Authorization: `${_token}`,
                 "content-type": "application/json"
             },
-            body: JSON.stringify(activate),
+            body: JSON.stringify({...activate, project_id}),
         }).then(res => res.json()).then(res => {
             const { success, activation_key, status } = res;
             setActivate({ ...activate, activation_key })
@@ -1026,9 +1026,6 @@ export default () => {
         StatusStatisticalTask.LATE.color,
     ];
 
-
-
-
     const [statisTask, setStatisTask] = useState([]);
     useEffect(() => {
 
@@ -1048,7 +1045,6 @@ export default () => {
                         switch (key) {
                             case 'completed':
                                 name = lang["task.complete"];
-
                                 break;
                             case 'inProgress':
                                 name = lang["task.expired"];
@@ -1061,7 +1057,6 @@ export default () => {
                         }
                         return { name, value: percentage, total: amount };
                     });
-
                     setStatisTask(data)
 
                 } else {
