@@ -88,7 +88,7 @@ export default () => {
     };
 
     const [errors, setErrors] = useState({});
-    console.log(modalTemp)
+    // console.log(modalTemp)
     const validate = () => {
         let temp = {};
 
@@ -252,7 +252,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    console.log(fieldTempUpdate)
+    // console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -263,7 +263,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        console.log(fieldId)
+        // console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -387,7 +387,7 @@ export default () => {
                     .then((resp) => {
                         const { success, content, data, status } = resp;
                         if (success) {
-                   console.log(resp)
+                //    console.log(resp)
                            
                            
                             const tableId = data.table.id; // Lấy id bảng vừa tạo

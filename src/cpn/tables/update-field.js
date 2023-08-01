@@ -440,7 +440,7 @@ export default () => {
         });
     }
 
-    console.log(fieldTempUpdate)
+    // console.log(fieldTempUpdate)
     const getIdField = (fieldId) => {
         // console.log(fieldId)
         const updatedField = {
@@ -640,7 +640,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log("data", data)
+                // console.log("data", data)
                 if (success) {
                     if (data) {
                         setTableFields(data);
@@ -918,7 +918,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: foreignKeys
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -931,8 +931,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                console.log(resp)
-                // functions.showApiResponseMessage(status);
+                // console.log(resp)
+                functions.showApiResponseMessage(status);
             });
     };
     const [currentPageTable, setCurrentPageTable] = useState(1);
@@ -958,8 +958,8 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    console.log("p key", foreignKey)
-    console.log("f key", foreignKeys)
+    // console.log("p key", foreignKey)
+    // console.log("f key", foreignKeys)
     // console.log(foreignKey)
     // console.log(tempFields)
     // console.log(primaryKey)

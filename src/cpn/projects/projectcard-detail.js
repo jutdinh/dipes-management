@@ -963,7 +963,7 @@ export default () => {
                 Authorization: `${_token}`,
                 "content-type": "application/json"
             },
-            body: JSON.stringify({...activate, project_id}),
+            body: JSON.stringify({ ...activate, project_id }),
         }).then(res => res.json()).then(res => {
             const { success, activation_key, status } = res;
             setActivate({ ...activate, activation_key })
@@ -1037,8 +1037,8 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content, statistic } = resp;
-                console.log(resp)
-                if (!success) {
+                // console.log(resp)
+                if (success) {
 
                     const data = Object.entries(statistic).map(([key, { percentage, amount }]) => {
                         let name;
@@ -1047,10 +1047,10 @@ export default () => {
                                 name = lang["task.complete"];
                                 break;
                             case 'inProgress':
-                                name = lang["task.expired"];
+                                name = lang["task.inprogress"];
                                 break;
                             case 'expired':
-                                name = lang["task.inprogress"];
+                                name = lang["task.expired"];
                                 break;
                             default:
                                 name = '';
@@ -1066,9 +1066,10 @@ export default () => {
     }, [])
     const totalOfAllTasks = statisTask.reduce((total, task) => total + task.total, 0);
 
-    // Đây là màu mà bạn cung cấp
+
 
     console.log(statisTask)
+
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
     }) => {
@@ -1102,7 +1103,7 @@ export default () => {
                     {/* Detail */}
                     <div class="col-md-6">
                         <div class="full" style={{ height: "100%", paddingBottom: 15 }}>
-                            <div className="white_shd full"  style={{ height: "100%" }}>
+                            <div className="white_shd full" style={{ height: "100%" }}>
                                 <div class="full graph_head d-flex justify-content-between align-items-center">
                                     <div class="heading1 margin_0">
                                         <h5>{lang["project.info"]}</h5>
@@ -1629,41 +1630,44 @@ export default () => {
                                         {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
                                     </span>
                                 </div>
-                                <div style={{ display: 'flex', height: '425px', width: '100%' }}>
-                                    <ResponsiveContainer width="60%">
-                                        <PieChart>
-                                            <Pie
-                                                data={statisTask}
-                                                cx="50%"
-                                                cy="50%"
-                                                outerRadius={90 + '%'}
-                                                fill="#8884d8"
-                                                dataKey="value"
-                                                label={renderCustomizedLabel}
-                                                labelLine={false}
-                                            >
-                                                {statisTask.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center' }}>
-                                        {statisTask.map((task, index) => (
-                                            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                                <div style={{
-                                                    display: 'inline-block',
-                                                    width: '25px',
-                                                    height: '15px',
-                                                    backgroundColor: COLORS[index % COLORS.length],  // Lấy màu từ mảng COLORS dựa trên chỉ số của task
-                                                    marginRight: '10px'
-                                                }}></div>
-                                                <p>{`${task.name}: ${task.value}% (${task.total}/${totalOfAllTasks})`}</p>
-                                            </div>
-                                        ))}
+                                {statisTask && statisTask.length > 0 ? (
+                                    <div style={{ display: 'flex', height: '425px', width: '100%' }}>
+                                        <ResponsiveContainer width="60%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={statisTask}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={90 + '%'}
+                                                    fill="#8884d8"
+                                                    dataKey="value"
+                                                    label={renderCustomizedLabel}
+                                                    labelLine={false}
+                                                >
+                                                    {statisTask.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                        <div style={{ width: '40%', display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center' }}>
+                                            {statisTask.map((task, index) => (
+                                                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                                    <div style={{
+                                                        display: 'inline-block',
+                                                        width: '25px',
+                                                        height: '15px',
+                                                        backgroundColor: COLORS[index % COLORS.length],  // Lấy màu từ mảng COLORS dựa trên chỉ số của task
+                                                        marginRight: '10px'
+                                                    }}></div>
+                                                    <p>{`${task.name}: ${task.value}% (${task.total}/${totalOfAllTasks})`}</p>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                ) : null}
+
                                 {/* <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">
