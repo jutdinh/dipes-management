@@ -26,8 +26,9 @@ export default () => {
     useEffect(() => {
         const width = $('#hdxjhdksrhkhg').width();
         const height = $('#hdxjhdksrhkhg').height();
-        setWidth(window.innerWidth); setHeight(window.innerHeight);
-    }, [])
+        setWidth(width ?width: 1000); setHeight(height? height: 1000);
+    }, [$('#hdxjhdksrhkhg')])
+
 
     useEffect(() => {
         if (offsetPoints) {
