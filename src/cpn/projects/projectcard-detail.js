@@ -197,7 +197,6 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
                         setProjectDetail(data);

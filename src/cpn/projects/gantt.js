@@ -297,12 +297,12 @@ const TimelineChart = ({ data, project }) => {
                     now={now}
                     enableSticky
                     scrollToNow
-                    renderElementTooltip={({ element }) => (
-                        <div>
-                            <div>{element.data.customStart}</div>
-                            <div>{element.data.customEnd}</div>
-                        </div>
-                    )}
+                    // renderElementTooltip={({ element }) => (
+                    //     <div>
+                    //         <div>{element.data.customStart}</div>
+                    //         <div>{element.data.customEnd}</div>
+                    //     </div>
+                    // )}
                 />
             </div>
         </div>

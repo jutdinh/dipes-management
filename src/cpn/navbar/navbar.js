@@ -20,7 +20,7 @@ export default () => {
                <div class="icon_setting"></div>
                <div class="user_profle_side">
                   <div class="logo_section">
-                     <a href="index.html"><img class="img-responsive" src="/images/logo/logo.png" alt="#" /></a>
+                     <a href="/"><img class="img-responsive" src="/images/logo/logo.png" alt="#" /></a>
                   </div>
                </div>
             </div>
