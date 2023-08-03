@@ -261,24 +261,24 @@ export default () => {
 
                                                     <nav aria-label="Page navigation example">
                                                         <ul className="pagination mb-0">
-                                                            <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateLogs(1)}>
+                                                            <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateTable(1)}>
                                                                     &#8810;
                                                                 </button>
                                                             </li>
                                                             <li className={`page-item ${currentPageLogs === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateLogs(currentPageLogs - 1)}>
+                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
                                                                     &laquo;
                                                                 </button>
                                                             </li>
-                                                            {currentPageLogs > 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                            {Array(totalPagesLogs).fill().map((_, index) => {
+                                                            {currentPageTable > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            {Array(totalPagesTable).fill().map((_, index) => {
                                                                 if (
-                                                                    index + 1 === currentPageLogs ||
-                                                                    (index + 1 >= currentPageLogs - 2 && index + 1 <= currentPageLogs + 2)
+                                                                    index + 1 === currentPageTable ||
+                                                                    (index + 1 >= currentPageTable - 2 && index + 1 <= currentPageTable + 2)
                                                                 ) {
                                                                     return (
-                                                                        <li key={index} className={`page-item ${currentPageLogs === index + 1 ? 'active' : ''}`}>
+                                                                        <li key={index} className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
                                                                             <button className="page-link" onClick={() => paginateLogs(index + 1)}>
                                                                                 {index + 1}
                                                                             </button>
@@ -286,14 +286,14 @@ export default () => {
                                                                     )
                                                                 }
                                                             })}
-                                                            {currentPageLogs < totalPagesLogs - 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                            <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateLogs(currentPageLogs + 1)}>
+                                                            {currentPageTable < totalPagesTable - 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                            <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(currentPageTable + 1)}>
                                                                     &raquo;
                                                                 </button>
                                                             </li>
-                                                            <li className={`page-item ${currentPageLogs === totalPagesLogs ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateLogs(totalPagesLogs)}>
+                                                            <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginateLogs(totalPagesTable)}>
                                                                     &#8811;
                                                                 </button>
                                                             </li>
