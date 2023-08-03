@@ -159,13 +159,13 @@ const TimelineChart = ({ data, project }) => {
             title:
                 (<div style={styles.container}>
                     <div style={styles.images}>
-                        {task.members.slice(0, 2).map(mem =>
+                        {task.members.slice(0, 1).map(mem =>
                             <img style={{ width: "26px" }} class="img-responsive circle-image mt-1 ml-1" src={proxy + mem.avatar} alt="#" />
                         )}
                         {
-                            task.members.length > 2 &&
-                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{ width: "25px", backgroundImage: `url(${proxy + task.members[2].avatar})` }}>
-                                <span>+{task.members.length - 2}</span>
+                            task.members.length > 1 &&
+                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{ width: "25px", backgroundImage: `url(${proxy + task.members[1].avatar})` }}>
+                                <span>+{task.members.length - 1}</span>
                             </div>
                         }
                     </div>
