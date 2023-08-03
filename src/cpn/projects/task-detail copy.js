@@ -470,7 +470,7 @@ export default () => {
     };
 
     const [confirmFilter, setConfrimFilter] = useState([]);
-    const confirmFilterOptions = statusTask.map(status => ({ label: lang[status.label], value: status.value, id: status.id }));
+    const confirmFilterOptions = statusTask.map(status => ({ label:  lang[status.label], value: status.value, id: status.id }));
     const addOrRemoveConfirm = (status) => {
         const newFilter = [...confirmFilter];
         const index = newFilter.findIndex(item => item.id === status.id);
@@ -617,7 +617,7 @@ export default () => {
                                                             let filterStatusValues = statusFilter.map(item => item.value);
                                                             let taskStatus = task && task.task_status ? task.task_status : '';
                                                             let filterConfirmValues = confirmFilter.map(item => item.value);
-                                                            let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                            let taskConfirm = task && task.task_approve ? 1 : 0; 
                                                             return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
                                                                 (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
                                                                 (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
@@ -1274,18 +1274,7 @@ export default () => {
                                     <div class="table_section padding_infor_info_gantt_chart">
                                         {
                                             filteredTasks && filteredTasks.length > 0 ? (
-                                                <Gantt data={
-                                                    filteredTasks.filter((task) => {
-                                                    let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
-                                                    let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
-                                                    let filterStatusValues = statusFilter.map(item => item.value);
-                                                    let taskStatus = task && task.task_status ? task.task_status : '';
-                                                    let filterConfirmValues = confirmFilter.map(item => item.value);
-                                                    let taskConfirm = task && task.task_approve ? 1 : 0;
-                                                    return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
-                                                        (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
-                                                        (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
-                                                })} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
+                                                <Gantt data={filteredTasks} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
                                     </div>
