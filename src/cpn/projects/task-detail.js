@@ -104,7 +104,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data) {
                         data.sort((a, b) => {
@@ -128,14 +128,14 @@ export default () => {
         task.members?.some(member => member.username === _users.username) ||
         ["ad", "uad"].indexOf(auth.role) !== -1
     );
-    console.log(filteredTasks)
+    // console.log(filteredTasks)
     const handleCloseModal = () => {
         setShowModal(false);
         setErrorMessagesadd({})
     };
 
     const getCorespondingValue = (task) => {
-        console.log(task)
+        // console.log(task)
         const corespondingTask = fakeTasks.find(t => t.task_id == task.task_id)
         return corespondingTask["task_progress"]
     }
@@ -225,7 +225,7 @@ export default () => {
     const getIdTask = (taskid) => {
         setUpdateTask(taskid);
     }
-    console.log(updateTaskinfo)
+    // console.log(updateTaskinfo)
 
     useEffect(() => {
         if (updateTaskinfo && updateTaskinfo.members) {

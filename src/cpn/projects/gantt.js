@@ -225,6 +225,38 @@ const TimelineChart = ({ data, project }) => {
         }, 20);
     }, [selectedYear, selectedMonth, start, end]);
 
+    console.log(document.querySelector('.rt-layout__timeline'));
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    
+    const timeline = document.querySelector('.rt-layout__timeline');
+    if(timeline){
+        timeline.addEventListener('mousedown', (e) => {
+            isDown = true;
+            timeline.classList.add('active'); // Thêm class 'active' khi chuột nhấn xuống
+            startX = e.pageX - timeline.offsetLeft;
+            scrollLeft = timeline.scrollLeft;
+          });
+          timeline.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - timeline.offsetLeft;
+            const walk = (x - startX);
+            timeline.scrollLeft = scrollLeft - walk;
+          });
+          timeline.addEventListener('mouseup', () => {
+            isDown = false;
+            timeline.classList.remove('active'); // Xóa class 'active' khi chuột nhả ra
+          });
+          timeline.addEventListener('mouseleave', () => {
+            isDown = false;
+            timeline.classList.remove('active'); // Xóa class 'active' khi chuột rời khỏi
+          });
+    }
+   
+    
+      
 
     return (
         <div className="app app1">

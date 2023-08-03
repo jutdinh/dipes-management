@@ -1067,7 +1067,7 @@ export default () => {
 
 
 
-    console.log(statisTask)
+    // console.log(statisTask)
 
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,

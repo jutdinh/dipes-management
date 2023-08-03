@@ -132,7 +132,7 @@ export default () => {
                 }
             })
     }, [])
-    // console.log(statisLead)
+    console.log(statisLead)
     const mapStatus = {
         "1": lang["initialization"],
         "2": lang["implement"],
@@ -191,20 +191,20 @@ export default () => {
         const { x, y, width, height, value, dataKey } = props;
         let labelValue;
         let yPos;
-    
+
         // Đặt nhãn ở phía trên cột
-        
-            labelValue = `${value} ${lang["projects"]}`;
-            yPos = y - 5;
-        
-    
+
+        labelValue = `${value} ${lang["projects"]}`;
+        yPos = y - 5;
+
+
         return (
             <text x={x + width / 2} y={yPos} fill="#ffffff" fontSize={18} fontWeight={10} textAnchor="middle" dominantBaseline="middle">
                 {labelValue}
             </text>
         );
     };
-    
+
     // const status = [
     //     { id: 0, label: lang["initialization"], value: 1, color: "#1ed085" },
     //     { id: 1, label: lang["implement"], value: 2, color: "#8884d8" },
@@ -241,7 +241,7 @@ export default () => {
         value: statisLead[key].total,
         avatar: statisLead[key].avatar
     }));
-    // console.log(outputDataLead)
+    console.log(outputDataLead)
     let totalSumLead = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
 
 
@@ -257,13 +257,14 @@ export default () => {
     const renderCustomizedLabel1 = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
     }) => {
+        console.log(percent)
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
         return (
             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                {`${(percent * 100).toFixed(0)}%`}
+                {`${(percent * 100).toFixed(2)}%`}
             </text>
         );
     };
@@ -346,7 +347,7 @@ export default () => {
                                                         data={outputData}
                                                         cx="55%"
                                                         cy="50%"
-                                                        outerRadius={80}
+                                                        outerRadius={75 + '%'}
                                                         fill="#8884d8"
                                                         label
                                                         labelLine={{ outerRadius: '90%' }}
@@ -420,18 +421,22 @@ export default () => {
                                                 <PieChart width={250} height={260}>
                                                     <Pie
                                                         data={outputDataLead}
-                                                        cx="45%"
+                                                        cx="50%"
                                                         cy="50%"
+                                                        outerRadius={85 + '%'}
                                                         labelLine={false}
                                                         label={renderCustomizedLabel1}
-                                                        outerRadius={80}
+                                                      
                                                         fill="#8884d8"
                                                         dataKey="value"
                                                     >
-                                                        {
-                                                            outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
-                                                        }
-                                                    </Pie>
+
+                                                        
+
+                                                            {
+                                                                outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
+                                                            }
+                                                        </Pie>
                                                 </PieChart>
                                             </div>
                                         </div>
@@ -473,7 +478,7 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 ) : (
                                     <div class="list_cont ">
                                         <p>{lang["not found"]}</p>
@@ -512,7 +517,7 @@ export default () => {
                                             tickFormatter={(value) => Math.floor(value)}
                                             allowDecimals={false}
                                             tickCount={5}>
-                                            
+
                                             <Label value={lang["project-number"]} angle={-90} fontSize={16} position='insideLeft' />
                                         </YAxis>
 
@@ -529,21 +534,21 @@ export default () => {
                                             </Bar> */}
 
                                         <Bar barSize={60} dataKey={lang["initialization"]} fill="#1ed085" >
-                                            <LabelList dataKey={lang["initialization"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
+                                            <LabelList dataKey={lang["initialization"]} position="top" formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
                                         <Bar barSize={60} dataKey={lang["implement"]} fill="#8884d8"  >
-                                            <LabelList dataKey={lang["implement"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
+                                            <LabelList dataKey={lang["implement"]} position="top" formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
                                         <Bar barSize={60} dataKey={lang["deploy"]} fill="#ffc658" >
-                                            <LabelList dataKey={lang["deploy"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
+                                            <LabelList dataKey={lang["deploy"]} position="top" formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
                                         <Bar barSize={60} dataKey={lang["complete"]} fill="#ff8042" >
-                                            <LabelList dataKey={lang["complete"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
+                                            <LabelList dataKey={lang["complete"]} position="top" formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
                                         <Bar barSize={60} dataKey={lang["pause"]} fill="#FF0000" >
-                                            <LabelList dataKey={lang["pause"]} position="top"  formatter={(value) => `${value} ${lang["projects"]}`} />
+                                            <LabelList dataKey={lang["pause"]} position="top" formatter={(value) => `${value} ${lang["projects"]}`} />
                                         </Bar>
-                                       
+
 
                                     </BarChart>
                                 </ResponsiveContainer>
