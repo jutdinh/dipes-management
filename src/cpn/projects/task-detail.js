@@ -611,7 +611,7 @@ export default () => {
                                             <div class="table-body">
                                                 <table class="table table-striped">
                                                     <tbody>
-                                                        {currentMembersTask.filter((task) => {
+                                                        {tasks.filter((task) => {
                                                             let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
                                                             let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
                                                             let filterStatusValues = statusFilter.map(item => item.value);
