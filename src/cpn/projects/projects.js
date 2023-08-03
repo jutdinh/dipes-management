@@ -15,6 +15,10 @@ export default () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
     const stringifiedUser = localStorage.getItem("user");
+
+
+    const [ regent, setRegent ] = useState(false)
+
     const _users = JSON.parse(stringifiedUser)
     // const showApiResponseMessage = (status) => {
     //     const message = responseMessages[status];
@@ -212,6 +216,38 @@ export default () => {
             })
 
     }, [])
+
+    useEffect( () => {
+        if( projects.length > 0 && !regent ){
+            fetch(`${proxy}/projects/full/all/projects`, {
+                headers: {
+                    Authorization: _token
+                }
+            })
+                .then(res => res.json())
+                .then(resp => {
+                    const { success, data, status, content } = resp;
+                    // console.log(resp)
+                    if (success) {
+                        if (data != undefined && data.length > 0) {
+                            setProjects(data);
+                            setRegent(true)
+                            dispatch({
+                                branch: "default",
+                                type: "setProjects",
+                                payload: {
+                                    projects: data
+                                }
+                            })
+                        }
+                        setLoaded(true)
+                    } else {
+                        window.location = "/404-not-found"
+                    }
+    
+                })
+        }
+    }, [projects])
 
     const [users, setUsers] = useState([]);
 
