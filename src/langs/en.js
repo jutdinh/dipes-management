@@ -422,7 +422,9 @@ export default {
     "december":'December',
     "listtask": 'Tasks',
     "gantt.yearmonths":"Year and Month",
-    "create account": "Create Account"
+    "create account": "Create Account",
+    "error.fk":"This field cannot be selected because it is a foreign key and the corresponding primary key exists in the list of fields",
+    "error.date": "Can't select argument fields with data types of DATE or DECIMAL"
 
 
 }

@@ -1584,20 +1584,26 @@ export default () => {
                                                                             // If it's a date field, show error and prevent checking
                                                                             if (isDateField && e.target.checked) {
                                                                                 Swal.fire({
-                                                                                    title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL",
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.date"],
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
                                                                                 });
                                                                                 e.preventDefault();
                                                                             }
                                                                             // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
                                                                             else if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
                                                                                 Swal.fire({
-                                                                                    title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {
@@ -1676,10 +1682,13 @@ export default () => {
                                                                             // If it's a foreign key and corresponding primary key exists, show error and prevent checking
                                                                             if (isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
                                                                                 Swal.fire({
-                                                                                    title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {

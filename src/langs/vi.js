@@ -427,7 +427,9 @@ export default {
     "listtask": "Danh sách công việc",
     "gantt.yearmonths":"Năm và tháng",
 
-    "create account": "Tạo tài khoản"
+    "create account": "Tạo tài khoản",
+    "error.fk":"Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
+    "error.date": "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL"
 
 
 
