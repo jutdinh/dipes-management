@@ -2157,7 +2157,7 @@ export default () => {
 
                                                     </div>
                                                     <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables?.length)} {lang["of"]} {tables.tables?.length} {lang["results"]}</p>
+                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, tables.tables?.length)} {lang["of"]} {tables.tables?.length} {lang["results"]}</p>
                                                         <nav aria-label="Page navigation example">
                                                             <ul className="pagination mb-0">
                                                                 <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
