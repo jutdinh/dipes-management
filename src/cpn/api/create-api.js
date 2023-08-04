@@ -777,7 +777,7 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="font-weight-bold">{lang["api name"]} <span className='red_star'>*</span></label>
                                             <input
@@ -792,6 +792,162 @@ export default () => {
 
                                     </div>
                                     <div class="col-md-12">
+                                    <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
+                                        <div class="row">
+                                            <div class="col-sm-3" >
+                                                <div class="checkbox-item">
+                                                    <label >
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.status === true}
+                                                            onChange={() => setModalTemp({ ...modalTemp, status: true })}
+                                                        />
+                                                        On
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" >
+                                                <div class="checkbox-item">
+                                                    <label> <input
+                                                        class="mr-1"
+                                                        type="radio"
+                                                        checked={modalTemp.status === false}
+                                                        onChange={() => setModalTemp({ ...modalTemp, status: false })}
+                                                    />
+                                                        Off
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" ></div>
+                                            <div class="col-sm-3" ></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                    <label class="font-weight-bold">{lang["method"]} <span className='red_star'>*</span></label>
+                                        <div class="row">
+                                            <div class="col-sm-3" >
+                                            <div class="checkbox-item">
+                                                        <label>
+                                                            <input
+                                                                class="mr-1"
+                                                                type="radio"
+                                                                checked={modalTemp.api_method === "get"}
+                                                                onChange={() => {
+                                                                    const updatedModalTemp = {
+                                                                        ...modalTemp,
+                                                                        api_method: "get",
+                                                                        tables: [],
+                                                                        params: [],
+                                                                        fields: [],
+                                                                        body: [],
+                                                                        calculates: [],
+                                                                        statistic: []
+
+                                                                    };
+                                                                    setModalTemp(updatedModalTemp);
+                                                                    setSelectedFieldsModal2([]);
+                                                                    setSelectedFields([]);
+                                                                    setSelectedFieldsBody([]);
+                                                                }}
+                                                            />
+                                                            GET
+                                                        </label>
+                                                    </div>
+                                            </div>
+                                            <div class="col-sm-3" >
+                                            <div class="checkbox-item">
+                                                        <label>
+                                                            <input
+                                                                class="mr-1"
+                                                                type="radio"
+                                                                checked={modalTemp.api_method === "post"}
+                                                                onChange={() => {
+                                                                    const updatedModalTemp = {
+                                                                        ...modalTemp,
+                                                                        api_method: "post",
+                                                                        tables: [],
+                                                                        params: [],
+                                                                        fields: [],
+                                                                        body: [],
+                                                                        calculates: [],
+                                                                        statistic: []
+                                                                    };
+                                                                    setModalTemp(updatedModalTemp);
+                                                                    setSelectedFieldsModal2([]);
+                                                                    setSelectedFields([]);
+                                                                    setSelectedFieldsBody([]);
+
+                                                                }}
+                                                            />
+                                                            POST</label>
+                                                    </div>
+
+                                            </div>
+                                            <div class="col-sm-3" >
+                                            <div class="checkbox-item round">
+                                                        <label>
+                                                            <input
+                                                                class="mr-1"
+                                                                type="radio"
+                                                                checked={modalTemp.api_method === "put"}
+                                                                onChange={() => {
+                                                                    const updatedModalTemp = {
+                                                                        ...modalTemp,
+                                                                        api_method: "put",
+                                                                        tables: [],
+                                                                        params: [],
+                                                                        fields: [],
+                                                                        body: [],
+                                                                        calculates: [],
+                                                                        statistic: []
+                                                                    };
+                                                                    setModalTemp(updatedModalTemp);
+                                                                    setSelectedFieldsModal2([]);
+                                                                    setSelectedFields([]);
+                                                                    setSelectedFieldsBody([]);
+
+                                                                }}
+                                                            />
+                                                            PUT
+                                                        </label>
+                                                    </div>
+                                            </div>
+                                            <div class="col-sm-3" >
+                                            <div class="checkbox-item">
+                                                        <label>
+                                                            <input
+                                                                class="mr-1"
+                                                                type="radio"
+                                                                checked={modalTemp.api_method === "delete"}
+                                                                onChange={() => {
+                                                                    const updatedModalTemp = {
+                                                                        ...modalTemp,
+                                                                        api_method: "delete",
+                                                                        tables: [],
+                                                                        params: [],
+                                                                        fields: [],
+                                                                        body: [],
+                                                                        calculates: [],
+                                                                        statistic: []
+
+                                                                    };
+                                                                    setModalTemp(updatedModalTemp);
+                                                                    setSelectedFieldsModal2([]);
+                                                                    setSelectedFields([]);
+                                                                    setSelectedFieldsBody([]);
+
+                                                                }}
+                                                            />
+                                                            DELETE
+                                                        </label>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    {/* <div class="col-md-12">
                                         <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                         <div class="form-group">
                                             <div class="col-md-6">
@@ -939,7 +1095,9 @@ export default () => {
                                                 </div>
                                                
                                             </div>
-                                    </div>
+                                    </div> */}
+
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="font-weight-bold">{lang["api.description"]}</label>
