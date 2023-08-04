@@ -72,6 +72,7 @@ export default () => {
     const [fakeTasks, setFakeTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
+    console.log(taskDetail)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -887,7 +888,7 @@ export default () => {
                                                             </div>  <div class="form-group col-lg-8"></div>
 
                                                             <div className="col-lg-6">
-                                                                <label>{lang["log.daystart"]}:</label>
+                                                                <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
                                                                 <input type="date" className="form-control" value={updateTaskinfo.start} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, start: e.target.value }) }
                                                                 } />
@@ -896,7 +897,7 @@ export default () => {
                                                                 </div>
                                                             </div>
                                                             <div className="col-lg-6">
-                                                                <label>{lang["log.dayend"]}:</label>
+                                                                <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
                                                                 <input type="date" className="form-control" value={updateTaskinfo.end} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, end: e.target.value }) }
                                                                 } />
@@ -1206,8 +1207,8 @@ export default () => {
                                                                                                         </td>
                                                                                                         <td scope="row">
                                                                                                             {
-                                                                                                                task.old_value === "true" ? lang["approved"] :
-                                                                                                                    task.old_value === "false" ? lang["await"] :
+                                                                                                                task.old_value === true ? lang["approved"] :
+                                                                                                                    task.old_value === false ? lang["await"] :
                                                                                                                         !isNaN(task.old_value) ?
                                                                                                                             lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
                                                                                                                             :
@@ -1217,8 +1218,8 @@ export default () => {
                                                                                                         </td>
                                                                                                         <td scope="row">
                                                                                                             {
-                                                                                                                task.new_value === "true" ? lang["approved"] :
-                                                                                                                    task.new_value === "false" ? lang["await"] :
+                                                                                                                task.new_value === true? lang["approved"] :
+                                                                                                                    task.new_value === false ? lang["await"] :
                                                                                                                         !isNaN(task.new_value) ?
                                                                                                                             lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
                                                                                                                             :
