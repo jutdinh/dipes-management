@@ -12,6 +12,7 @@ import responseMessages from "../enum/response-code";
 import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
 import $ from 'jquery'
+import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -680,7 +681,7 @@ export default () => {
                                                                     <tr key={index}>
                                                                         <td>{table.table_name}</td>
                                                                         <td>{table.create_by?.fullname}</td>
-                                                                        <td>{table.create_at}</td>
+                                                                        <td>{formatDate(table.create_at)}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>

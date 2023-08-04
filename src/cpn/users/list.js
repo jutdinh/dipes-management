@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
+import { formatDate } from '../../redux/configs/format-date';
 export default (props) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
 
@@ -549,7 +550,7 @@ export default (props) => {
                                                                                         {lang["time"]}: {
                                                                                             lang["time"] === "Time" ?
                                                                                                 item.create_at.replace("lúc", "at") :
-                                                                                                item.create_at
+                                                                                                formatDate(item.create_at)
                                                                                         }
                                                                                     </li>
 

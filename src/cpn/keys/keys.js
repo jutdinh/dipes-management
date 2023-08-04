@@ -5,7 +5,7 @@ import { StatusEnum, StatusTask } from '../enum/status';
 import Swal from 'sweetalert2';
 import { Header } from '../common';
 import $, { data } from 'jquery';
-
+import { formatDate  } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const dispatch = useDispatch()
@@ -107,7 +107,7 @@ export default () => {
                                                                                 <p>{lang["time"]}: {
                                                                                     lang["time"] === "Time" ?
                                                                                         item.project.create_at?.replace("lúc", "at") :
-                                                                                        item.project.create_at
+                                                                                        formatDate(item.project.create_at)
                                                                                 }</p>
 
 

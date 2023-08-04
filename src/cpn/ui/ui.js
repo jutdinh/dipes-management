@@ -7,6 +7,7 @@ import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
+import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -213,7 +214,7 @@ export default () => {
 
 
                                                                         <td>{ui.create_by.fullname}</td>
-                                                                        <td>{ui.create_at}</td>
+                                                                        <td>{formatDate(ui.create_at)}</td>
                                                                         <td class="font-weight-bold align-center">
                                                                             <select className="form-control" onChange={() => handleUpdateStatus(ui)}>
                                                                                 <option value={true} selected={ui.status} style={{ color: 'green' }}>On</option>

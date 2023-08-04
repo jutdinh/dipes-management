@@ -10,6 +10,9 @@ import { Tables } from ".";
 import Diagram from './diagram/digram';
 import responseMessages from "../enum/response-code";
 import functions from "../../redux/configs/functions";
+import { formatDate } from "../../redux/configs/format-date";
+
+
 const TABLES = "tables";
 const DIAGRAM = "diagram"
 
@@ -243,7 +246,7 @@ export default () => {
                                                                             </div>
                                                                         </td>
                                                                         <td>{table.create_by?.fullname}</td>
-                                                                        <td>{table.create_at}</td>
+                                                                        <td>{formatDate(table.create_at)}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                       
                                                                         {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}

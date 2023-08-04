@@ -10,6 +10,9 @@ import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import responseMessages from "../enum/response-code";
+
+
+import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -1924,7 +1927,7 @@ export default () => {
                                                                                 {table.table_name}
                                                                             </div>
                                                                         </td>
-                                                                        <td>{table.create_at}</td>
+                                                                        <td>{formatDate(table.create_at)}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -2019,7 +2022,7 @@ export default () => {
                                                                                     {api.api_name}
                                                                                 </div>
                                                                             </td>
-                                                                            <td>{api.create_at}</td>
+                                                                            <td>{formatDate(api.create_at)}</td>
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
@@ -2140,7 +2143,7 @@ export default () => {
                                                                                         {ui.title}
                                                                                     </div>
                                                                                 </td>
-                                                                                <td>{ui.create_at}</td>
+                                                                                <td>{formatDate(ui.create_at)}</td>
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>

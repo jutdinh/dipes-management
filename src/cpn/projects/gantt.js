@@ -225,7 +225,7 @@ const TimelineChart = ({ data, project }) => {
         }, 20);
     }, [selectedYear, selectedMonth, start, end]);
 
-    console.log(document.querySelector('.rt-layout__timeline'));
+    // console.log(document.querySelector('.rt-layout__timeline'));
     let isDown = false;
     let startX;
     let scrollLeft;

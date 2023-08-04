@@ -4,7 +4,7 @@ import responseMessages from "../enum/response-code";
 import Swal from 'sweetalert2';
 import { Header } from '../common';
 import $ from 'jquery';
-
+import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const storedProjects = useSelector( state => state.projects )
@@ -703,8 +703,8 @@ export default () => {
 
                                                                                     <p>{lang["time"]}: {
                                                                                         lang["time"] === "Time" ?
-                                                                                            item.create_at.replace("lúc", "at") :
-                                                                                            item.create_at
+                                                                                        formatDate(item.create_at.replace("lúc", "at")) :
+                                                                                          formatDate(item.create_at)  
                                                                                     }</p>
                                                                                     {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
                                                                                     <p class="font-weight-bold">{lang["projectmanager"]}</p>

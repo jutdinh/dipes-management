@@ -9,6 +9,7 @@ import XLSX from 'xlsx-js-style'
 import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 import { Tables } from ".";
+import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -65,7 +66,7 @@ export default () => {
     const downloadAPI = () => {
         // console.log(apis);
       
-        const header = ["API ID", "Tên API", "URL", "Phương thức API", "Ngày tạo"];
+        const header = ["ID", "Tên API", "URL", "Phương thức", "Ngày tạo"];
       
         const reportData = apis.map(item => {
           return [
@@ -334,7 +335,7 @@ export default () => {
                                                                         <td>{api.api_name}</td>
                                                                         {/* <td>{api.api_scope}</td> */}
                                                                         <td>{api.create_by.fullname}</td>
-                                                                        <td>{api.create_at}</td>
+                                                                        <td>{formatDate(api.create_at)}</td>
                                                                         <td class="font-weight-bold align-center">
                                                                             <select className="form-control" onChange={() => handleUpdateStatus(api)}>
                                                                                 <option value={true} selected={api.status} style={{ color: 'green' }}>On</option>

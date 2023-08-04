@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import CheckList from '../common/checkList';
 import FloatingTextBox from '../common/floatingTextBox';
-
+import { formatDate } from '../../redux/configs/format-date';
 import Swal from 'sweetalert2';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -398,7 +398,7 @@ export default () => {
                                                     </td>
                                                     <td>{log.event_title}</td>
                                                     <td>{log.event_description.slice(0, 100)}{log.event_description.length > 100 ? "..." : ""}</td>
-                                                    <td>{log.create_at}</td>
+                                                    <td>{formatDate(log.create_at)}</td>
                                                     <td class="align-center">
                                                         <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
 

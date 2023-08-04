@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
 import Gantt from "./gantt"
-
+import { formatDate } from "../../redux/configs/format-date";
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);

@@ -159,7 +159,7 @@ export default () => {
             setModalTemp({
                 field_name: '',
                 DATATYPE: '',
-                NULL: true,
+                NULL: false,
                 LENGTH: 66535,
                 AUTO_INCREMENT: true,
                 MIN: '',
