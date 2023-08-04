@@ -1011,7 +1011,7 @@ export default () => {
                                                                         <input
                                                                             className="form-control"
                                                                             type={inputType === "int" ? "number" : inputType}
-                                                                            value={value}
+                                                                            defaultValue={value}
                                                                             onChange={(e) => {
                                                                                 setModalTemp((prevModalTemp) => ({
                                                                                     ...prevModalTemp,
