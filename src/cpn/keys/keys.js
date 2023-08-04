@@ -124,7 +124,7 @@ export default () => {
                                                                                     </div>
 
                                                                                 </div>
-                                                                                <p class="card-title font-weight-bold mt-1 mr-2">{lang["activation"]}:  </p>
+                                                                                {/* <p class="card-title font-weight-bold mt-1 mr-2">{lang["activation"]}:  </p> */}
                                                                                 <p class="mt-1 mr-2">UUID: {item.uuid} </p>
                                                                                 <p class="card-title font-weight-bold mt-1 mr-2">{lang["key"]}:  </p>
                                                                                 <textarea type="text" class="form-control" value={item.key}
