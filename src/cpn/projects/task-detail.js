@@ -1197,7 +1197,7 @@ export default () => {
                                                                                             <tbody>
                                                                                                 {taskDetail.history.reverse().map((task, index) => (
                                                                                                     <tr key={task.id}>
-                                                                                                        <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
+                                                                                                        <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
                                                                                                         <td scope="row">
                                                                                                             {task.modified_what === "approve" ? lang["confirm"] :
                                                                                                                 task.modified_what === "infor" ? lang["log.information"] :
@@ -1226,7 +1226,7 @@ export default () => {
                                                                                                             }
                                                                                                         </td>
 
-                                                                                                        <td scope="row">{task.modified_at}</td>
+                                                                                                        <td scope="row">{formatDate(task.modified_at)}</td>
                                                                                                         <td scope="row">
                                                                                                             <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
                                                                                                             {task.modified_by?.fullname}
