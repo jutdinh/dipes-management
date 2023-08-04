@@ -191,9 +191,8 @@ export default () => {
     const [projects, setProjects] = useState(storedProjects);
     const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {
-        
-        if( projects.length == 0 ){
+    useEffect(() => {               
+        if( projects.length == 0 || projects.length == undefined ){
             fetch(`${proxy}/projects/all/projects`, {
                 headers: {
                     Authorization: _token
@@ -220,7 +219,7 @@ export default () => {
                     }
     
                 })
-        }else{
+        }else{           
             setLoaded(true)
         }
 
