@@ -11,6 +11,9 @@ import XLSX from 'xlsx-js-style'
 import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
+
+
+
     const _token = localStorage.getItem("_token");
     const dispatch = useDispatch()
     const { project_id, version_id } = useParams();

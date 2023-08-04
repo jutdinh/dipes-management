@@ -9,6 +9,9 @@ import { Header } from '../common';
 
 export default () => {
     const { proxy, lang } = useSelector(state => state)
+    const storedProjects = useSelector( state => state.projects )
+
+
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const user = JSON.parse(stringifiedUser) || {}
@@ -17,31 +20,34 @@ export default () => {
     const dispatch = useDispatch()
 
     const [users, setUsers] = useState([]);
-    const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState(storedProjects);
     const [data, setData] = useState([]);
     useEffect(() => {
-        fetch(`${proxy}/projects/all/projects`, {
-            headers: {
-                Authorization: _token
-            }
-        })
-            .then(res => res.json())
-            .then(resp => {
-                const { success, data, status, content } = resp;
-                // console.log(resp)
-                if (success) {
-                    if (data != undefined && data.length > 0) {
-                        setProjects(data);
-                        dispatch({
-                            branch: "project",
-                            type: "setProjects",
-                            payload: data
-                        })
-                    }
-                } else {
-                    // window.location = "/404-not-found"
+
+        if( storedProjects.length == 0 ){
+            fetch(`${proxy}/projects/all/projects`, {
+                headers: {
+                    Authorization: _token
                 }
             })
+                .then(res => res.json())
+                .then(resp => {
+                    const { success, data, status, content } = resp;
+                    // console.log(resp)
+                    if (success) {
+                        if (data != undefined && data.length > 0) {
+                            setProjects(data);
+                            dispatch({
+                                branch: "project",
+                                type: "setProjects",
+                                payload: data
+                            })
+                        }
+                    } else {
+                        // window.location = "/404-not-found"
+                    }
+                })
+        }
     }, [])
 
     useEffect(() => {
