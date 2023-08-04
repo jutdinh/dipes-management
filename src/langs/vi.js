@@ -269,6 +269,7 @@ export default {
     "key": "Khóa",
     "pkey": "Khóa chính",
     "fkey": "Khóa ngoại",
+    "cascading": "Xoá hàng loạt",
     "fields name": "Tên trường",
     "datatype": "Kiểu dữ liệu",
     "null": "Yêu cầu dữ liệu",

@@ -41,25 +41,6 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [statusCreate, setStatusCreate] = useState({});
     const [fieldTemp, setFieldTemp] = useState({});
-
-
-    const [primaryFlicker, setPrimaryFlicker] = useState({
-        on: false,
-        foucs: false
-    })
-
-    const [foreignFlicker, setForeignFlicker] = useState({
-        on: false,
-        foucs: false
-    })
-
-
-    const [cascadeFlicker, setCascadeFlicker] = useState({
-        on: false,
-        foucs: false
-    })
-
-
     // const [modalTemp, setModalTemp] = useState({ DATATYPE: types[0].value });
     const defaultValues = {
         field_name: '',
@@ -76,16 +57,9 @@ export default () => {
         DEFAULT_FALSE: ''
     };
 
-    const styles = {
-        hiddenInput: {
-            width: 1,
-            opacity: 0
-        }
-    }
-
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
-    // // console.log(modalTemp)
+    // console.log(modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
@@ -114,7 +88,7 @@ export default () => {
     };
 
     const [errors, setErrors] = useState({});
-    // // console.log(modalTemp)
+    // console.log(modalTemp)
     const validate = () => {
         let temp = {};
 
@@ -164,17 +138,11 @@ export default () => {
             }
 
             if (isOnforenkey) {
-                setForeignKeys([...foreignKeys, { ...foreignKey, index: tempCounter, cascade: isOnCascade }])
+                setForeignKeys([...foreignKeys, { ...foreignKey, index: tempCounter }])
             }
 
             setIsOn(false)
             setIsOnforenkey(false)
-            setIsOnCascade(false)
-
-            setPrimaryFlicker({ focus: false, on: false })
-            setForeignFlicker({ focus: false, on: false })
-            setCascadeFlicker({ focus: false, on: false })
-
             // setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
 
             dispatch({
@@ -229,12 +197,11 @@ export default () => {
             }
             if (isOnforenkey) {
                 const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
-                updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index, cascade: isOnCascade });
+                updatedForeignKeys.push({ ...foreignKey, index: fieldTempUpdate.index });
                 setForeignKeys(updatedForeignKeys);
             } else {
-                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);                
-                console.log(updatedForeignKeys)
-                setForeignKeys( updatedForeignKeys );
+                const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.index !== fieldTempUpdate.index);
+                setForeignKeys(updatedForeignKeys);
             }
             dispatch({
                 branch: "db",
@@ -262,44 +229,30 @@ export default () => {
 
     };
 
-    // // console.log(modalTemp)
+    // console.log(modalTemp)
 
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
     useEffect(() => {
-        console.log(fieldTempUpdate)
-        console.log(primaryKey)
-        console.log(foreignKeys)
         if (primaryKey.includes(fieldTempUpdate.index)) {
             setIsOn(true);
-            setPrimaryFlicker({ ...primaryFlicker, on: true })
         }
         else {
-            setPrimaryFlicker({ ...primaryFlicker, on: false })
+            setIsOn(false);
         }
-        const fk = foreignKeys.some((fk) => fk.index === fieldTempUpdate.index || fk.field_id === fieldTempUpdate.id )
-        console.log(fk)
-        if (fk) {
-            setIsOnforenkey(true);
-            setForeignFlicker({ ...foreignFlicker, on: true })
-        }        
-        else {
-            setIsOnforenkey(false);
-            setForeignFlicker({ ...foreignFlicker, on: false })
-        }
-
-        if (foreignKeys.some((fk) => fk.index === fieldTempUpdate.index && fk.cascade )) {
-            setIsOnCascade(true);
-            setCascadeFlicker({ ...cascadeFlicker, on: true })
-        }
-        else {
-            setCascadeFlicker({ ...cascadeFlicker, on: false })
-            setIsOnCascade(false);
-        }
-
     }, [fieldTempUpdate]);
 
+    useEffect(() => {
 
-    // // console.log(fieldTempUpdate)
+        if (foreignKeys.some((fk) => fk.index === fieldTempUpdate.index)) {
+            setIsOnforenkey(true);
+
+
+        }
+        else {
+            setIsOnforenkey(false);
+        }
+    }, [fieldTempUpdate]);
+    // console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -310,7 +263,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        // // console.log(fieldId)
+        // console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -397,8 +350,8 @@ export default () => {
             });
     };
 
-    // // console.log(tempFields)
-    // // console.log(table)
+    // console.log(tempFields)
+    // console.log(table)
     const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
         e.preventDefault();
@@ -414,14 +367,14 @@ export default () => {
                 return;
             }
             if (validateTablename()) {
-                // // console.log( table )
+                // console.log( table )
                 const tableRequestBody = {
                     version_id: version_id,
                     table: {
                         table_name: table.table_name
                     }
                 };
-                //// console.log("body",tableRequestBody)
+                //console.log("body",tableRequestBody)
                 fetch(`${proxy}/db/tables/table`, {
                     method: "POST",
                     headers: {
@@ -434,9 +387,9 @@ export default () => {
                     .then((resp) => {
                         const { success, content, data, status } = resp;
                         if (success) {
-                            //    // console.log(resp)
-
-
+                //    console.log(resp)
+                           
+                           
                             const tableId = data.table.id; // Lấy id bảng vừa tạo
                             addField(tableId, status);
                         } else {
@@ -451,7 +404,7 @@ export default () => {
 
     };
 
-
+      
     const addField = (tableId, prevStatus = undefined) => {
         if (primaryKey.length !== 0) {
             const fieldRequestBody = {
@@ -461,7 +414,7 @@ export default () => {
                     ...tempFields
                 ],
             };
-            // // console.log("field", fieldRequestBody)
+            // console.log("field", fieldRequestBody)
 
             fetch(`${proxy}/db/fields/fields`, {
                 method: "POST",
@@ -474,7 +427,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    // // console.log(data)
+                    // console.log(data)
                     if (success) {
 
                         addKey({ tableId, data }, prevStatus);
@@ -506,7 +459,7 @@ export default () => {
             primary_key: primaryKeyid,
             foreign_keys: foreignKeys
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -519,8 +472,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // functions.showApiResponseMessage(prevStatus);
-
+                functions.showApiResponseMessage(prevStatus);
+             
             });
     };
 
@@ -534,6 +487,7 @@ export default () => {
 
         } else {
             setIsOn(true);
+
         }
     };
 
@@ -552,17 +506,6 @@ export default () => {
         }
     };
 
-
-    const [isOnCascade, setIsOnCascade] = useState(false);
-    const handleClickCascade = () => {
-        if (isOnCascade) {
-            setIsOnCascade(false);
-
-        } else {
-            setIsOnCascade(true);
-        }
-    };
-
     const [tableUpdate, setUpdateTable] = useState([]);
     const getIdTable = (tableid) => {
         setUpdateTable(tableid);
@@ -571,11 +514,11 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // // console.log(field)
+            // console.log(field)
             setModalTemp({
                 ...modalTemp, ...field.props
             });
-            // // console.log(modalTemp)
+            // console.log(modalTemp)
 
         }
 
@@ -590,7 +533,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        // // console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "POST",
             headers: {
@@ -610,7 +553,7 @@ export default () => {
     };
 
     // useEffect(() => {
-    //     // // console.log(tableUpdate);
+    //     // console.log(tableUpdate);
     // }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -621,7 +564,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        // // console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -686,52 +629,11 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    // // console.log("p key", primaryKey)
-    // // console.log("f key", foreignKeys)
-    // // // console.log(modalTemp)
+    // console.log("p key", primaryKey)
+    // console.log("f key", foreignKeys)
+    // // console.log(modalTemp)
 
-    // // console.log(tempFields)
-
-
-    const enterPrimaryTrigger = (e) => {
-        if (e.keyCode == 13) {
-            setPrimaryFlicker({ ...primaryFlicker, on: !primaryFlicker.on })
-            handleClickPrimary()
-        }
-    }
-
-    const primaryFlickerOnClick = (e) => {
-        const newState = !primaryFlicker.on
-        setPrimaryFlicker({ ...primaryFlicker, on: newState })
-        handleClickPrimary()
-    }
-
-    const enterForeignTrigger = (e) => {
-        if (e.keyCode == 13) {
-            setForeignFlicker({ ...foreignFlicker, on: !foreignFlicker.on })
-            handleClickForenkey()
-        }
-    }
-
-    const foreignFlickerOnClick = (e) => {
-        const newState = !foreignFlicker.on
-        setForeignFlicker({ ...foreignFlicker, on: newState })
-        handleClickForenkey()
-    }
-
-    const enterCascadeTrigger = (e) => {
-        if (e.keyCode == 13) {
-            setCascadeFlicker({ ...cascadeFlicker, on: !cascadeFlicker.on })
-            handleClickCascade()
-        }
-    }
-
-    const cascadeFlickerOnClick = (e) => {
-        const newState = !cascadeFlicker.on
-        setCascadeFlicker({ ...cascadeFlicker, on: newState })
-        handleClickCascade()
-    }
-
+    // console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -913,7 +815,6 @@ export default () => {
                                             <label>{lang["key"]} <span className='red_star'>*</span></label>
                                         </div>
                                         <div class="form-group col-lg-6"></div>
-
                                         {/* <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["pkey"]} </label>
                                             <i
@@ -930,66 +831,35 @@ export default () => {
                                                 onClick={handleClickForenkey}
                                             ></i>
                                         </div> */}
-                                        <div class="form-group col-lg-12 d-flex align-items-center">
+                                          <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["pkey"]}</label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterPrimaryTrigger}
-                                                    onFocus={() => { setPrimaryFlicker({ ...primaryFlicker, focus: true }) }}
-                                                    onBlur={() => { setPrimaryFlicker({ ...primaryFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${primaryFlicker.on ? "flicker-on" : ""} ${primaryFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={primaryFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <img
+                                                src={isOn ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickPrimary}
+                                                tabindex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickPrimary();
+                                                    }
+                                                }}
+                                            />
                                         </div>
-
-
-                                        <div class="form-group col-lg-6 d-flex align-items-center">
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["fkey"]} </label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterForeignTrigger}
-                                                    onFocus={() => { setForeignFlicker({ ...foreignFlicker, focus: true }) }}
-                                                    onBlur={() => { setForeignFlicker({ ...foreignFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${foreignFlicker.on ? "flicker-on" : ""} ${foreignFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={foreignFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-
-                                        <div class="form-group col-lg-6 d-flex align-items-center" style={{ opacity: `${isOnforenkey ? 1 : 0}` }}>
-
-                                            <label class="mr-2">{lang["cascading"]} </label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterCascadeTrigger}
-                                                    onFocus={() => { setCascadeFlicker({ ...cascadeFlicker, focus: true }) }}
-                                                    onBlur={() => { setCascadeFlicker({ ...cascadeFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${cascadeFlicker.on ? "flicker-on" : ""} ${cascadeFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={cascadeFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <img
+                                                src={isOnforenkey ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickForenkey}
+                                                tabIndex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickForenkey();
+                                                    }
+                                                }}
+                                            />
                                         </div>
 
                                         <div className={`form-group col-lg-6`}>
@@ -1022,7 +892,7 @@ export default () => {
                                                 value={foreignKey.ref_field_id}
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
-                                                    // // console.log(e.target.value);
+                                                    // console.log(e.target.value);
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
@@ -1204,66 +1074,35 @@ export default () => {
                                             <label>{lang["key"]} <span className='red_star'>*</span></label>
                                         </div>
                                         <div class="form-group col-lg-6"></div>
-                                        <div class="form-group col-lg-12 d-flex align-items-center">
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["pkey"]}</label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterPrimaryTrigger}
-                                                    onFocus={() => { setPrimaryFlicker({ ...primaryFlicker, focus: true }) }}
-                                                    onBlur={() => { setPrimaryFlicker({ ...primaryFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${primaryFlicker.on ? "flicker-on" : ""} ${primaryFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={primaryFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <img
+                                                src={isOn ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickPrimary}
+                                                tabindex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickPrimary();
+                                                    }
+                                                }}
+                                            />
                                         </div>
-
-
-                                        <div class="form-group col-lg-6 d-flex align-items-center">
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["fkey"]} </label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterForeignTrigger}
-                                                    onFocus={() => { setForeignFlicker({ ...foreignFlicker, focus: true }) }}
-                                                    onBlur={() => { setForeignFlicker({ ...foreignFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${foreignFlicker.on ? "flicker-on" : ""} ${foreignFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={foreignFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-
-                                        <div class="form-group col-lg-6 d-flex align-items-center" style={{ opacity: `${isOnforenkey ? 1 : 0}` }}>
-
-                                            <label class="mr-2">{lang["cascading"]} </label>
-                                            <div className="flicker-container">
-                                                <input type="text" style={styles.hiddenInput}
-                                                    onKeyUp={enterCascadeTrigger}
-                                                    onFocus={() => { setCascadeFlicker({ ...cascadeFlicker, focus: true }) }}
-                                                    onBlur={() => { setCascadeFlicker({ ...cascadeFlicker, focus: false }) }}
-                                                />
-                                                <div
-                                                    className={`flicker ${cascadeFlicker.on ? "flicker-on" : ""} ${cascadeFlicker.focus ? "flicker-focus" : ""} `}
-                                                    onClick={cascadeFlickerOnClick}
-                                                >
-                                                    <div className="thumb">
-                                                        <div className="bar" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <img
+                                                src={isOnforenkey ? '/images/icon/on.png' : '/images/icon/off.png'}
+                                                className='toggle-icon'
+                                                alt='toggle'
+                                                onClick={handleClickForenkey}
+                                                tabIndex="0"
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        handleClickForenkey();
+                                                    }
+                                                }}
+                                            />
                                         </div>
 
 

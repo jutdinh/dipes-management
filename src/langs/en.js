@@ -275,6 +275,7 @@ export default {
     "key": "Key",
     "pkey": "Primary Key",
     "fkey": "Foreign Key",
+    "cascading": "Cascading",
     "fields name": "Fields name",
     "datatype": "Data type",
     "null": "Data Requests",

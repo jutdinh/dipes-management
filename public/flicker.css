@@ -1,0 +1,48 @@
+.flicker-container{
+    display: contents;
+}
+
+.flicker {
+    width: 64px;
+    height: 24px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.flicker .thumb{
+    transition: ease-in-out 0.5s; 
+    width: inherit;
+    height: inherit;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+    background-color: rgba(0, 255, 255, 0);
+    
+}
+
+.flicker .thumb .bar{
+    position: absolute;  
+    transition: ease-in-out 0.25s;  
+    left: 0;
+    top: -2px;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 1px 1px 5px 1px #ccc;
+}
+
+.flicker-focus{
+    box-shadow: 1px 1px 5px 1px #ccc;
+}
+
+.flicker-on .thumb{
+    background-color: rgba(0, 255, 255, 1);
+}
+
+.flicker-on .thumb .bar{
+    left: 40px;
+}

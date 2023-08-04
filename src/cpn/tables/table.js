@@ -51,7 +51,7 @@ export default () => {
     //         }
     //     });
     // };
-    const [ section, setSection ] = useState(DIAGRAM)
+    const [ section, setSection ] = useState(TABLES)
 
     useEffect(() => {
 
