@@ -1161,7 +1161,7 @@ img[class="scaled-hover-target"]{
     padding: 10px 15px;
     background: #fff;
     border-radius: 5px;
-    min-height: 103px;
+    min-height: 101px;
     display: flex;
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1247,9 +1247,10 @@ img[class="scaled-hover-target"]{
 
 }
 .padding_infor_info_home {
-    padding: 10px 35px;
+    padding: 1px 35px;
     float: left;
     width: 100%;
+    min-height: 276px;
   
 
 }

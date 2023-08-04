@@ -56,7 +56,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(apis)
+    // console.log(apis)
 
     const handleGetApi = (apiid) => {
         // console.log("api", apiid)

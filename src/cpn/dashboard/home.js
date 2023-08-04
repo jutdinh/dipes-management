@@ -96,7 +96,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, statistic, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     const dataArray = Object.keys(statistic).map((key) => {
                         return {
@@ -110,7 +110,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statisStatus)
+    // console.log(statisStatus)
 
     const [statisLead, setStatisLead] = useState([]);
 
@@ -123,7 +123,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, statistic, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
 
                     setStatisLead(statistic);
@@ -132,7 +132,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(statisLead)
+    // console.log(statisLead)
     const mapStatus = {
         "1": lang["initialization"],
         "2": lang["implement"],
@@ -241,7 +241,7 @@ export default () => {
         value: statisLead[key].total,
         avatar: statisLead[key].avatar
     }));
-    console.log(outputDataLead)
+    // console.log(outputDataLead)
     let totalSumLead = statisStatus.reduce((sum, statis) => sum + statis.total, 0);
 
 
@@ -257,15 +257,16 @@ export default () => {
     const renderCustomizedLabel1 = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
     }) => {
-        console.log(percent)
+        // console.log(percent)
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
         return (
             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                {`${(percent * 100).toFixed(2)}%`}
-            </text>
+            {`${parseFloat((percent * 100).toFixed(2))}%`}
+          </text>
+          
         );
     };
 
@@ -499,7 +500,7 @@ export default () => {
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_statis">
-                                <ResponsiveContainer width="90%" height={365}>
+                                <ResponsiveContainer width="90%" height={370}>
                                     <BarChart
                                         style={{ margin: 'auto', display: 'block' }}
                                         width={1100}

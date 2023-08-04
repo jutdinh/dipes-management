@@ -137,7 +137,7 @@ export default () => {
 
     const renderCustomizedLabel = (props) => {
         const { x, y, width, height, value, dataKey } = props;
-        console.log(props)
+        // console.log(props)
         let labelValue;
         let yPos;// Vị trí y nằm giữa cột
         if (dataKey != 'y') {

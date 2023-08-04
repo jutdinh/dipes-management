@@ -629,11 +629,11 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    console.log("p key", primaryKey)
-    console.log("f key", foreignKeys)
-    // console.log(modalTemp)
+    // console.log("p key", primaryKey)
+    // console.log("f key", foreignKeys)
+    // // console.log(modalTemp)
 
-    console.log(tempFields)
+    // console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
