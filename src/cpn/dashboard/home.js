@@ -14,6 +14,8 @@ export default () => {
     const user = JSON.parse(stringifiedUser) || {}
     const [activeLink, setActiveLink] = useState("/");
 
+    const dispatch = useDispatch()
+
     const [users, setUsers] = useState([]);
     const [projects, setProjects] = useState([]);
     const [data, setData] = useState([]);
@@ -30,7 +32,11 @@ export default () => {
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProjects(data);
-
+                        dispatch({
+                            branch: "project",
+                            type: "setProjects",
+                            payload: data
+                        })
                     }
                 } else {
                     // window.location = "/404-not-found"

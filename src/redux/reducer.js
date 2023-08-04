@@ -6,6 +6,7 @@ import { socket } from './configs/socket';
 
 import DatabaseBranch from './router/db';
 import ApiBranch from './router/api';
+import ProjectBranch from './router/project';
 
 const initState = {
     ...config,
@@ -17,6 +18,8 @@ const initState = {
     proxy,
     lang: Langs[localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi"],
     database: { tables: [], fields: [], currentTable: {}, currentField: {}, offsets: [], tableOffsets: [], offsetPoints: [] },
+
+    projects: []
 }
 
 export default (state = initState, action) => {
@@ -33,6 +36,10 @@ export default (state = initState, action) => {
 
         case "api":
             return ApiBranch(state, action);
+            break;
+
+        case "project":
+            return ProjectBranch(state, action);
             break;
 
         default:

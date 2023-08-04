@@ -7,7 +7,11 @@ import $ from 'jquery';
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
+    const storedProjects = useSelector( state => state.projects )
     const dispatch = useDispatch()
+
+
+
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
     const [showMonitorPopup, setShowMonitorPopup] = useState(false);
@@ -184,36 +188,41 @@ export default () => {
     // const stringifiedUser = localStorage.getItem("user");
     // const users = JSON.parse(stringifiedUser)
     const [project, setProject] = useState({ project_type: "database" });
-    const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState(storedProjects);
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        fetch(`${proxy}/projects/all/projects`, {
-            headers: {
-                Authorization: _token
-            }
-        })
-            .then(res => res.json())
-            .then(resp => {
-                const { success, data, status, content } = resp;
-                // console.log(resp)
-                if (success) {
-                    if (data != undefined && data.length > 0) {
-                        setProjects(data);
-                        dispatch({
-                            branch: "default",
-                            type: "setProjects",
-                            payload: {
-                                projects: data
-                            }
-                        })
-                    }
-                    setLoaded(true)
-                } else {
-                    window.location = "/404-not-found"
+        
+        if( projects.length == 0 ){
+            fetch(`${proxy}/projects/all/projects`, {
+                headers: {
+                    Authorization: _token
                 }
-
             })
+                .then(res => res.json())
+                .then(resp => {
+                    const { success, data, status, content } = resp;
+                    // console.log(resp)
+                    if (success) {
+                        if (data != undefined && data.length > 0) {
+                            setProjects(data);
+                            dispatch({
+                                branch: "default",
+                                type: "setProjects",
+                                payload: {
+                                    projects: data
+                                }
+                            })
+                        }
+                        setLoaded(true)
+                    } else {
+                        window.location = "/404-not-found"
+                    }
+    
+                })
+        }else{
+            setLoaded(true)
+        }
 
     }, [])
 

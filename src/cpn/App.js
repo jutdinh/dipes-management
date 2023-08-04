@@ -79,7 +79,7 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
-        <Route path="/keyss" element={<Navigation Child={Keys} />} />
+        <Route path="/keys" element={<Navigation Child={Keys} />} />
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/detail/task/:project_id" element={<Navigation Child={TaskDetail} />} />
