@@ -85,7 +85,7 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
-    // // console.log(modalTemp)
+    console.log(modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
@@ -310,7 +310,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        // // console.log(fieldId)
+        console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -731,7 +731,7 @@ export default () => {
         setCascadeFlicker({ ...cascadeFlicker, on: newState })
         handleClickCascade()
     }
-
+console.log(fieldTempUpdate)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
