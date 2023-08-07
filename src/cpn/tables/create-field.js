@@ -109,6 +109,9 @@ export default () => {
             DEFAULT_FALSE: ''
         });
         setShowModal(false);
+    
+        setIsOnforenkey(false)
+        
 
         // setForeignKey({ ...foreignKey, table_id: "", ref_field_id: "" });
     };
@@ -397,8 +400,7 @@ export default () => {
             });
     };
 
-    // // console.log(tempFields)
-    // // console.log(table)
+
     const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
         e.preventDefault();
@@ -519,7 +521,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // functions.showApiResponseMessage(prevStatus);
+                functions.showApiResponseMessage(prevStatus);
 
             });
     };
@@ -551,7 +553,7 @@ export default () => {
 
         }
     };
-
+console.log(isOnforenkey)
 
     const [isOnCascade, setIsOnCascade] = useState(false);
     const handleClickCascade = () => {
@@ -795,7 +797,6 @@ console.log(fieldTempUpdate)
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
                                                                         <td scope="row">{indexOfFirstTable + index + 1}</td>
@@ -829,7 +830,6 @@ console.log(fieldTempUpdate)
                                                                         </td>
                                                                     </tr>
                                                                 ))}
-
                                                             </tbody>
                                                         </table>
                                                         <div className="d-flex justify-content-between align-items-center">
@@ -1222,7 +1222,6 @@ console.log(fieldTempUpdate)
                                                 </div>
                                             </div>
                                         </div>
-
 
                                         <div class="form-group col-lg-6 d-flex align-items-center">
                                             <label class="mr-2">{lang["fkey"]} </label>

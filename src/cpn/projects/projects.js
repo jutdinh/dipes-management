@@ -7,10 +7,10 @@ import $ from 'jquery';
 import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
-    const storedProjects = useSelector( state => state.projects )
+    const storedProjects = useSelector(state => state.projects)
     const dispatch = useDispatch()
 
-
+    const [errors, setErrors] = useState({});
 
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
@@ -21,7 +21,7 @@ export default () => {
     const stringifiedUser = localStorage.getItem("user");
 
 
-    const [ regent, setRegent ] = useState(false)
+    const [regent, setRegent] = useState(false)
 
     const _users = JSON.parse(stringifiedUser)
     // const showApiResponseMessage = (status) => {
@@ -191,8 +191,8 @@ export default () => {
     const [projects, setProjects] = useState(storedProjects);
     const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {               
-        if( projects.length == 0 || projects.length == undefined ){
+    useEffect(() => {
+        if (projects.length == 0 || projects.length == undefined) {
             fetch(`${proxy}/projects/all/projects`, {
                 headers: {
                     Authorization: _token
@@ -217,16 +217,16 @@ export default () => {
                     } else {
                         window.location = "/404-not-found"
                     }
-    
+
                 })
-        }else{           
+        } else {
             setLoaded(true)
         }
 
     }, [])
 
-    useEffect( () => {
-        if( projects.length > 0 && !regent ){
+    useEffect(() => {
+        if (projects.length > 0 && !regent) {
             fetch(`${proxy}/projects/full/all/projects`, {
                 headers: {
                     Authorization: _token
@@ -252,7 +252,7 @@ export default () => {
                     } else {
                         window.location = "/404-not-found"
                     }
-    
+
                 })
         }
     }, [projects])
@@ -279,67 +279,83 @@ export default () => {
                 }
             })
     }, [])
+    const validateAddProject = () => {
+        let temp = {};
 
+        temp.project_name = project.project_name ? "" : lang["error.input"];
+        temp.project_status = project.project_status ? "" : lang["error.input"];
+        temp.manager = manager ? "" : lang["error.input"];
+
+
+        setErrors({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
     const submit = (e) => {
         e.preventDefault();
+        if (validateAddProject()) {
+            const body = {
+                project,
+                manager: { username: manager },
+            };
 
-        const body = {
-            project,
-            manager: { username: manager },
-        };
+            const status = body.project.project_status;
+            body.project.project_status = parseInt(status)
 
-        const status = body.project.project_status;
-        body.project.project_status = parseInt(status)
-
-        fetch(`${proxy}/projects/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${_token}`,
-            },
-            body: JSON.stringify(body),
-        })
-            .then((res) => res.json())
-            .then((resp) => {
-                const { success, content, data, status } = resp;
-                functions.showApiResponseMessage(status);
-                if (success) {
-
-
-                    const projectId = data.project_id;
-                    return fetch(`${proxy}/projects/members`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `${_token}`,
-                        },
-                        body: JSON.stringify({
-                            project_id: projectId,
-                            usernames: uniqueArray,
-                        }),
-                    });
-
-                }
-                // else {
-                //     Swal.fire({
-                //         title: "Thất bại!",
-                //         text: "error.message",
-                //         icon: "error",
-                //         showConfirmButton: false,
-                //         timer: 2000,
-                //     });
-                //     throw new Error(content);
-                // }
+            fetch(`${proxy}/projects/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${_token}`,
+                },
+                body: JSON.stringify(body),
             })
-            .then(res => res && res.json())
-            .then((resp) => {
-                if (resp) {
+                .then((res) => res.json())
+                .then((resp) => {
                     const { success, content, data, status } = resp;
+                    functions.showApiResponseMessage(status);
+                    if (success) {
+
+
+                        const projectId = data.project_id;
+                        return fetch(`${proxy}/projects/members`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `${_token}`,
+                            },
+                            body: JSON.stringify({
+                                project_id: projectId,
+                                usernames: uniqueArray,
+                            }),
+                        });
+
+                    }
+                    // else {
+                    //     Swal.fire({
+                    //         title: "Thất bại!",
+                    //         text: "error.message",
+                    //         icon: "error",
+                    //         showConfirmButton: false,
+                    //         timer: 2000,
+                    //     });
+                    //     throw new Error(content);
+                    // }
+                })
+                .then(res => res && res.json())
+                .then((resp) => {
+                    if (resp) {
+                        const { success, content, data, status } = resp;
 
 
 
-                }
-            })
+                    }
+                })
+        }
+
+
 
     };
     const handleDeleteUser = (project) => {
@@ -439,13 +455,16 @@ export default () => {
                                             <input type="text" class="form-control" value={project.project_name} onChange={
                                                 (e) => { setProject({ ...project, project_name: e.target.value }) }
                                             } placeholder={lang["p.projectname"]} />
+                                            {errors.project_name && <p className="text-danger mb-0">{errors.project_name}</p>}
                                         </div>
+
                                         <div class="form-group col-lg-6">
                                             <label>{lang["projectcode"]} </label>
                                             <input type="text" class="form-control" value={project.project_code} onChange={
                                                 (e) => { setProject({ ...project, project_code: e.target.value }) }
                                             } placeholder={lang["p.projectcode"]} />
                                         </div>
+
                                         <div class="form-group col-lg-6 ">
                                             <label>{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                             <select className="form-control" value={project.project_status} onChange={(e) => { setProject({ ...project, project_status: e.target.value }) }}>
@@ -456,7 +475,9 @@ export default () => {
                                                     );
                                                 })}
                                             </select>
+                                            {errors.project_status && <p className="text-danger mb-0">{errors.project_status}</p>}
                                         </div>
+
                                         <div class="form-group col-lg-6 ">
                                             <label>{lang["projecttype"]}</label>
                                             <select className="form-control" value={project.project_type} onChange={(e) => { setProject({ ...project, project_type: e.target.value }) }}>
@@ -491,6 +512,7 @@ export default () => {
                                                     );
                                                 })}
                                             </select>
+                                            {errors.manager && <p className="text-danger mb-0">{errors.manager}</p>}
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label>{lang["projectdescripton"]}</label>
@@ -703,8 +725,8 @@ export default () => {
 
                                                                                     <p>{lang["time"]}: {
                                                                                         lang["time"] === "Time" ?
-                                                                                        formatDate(item.create_at.replace("lúc", "at")) :
-                                                                                          formatDate(item.create_at)  
+                                                                                            formatDate(item.create_at.replace("lúc", "at")) :
+                                                                                            formatDate(item.create_at)
                                                                                     }</p>
                                                                                     {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
                                                                                     <p class="font-weight-bold">{lang["projectmanager"]}</p>

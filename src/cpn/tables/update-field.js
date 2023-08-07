@@ -391,6 +391,7 @@ export default () => {
     const [fieldTempUpdate, setFieldTempupdate] = useState(defaultValues);
 
 
+console.log("FieldTemp", fieldTempUpdate)
     useEffect(() => {
         if (primaryKey.includes(fieldTempUpdate.id)) {
             setIsOn(true);
@@ -399,7 +400,7 @@ export default () => {
             setIsOn(false);
         }
     }, [fieldTempUpdate]);
-
+console.log(foreignKeys)
     useEffect(() => {
 
         if (foreignKeys.some((fk) => fk.field_id === fieldTempUpdate.id)) {
@@ -749,7 +750,7 @@ export default () => {
     //primary
     const [isOn, setIsOn] = useState(false);
     const [primaryKey, setPrimaryKey] = useState([]);
-
+console.log(primaryKey)
 
     const handleClickPrimary = () => {
         setIsOn(!isOn);

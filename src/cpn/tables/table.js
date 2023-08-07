@@ -30,28 +30,8 @@ export default () => {
     };
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
-    // const showApiResponseMessage = (status) => {
-    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-    //     const message = responseMessages[status];
-    
-    //     const title = message?.[langItem]?.type || "Unknown error";
-    //     const description = message?.[langItem]?.description || "Unknown error";
-    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-        
-    //     Swal.fire({
-    //         title,
-    //         text: description,
-    //         icon,
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //     }).then(() => {
-    //         if (icon === "success") {
-    //             window.location.reload();
-
-    //         }
-    //     });
-    // };
-    const [ section, setSection ] = useState(TABLES)
+ 
+    const [ section, setSection ] = useState(DIAGRAM)
 
     useEffect(() => {
 
