@@ -1,5 +1,4 @@
-const responseMessages = 
-{
+const responseMessages = {
     "0x4501000": {
         "vi": {
             "description": "Thành công",
@@ -2026,7 +2025,7 @@ const responseMessages =
             "type": "Thành công"
         },
         "en": {
-            "description": "Update table success",
+            "description": "Table update successful",
             "type": "Success"
         }
     },
@@ -2459,8 +2458,27 @@ const responseMessages =
             "description": "Key activation successful",
             "type": "Success"
         }
+    },
+    "0x4501245": {
+        "vi": {
+            "description": "Người quản lý dự án không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Project manager does not exist",
+            "type": "Error"
+        }
+    },
+    "0x4501246": {
+        "vi": {
+            "description": "Lỗi server",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Server error",
+            "type": "Error"
+        }
     }
 }
-  
   export default responseMessages;
   
