@@ -1845,19 +1845,25 @@ export default () => {
                                     <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }} title={lang["export"]}></i>
                                 </div>
                             </div>
-                            <div class="table_section padding_infor_info">
+                            <div class="table_section padding_infor_info_website">
                                 <div class="row column1">
                                     <div class="col-md-6 col-lg-4">
                                         <div class="full counter_section margin_bottom_30 box-table">
                                             <div class="couter_icon">
-                                                <div>
+                                                <div class="d-flex">
                                                     <i class="fa fa-table yellow_color"></i>
                                                 </div>
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">{tables.tables?.length || 0}</p>
-                                                    <p class="head_couter">Tables</p>
+                                                    <p class="total_no  mt-4">{tables.tables?.length || 0} Tables</p>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()} data-toggle="modal" data-target="#">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1871,8 +1877,14 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">{apis.length || 0}</p>
-                                                    <p class="head_couter">API</p>
+                                                    <p class="total_no  mt-4">{apis.length || 0} API</p>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()} data-toggle="modal" data-target="#">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1886,327 +1898,17 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no">{uis.length || 0}</p>
-                                                    <p class="head_couter">UI</p>
+                                                    <p class="total_no  mt-4">{uis.length || 0} UI</p>
+                                                </div>
+                                            </div>
+                                            <div class="counter_no">
+                                                <div>
+                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button></p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row column1">
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">{lang["list of tables"]} </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()}>
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        {
-                                            currentTable && currentTable.length > 0 ? (
-                                                <>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {currentTable.map((table, index) => (
-                                                                    <tr key={table.id}>
-                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
-                                                                        <td style={{ maxWidth: "100px" }}>
-                                                                            <div style={{
-                                                                                width: "100%",
-                                                                                overflow: "hidden",
-                                                                                textOverflow: "ellipsis",
-                                                                                whiteSpace: "nowrap"
-                                                                            }}>
-                                                                                {table.table_name}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>{formatDate(table.create_at)}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul className="pagination mb-0">
-                                                                <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateTable(1)}>
-                                                                        &#8810;
-                                                                    </button>
-                                                                </li>
-                                                                {/* <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li> */}
-                                                                {currentPageTable > 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {Array(totalPagesTable).fill().map((_, index) => {
-                                                                    if (
-                                                                        index + 1 === currentPageTable ||
-                                                                        (index + 1 >= currentPageTable - 1 && index + 1 <= currentPageTable + 1)
-                                                                    ) {
-                                                                        return (
-                                                                            <li key={index} className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateTable(index + 1)}>
-                                                                                    {index + 1}
-                                                                                </button>
-                                                                            </li>
-                                                                        )
-                                                                    }
-                                                                })}
-                                                                {currentPageTable < totalPagesTable - 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {/* <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li> */}
-                                                                <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateTable(totalPagesTable)}>
-                                                                        &#8811;
-                                                                    </button>
-                                                                </li>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
-
-
-
-                                                </>) : (
-                                                <div class="list_cont ">
-                                                    <p>{lang["not found"]}</p>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">{lang["list of api"]} </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        {
-                                            currentApi && currentApi.length > 0 ? (
-                                                <>
-                                                    <div class="table-responsive">
-
-                                                        <>
-                                                            <table class="table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["api name"]}</th>
-                                                                        <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {currentApi.map((api, index) => (
-                                                                        <tr key={api.id}>
-                                                                            <td scope="row">{indexOfFirstApi + index + 1}</td>
-                                                                            <td style={{ maxWidth: "100px" }}>
-                                                                                <div style={{
-                                                                                    width: "100%",
-                                                                                    overflow: "hidden",
-                                                                                    textOverflow: "ellipsis",
-                                                                                    whiteSpace: "nowrap"
-                                                                                }}>
-                                                                                    {api.api_name}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>{formatDate(api.create_at)}</td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-
-                                                            {/* <div className="d-flex justify-content-between align-items-center">
-                                                            <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul className="pagination mb-0">
-                                                                    <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
-                                                                            &laquo;
-                                                                        </button>
-                                                                    </li>
-                                                                    {Array(totalPagesApi).fill().map((_, index) => (
-                                                                        <li className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                            <button className="page-link" onClick={() => paginateApi(index + 1)}>
-                                                                                {index + 1}
-                                                                            </button>
-                                                                        </li>
-                                                                    ))}
-                                                                    <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
-                                                                            &raquo;
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div> */}
-                                                        </>
-
-                                                    </div>
-                                                    <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, apis.length)} {lang["of"]} {apis.length} {lang["results"]}</p>
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul className="pagination mb-0">
-                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(1)}>
-                                                                        &#8810;
-                                                                    </button>
-                                                                </li>
-                                                                {/* <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
-                                                                        &laquo;
-                                                                    </button>
-                                                                </li> */}
-                                                                {currentPageApi > 1 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {Array(totalPagesApi).fill().map((_, index) => {
-                                                                    if (
-                                                                        index + 1 === currentPageApi ||
-                                                                        (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
-                                                                    ) {
-                                                                        return (
-                                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
-                                                                                    {index + 1}
-                                                                                </button>
-                                                                            </li>
-                                                                        )
-                                                                    }
-                                                                })}
-                                                                {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {/* <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
-                                                                        &raquo;
-                                                                    </button>
-                                                                </li> */}
-                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
-                                                                        &#8811;
-                                                                    </button>
-                                                                </li>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div class="list_cont ">
-                                                    <p>{lang["not found"]}</p>
-                                                </div>
-                                            )
-
-                                        }
-
-                                    </div>
-                                    <div class="col-md-4 col-lg-4">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">{lang["list of ui"]} </p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        {
-                                            currentUi && currentUi.length > 0 ? (
-                                                <>
-                                                    <div class="table-responsive">
-                                                        {
-                                                            currentUi && currentUi.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["ui name"]}</th>
-                                                                            <th class="font-weight-bold align-center">{lang["create-at"]}</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {currentUi.map((ui, index) => (
-                                                                            <tr key={index}>
-                                                                                <td scope="row">{indexOfFirstUi + index + 1}</td>
-                                                                                <td style={{ maxWidth: "100px" }}>
-                                                                                    <div style={{
-                                                                                        width: "100%",
-                                                                                        overflow: "hidden",
-                                                                                        textOverflow: "ellipsis",
-                                                                                        whiteSpace: "nowrap"
-                                                                                    }}>
-                                                                                        {ui.title}
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>{formatDate(ui.create_at)}</td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
-                                                                </div>
-                                                            )
-                                                        }
-
-                                                    </div>
-                                                    <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, tables.tables?.length)} {lang["of"]} {tables.tables?.length} {lang["results"]}</p>
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul className="pagination mb-0">
-                                                                <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateUi(1)}>
-                                                                        &#8810;
-                                                                    </button>
-                                                                </li>
-                                                                {/* <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
-                                                                    &laquo;
-                                                                </button>
-                                                            </li> */}
-                                                                {currentPageUi > 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {Array(totalPagesUi).fill().map((_, index) => {
-                                                                    if (
-                                                                        index + 1 === currentPageUi ||
-                                                                        (index + 1 >= currentPageUi - 1 && index + 1 <= currentPageUi + 1)
-                                                                    ) {
-                                                                        return (
-                                                                            <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateUi(index + 1)}>
-                                                                                    {index + 1}
-                                                                                </button>
-                                                                            </li>
-                                                                        )
-                                                                    }
-                                                                })}
-                                                                {currentPageUi < totalPagesUi - 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                                {/* <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
-                                                                    &raquo;
-                                                                </button>
-                                                            </li> */}
-                                                                <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateUi(totalPagesUi)}>
-                                                                        &#8811;
-                                                                    </button>
-                                                                </li>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div class="list_cont ">
-                                                    <p>{lang["not found"]}</p>
-                                                </div>
-                                            )
-                                        }
-
                                     </div>
                                 </div>
                             </div>

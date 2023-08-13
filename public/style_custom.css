@@ -1219,6 +1219,13 @@ img[class="scaled-hover-target"]{
 
 }
 
+.padding_infor_info_website {
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+    
+}
+
 .padding_infor_info_gantt_chart {
     padding: 10px 35px;
     float: left;

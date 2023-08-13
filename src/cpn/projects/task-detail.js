@@ -482,7 +482,7 @@ export default () => {
         }
         setConfrimFilter(newFilter);
     };
-
+    // console.log(taskDetail.members)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1083,6 +1083,43 @@ export default () => {
                                                                 }
                                                                 </span>
                                                             </div>
+                                                            <div class="form-group col-lg-12">
+                                                            <div class="table-responsive">
+                                                                {
+                                                                    taskDetail.members && taskDetail.members.length > 0 ? (
+                                                                        <>
+                                                                            <table class="table table-striped ">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                        <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                                                        <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+                                                                                       
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    { taskDetail.members.map((member, index) => (
+                                                                                        <tr key={member.username}>
+                                                                                            <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                                            <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                                            <td>{member.fullname}</td>
+                                                                                            
+                                                                                           
+                                                                                        </tr>
+                                                                                    ))}
+                                                                                </tbody>
+                                                                            </table>
+
+
+                                                                        </>
+                                                                    ) : (
+                                                                        <div class="list_cont ">
+                                                                            <p>{lang["empty.member"]}</p>
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            </div>
 
                                                             {/* <div class="form-group col-lg-12">
                                                                 <label><b>{lang["members"]}</b></label>
@@ -1111,7 +1148,7 @@ export default () => {
                                                             </div>
                                                             <div class="form-group col-lg-12">
                                                                 <label><b>Lịch sử</b></label>
-                                                                <div class="table-responsive">
+                                                               
                                                                     {/* {
                                                         currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
                                                             <>
@@ -1212,18 +1249,20 @@ export default () => {
                                                                                                                         !isNaN(task.old_value) ?
                                                                                                                             lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
                                                                                                                             :
-                                                                                                                            `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+                                                                                                                            // `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+                                                                                                                            `${task.old_value}`
 
                                                                                                             }
                                                                                                         </td>
                                                                                                         <td scope="row">
                                                                                                             {
-                                                                                                                task.new_value === true? lang["approved"] :
+                                                                                                                task.new_value === true ? lang["approved"] :
                                                                                                                     task.new_value === false ? lang["await"] :
                                                                                                                         !isNaN(task.new_value) ?
                                                                                                                             lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
                                                                                                                             :
-                                                                                                                            `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                                                            `${task.new_value}`
+                                                                                                                // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
                                                                                                             }
                                                                                                         </td>
 
@@ -1245,7 +1284,7 @@ export default () => {
                                                                             </div>
                                                                         )
                                                                     }
-                                                                </div>
+                                                               
                                                             </div>
                                                         </div>
                                                     </form>
@@ -1277,16 +1316,16 @@ export default () => {
                                             filteredTasks && filteredTasks.length > 0 ? (
                                                 <Gantt data={
                                                     filteredTasks.filter((task) => {
-                                                    let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
-                                                    let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
-                                                    let filterStatusValues = statusFilter.map(item => item.value);
-                                                    let taskStatus = task && task.task_status ? task.task_status : '';
-                                                    let filterConfirmValues = confirmFilter.map(item => item.value);
-                                                    let taskConfirm = task && task.task_approve ? 1 : 0;
-                                                    return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
-                                                        (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
-                                                        (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
-                                                })} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
+                                                        let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
+                                                        let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
+                                                        let filterStatusValues = statusFilter.map(item => item.value);
+                                                        let taskStatus = task && task.task_status ? task.task_status : '';
+                                                        let filterConfirmValues = confirmFilter.map(item => item.value);
+                                                        let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                        return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
+                                                            (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
+                                                            (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
+                                                    })} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
                                     </div>
