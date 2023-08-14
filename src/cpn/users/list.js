@@ -588,7 +588,7 @@ export default (props) => {
                                                                         <div class="contact_inner">
                                                                             <div class="left-cus">
                                                                                 <p><strong>{item.fullname}</strong></p>
-                                                                                <p>{lang["username"]}:{item.username} </p>
+                                                                                <p>{lang["username"]}: {item.username} </p>
                                                                                 <p>{lang["permission"]}:
                                                                                     {item.role === "ad" ? lang["administrator"] :
                                                                                         item.role === "pm" ? lang["uprojectmanager"] :

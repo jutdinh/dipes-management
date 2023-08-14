@@ -714,7 +714,7 @@ export default () => {
     //task
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 4;
+    const rowsPerPage = 3;
 
     const indexOfLastMember = currentPage * rowsPerPage;
     const indexOfFirstMember = indexOfLastMember - rowsPerPage;
@@ -1633,7 +1633,7 @@ export default () => {
                                     </span>
                                 </div>
                                 {statisTask && statisTask.length > 0 ? (
-                                    <div style={{ display: 'flex', height: '425px', width: '100%' }}>
+                                    <div style={{ display: 'flex', height: '365px', width: '100%' }}>
                                         <ResponsiveContainer width="60%">
                                             <PieChart>
                                                 <Pie
@@ -1832,7 +1832,7 @@ export default () => {
                 </div>
                 {/* Website info */}
                 <div class="row">
-                    <div class="col-md-12">
+                    <div style={{ paddingLeft: "10px" }} class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
@@ -1848,7 +1848,7 @@ export default () => {
                             <div class="table_section padding_infor_info_website">
                                 <div class="row column1">
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30 box-table">
+                                        <div class="full counter_section mb-1 mt-1 box-table">
                                             <div class="couter_icon">
                                                 <div class="d-flex">
                                                     <i class="fa fa-table yellow_color"></i>
@@ -1869,7 +1869,7 @@ export default () => {
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30 box-api">
+                                        <div class="full counter_section mb-1 mt-1 box-api">
                                             <div class="couter_icon">
                                                 <div>
                                                     <i class="fa fa-cog blue1_color"></i>
@@ -1890,7 +1890,7 @@ export default () => {
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section margin_bottom_30 box-ui " >
+                                        <div class="full counter_section mb-1 mt-1  box-ui " >
                                             <div class="couter_icon">
                                                 <div>
                                                     <i class="fa fa-newspaper-o green_color"></i>

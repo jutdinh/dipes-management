@@ -1068,7 +1068,7 @@ export default () => {
                                                             <div class="form-group col-lg-4">
 
                                                             </div>
-                                                            <div class="form-group col-lg-12">
+                                                            {/* <div class="form-group col-lg-12">
                                                                 <label><b>{lang["members"]}</b></label>
                                                                 <span className="d-block"> {
                                                                     taskDetail.members && taskDetail.members.length > 0 ?
@@ -1082,7 +1082,7 @@ export default () => {
                                                                         <p>{lang["projectempty"]} </p>
                                                                 }
                                                                 </span>
-                                                            </div>
+                                                            </div> */}
                                                             <div class="form-group col-lg-12">
                                                             <div class="table-responsive">
                                                                 {
