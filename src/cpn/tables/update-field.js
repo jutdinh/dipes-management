@@ -201,7 +201,8 @@ export default () => {
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             } else {
-                const updatedForeignKeys = foreignKeys
+                const updatedForeignKeys = foreignKeys.filter( key => key.field_id != fieldTempUpdate.id )
+                
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             }
@@ -889,7 +890,7 @@ export default () => {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
                 } else {
-                    // functions.showApiResponseMessage(status, false);
+                    functions.showApiResponseMessage(status, false);
                 }
             });
     };

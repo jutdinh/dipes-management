@@ -437,7 +437,7 @@ export default () => {
                                     </button>
                             }
                         </div>
-                    </div>
+                    </div>                    
                 </div>
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
