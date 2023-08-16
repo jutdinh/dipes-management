@@ -1736,3 +1736,25 @@ img[class="scaled-hover-target"]{
     cursor: grabbing; /* biểu tượng bàn tay đang nắm chặt */
   }
   
+
+  .checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    max-height: 250px; 
+    overflow-y: auto; 
+    padding: 10px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-container-wrapper {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    width: 100%;
+}

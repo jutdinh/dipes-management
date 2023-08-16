@@ -96,8 +96,8 @@ export default () => {
     const addUI = () => {
         if (validateUiname()) {
 
-            modalTemp.statistic_fields.map( field => {
-                field.group_by = field.group_by.map( group => group.fomular_alias )
+            modalTemp.statistic_fields.map(field => {
+                field.group_by = field.group_by.map(group => group.fomular_alias)
             })
 
             const requestBody = {
@@ -141,7 +141,7 @@ export default () => {
     }
     const [getAllField, setAllField] = useState([]);
     const [fields, setFields] = useState([])
-    
+
 
     const handleSubmitTables = () => {
         if (validateTable()) {
@@ -282,7 +282,7 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
 
-    const [field, setField] = useState("");    
+    const [field, setField] = useState("");
     const [groupBy, setGroupBy] = useState([])
 
     const [errorCaculates, setErrorCaculates] = useState({});
@@ -297,19 +297,23 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
 
-    const addOrRemoveGroupByField = ( id ) => {
-        const corespondingGroupByField = groupBy.find( f => f.id == id )
+    const addOrRemoveGroupByField = (id) => {
+        const corespondingGroupByField = groupBy.find(f => f.id == id);
         let newGroupBy;
-        if( corespondingGroupByField ){
-            newGroupBy = groupBy.filter( f => f.id != id )
-        }else{
-            const field = fields.find( f => f.id == id )
-            if( field ){
-                newGroupBy = [...groupBy, field]
+        if (corespondingGroupByField) {
+            newGroupBy = groupBy.filter(f => f.id != id);
+        } else {
+            const field = fields.find(f => f.id == id);
+            if (field) {
+                newGroupBy = [...groupBy, field];
             }
         }
-        setGroupBy(newGroupBy)
+        setGroupBy(newGroupBy);
     }
+    const isFieldChecked = (id) => {
+        return groupBy.some(f => f.id == id);
+    }
+
 
 
     const handleSubmitFieldCalculates = async (event) => {
@@ -461,7 +465,7 @@ export default () => {
     const updateFieldStatistical = (sta) => {
         // console.log(sta)
         setStatisticalUpdate(sta)
-        setGroupBy( sta.group_by )
+        setGroupBy(sta.group_by)
     }
     const validateStatisticalUpdate = () => {
         let temp = {};
@@ -479,7 +483,7 @@ export default () => {
     const submitupdateFieldStatistical = () => {
         if (validateStatisticalUpdate()) {
             const updatedStatistical = modalTemp.statistic_fields.map(item =>
-                item.fomular_alias === statisticalUpdate.fomular_alias ?{ ...statisticalUpdate, group_by: groupBy } : item
+                item.fomular_alias === statisticalUpdate.fomular_alias ? { ...statisticalUpdate, group_by: groupBy } : item
             );
             setGroupBy([])
             setModalTemp(prev => ({
@@ -798,7 +802,7 @@ export default () => {
                                                                             <td>{index + 1}</td>
                                                                             <td>{statistic.display_name}</td>
                                                                             <td>{statistic.field}</td>
-                                                                            <td>{statistic.group_by?.map( field => field.field_name ).join(", ")}</td>
+                                                                            <td>{statistic.group_by?.map(field => field.field_name).join(", ")}</td>
                                                                             <td>{statistic.fomular}</td>
                                                                             <td class="align-center" style={{ minWidth: "130px" }}>
                                                                                 <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
@@ -958,26 +962,40 @@ export default () => {
                                     </div>
 
                                     <div className={`form-group col-lg-12`}>
-                                        <p class="font-weight-bold">
-                                            {lang["group by"]} 
+                                        <p className="font-weight-bold">
+                                            {lang["group by"]}
                                         </p>
-                                        <select className="form-control" value={statisticalUpdate.field} onChange={ (e) => { addOrRemoveGroupByField(e.target.value) }  }>
-                                            <option value="">{lang["select fields"]}</option>
 
+                                       <div className="form-group checkbox-container-wrapper">
+                                       <div className="checkbox-container">
                                             {fields.map((field, index) => (
-                                                <option key={index} value={field.id}>
-                                                    {field.field_name}
-                                                </option>
+                                                <div key={index} className="form-check">
+                                                     <label className="form-check-label">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={field.id}
+                                                        checked={isFieldChecked(field.id)}
+                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                    />
+                                                   
+                                                        {field.field_name}
+                                                    </label>
+                                                </div>
                                             ))}
-                                        </select>
+                                            </div>
+                                        </div>
+
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
 
 
-                                    <div class="form-group col-lg-12">                                        
+
+
+                                    <div class="form-group col-lg-12">
                                         <div class="table-responsive">
                                             {
-                                                 groupBy.length > 0 ? (
+                                                groupBy.length > 0 ? (
                                                     <>
                                                         <table class="table table-striped">
                                                             <thead>
@@ -989,7 +1007,7 @@ export default () => {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                { groupBy.map( (field, index) => 
+                                                                {groupBy.map((field, index) =>
                                                                     <tr key={`${index}`}>
                                                                         <td>{index + 1}</td>
                                                                         <td>{field.field_name}</td>
@@ -1078,7 +1096,7 @@ export default () => {
                                             required
                                         />
                                         {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
-                                    </div>                                 
+                                    </div>
 
                                     <div class="form-group col-md-12">
                                         <label> < p class="font-weight-bold">{getAllField.table_name}</p> </label>
@@ -1109,26 +1127,38 @@ export default () => {
 
 
                                     <div className={`form-group col-lg-12`}>
-                                        <p class="font-weight-bold">
-                                            {lang["group by"]} 
+                                        <p className="font-weight-bold">
+                                            {lang["group by"]}
                                         </p>
-                                        <select className="form-control" value={statisticalUpdate.field} onChange={ (e) => { addOrRemoveGroupByField(e.target.value) }  }>
-                                            <option value="">{lang["select fields"]}</option>
 
+                                       <div className="form-group checkbox-container-wrapper">
+                                       <div className="checkbox-container">
                                             {fields.map((field, index) => (
-                                                <option key={index} value={field.id}>
-                                                    {field.field_name}
-                                                </option>
+                                                <div key={index} className="form-check">
+                                                     <label className="form-check-label">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={field.id}
+                                                        checked={isFieldChecked(field.id)}
+                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                    />
+                                                   
+                                                        {field.field_name}
+                                                    </label>
+                                                </div>
                                             ))}
-                                        </select>
+                                            </div>
+                                        </div>
+
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
 
 
-                                    <div class="form-group col-lg-12">                                        
+                                    <div class="form-group col-lg-12">
                                         <div class="table-responsive">
                                             {
-                                                 groupBy.length > 0 ? (
+                                                groupBy.length > 0 ? (
                                                     <>
                                                         <table class="table table-striped">
                                                             <thead>
@@ -1140,7 +1170,7 @@ export default () => {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                { groupBy.map( (field, index) => 
+                                                                {groupBy.map((field, index) =>
                                                                     <tr key={`${index}`}>
                                                                         <td>{index + 1}</td>
                                                                         <td>{field.field_name}</td>
