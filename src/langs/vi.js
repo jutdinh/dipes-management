@@ -309,6 +309,7 @@ export default {
     "edit statistical fields": "Chỉnh sửa trường thống kê",
 
     "select fields": "Chọn trường",
+    "group by": "Nhóm giá trị bởi trường",
     "edit api": "Chỉnh sửa api",
     "fields data": "Danh sách các trường dữ liệu",
 

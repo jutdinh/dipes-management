@@ -312,6 +312,7 @@ export default {
     "fields name statistic": "Statistics field name",
     "edit statistical fields": "Edit statistics field",
     "select fields": "Select fields",
+    "group by": "Group by",
     "ui information": "User interface information",
     "name page": "Page name",
     "manage ui": "Manage user interface",
