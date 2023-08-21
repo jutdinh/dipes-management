@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
 import $ from "jquery"
+import { formatDate } from "../../redux/configs/format-date";
 
 
 export default () => {
@@ -20,7 +21,7 @@ export default () => {
     const { tempFieldParam } = useSelector(state => state);
 
     const dispatch = useDispatch();
-
+    const [fields, setFields] = useState([])
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
@@ -153,7 +154,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        // console.log(requestBody)
+        console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "POST",
             headers: {
@@ -166,11 +167,11 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 // console.log(resp)
-                if (success) {
-                    functions.showApiResponseMessage(status);
-                } else {
-                    functions.showApiResponseMessage(status);
-                }
+                // if (success) {
+                //     functions.showApiResponseMessage(status);
+                // } else {
+                //     functions.showApiResponseMessage(status);
+                // }
             })
     };
     const handleSubmitTables = () => {
@@ -284,31 +285,57 @@ export default () => {
     //         console.log(`Khóa ngoại ${index+1} của bảng ${table.table_name}: ${fk}`);
     //     });
     // });
+
+
+
+    // const handleChange = (e) => {
+    //     const selectedTableName = e.target.value;
+    //     const selectedTableData = allTable.find(
+    //         (table) => table.table_name === selectedTableName
+    //     );
+
+    //     setSelectedTables((prevSelectedTables) => [
+    //         ...prevSelectedTables,
+    //         selectedTableData,
+    //     ]);
+    //     // After updating selectedTables, we need to find the linked tables
+    //     const updatedSelectedTables = [...selectedTables, selectedTableData];
+    //     const linkedTables = allTable.filter(
+    //         (table) => 
+    //         !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+    //          updatedSelectedTables.some((selectedTable) => (selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id) 
+    //                 || selectedTable.primary_key === table.id 
+    //                 || table.foreign_keys.some(
+    //                         (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
+    //                     ) || table.primary_key === selectedTable.id)
+    //             )
+    //     );
+    //     setPossibleTables(linkedTables);
+    // };
+
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
-
+    
         setSelectedTables((prevSelectedTables) => [
             ...prevSelectedTables,
             selectedTableData,
         ]);
-        // After updating selectedTables, we need to find the linked tables
+
         const updatedSelectedTables = [...selectedTables, selectedTableData];
         const linkedTables = allTable.filter(
-            (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+            (table) => 
+                !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
-                    (selectedTable) => (selectedTable.foreign_keys.some(
-                        (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-                    ) || selectedTable.primary_key === table.id ||
-                        table.foreign_keys.some(
-                            (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
-                        ) || table.primary_key === selectedTable.id)
+                    (selectedTable) => 
+                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id) 
                 )
         );
         setPossibleTables(linkedTables);
     };
+    
 
     //xóa bảng đã chọn 
     const handleDeleteAll = () => {
@@ -398,6 +425,7 @@ export default () => {
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
+    console.log(selectedFieldsModal2[0]?.id)
     // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
@@ -593,8 +621,9 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        // console.log(sta)
+        console.log(sta)
         setStatisticalUpdate(sta)
+        setGroupBy(sta.raw_group_by)
     }
     const validateStatisticalUpdate = () => {
         let temp = {};
@@ -613,8 +642,12 @@ export default () => {
     const submitupdateFieldStatistical = () => {
         if (validateStatisticalUpdate()) {
             const updatedStatistical = modalTemp.statistic.map(item =>
-                item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
+                item.fomular_alias === statisticalUpdate.fomular_alias ?{ ...statisticalUpdate, group_by: groupBy.map( g => g.fomular_alias ), raw_group_by: groupBy}  : item
             );
+
+            setGroupBy([])
+         
+
             setModalTemp(prev => ({
                 ...prev,
                 statistic: updatedStatistical
@@ -629,15 +662,31 @@ export default () => {
             $("#closeEditStatis").click()
         }
     };
+    
+    
+    const [groupBy, setGroupBy] = useState([])
+console.log(groupBy)
+    const addOrRemoveGroupByField = (id) => {
+        console.log(id)
+        const corespondingGroupByField = groupBy.find(f => f.id == id);
+        let newGroupBy = [...groupBy];
+        if (corespondingGroupByField) {
+            newGroupBy = groupBy.filter(f => f.id != id);
+        } else {
+           
+            const field = Object.values(selectedFieldsModal2).flat().find(f => f.id == id);
+            if (field) {
+                newGroupBy = [...groupBy, field];
+                console.log(newGroupBy)
+            }
+        }
+        setGroupBy(newGroupBy);
+    }
 
-    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
-    // useEffect(() => {
-    //     if (statisticalUpdate.fomular_alias) {
-    //         submitupdateFieldStatistical();
-    //     }
-    // }, [statisticalUpdate]);
 
-
+    const isFieldChecked = (id) => {
+        return groupBy.some(f => f.id == id);
+    }
 
     const handleDeleteStatistical = (sta) => {
         // console.log(sta)
@@ -663,7 +712,6 @@ export default () => {
                     ...prev,
                     statistic: newCalculates
                 }));
-
                 Swal.fire({
                     title: lang["success.title"],
                     text: lang["delete.success.field"],
@@ -674,7 +722,7 @@ export default () => {
             }
         });
     }
-
+console.log(modalTemp.statistic)
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
         let temp = {};
@@ -700,10 +748,8 @@ export default () => {
         if (validateStatistical()) {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
 
-            const newStatistical = { fomular_alias, display_name, field, fomular };
+            const newStatistical = { fomular_alias, display_name, field, fomular, group_by: groupBy.map( g => g.fomular_alias ), raw_group_by: groupBy };
 
-
-            // Cập nhật modalTemp
             setModalTemp(prev => ({
                 ...prev,
                 statistic: [...prev.statistic, newStatistical]
@@ -711,6 +757,7 @@ export default () => {
             setStatistical([...statistical, newStatistical])
             setDisplayname("");
             setField("");
+            // setGroupBy([])
             setFomular("");
             Swal.fire({
                 title: lang["success.title"],
@@ -1140,7 +1187,7 @@ export default () => {
                                                                         <td>{index + 1}</td>
                                                                         <td>{table.table_name}</td>
                                                                         <td>{table.create_by?.fullname}</td>
-                                                                        <td>{table.create_at}</td>
+                                                                        <td>{formatDate(table.create_at)}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -1292,16 +1339,13 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 )}
-
-
-
-                                                {/* Chọn trường hiện thị */}
+                                                {/* Chọn trường hiển thị */}
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["fields display"]} <span className='red_star'>*</span></p>
                                                             {(modalTemp.api_method === "get") && <p className="text-danger ml-2">{errorApi.fields}</p>}
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
+                                                            <button type="button"   class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -1418,6 +1462,7 @@ export default () => {
                                                                             <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                             <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                            <th class="font-weight-bold">{lang["group by"]}</th>
                                                                             <th class="font-weight-bold">{lang["calculations"]}</th>
                                                                             <th class="font-weight-bold align-center">{lang["log.action"]}</th>
                                                                         </tr>
@@ -1428,6 +1473,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
+                                                                                <td>{statistic.raw_group_by?.map(field => field.display_name).join(", ")}</td>
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editStatistical" title={lang["edit"]}></i>
@@ -2022,7 +2068,7 @@ export default () => {
                     </div>
                 </div>
                 {/*add Field statistical */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">padding_infor_info
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2124,6 +2170,66 @@ export default () => {
                                                     <p>{lang["not found"]}</p>
                                                 </div>
                                             )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className={`form-group col-lg-12`}>
+                                        <p className="font-weight-bold">
+                                            {lang["group by"]}
+                                        </p>
+
+                                       <div className="form-group checkbox-container-wrapper">
+                                       <div className="checkbox-container">
+                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                <div key={index} className="form-check">
+                                                     <label className="form-check-label">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={field.id}
+                                                        checked={isFieldChecked(field.id)}
+                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                    />
+                                                   
+                                                        {field.display_name}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                            </div>
+                                        </div>
+
+                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <div class="table-responsive">
+                                            {
+                                                groupBy.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {groupBy.map((field, index) =>
+                                                                    <tr key={`${index}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{field.display_name}</td>
+                                                                        <td>{field.fomular_alias}</td>
+                                                                    </tr>
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>{lang["not found"]}</p>
+                                                    </div>
+                                                )
                                             }
                                         </div>
                                     </div>
@@ -2269,6 +2375,66 @@ export default () => {
                                                 }
                                             </div>
                                         </div>
+                                        <div className={`form-group col-lg-12`}>
+                                        <p className="font-weight-bold">
+                                            {lang["group by"]}
+                                        </p>
+
+                                       <div className="form-group checkbox-container-wrapper">
+                                       <div className="checkbox-container">
+                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                <div key={index} className="form-check">
+                                                     <label className="form-check-label">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={field.id}
+                                                        checked={isFieldChecked(field.id)}
+                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                    />
+                                                   
+                                                        {field.display_name}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                            </div>
+                                        </div>
+
+                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <div class="table-responsive">
+                                            {
+                                                groupBy.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {groupBy.map((field, index) =>
+                                                                    <tr key={`${index}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{field.display_name}</td>
+                                                                        <td>{field.fomular_alias}</td>
+                                                                    </tr>
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>{lang["not found"]}</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                         <div className={`form-group col-lg-12`}>
                                             <label>{lang["select fields"]}<span className='red_star'>*</span></label>
                                             <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>

@@ -966,32 +966,28 @@ export default () => {
                                             {lang["group by"]}
                                         </p>
 
-                                       <div className="form-group checkbox-container-wrapper">
-                                       <div className="checkbox-container">
-                                            {fields.map((field, index) => (
-                                                <div key={index} className="form-check">
-                                                     <label className="form-check-label">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={field.id}
-                                                        checked={isFieldChecked(field.id)}
-                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
-                                                    />
-                                                   
-                                                        {field.field_name}
-                                                    </label>
-                                                </div>
-                                            ))}
+                                        <div className="form-group checkbox-container-wrapper">
+                                            <div className="checkbox-container">
+                                                {fields.map((field, index) => (
+                                                    <div key={index} className="form-check">
+                                                        <label className="form-check-label">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                value={field.id}
+                                                                checked={isFieldChecked(field.id)}
+                                                                onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                            />
+
+                                                            {field.field_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
 
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
-
-
-
-
                                     <div class="form-group col-lg-12">
                                         <div class="table-responsive">
                                             {
@@ -1131,23 +1127,22 @@ export default () => {
                                             {lang["group by"]}
                                         </p>
 
-                                       <div className="form-group checkbox-container-wrapper">
-                                       <div className="checkbox-container">
-                                            {fields.map((field, index) => (
-                                                <div key={index} className="form-check">
-                                                     <label className="form-check-label">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={field.id}
-                                                        checked={isFieldChecked(field.id)}
-                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
-                                                    />
-                                                   
-                                                        {field.field_name}
-                                                    </label>
-                                                </div>
-                                            ))}
+                                        <div className="form-group checkbox-container-wrapper">
+                                            <div className="checkbox-container">
+                                                {fields.map((field, index) => (
+                                                    <div key={index} className="form-check">
+                                                        <label className="form-check-label">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                value={field.id}
+                                                                checked={isFieldChecked(field.id)}
+                                                                onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                            />
+                                                            {field.field_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
 

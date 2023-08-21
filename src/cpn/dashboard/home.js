@@ -9,7 +9,7 @@ import { Header } from '../common';
 
 export default () => {
     const { proxy, lang } = useSelector(state => state)
-    const storedProjects = useSelector( state => state.projects )
+    const storedProjects = useSelector(state => state.projects)
 
 
     const _token = localStorage.getItem("_token");
@@ -24,7 +24,7 @@ export default () => {
     const [data, setData] = useState([]);
     useEffect(() => {
 
-        if( storedProjects.length == 0 ){
+        if (storedProjects.length == 0) {
             fetch(`${proxy}/projects/all/projects`, {
                 headers: {
                     Authorization: _token
@@ -276,9 +276,9 @@ export default () => {
 
         return (
             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-            {`${parseFloat((percent * 100).toFixed(2))}%`}
-          </text>
-          
+                {`${parseFloat((percent * 100).toFixed(2))}%`}
+            </text>
+
         );
     };
 
@@ -439,17 +439,13 @@ export default () => {
                                                         outerRadius={85 + '%'}
                                                         labelLine={false}
                                                         label={renderCustomizedLabel1}
-                                                      
+
                                                         fill="#8884d8"
-                                                        dataKey="value"
-                                                    >
-
-                                                        
-
-                                                            {
-                                                                outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
-                                                            }
-                                                        </Pie>
+                                                        dataKey="value">
+                                                        {
+                                                            outputDataLead.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORSLEAD[index % COLORSLEAD.length]} />)
+                                                        }
+                                                    </Pie>
                                                 </PieChart>
                                             </div>
                                         </div>
@@ -461,7 +457,6 @@ export default () => {
                                                             <th>{lang["projects manager"]}</th>
                                                             <th>{totalSumLead} {lang["project"]}</th>
                                                             <th>%</th>
-
                                                         </tr>
                                                     </thead>
                                                     <tbody>

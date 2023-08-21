@@ -334,7 +334,7 @@ export default () => {
                                                                         <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
                                                                         <td>{api.api_name}</td>
                                                                         {/* <td>{api.api_scope}</td> */}
-                                                                        <td>{api.create_by.fullname}</td>
+                                                                        <td>{api.create_by?.fullname}</td>
                                                                         <td>{formatDate(api.create_at)}</td>
                                                                         <td class="font-weight-bold align-center">
                                                                             <select className="form-control" onChange={() => handleUpdateStatus(api)}>
