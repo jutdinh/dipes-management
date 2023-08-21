@@ -431,7 +431,12 @@ export default {
 
     "create account": "Tạo tài khoản",
     "error.fk":"Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
-    "error.date": "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL"
+    "error.date": "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL",
+    "edit.project": "Chỉnh sửa dự án",
+    "view.task": "Xem chi tiết công việc",
+    "ui.table": "Bảng mẫu",
+    "ui.table_statis":"Mẫu bảng thống kê",
+    "data": "Dữ liệu"
 
 
 

@@ -426,7 +426,12 @@ export default {
     "gantt.yearmonths":"Year and Month",
     "create account": "Create Account",
     "error.fk":"This field cannot be selected because it is a foreign key and the corresponding primary key exists in the list of fields",
-    "error.date": "Can't select argument fields with data types of DATE or DECIMAL"
+    "error.date": "Can't select argument fields with data types of DATE or DECIMAL",
+    "edit.project": "Edit project",
+    "view.task": "View tasks details",
+    "ui.table_statis":"Statistics table template",
+    "ui.table": "Template table",
+    "data": "Data"
 
 
 }

@@ -1112,7 +1112,7 @@ export default () => {
                                     </div>
                                     <div>
                                         <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
-                                            <i class="fa fa-edit size pointer" ></i>
+                                            <i class="fa fa-edit size pointer" title={lang["edit.project"]} ></i>
                                         </button>
                                     </div>
                                 </div>
@@ -1610,7 +1610,7 @@ export default () => {
                                 </div>
                                 <div>
                                     <button type="button" class="btn btn-primary btn-header" onClick={openDetailTask} data-toggle="modal">
-                                        <i class="fa fa-tasks size pointer" ></i>
+                                        <i class="fa fa-tasks size pointer" title={lang["view.task"]}></i>
                                     </button>
                                 </div>
                             </div>
@@ -1861,9 +1861,10 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => tablesManager()} data-toggle="modal" data-target="#">
-                                                        <i class="fa fa-plus"></i>
-                                                    </button></p>
+                                                    <p class="total_no mt-4">
+                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => tablesManager()} title={lang["viewdetail"]}></i>
+                                                    </p>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -1882,9 +1883,10 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()} data-toggle="modal" data-target="#">
-                                                        <i class="fa fa-plus"></i>
-                                                    </button></p>
+                                                    <p class="total_no mt-4">
+                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => apisManager()} title={lang["viewdetail"]}></i>
+                                                    </p>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -1903,9 +1905,12 @@ export default () => {
                                             </div>
                                             <div class="counter_no">
                                                 <div>
-                                                    <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
+                                                    {/* <p class="total_no mt-4"> <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => uisManager()} data-toggle="modal" data-target="#">
                                                         <i class="fa fa-plus"></i>
-                                                    </button></p>
+                                                    </button></p> */}
+                                                    <p class="total_no mt-4">
+                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => uisManager()} title={lang["viewdetail"]}></i>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
