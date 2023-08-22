@@ -10,11 +10,12 @@ import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
 import clipboardCopy from 'clipboard-copy';
 import $ from 'jquery';
+import { formatDate } from "../../redux/configs/format-date";
 import bootstrap from "bootstrap";
 
 var hideModal = hideModalInfo => {
     $("#addFieldCalculates").modal("hide");
-  };
+};
 export default () => {
     const { lang, proxy, auth } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -67,7 +68,7 @@ export default () => {
 
     const myModal = useRef();
 
-    
+
     const [errorApi, setErrorApi] = useState({});
     const validateApiname = () => {
         let temp = {};
@@ -102,7 +103,7 @@ export default () => {
     }
     const validateApiFieldShow = () => {
         let temp = {};
-        temp.fields = modalTemp.fields && modalTemp.fields.length > 0 ? "" : lang["show empty"];
+        temp.fields = modalTemp.fields && modalTemp.fields.length > 0 ? "" : lang[""];
 
         setErrorApi({
             ...temp
@@ -117,7 +118,7 @@ export default () => {
             "get": [validateApiname, validateApiFieldShow],
             "post": [validateApiname, validateApiBody],
             "put": [validateApiname, validateApiParams, validateApiBody],
-            "delete": [validateApiname,validateApiParams]
+            "delete": [validateApiname, validateApiParams]
         }
 
         const validateFunctions = validator[modalTemp.api_method]
@@ -127,11 +128,9 @@ export default () => {
             const checkResult = validateFunctions[i]()
             if (!checkResult) {
                 valid = false
-
                 break;
             }
         }
-
         // console.log("VALID: ", valid)
         if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -346,8 +345,37 @@ export default () => {
     //luu id bảng được chọn
     // console.log(selectedTables)
 
+    // const handleChange = (e) => {
+    //     const selectedTableName = e.target.value;
+    //     const selectedTableData = allTable.find(
+    //         (table) => table.table_name === selectedTableName
+    //     );
+
+    //     setSelectedTables((prevSelectedTables) => [
+    //         ...prevSelectedTables,
+    //         selectedTableData,
+    //     ]);
+
+
+    //     const updatedSelectedTables = [...selectedTables, selectedTableData];
+    //     setPossibleTables(findLinkedTables(updatedSelectedTables));
+    //     const linkedTables = allTable.filter(
+    //         (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+    //             updatedSelectedTables.some(
+    //                 (selectedTable) => (selectedTable.foreign_keys.some(
+    //                     (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
+    //                 ) || selectedTable.primary_key === table.id ||
+    //                     table.foreign_keys.some(
+    //                         (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
+    //                     ) || table.primary_key === selectedTable.id)
+    //             )
+    //     );
+
+    //     setPossibleTables(linkedTables);
+    // };
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
+        console.log("a")
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
@@ -357,62 +385,42 @@ export default () => {
             selectedTableData,
         ]);
 
-        // After updating selectedTables, we need to find the linked tables
         const updatedSelectedTables = [...selectedTables, selectedTableData];
-        setPossibleTables(findLinkedTables(updatedSelectedTables));
         const linkedTables = allTable.filter(
-            (table) => !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+            (table) =>
+                !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
-                    (selectedTable) => (selectedTable.foreign_keys.some(
-                        (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-                    ) || selectedTable.primary_key === table.id ||
-                        table.foreign_keys.some(
-                            (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
-                        ) || table.primary_key === selectedTable.id)
+                    (selectedTable) =>
+                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id)
                 )
         );
-
         setPossibleTables(linkedTables);
     };
 
     const findLinkedTables = (selectedTables) => {
+        const updatedSelectedTables = [...selectedTables];
         return allTable.filter(
             (table) =>
-                !selectedTables.some((selectedTable) => selectedTable.id === table.id) &&
-                selectedTables.some(
+                !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
+                updatedSelectedTables.some(
                     (selectedTable) =>
-                    (selectedTable.foreign_keys.some(
-                        (fk) => fk.table_id === table.id || fk.ref_table_id === table.id
-                    ) ||
-                        selectedTable.primary_key === table.id ||
-                        table.foreign_keys.some(
-                            (fk) => fk.table_id === selectedTable.id || fk.ref_table_id === selectedTable.id
-                        ) ||
-                        table.primary_key === selectedTable.id)
+                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id)
                 )
         );
     };
-    const [isResetting, setIsResetting] = useState(false);
+
 
     useEffect(() => {
-        if (isResetting) {
+        if (selectedTables.length < 1) {
             setPossibleTables(allTable);
-            setIsResetting(false);
         } else {
             setPossibleTables(findLinkedTables(selectedTables));
         }
-    }, [selectedTables, isResetting]);
-
-
-    const [initialTables, setInitialTables] = useState([]);
-
-    useEffect(() => {
-        setInitialTables(allTable);
-    }, [allTable]);
+    }, [selectedTables]);
 
     const handleDeleteAll = () => {
         setSelectedTables([]);
-        setPossibleTables(initialTables);
+
 
         setModalTemp(prevState => ({
             ...prevState,
@@ -433,7 +441,7 @@ export default () => {
 
     useEffect(() => {
         const fetchTable = (tableId) => {
-            return fetch(`${proxy}/db/tables/v/${ version_id }/table/${tableId}`, {
+            return fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
                 headers: {
                     Authorization: _token
                 }
@@ -763,7 +771,13 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
+        console.log(sta)
         setStatisticalUpdate(sta)
+        console.log(modalTemp.fields)
+
+        const raw_group_by = modalTemp.fields.filter(field => sta.group_by.includes(field.fomular_alias));
+        setGroupBy(raw_group_by)
+        console.log(raw_group_by)
     }
     const validateStatisticalUpdate = () => {
         let temp = {};
@@ -783,13 +797,14 @@ export default () => {
     const submitupdateFieldStatistical = () => {
         if (validateStatisticalUpdate()) {
             const updatedStatistical = modalTemp.statistic.map(item =>
-                item.fomular_alias === statisticalUpdate.fomular_alias ? statisticalUpdate : item
+                item.fomular_alias === statisticalUpdate.fomular_alias ? { ...statisticalUpdate, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy } : item
             );
 
             setModalTemp(prev => ({
                 ...prev,
                 statistic: updatedStatistical
             }));
+            setGroupBy([])
             Swal.fire({
                 title: lang["success.title"],
                 text: lang["success.update"],
@@ -803,21 +818,8 @@ export default () => {
 
     };
 
-    // Khi calculatesUpdate thay đổi, cập nhật mảng calculates
-    // useEffect(() => {
-    //     if (statisticalUpdate.fomular_alias) {
-    //         submitupdateFieldStatistical();
-    //     }
-    // }, [statisticalUpdate]);
-
-
 
     const handleDeleteStatistical = (sta) => {
-       // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
-        // setModalTemp(prev => ({
-        //     ...prev,
-        //     calculates: newCalculates
-        // }));
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -835,7 +837,6 @@ export default () => {
                     ...prev,
                     statistic: newCalculates
                 }));
-
                 Swal.fire({
                     title: lang["success.title"],
                     text: lang["delete.success.field"],
@@ -846,9 +847,6 @@ export default () => {
             }
         });
     }
-
-
-
 
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
@@ -864,7 +862,28 @@ export default () => {
 
         return Object.values(temp).every(x => x === "");
     }
+    const [groupBy, setGroupBy] = useState([])
+    console.log(groupBy)
+    const addOrRemoveGroupByField = (id) => {
+        console.log(id)
+        const corespondingGroupByField = groupBy.find(f => f.id == id);
+        let newGroupBy = [...groupBy];
+        if (corespondingGroupByField) {
+            newGroupBy = groupBy.filter(f => f.id != id);
+        } else {
 
+            const field = modalTemp.fields.flat().find(f => f.id == id);
+            if (field) {
+                newGroupBy = [...groupBy, field];
+                console.log(newGroupBy)
+            }
+        }
+        setGroupBy(newGroupBy);
+    }
+
+    const isFieldChecked = (id) => {
+        return groupBy.some(f => f.id == id);
+    }
 
     const [field, setField] = useState("");
     const [statistical, setStatistical] = useState([]);
@@ -874,7 +893,7 @@ export default () => {
 
             const fomular_alias = await generateUniqueFormularAlias(display_name);
             // console.log(fomular_alias)
-            const newStatistical = { fomular_alias, display_name, field, fomular };
+            const newStatistical = { fomular_alias, display_name, field, fomular, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy };
             // Cập nhật modalTemp
             setModalTemp(prev => ({
                 ...prev,
@@ -884,6 +903,7 @@ export default () => {
             setDisplayname("");
             setField("");
             setFomular("");
+            setGroupBy([])
             setShowModal(false);
             Swal.fire({
                 title: lang["success.title"],
@@ -894,27 +914,8 @@ export default () => {
             })
             $('#closeAddStatis').click()
         }
-
-
-
     };
-    // console.log(statistical)
 
-    const fieldShow = (project) => {
-        window.location.href = `/projects/${version_id}/apis/create/fieldshow`;
-        // window.location.href = `tables`;
-    };
-    const fieldStatistical = (project) => {
-        window.location.href = `/projects/${version_id}/apis/create/fieldstatis`;
-        // window.location.href = `tables`;
-    };
-  
-
- 
-    //    console.log(modalTemp.calculates)
-    // console.log(tempFieldParam)
-    // console.log(calculates)
-    // console.log(selectedFieldsModal2)
     const handleCloseModal = () => {
         setErrorStatistical({});
         setDisplayname("");
@@ -1120,7 +1121,7 @@ export default () => {
                                                                         <td>{index + 1}</td>
                                                                         <td>{table.table_name}</td>
                                                                         <td>{table.create_by?.fullname}</td>
-                                                                        <td>{table.create_at}</td>
+                                                                        <td>{formatDate(table.create_at)}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -1255,7 +1256,7 @@ export default () => {
                                                     </div>
                                                 )}
 
-                                                {/* Chọn trường hiện thị */}
+                                                {/* Chọn trường hiển thị */}
                                                 {modalTemp.api_method === "get" && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
@@ -1377,6 +1378,7 @@ export default () => {
                                                                             <th class="font-weight-bold">{lang["log.no"]}</th>
                                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                                             <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                            <th class="font-weight-bold">{lang["group by"]}</th>
                                                                             <th class="font-weight-bold">{lang["calculations"]}</th>
                                                                             <th class="font-weight-bold align-center">{lang["log.action"]}</th>
                                                                         </tr>
@@ -1387,6 +1389,8 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
+                                                                                <td>{modalTemp.fields.filter(field => statistic.group_by.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
+
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
                                                                                     <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editStatistical" title={lang["edit"]}></i>
@@ -1452,7 +1456,7 @@ export default () => {
                                             <div className={`form-group col-lg-12 mt-2`}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                     <label >{lang["selected table"]}: <span className='red_star'>*</span></label>
-                                                    <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>Xóa tất cả</button>
+                                                    <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>{lang["deleteall"]}</button>
                                                 </div>
                                                 <div className="outerBox">
                                                     {selectedTables.map(table => (
@@ -1471,7 +1475,7 @@ export default () => {
                                     <div class="form-group col-md-12">
                                         <label>{lang["time"]}</label>
                                         <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
-                                    </div>edit calculated fiels
+                                    </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
@@ -1492,7 +1496,7 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
+                                        {/* {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
@@ -1508,6 +1512,72 @@ export default () => {
                                                             </label>
                                                         </div>
                                                     ))}
+                                                </div>
+                                            </div>
+                                        ))} */}
+
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className="form-group table-wrapper">
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                <div className="field-wrapper">
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
+                                                        // Check if the field is a foreign key
+                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
+
+                                                        // Check if the field is of type 'date'
+                                                        let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
+
+                                                        return (
+                                                            <div key={fieldIndex}>
+                                                                <label>
+                                                                    <input
+                                                                        className="mr-1"
+                                                                        type="checkbox"
+                                                                        checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                        onChange={e => {
+                                                                            // If it's a date field, show error and prevent checking
+                                                                            if (isDateField && e.target.checked) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.date"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            }
+                                                                            // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
+                                                                            else if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            } else {
+                                                                                handleCheckboxChange(tableId, field.id, e.target.checked);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {field.field_name}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         ))}
@@ -1752,7 +1822,7 @@ export default () => {
                                 <button type="button" onClick={handleSubmitFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" id="closeAddCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
-                        </div>  
+                        </div>
                     </div>
                 </div>
                 {/* Edit Field calculates */}
@@ -1835,7 +1905,7 @@ export default () => {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button"  onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={submitupdateFieldCalculates} class="btn btn-success ">{lang["btn.update"]}</button>
                                 <button type="button" id="closeEditCalculates" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1891,7 +1961,7 @@ export default () => {
                                                             {modalTemp.fields.map((field, index) => {
                                                                 const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
                                                                 if (!tableId || !fieldInfo) {
-                                                                    return null; 
+                                                                    return null;
                                                                 }
                                                                 const tableInfo = tableFields[tableId];
                                                                 if (!tableInfo) {
@@ -1943,6 +2013,66 @@ export default () => {
                                                     <p>{lang["not found"]}</p>
                                                 </div>
                                             )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className={`form-group col-lg-12`}>
+                                        <p className="font-weight-bold">
+                                            {lang["group by"]}
+                                        </p>
+
+                                        <div className="form-group checkbox-container-wrapper">
+                                            <div className="checkbox-container">
+                                                {modalTemp.fields.map((field, index) => (
+                                                    <div key={index} className="form-check">
+                                                        <label className="form-check-label">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                value={field.id}
+                                                                checked={isFieldChecked(field.id)}
+                                                                onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                            />
+
+                                                            {field.display_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <div class="table-responsive">
+                                            {
+                                                groupBy.length > 0 ? (
+                                                    <>
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {groupBy.map((field, index) =>
+                                                                    <tr key={`${index}`}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{field.display_name}</td>
+                                                                        <td>{field.fomular_alias}</td>
+                                                                    </tr>
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>{lang["not found"]}</p>
+                                                    </div>
+                                                )
                                             }
                                         </div>
                                     </div>
@@ -2012,7 +2142,7 @@ export default () => {
                                             <input type="text" className="form-control" value={statisticalUpdate.display_name} onChange={
                                                 (e) => { setStatisticalUpdate({ ...statisticalUpdate, display_name: e.target.value }) }
                                             } placeholder="" />
-                                             {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
+                                            {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                         </div>
                                         <div class="form-group  col-md-12">
                                             <label> < p class="font-weight-bold">{lang["fields display"]}</p></label>
@@ -2032,11 +2162,11 @@ export default () => {
                                                                 {modalTemp.fields.map((field, index) => {
                                                                     const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
                                                                     if (!tableId || !fieldInfo) {
-                                                                        return null; 
+                                                                        return null;
                                                                     }
                                                                     const tableInfo = tableFields[tableId];
                                                                     if (!tableInfo) {
-                                                                        return null; 
+                                                                        return null;
                                                                     }
                                                                     return (
                                                                         <tr key={`${tableId}-${field.id}`}>
@@ -2084,6 +2214,66 @@ export default () => {
                                                         <p>{lang["not found"]}</p>
                                                     </div>
                                                 )
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={`form-group col-lg-12`}>
+                                            <p className="font-weight-bold">
+                                                {lang["group by"]}
+                                            </p>
+
+                                            <div className="form-group checkbox-container-wrapper">
+                                                <div className="checkbox-container">
+                                                    {modalTemp.fields.map((field, index) => (
+                                                        <div key={index} className="form-check">
+                                                            <label className="form-check-label">
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    value={field.id}
+                                                                    checked={isFieldChecked(field.id)}
+                                                                    onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                                />
+
+                                                                {field.display_name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <div class="table-responsive">
+                                                {
+                                                    groupBy.length > 0 ? (
+                                                        <>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {groupBy.map((field, index) =>
+                                                                        <tr key={`${index}`}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{field.display_name}</td>
+                                                                            <td>{field.fomular_alias}</td>
+                                                                        </tr>
+                                                                    )}
+                                                                </tbody>
+                                                            </table>
+                                                        </>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>{lang["not found"]}</p>
+                                                        </div>
+                                                    )
                                                 }
                                             </div>
                                         </div>

@@ -883,7 +883,7 @@ img[class="scaled-hover-target"] {
     padding: 10px 0;
 }
 
-.option {
+/* .option {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -892,7 +892,7 @@ img[class="scaled-hover-target"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
+} */
 
 .option h5 {
     margin-bottom: 10px;
@@ -1068,11 +1068,11 @@ img[class="scaled-hover-target"] {
 }
 
 /* Đối với WebKit (Chrome, Safari) */
-.div-to-scroll::-webkit-scrollbar {
+/* .div-to-scroll::-webkit-scrollbar {
     width: 5px;
-    /* Chiều rộng của thanh cuộn */
+    
     min-height: 140px;
-}
+} */
 
 .user-list-content {
     max-height: 200px;
@@ -1180,7 +1180,9 @@ img[class="scaled-hover-target"] {
     right: 0;
     bottom: -10px;
 }
-
+.mb-10 {
+    margin-bottom: 10px;
+}
 .breadcrumb {
     font-size: 14px;
     font-family: "UTM Avo", sans-serif !important;
@@ -1258,6 +1260,7 @@ img[class="scaled-hover-target"] {
     min-height: 500px;
 
 }
+
 .padding_infor_info_245 {
     padding: 10px 35px;
     float: left;
@@ -1422,20 +1425,88 @@ img[class="scaled-hover-target"] {
 .size {
     font-size: 18px;
 }
-.icon-detail{
+
+.icon-detail {
     color: #0056b3;
 }
+
 .icon-add {
     color: #007bff;
     font-size: 24px;
     width: 24px;
     height: 27px;
 }
+
 .icon-export {
     color: #269c1b;
     font-size: 24px;
     width: 24px;
     height: 24px;
+}
+
+.icon-detail-project {
+    color: #0d49b8;
+    font-size: 24px;
+    background-color: rgb(240, 240, 240);
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.div-to-scroll {
+    overflow-y: auto;
+    max-height: calc(4 * 1em + 5 * 5px);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+    min-height: 105px;
+    margin-top: 10px;
+    position: relative;  
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1); 
+}
+.option-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ced4da;  
+    padding-bottom: 2px;           
+    margin-bottom: 5px;   
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); 
+
+}
+.no-data-message {
+    grid-column: span 2; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.option {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 7px;
+    margin:  0;
+
+}
+
+.option h5,
+.option .btn {
+    display: flex;
+    justify-content: space-between;
+    /* Đặt h5 và nút nằm trên cùng một hàng và ở hai đầu của khối */
+}
+
+
+.border-left {
+    border-left: solid rgba(59, 18, 18, 0.3);
+    padding-left: 20px;
+
 }
 
 .icon-export-ex {
@@ -1451,10 +1522,12 @@ img[class="scaled-hover-target"] {
     width: 24px;
     height: 24px;
 }
+
 .size-24 {
     font-size: 24px;
 }
-.size-32{
+
+.size-32 {
     font-size: 32px;
 }
 

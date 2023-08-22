@@ -753,7 +753,9 @@ export default () => {
             setShowViewMore(false);
         }
     }, [projectdetail.project_description]);
-
+    const editProject = () => {
+        window.location.href = `/projects/detail/${project_id}/edit`;
+    };
     const tablesManager = (project) => {
 
         window.location.href = `/projects/${versions[0]?.version_id}/tables`;
@@ -1095,7 +1097,6 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-
                             <h4><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
                             </label> </h4>
                         </div>
@@ -1106,14 +1107,12 @@ export default () => {
                     <div class="col-md-6">
                         <div class="full" style={{ height: "100%", paddingBottom: 15 }}>
                             <div className="white_shd full" style={{ height: "100%" }}>
-                                <div class="full graph_head d-flex justify-content-between align-items-center">
+                                <div class="full graph_head  d-flex justify-content-between align-items-center">
                                     <div class="heading1 margin_0">
                                         <h5>{lang["project.info"]}</h5>
                                     </div>
-                                    <div>
-                                        <button type="button" class="btn btn-primary btn-header" data-toggle="modal" data-target="#editProject">
-                                            <i class="fa fa-edit size pointer" title={lang["edit.project"]} ></i>
-                                        </button>
+                                    <div class="" onClick={editProject}>
+                                        <i class="fa fa-list-ul icon-detail-project" title={lang["edit.project"]}></i>
                                     </div>
                                 </div>
                                 <div class="table_section padding_infor_info">
@@ -1227,8 +1226,6 @@ export default () => {
                                                             ))}
                                                         </tbody>
                                                     </table>
-
-
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">
@@ -1261,7 +1258,6 @@ export default () => {
                                             </ul>
                                         </nav>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -1609,9 +1605,11 @@ export default () => {
                                     <h5>{lang["projectprocess"]}</h5>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary btn-header" onClick={openDetailTask} data-toggle="modal">
-                                        <i class="fa fa-tasks size pointer" title={lang["view.task"]}></i>
-                                    </button>
+                                    {/* <button type="button" class="btn btn-primary btn-header" onClick={openDetailTask} data-toggle="modal">
+                                        <i class="fa fa-list-ul size pointer" title={lang["view.task"]}></i>
+                                        
+                                    </button> */}
+                                    <i class="fa fa-list-ul icon-detail-project pointer" onClick={openDetailTask} title={lang["view.task"]}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -1862,7 +1860,7 @@ export default () => {
                                             <div class="counter_no">
                                                 <div>
                                                     <p class="total_no mt-4">
-                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => tablesManager()} title={lang["viewdetail"]}></i>
+                                                        <i class="fa fa-cog icon-detail pointer size-32 ml-auto" onClick={() => tablesManager()} title={lang["viewdetail"]}></i>
                                                     </p>
 
                                                 </div>
@@ -1873,7 +1871,7 @@ export default () => {
                                         <div class="full counter_section mb-1 mt-1 box-api">
                                             <div class="couter_icon">
                                                 <div>
-                                                    <i class="fa fa-cog blue1_color"></i>
+                                                    <i class="fa fa-cloud blue1_color"></i>
                                                 </div>
                                             </div>
                                             <div class="counter_no">
@@ -1884,7 +1882,7 @@ export default () => {
                                             <div class="counter_no">
                                                 <div>
                                                     <p class="total_no mt-4">
-                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => apisManager()} title={lang["viewdetail"]}></i>
+                                                        <i class="fa fa-cog icon-detail pointer size-32 ml-auto" onClick={() => apisManager()} title={lang["viewdetail"]}></i>
                                                     </p>
 
                                                 </div>
@@ -1909,7 +1907,7 @@ export default () => {
                                                         <i class="fa fa-plus"></i>
                                                     </button></p> */}
                                                     <p class="total_no mt-4">
-                                                        <i class="fa fa-info-circle icon-detail pointer size-32 ml-auto" onClick={() => uisManager()} title={lang["viewdetail"]}></i>
+                                                        <i class="fa fa-cog icon-detail pointer size-32 ml-auto" onClick={() => uisManager()} title={lang["viewdetail"]}></i>
                                                     </p>
                                                 </div>
                                             </div>

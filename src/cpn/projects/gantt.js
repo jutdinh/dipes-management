@@ -95,7 +95,6 @@ const TimelineChart = ({ data, project }) => {
         //         { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children.flatMap(month => month.children))) },
         //     ];
         // };
-
         const buildTimebar = () => {
             const years = Array.from({ length: 4 }, (_, i) => {
                 const year = selectedYear;
@@ -325,7 +324,10 @@ const TimelineChart = ({ data, project }) => {
                     //   zoomOut={handleZoomOut}
                     // clickElement={clickElement}
                     timebar={timebar}
-                    tracks={tracks}
+                    tracks={tracks.filter(track => {
+                        const trackStartDate = moment(track.elements[0].start);
+                        return trackStartDate.year() === selectedYear && trackStartDate.month() === selectedMonth;
+                    })}
                     now={now}
                     enableSticky
                     scrollToNow

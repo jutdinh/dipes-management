@@ -7,7 +7,7 @@ import { Home, About } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
 import { Login, SignUp, SignOut } from './auth';
 import { Settings } from './settings';
-import { Projects, ProjectsCard, ProjectDetail, TaskDetail } from './projects';
+import { Projects, ProjectsCard, ProjectDetail, TaskDetail, EditProject } from './projects';
 import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
@@ -80,6 +80,7 @@ function App() {
         <Route path="/" element={<Navigation Child={Home} />} />
         <Route path="/projects" element={<Navigation Child={Projects} />} />
         <Route path="/keys" element={<Navigation Child={Keys} />} />
+        <Route path="/projects/detail/:project_id/edit" element={<Navigation Child={EditProject} />} />
         <Route path="/projects/detail/:project_id" element={<Navigation Child={ProjectDetail} />} />
         <Route path="/projects/task/:project_id" element={<Navigation Child={Tasks} />} />
         <Route path="/projects/detail/task/:project_id" element={<Navigation Child={TaskDetail} />} />

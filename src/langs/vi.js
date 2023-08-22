@@ -379,7 +379,7 @@ export default {
     "error.login.empty": "Vui lòng nhập đầy đủ thông tin",
     "preview layout": "Xem trước bố cục",
     "not found user": "Chưa có người dùng",
-    "table empty": "Bản này không được bỏ trống",
+    "table empty": "Bảng này không được bỏ trống",
     "params empty": "Đối số không được để trống",
 
 
@@ -436,7 +436,8 @@ export default {
     "view.task": "Xem chi tiết công việc",
     "ui.table": "Bảng mẫu",
     "ui.table_statis":"Mẫu bảng thống kê",
-    "data": "Dữ liệu"
+    "data": "Dữ liệu",
+    "deleteall": "Xóa tất cả"
 
 
 

@@ -167,11 +167,11 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 // console.log(resp)
-                // if (success) {
-                //     functions.showApiResponseMessage(status);
-                // } else {
-                //     functions.showApiResponseMessage(status);
-                // }
+                if (success) {
+                    functions.showApiResponseMessage(status);
+                } else {
+                    functions.showApiResponseMessage(status);
+                }
             })
     };
     const handleSubmitTables = () => {
@@ -318,7 +318,7 @@ export default () => {
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
-    
+
         setSelectedTables((prevSelectedTables) => [
             ...prevSelectedTables,
             selectedTableData,
@@ -326,16 +326,16 @@ export default () => {
 
         const updatedSelectedTables = [...selectedTables, selectedTableData];
         const linkedTables = allTable.filter(
-            (table) => 
+            (table) =>
                 !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
                 updatedSelectedTables.some(
-                    (selectedTable) => 
-                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id) 
+                    (selectedTable) =>
+                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id)
                 )
         );
         setPossibleTables(linkedTables);
     };
-    
+
 
     //xóa bảng đã chọn 
     const handleDeleteAll = () => {
@@ -642,11 +642,11 @@ export default () => {
     const submitupdateFieldStatistical = () => {
         if (validateStatisticalUpdate()) {
             const updatedStatistical = modalTemp.statistic.map(item =>
-                item.fomular_alias === statisticalUpdate.fomular_alias ?{ ...statisticalUpdate, group_by: groupBy.map( g => g.fomular_alias ), raw_group_by: groupBy}  : item
+                item.fomular_alias === statisticalUpdate.fomular_alias ? { ...statisticalUpdate, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy } : item
             );
 
             setGroupBy([])
-         
+
 
             setModalTemp(prev => ({
                 ...prev,
@@ -662,10 +662,10 @@ export default () => {
             $("#closeEditStatis").click()
         }
     };
-    
-    
+
+
     const [groupBy, setGroupBy] = useState([])
-console.log(groupBy)
+    console.log(groupBy)
     const addOrRemoveGroupByField = (id) => {
         console.log(id)
         const corespondingGroupByField = groupBy.find(f => f.id == id);
@@ -673,7 +673,7 @@ console.log(groupBy)
         if (corespondingGroupByField) {
             newGroupBy = groupBy.filter(f => f.id != id);
         } else {
-           
+
             const field = Object.values(selectedFieldsModal2).flat().find(f => f.id == id);
             if (field) {
                 newGroupBy = [...groupBy, field];
@@ -722,7 +722,7 @@ console.log(groupBy)
             }
         });
     }
-console.log(modalTemp.statistic)
+    console.log(modalTemp.statistic)
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
         let temp = {};
@@ -748,7 +748,7 @@ console.log(modalTemp.statistic)
         if (validateStatistical()) {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
 
-            const newStatistical = { fomular_alias, display_name, field, fomular, group_by: groupBy.map( g => g.fomular_alias ), raw_group_by: groupBy };
+            const newStatistical = { fomular_alias, display_name, field, fomular, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy };
 
             setModalTemp(prev => ({
                 ...prev,
@@ -757,7 +757,7 @@ console.log(modalTemp.statistic)
             setStatistical([...statistical, newStatistical])
             setDisplayname("");
             setField("");
-            // setGroupBy([])
+            setGroupBy([])
             setFomular("");
             Swal.fire({
                 title: lang["success.title"],
@@ -795,6 +795,7 @@ console.log(modalTemp.statistic)
     const handleCloseModal = () => {
         setErrorStatistical({});
         setDisplayname("");
+        setGroupBy([])
         setField("");
         setFomular("");
         setErrorCaculates({})
@@ -839,7 +840,7 @@ console.log(modalTemp.statistic)
 
                                     </div>
                                     <div class="col-md-12">
-                                    <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                         <div class="row">
                                             <div class="col-sm-3" >
                                                 <div class="checkbox-item">
@@ -871,124 +872,124 @@ console.log(modalTemp.statistic)
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                    <label class="font-weight-bold">{lang["method"]} <span className='red_star'>*</span></label>
+                                        <label class="font-weight-bold">{lang["method"]} <span className='red_star'>*</span></label>
                                         <div class="row">
                                             <div class="col-sm-3" >
-                                            <div class="checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                class="mr-1"
-                                                                type="radio"
-                                                                checked={modalTemp.api_method === "get"}
-                                                                onChange={() => {
-                                                                    const updatedModalTemp = {
-                                                                        ...modalTemp,
-                                                                        api_method: "get",
-                                                                        tables: [],
-                                                                        params: [],
-                                                                        fields: [],
-                                                                        body: [],
-                                                                        calculates: [],
-                                                                        statistic: []
+                                                <div class="checkbox-item">
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "get"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "get",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
 
-                                                                    };
-                                                                    setModalTemp(updatedModalTemp);
-                                                                    setSelectedFieldsModal2([]);
-                                                                    setSelectedFields([]);
-                                                                    setSelectedFieldsBody([]);
-                                                                }}
-                                                            />
-                                                            GET
-                                                        </label>
-                                                    </div>
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
+                                                            }}
+                                                        />
+                                                        GET
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="col-sm-3" >
-                                            <div class="checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                class="mr-1"
-                                                                type="radio"
-                                                                checked={modalTemp.api_method === "post"}
-                                                                onChange={() => {
-                                                                    const updatedModalTemp = {
-                                                                        ...modalTemp,
-                                                                        api_method: "post",
-                                                                        tables: [],
-                                                                        params: [],
-                                                                        fields: [],
-                                                                        body: [],
-                                                                        calculates: [],
-                                                                        statistic: []
-                                                                    };
-                                                                    setModalTemp(updatedModalTemp);
-                                                                    setSelectedFieldsModal2([]);
-                                                                    setSelectedFields([]);
-                                                                    setSelectedFieldsBody([]);
+                                                <div class="checkbox-item">
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "post"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "post",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
 
-                                                                }}
-                                                            />
-                                                            POST</label>
-                                                    </div>
+                                                            }}
+                                                        />
+                                                        POST</label>
+                                                </div>
 
                                             </div>
                                             <div class="col-sm-3" >
-                                            <div class="checkbox-item round">
-                                                        <label>
-                                                            <input
-                                                                class="mr-1"
-                                                                type="radio"
-                                                                checked={modalTemp.api_method === "put"}
-                                                                onChange={() => {
-                                                                    const updatedModalTemp = {
-                                                                        ...modalTemp,
-                                                                        api_method: "put",
-                                                                        tables: [],
-                                                                        params: [],
-                                                                        fields: [],
-                                                                        body: [],
-                                                                        calculates: [],
-                                                                        statistic: []
-                                                                    };
-                                                                    setModalTemp(updatedModalTemp);
-                                                                    setSelectedFieldsModal2([]);
-                                                                    setSelectedFields([]);
-                                                                    setSelectedFieldsBody([]);
+                                                <div class="checkbox-item round">
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "put"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "put",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
 
-                                                                }}
-                                                            />
-                                                            PUT
-                                                        </label>
-                                                    </div>
+                                                            }}
+                                                        />
+                                                        PUT
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="col-sm-3" >
-                                            <div class="checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                class="mr-1"
-                                                                type="radio"
-                                                                checked={modalTemp.api_method === "delete"}
-                                                                onChange={() => {
-                                                                    const updatedModalTemp = {
-                                                                        ...modalTemp,
-                                                                        api_method: "delete",
-                                                                        tables: [],
-                                                                        params: [],
-                                                                        fields: [],
-                                                                        body: [],
-                                                                        calculates: [],
-                                                                        statistic: []
+                                                <div class="checkbox-item">
+                                                    <label>
+                                                        <input
+                                                            class="mr-1"
+                                                            type="radio"
+                                                            checked={modalTemp.api_method === "delete"}
+                                                            onChange={() => {
+                                                                const updatedModalTemp = {
+                                                                    ...modalTemp,
+                                                                    api_method: "delete",
+                                                                    tables: [],
+                                                                    params: [],
+                                                                    fields: [],
+                                                                    body: [],
+                                                                    calculates: [],
+                                                                    statistic: []
 
-                                                                    };
-                                                                    setModalTemp(updatedModalTemp);
-                                                                    setSelectedFieldsModal2([]);
-                                                                    setSelectedFields([]);
-                                                                    setSelectedFieldsBody([]);
+                                                                };
+                                                                setModalTemp(updatedModalTemp);
+                                                                setSelectedFieldsModal2([]);
+                                                                setSelectedFields([]);
+                                                                setSelectedFieldsBody([]);
 
-                                                                }}
-                                                            />
-                                                            DELETE
-                                                        </label>
-                                                    </div>
+                                                            }}
+                                                        />
+                                                        DELETE
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1345,7 +1346,7 @@ console.log(modalTemp.statistic)
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["fields display"]} <span className='red_star'>*</span></p>
                                                             {(modalTemp.api_method === "get") && <p className="text-danger ml-2">{errorApi.fields}</p>}
-                                                            <button type="button"   class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -1540,7 +1541,7 @@ console.log(modalTemp.statistic)
                                             <div className={`form-group col-lg-12 mt-2`}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                     <label >{lang["selected table"]}: <span className='red_star'>*</span></label>
-                                                    <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>Xóa tất cả</button>
+                                                    <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>{lang["deleteall"]}</button>
                                                 </div>
                                                 <div className="outerBox">
                                                     {selectedTables.map(table => (
@@ -2178,23 +2179,23 @@ console.log(modalTemp.statistic)
                                             {lang["group by"]}
                                         </p>
 
-                                       <div className="form-group checkbox-container-wrapper">
-                                       <div className="checkbox-container">
-                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
-                                                <div key={index} className="form-check">
-                                                     <label className="form-check-label">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={field.id}
-                                                        checked={isFieldChecked(field.id)}
-                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
-                                                    />
-                                                   
-                                                        {field.display_name}
-                                                    </label>
-                                                </div>
-                                            ))}
+                                        <div className="form-group checkbox-container-wrapper">
+                                            <div className="checkbox-container">
+                                                {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                    <div key={index} className="form-check">
+                                                        <label className="form-check-label">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                value={field.id}
+                                                                checked={isFieldChecked(field.id)}
+                                                                onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                            />
+
+                                                            {field.display_name}
+                                                        </label>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
 
@@ -2376,65 +2377,65 @@ console.log(modalTemp.statistic)
                                             </div>
                                         </div>
                                         <div className={`form-group col-lg-12`}>
-                                        <p className="font-weight-bold">
-                                            {lang["group by"]}
-                                        </p>
+                                            <p className="font-weight-bold">
+                                                {lang["group by"]}
+                                            </p>
 
-                                       <div className="form-group checkbox-container-wrapper">
-                                       <div className="checkbox-container">
-                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
-                                                <div key={index} className="form-check">
-                                                     <label className="form-check-label">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={field.id}
-                                                        checked={isFieldChecked(field.id)}
-                                                        onChange={(e) => addOrRemoveGroupByField(e.target.value)}
-                                                    />
-                                                   
-                                                        {field.display_name}
-                                                    </label>
+                                            <div className="form-group checkbox-container-wrapper">
+                                                <div className="checkbox-container">
+                                                    {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                        <div key={index} className="form-check">
+                                                            <label className="form-check-label">
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    value={field.id}
+                                                                    checked={isFieldChecked(field.id)}
+                                                                    onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                                />
+
+                                                                {field.display_name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
+                                            </div>
+
+                                            {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <div class="table-responsive">
+                                                {
+                                                    groupBy.length > 0 ? (
+                                                        <>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {groupBy.map((field, index) =>
+                                                                        <tr key={`${index}`}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{field.display_name}</td>
+                                                                            <td>{field.fomular_alias}</td>
+                                                                        </tr>
+                                                                    )}
+                                                                </tbody>
+                                                            </table>
+                                                        </>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>{lang["not found"]}</p>
+                                                        </div>
+                                                    )
+                                                }
                                             </div>
                                         </div>
-
-                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <div class="table-responsive">
-                                            {
-                                                groupBy.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
-
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {groupBy.map((field, index) =>
-                                                                    <tr key={`${index}`}>
-                                                                        <td>{index + 1}</td>
-                                                                        <td>{field.display_name}</td>
-                                                                        <td>{field.fomular_alias}</td>
-                                                                    </tr>
-                                                                )}
-                                                            </tbody>
-                                                        </table>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["not found"]}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
                                         <div className={`form-group col-lg-12`}>
                                             <label>{lang["select fields"]}<span className='red_star'>*</span></label>
                                             <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>

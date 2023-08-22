@@ -305,8 +305,8 @@ export default {
     "add fields body": "Add body fields",
 
     "rdit fields body": "Edit body fields ",
-    "add field calculations": "Add fields calculations",
-    "edit field calculations": "Edit fields calculations",
+    "add field calculations": "Add calculated field",
+    "edit field calculations": "Edit calculated field",
     "fomular": "Fomular",
     "statistical fields": "Statistical fields ",
     "fields name statistic": "Statistics field name",
@@ -431,7 +431,8 @@ export default {
     "view.task": "View tasks details",
     "ui.table_statis":"Statistics table template",
     "ui.table": "Template table",
-    "data": "Data"
+    "data": "Data",
+    "deleteall": "Delete all"
 
 
 }
