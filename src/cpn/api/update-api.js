@@ -586,20 +586,34 @@ export default () => {
             setSelectedFields(tempParam);
         }
     };
+    function isPrimaryKey(tableId, fieldId) {
+        return tableFields[tableId].primary_key.includes(fieldId);
+    }
+    
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
-        // Sao chép state hiện tại
         const updatedSelections = { ...selectedFields };
-        // Nếu không có mảng cho tableId này, tạo mới
+    
         if (!updatedSelections[tableId]) {
             updatedSelections[tableId] = [];
         }
+    
         if (isChecked) {
-            // Nếu checkbox được chọn, thêm fieldId vào mảng
             updatedSelections[tableId].push(fieldId);
+    
+            // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
+            if (isPrimaryKey(tableId, fieldId)) {
+                for (let tid in tableFields) {
+                    for (const fk of tableFields[tid]?.foreign_keys || []) {
+                        if (fk.ref_field_id === fieldId) {
+                            updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
+                        }
+                    }
+                }
+            }
         } else {
-            // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
             updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
         }
+    
         setSelectedFields(updatedSelections);
     };
 
@@ -1530,6 +1544,10 @@ export default () => {
                                                             modalTemp.tables?.forEach(tid => {
                                                                 correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
                                                             });
+                                                        } 
+                                                        
+                                                        function isPrimaryKey(tableId, fieldId) {
+                                                            return tableFields[tableId].primary_key.includes(fieldId);
                                                         }
 
                                                         // Check if the field is of type 'date'
@@ -1557,7 +1575,7 @@ export default () => {
                                                                                 e.preventDefault();
                                                                             }
                                                                             // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
-                                                                            else if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                             else if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFields[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
                                                                                     title: lang["log.error"],
                                                                                     text: lang["error.fk"],

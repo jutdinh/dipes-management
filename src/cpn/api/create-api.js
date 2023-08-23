@@ -369,7 +369,7 @@ export default () => {
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
-    // console.log(tableFields)
+    console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
             const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
@@ -425,26 +425,40 @@ export default () => {
 
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
-    console.log(selectedFieldsModal2[0]?.id)
+    // console.log(selectedFieldsModal2[0]?.id)
     // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
     // console.log("FieldParams", selectedFields)
 
+    function isPrimaryKey(tableId, fieldId) {
+        return tableFields[tableId].primary_key.includes(fieldId);
+    }
+    
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
-        // Sao chép state hiện tại
         const updatedSelections = { ...selectedFields };
-        // Nếu không có mảng cho tableId này, tạo mới
+    
         if (!updatedSelections[tableId]) {
             updatedSelections[tableId] = [];
         }
+    
         if (isChecked) {
-            // Nếu checkbox được chọn, thêm fieldId vào mảng
             updatedSelections[tableId].push(fieldId);
+    
+            // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
+            if (isPrimaryKey(tableId, fieldId)) {
+                for (let tid in tableFields) {
+                    for (const fk of tableFields[tid]?.foreign_keys || []) {
+                        if (fk.ref_field_id === fieldId) {
+                            updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
+                        }
+                    }
+                }
+            }
         } else {
-            // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
             updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
         }
+    
         setSelectedFields(updatedSelections);
     };
     // console.log("trường hiển thị:", selectedFieldsModal2)
@@ -665,7 +679,7 @@ export default () => {
 
 
     const [groupBy, setGroupBy] = useState([])
-    console.log(groupBy)
+    // console.log(groupBy)
     const addOrRemoveGroupByField = (id) => {
         console.log(id)
         const corespondingGroupByField = groupBy.find(f => f.id == id);
@@ -722,7 +736,7 @@ export default () => {
             }
         });
     }
-    console.log(modalTemp.statistic)
+    // console.log(modalTemp.statistic)
     const [errorStatistical, setErrorStatistical] = useState({});
     const validateStatistical = () => {
         let temp = {};
@@ -800,7 +814,7 @@ export default () => {
         setFomular("");
         setErrorCaculates({})
     };
-    console.log(selectedFieldsModal2)
+    // console.log(selectedFieldsModal2)
 
     return (
         <div class="midde_cont">
@@ -1617,6 +1631,13 @@ export default () => {
                                                             });
                                                         }
 
+                                                        function isPrimaryKey(tableId, fieldId) {
+                                                            return tableFields[tableId].primary_key.includes(fieldId);
+                                                        }
+                                                        
+                                                      
+                                                        
+                                                        
                                                         // Check if the field is of type 'date'
                                                         let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
 
@@ -1641,8 +1662,7 @@ export default () => {
                                                                                 });
                                                                                 e.preventDefault();
                                                                             }
-                                                                            // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
-                                                                            else if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                            else if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFields[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
                                                                                     title: lang["log.error"],
                                                                                     text: lang["error.fk"],
