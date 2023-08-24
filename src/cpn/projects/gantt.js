@@ -19,8 +19,8 @@ const TimelineChart = ({ data, project }) => {
     const [timebar, setTimebar] = useState([]);
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
-    const [selectedMonth, setSelectedMonth] = useState(moment().month());
-
+    // const [selectedMonth, setSelectedMonth] = useState(moment().month());
+    const [selectedMonth, setSelectedMonth] = useState();
     // ///focus đến tháng hiện tại
     // useEffect(() => {
     //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
@@ -295,6 +295,9 @@ const TimelineChart = ({ data, project }) => {
                                     }
                                 }}
                                 >
+                                     <option>
+                                        {lang["choose"]}
+                                    </option>
                                 {months.map((month, i) => (
                                     <option key={i} value={i}>
                                         {month}
@@ -324,10 +327,31 @@ const TimelineChart = ({ data, project }) => {
                     //   zoomOut={handleZoomOut}
                     // clickElement={clickElement}
                     timebar={timebar}
-                    tracks={tracks.filter(track => {
-                        const trackStartDate = moment(track.elements[0].start);
-                        return trackStartDate.year() === selectedYear && trackStartDate.month() === selectedMonth;
-                    })}
+                    tracks={
+                        selectedMonth !== undefined ? (
+                            tracks.filter(track => {
+                                const trackStartDate = moment(track.elements[0].start);
+                                const trackEndDate = moment(track.elements[0].end);
+                    
+                                const selectedStartDate = moment().year(selectedYear).month(selectedMonth).date(1);
+                                const selectedEndDate = moment(selectedStartDate).endOf('month');
+                    
+                                return trackStartDate.isBetween(selectedStartDate, selectedEndDate, null, '[]') ||
+                                       trackEndDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                            })
+                        ) : (
+                            tracks
+                        )
+                    }
+                    
+                    
+                    
+                    // tracks={
+                    //     tracks.filter(track => {
+                    //     const trackStartDate = moment(track.elements[0].start);
+                    //     return trackStartDate.year() === selectedYear && trackStartDate.month() === selectedMonth;
+                    // })}
+                    
                     now={now}
                     enableSticky
                     scrollToNow

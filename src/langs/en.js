@@ -432,7 +432,9 @@ export default {
     "ui.table_statis":"Statistics table template",
     "ui.table": "Template table",
     "data": "Data",
-    "deleteall": "Delete all"
+    "deleteall": "Delete all",
+    "api auto": "API Auto",
+    "api custom": "API View"
 
 
 }

@@ -437,7 +437,7 @@ export default () => {
                                     </button>
                             }
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 {/* Modal add project */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
@@ -520,31 +520,21 @@ export default () => {
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder={lang["p.projectdescripton"]} />
                                         </div>
+                                        
                                         <div className="form-group col-lg-12">
-                                            <label>{lang["projectmember"]}</label>
-                                            <div class="options-container">
+                                        <label>{lang["projectmember"]}</label>
+                                        <div className="row">
+                                            <div className="col-md-6">
                                                 <div class="option">
-                                                    <h5>{lang["supervisor"]}</h5>
-                                                    {
-                                                        selectedUsers.map(user => {
-                                                            const userData = users.find(u => u.username === user.username);
-                                                            return (
-                                                                <div key={user.username}>
-                                                                    <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
-                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenAdminPopup} >
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-                                                </div>
 
-                                                {/* <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <h5>{lang["supervisor"]}</h5>
-                                                    <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
-                                                        {
-                                                            selectedUsers.map(user => {
+                                                    <div className="option-header">
+                                                        <h5>{lang["supervisor"]}</h5>
+
+                                                        <i class="fa fa-plus-square size-32 icon-add pointer  mb-10 " onClick={handleOpenAdminPopup} aria-hidden="true"></i>
+                                                    </div>
+                                                    <div class="div-to-scroll">
+                                                        {selectedUsers.length > 0 ? (
+                                                            selectedUsers.map((user, index) => {
                                                                 if (user.username === manager) {
                                                                     return null;
                                                                 }
@@ -555,18 +545,33 @@ export default () => {
                                                                     </div>
                                                                 )
                                                             })
+
+                                                        ) :
+                                                            <div className="no-data-message">
+                                                                {lang["not found user"]}
+                                                            </div>
+
                                                         }
                                                     </div>
-                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-                                                </div> */}
 
-                                                <div class="option" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                    <h5>{lang["deployers"]}</h5>
-                                                    <div class="div-to-scroll" style={{ overflowY: 'auto', maxHeight: '105px', minWidth: "50px", paddingRight: '15px' }}>
-                                                        {
-                                                            selectedImple.map(user => {
+                                                </div>
+
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div class="option">
+
+                                                    <div className="option-header">
+                                                        <h5>{lang["deployers"]}</h5>
+
+                                                        <i class="fa fa-plus-square size-32 icon-add pointer mb-10 " onClick={handleOpenImplementationPopup} aria-hidden="true"></i>
+                                                    </div>
+
+                                                    <div class="div-to-scroll">
+                                                        {selectedImple.length > 0 ? (
+                                                            selectedImple.map((user, index) => {
+                                                                if (user.username === manager) {
+                                                                    return null;
+                                                                }
                                                                 const userData = users.find(u => u.username === user.username);
                                                                 return (
                                                                     <div key={user.username}>
@@ -574,106 +579,82 @@ export default () => {
                                                                     </div>
                                                                 )
                                                             })
+                                                        ) :
+                                                            <div className="no-data-message">
+                                                                {lang["not found user"]}
+                                                            </div>
                                                         }
                                                     </div>
-                                                    <button type="button" class="btn btn-primary custom-buttonadd" onClick={handleOpenImplementationPopup} >
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
                                                 </div>
 
                                             </div>
                                         </div>
-                                        {showAdminPopup && (
-                                            <div class="user-popup">
-                                                <div class="user-popup-content">
-                                                    {users && users.map(user => {
-                                                        if (user.username !== manager && !selectedImple.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
-                                                            return (
-                                                                <div key={user.username} class="user-item">
+                                    </div>
+                                    {showAdminPopup && (
+                                        <div class="user-popup4">
+                                            <div class="user-popup-content">
+                                                {users && users.map(user => {
+                                                    if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                        return (
+                                                            <div key={user.username} class="user-item">
+                                                                <label class="pointer">
                                                                     <input
-                                                                        class="user-checkbox pointer"
+                                                                        class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                         onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <label class="pointer">
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
-                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-                                                                        </span>
+                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
 
-                                                                    </label>
+                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
-                                                                </div>
-                                                            )
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </div>
-                                                <div className="user-popup-actions">
-                                                    <button class="btn btn-success" onClick={handleSaveUsers}>{lang["btn.update"]}</button>
-                                                    <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
-                                                </div>
+                                                                    </span>
+                                                                </label>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    return null;
+                                                })}
                                             </div>
-                                        )}
-                                        {showImplementationPopup && (
-                                            <div class="user-popup2">
-                                                <div class="user-popup-content">
-                                                    {users && users.map(user => {
-                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedMonitor.some(u => u.username === user.username)) {
-                                                            return (
-                                                                <div key={user.username} class="user-item">
+                                            <div className="user-popup-actions">
+                                                <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {showImplementationPopup && (
+                                        <div class="user-popup2">
+                                            <div class="user-popup-content">
+                                                {users && users.map(user => {
+                                                    if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                        return (
+                                                            <div key={user.username} class="user-item">
+                                                                <label class="pointer">
                                                                     <input
-                                                                        class="user-checkbox pointer"
+                                                                        class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                         onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                    <label class="pointer">
-                                                                        <span class="user-name " onClick={() => handleAdminCheck(user, 'deployer')}>
-                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username} - {user.fullname}
-                                                                        </span>
-                                                                    </label>
-
-                                                                </div>
-                                                            )
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </div>
-                                                <div className="user-popup-actions">
-                                                    <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
-                                                    <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {/* {showMonitorPopup && (
-                                            <div class="user-popup3">
-                                                <div class="user-popup-content">
-                                                    {users && users.map(user => {
-                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username) && !selectedImple.some(u => u.username === user.username)) {
-                                                            return (
-                                                                <div key={user.username} class="user-item">
-                                                                    <input
-                                                                        class="user-checkbox"
-                                                                        type="checkbox"
-                                                                        checked={tempSelectedMonitor.some(u => u.username === user.username)}
-                                                                        onChange={() => handleMonitorCheck(user, 'deployer')}
-                                                                    />
                                                                     <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+
+
                                                                     </span>
-                                                                </div>
-                                                            )
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </div>
-                                                <div className="user-popup-actions">
-                                                    <button class="btn btn-success" onClick={handleSaveMonitor}>Lưu</button>
-                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                                </div>
+                                                                </label>
+                                                            </div>
+                                                        )
+                                                    }
+                                                    return null;
+                                                })}
                                             </div>
-                                        )} */}
+                                            <div className="user-popup-actions">
+                                                <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
+                                                <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
+                                            </div>
+                                        </div>
+                                    )}
                                     </div>
                                 </form>
                             </div>

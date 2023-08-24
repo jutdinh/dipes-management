@@ -1465,6 +1465,35 @@ img[class="scaled-hover-target"] {
     position: relative;  
     box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1); 
 }
+.nav .nav-tabs .h5 {
+    color: white;
+ }
+ 
+ .tab_style2 .tabbar nav div.nav-tabs .nav-link.active {
+     background: #d4e0ec;
+     color: #fff;
+     border-color: #ced4da;
+     border-bottom: none;
+     /* padding: 18px 25px 18px 25px; */
+ }
+ 
+ .heading1_cus {
+     float: left;
+     padding: 0;
+     width: 100%;
+     margin-top: 50px;
+ }
+ 
+ .tabbar .nav-tabs {
+     border-bottom: solid #eee 0px !important;
+ }
+.graph_head_cus {
+    padding: 0px 25px 0px 0px;
+    /* padding: 18px 25px 18px 25px; */
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
 .option-header {
     display: flex;
     justify-content: space-between;

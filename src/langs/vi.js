@@ -437,7 +437,9 @@ export default {
     "ui.table": "Bảng mẫu",
     "ui.table_statis":"Mẫu bảng thống kê",
     "data": "Dữ liệu",
-    "deleteall": "Xóa tất cả"
+    "deleteall": "Xóa tất cả",
+    "api auto": "API tự động",
+    "api custom": "API View"
 
 
 

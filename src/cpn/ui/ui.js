@@ -61,7 +61,7 @@ export default () => {
                 }
             })
     }, [])
-    // console.log(uis)
+    console.log(uis)
 
     const handleUpdateStatus = (uiid) => {
         // console.log("ui", uiid)
@@ -202,6 +202,7 @@ export default () => {
                                                                     <th class="font-weight-bold">{lang["creator"]}</th>
                                                                     <th class="font-weight-bold">{lang["time"]}</th>
                                                                     <th class="font-weight-bold">{lang["projectstatus"]}</th>
+                                                                    <th class="font-weight-bold">{lang["note"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                                 </tr>
                                                             </thead>
@@ -221,6 +222,7 @@ export default () => {
                                                                                 <option value={false} selected={!ui.status} style={{ color: 'red' }}>Off</option>
                                                                             </select>
                                                                         </td>
+                                                                        <td>{ui.type === `ui` ? lang["api auto"] : lang["api custom"]}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
                                                                             {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
@@ -294,10 +296,14 @@ export default () => {
                                             <span className="d-block"> {detailUi?.status ? "On" : "Off"} </span>
                                         </div>
                                         <div class="form-group col-lg-6">
+                                            <label><b>{lang["log.type"]}</b></label>
+                                            <span className="d-block"> {detailUi.type === "ui" ? lang["api auto"]: lang["api custom"]} </span>
+                                        </div>
+                                        <div class="form-group col-lg-6">
                                             <label><b>{lang["creator"]}</b></label>
                                             <span className="d-block"> {detailUi?.create_by?.fullname} </span>
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-6">
                                             <label><b>{lang["time"]}</b></label>
                                             <span className="d-block"> {detailUi?.create_at} </span>
                                         </div>

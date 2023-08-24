@@ -604,18 +604,21 @@ export default () => {
             if (isPrimaryKey(tableId, fieldId)) {
                 for (let tid in tableFields) {
                     for (const fk of tableFields[tid]?.foreign_keys || []) {
-                        if (fk.ref_field_id === fieldId) {
+                        if (fk.ref_field_id === fieldId && updatedSelections[tid]) {
                             updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
                         }
                     }
                 }
             }
         } else {
-            updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            if (updatedSelections[tableId]) {
+                updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            }
         }
     
         setSelectedFields(updatedSelections);
     };
+    
 
     //delete selected table 
 
@@ -1629,39 +1632,83 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
+                                    {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
-                                                    {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                        <div key={fieldIndex}>
-                                                            <label>
-                                                                <input className="mr-1 "
-                                                                    type="checkbox"
-                                                                    value={field.id}
-                                                                    checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
-                                                                    onChange={(e) => {
-                                                                        const checked = e.target.checked;
-                                                                        setSelectedFieldsModal2(prevState => {
-                                                                            let newFields = { ...prevState };
-                                                                            if (checked) {
-                                                                                if (!newFields[tableId]) newFields[tableId] = [];
-                                                                                newFields[tableId].push({
-                                                                                    id: field.id,
-                                                                                    display_name: field.field_name,
-                                                                                    fomular_alias: field.fomular_alias
+                                                    {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => {
+                                                        // Check if the field is a foreign key
+                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
+
+                                                        return (
+                                                            <div key={fieldIndex}>
+                                                                <label>
+                                                                    <input
+                                                                        className="mr-1"
+                                                                        type="checkbox"
+                                                                        value={field.id}
+                                                                        checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
+                                                                        onChange={(e) => {
+                                                                            const checked = e.target.checked;
+
+                                                                            // Kiểm tra nếu trường hiện tại là khóa ngoại và đã được chọn,
+                                                                            // và khóa chính tương ứng của nó cũng đã được chọn trước đó.
+                                                                            if (isForeignKey && checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsModal2[isForeignKey.table_id]?.some(f => f.id === isForeignKey.ref_field_id)) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
                                                                                 });
+                                                                                e.preventDefault();
                                                                             } else {
-                                                                                newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
+                                                                                setSelectedFieldsModal2(prevState => {
+                                                                                    let newFields = { ...prevState };
+
+                                                                                    if (checked) {
+                                                                                        if (!newFields[tableId]) newFields[tableId] = [];
+                                                                                        newFields[tableId].push({
+                                                                                            id: field.id,
+                                                                                            display_name: field.field_name,
+                                                                                            fomular_alias: field.fomular_alias
+                                                                                        });
+
+                                                                                        // Bỏ chọn khóa ngoại nếu khóa chính tương ứng được chọn
+                                                                                        if (isPrimaryKey(tableId, field.id)) {
+                                                                                            for (let tid in tableFields) {
+                                                                                                for (const fk of tableFields[tid]?.foreign_keys || []) {
+                                                                                                    if (fk.ref_field_id === field.id && newFields[tid]) {
+                                                                                                        newFields[tid] = newFields[tid].filter(f => f.id !== fk.field_id);
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    } else {
+                                                                                        newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
+                                                                                    }
+
+                                                                                    return newFields;
+                                                                                });
                                                                             }
-                                                                            return newFields;
-                                                                        });
-                                                                    }}
-                                                                />
-                                                                {field.field_name}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+
+                                                                        }}
+                                                                    />
+                                                                    {field.field_name}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         ))}

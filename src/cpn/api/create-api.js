@@ -434,7 +434,7 @@ export default () => {
     function isPrimaryKey(tableId, fieldId) {
         return tableFields[tableId].primary_key.includes(fieldId);
     }
-    
+
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         const updatedSelections = { ...selectedFields };
     
@@ -449,18 +449,21 @@ export default () => {
             if (isPrimaryKey(tableId, fieldId)) {
                 for (let tid in tableFields) {
                     for (const fk of tableFields[tid]?.foreign_keys || []) {
-                        if (fk.ref_field_id === fieldId) {
+                        if (fk.ref_field_id === fieldId && updatedSelections[tid]) {
                             updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
                         }
                     }
                 }
             }
         } else {
-            updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            if (updatedSelections[tableId]) {
+                updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            }
         }
     
         setSelectedFields(updatedSelections);
     };
+    
     // console.log("trường hiển thị:", selectedFieldsModal2)
     const getFieldDetails = (tableId, fieldId) => {
         const tableInfo = tableFields[tableId];
@@ -1634,10 +1637,10 @@ export default () => {
                                                         function isPrimaryKey(tableId, fieldId) {
                                                             return tableFields[tableId].primary_key.includes(fieldId);
                                                         }
-                                                        
-                                                      
-                                                        
-                                                        
+
+
+
+
                                                         // Check if the field is of type 'date'
                                                         let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
 
@@ -1746,8 +1749,11 @@ export default () => {
                                                                         value={field.id}
                                                                         checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
                                                                         onChange={(e) => {
-                                                                            // If it's a foreign key and corresponding primary key exists, show error and prevent checking
-                                                                            if (isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                            const checked = e.target.checked;
+
+                                                                            // Kiểm tra nếu trường hiện tại là khóa ngoại và đã được chọn,
+                                                                            // và khóa chính tương ứng của nó cũng đã được chọn trước đó.
+                                                                            if (isForeignKey && checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsModal2[isForeignKey.table_id]?.some(f => f.id === isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
                                                                                     title: lang["log.error"],
                                                                                     text: lang["error.fk"],
@@ -1759,9 +1765,9 @@ export default () => {
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {
-                                                                                const checked = e.target.checked;
                                                                                 setSelectedFieldsModal2(prevState => {
                                                                                     let newFields = { ...prevState };
+
                                                                                     if (checked) {
                                                                                         if (!newFields[tableId]) newFields[tableId] = [];
                                                                                         newFields[tableId].push({
@@ -1769,12 +1775,25 @@ export default () => {
                                                                                             display_name: field.field_name,
                                                                                             fomular_alias: field.fomular_alias
                                                                                         });
+
+                                                                                        // Bỏ chọn khóa ngoại nếu khóa chính tương ứng được chọn
+                                                                                        if (isPrimaryKey(tableId, field.id)) {
+                                                                                            for (let tid in tableFields) {
+                                                                                                for (const fk of tableFields[tid]?.foreign_keys || []) {
+                                                                                                    if (fk.ref_field_id === field.id && newFields[tid]) {
+                                                                                                        newFields[tid] = newFields[tid].filter(f => f.id !== fk.field_id);
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
                                                                                     } else {
                                                                                         newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
                                                                                     }
+
                                                                                     return newFields;
                                                                                 });
                                                                             }
+
                                                                         }}
                                                                     />
                                                                     {field.field_name}

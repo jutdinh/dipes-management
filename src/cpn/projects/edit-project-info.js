@@ -372,7 +372,7 @@ export default () => {
                                                     <div className="option-header">
                                                         <h5>{lang["deployers"]}</h5>
 
-                                                        <i class="fa fa-plus-square size-32 icon-add pointer mb-10 " onClick={handleOpenAdminPopup} aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-square size-32 icon-add pointer mb-10 " onClick={handleOpenImplementationPopup} aria-hidden="true"></i>
                                                     </div>
 
                                                     <div class="div-to-scroll">

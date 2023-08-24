@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Layout2 from './view_layout2'
 import Layout1 from './view_layout1'
+import LayoutViewApi from "./view_api_layout"
 import responseMessages from "../enum/response-code";
 import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
@@ -36,6 +37,7 @@ export default () => {
         title: "",
         status: true,
         layout_id: 0,
+        api_id: "",
         parmas: [],
         tables: [],
         statistic_fields: [],
@@ -68,12 +70,18 @@ export default () => {
     const validateUiname = () => {
         let temp = {};
         temp.title = modalTemp.title ? "" : lang["error.input"];
-        temp.tables = tables && tables.length > 0 ? "" : lang["error.input"];
+
+        if (modalTemp.layout_id != 2) {
+            temp.tables = tables && tables.length > 0 ? "" : lang["error.input"];
+        }
+
         setErrorUi({
             ...temp
         });
+
         return Object.values(temp).every(x => x === "");
     }
+    console.log(errorUi)
     // const handleSubmitModal = () => {
     //     if (validateApiname()) {
     //         setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -93,43 +101,86 @@ export default () => {
     //         addUI();
     //     }
     // }, [tempFieldParam]);
+    console.log(modalTemp.api_id)
     const addUI = () => {
         if (validateUiname()) {
 
             modalTemp.statistic_fields.map(field => {
                 field.group_by = field.group_by.map(group => group.fomular_alias)
             })
+            let requestBody= {}
+            const dataBody = modalTemp.api_id === "2" ?
+                requestBody = {
+                    version_id: parseInt(version_id),
+                    ui: {
+                        title: modalTemp.title,
+                        status: modalTemp.status,
+                    },
+                    widget: {
 
-            const requestBody = {
-                version_id: parseInt(version_id),
-                ui: {
-                    title: modalTemp.title,
-                    status: modalTemp.status,
-                },
-                widget: {
-                    table_id: modalTemp.tables,
-                    layout_id: modalTemp.layout_id,
-                    statistic: modalTemp.statistic_fields,
-                    calculates: modalTemp.calculates
-                },
-            }
-            console.log(requestBody)
-            fetch(`${proxy}/uis/ui`, {
+                        layout_id: modalTemp.layout_id,
+                        api_id: modalTemp.api_id,
+
+                    },
+                }
+                :
+                requestBody = {
+                    version_id: parseInt(version_id),
+                    ui: {
+                        title: modalTemp.title,
+                        status: modalTemp.status,
+                    },
+                    widget: {
+                        table_id: modalTemp.tables,
+                        layout_id: modalTemp.layout_id,
+                        api_id: modalTemp.api_id,
+                        statistic: modalTemp.statistic_fields,
+                        calculates: modalTemp.calculates
+                    },
+                }
+
+
+
+            console.log(dataBody)
+            const apiUrl = modalTemp.layout_id === "2" ? `${proxy}/uis/apiview` : `${proxy}/uis/ui`;
+            fetch(apiUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${_token}`,
                 },
-                body: JSON.stringify(requestBody),
+                body: JSON.stringify(dataBody),
             })
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
                     functions.showApiResponseMessage(status);
                 })
+
+
         }
     };
+    const [apis, setApis] = useState([]);
+    useEffect(() => {
+        fetch(`${proxy}/apis/v/${version_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
 
+                if (success) {
+                    if (data) {
+                        setApis(data.apis);
+
+                    }
+                } else {
+                    // window.location = "/404-not-found"
+                }
+            })
+    }, [])
     const [errorTable, setErrorTable] = useState({});
     const validateTable = () => {
         let temp = {};
@@ -628,6 +679,12 @@ export default () => {
         setErrorCaculates({})
         // console.log(errorCaculates)
     };
+
+
+    // console.log(modalTemp.layout_id)
+    // console.log(apis)
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -674,8 +731,10 @@ export default () => {
                                             <label class="font-weight-bold">Layout</label>
                                             {modalTemp.layout_id == 0 ?
                                                 <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
-                                                :
-                                                <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                : modalTemp.layout_id == 1 ?
+                                                    <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                    :
+                                                    <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(2)} data-toggle="modal" data-target="#preview"></i>
                                             }
                                         </div>
                                         <select
@@ -685,49 +744,70 @@ export default () => {
                                         >
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
+                                            <option value={2}>Layout API</option>
                                         </select>
                                     </div>
-                                    {/* Chọn các bảng */}
-                                    <div class="col-md-12 col-lg-12 bordered mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <p class="font-weight-bold">{lang["selected table"]} <span className='red_star'> *</span> </p>
-                                            {errorUi.tables && <p className="text-danger">{(errorUi.tables)}</p>}
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <div class="table-responsive">
-                                            {
-                                                tables && tables.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
+                                    {Number(modalTemp.layout_id) === 2 && (
+                                        <div className="form-group col-lg-6">
+                                            <label htmlFor="sel1">API <span className='red_star'>*</span></label>
+                                            <select className="form-control" name="role" value={modalTemp.api_id} onChange={(e) => setModalTemp({ ...modalTemp, api_id: e.target.value })}>
+                                                <option value={""}>{lang["choose"]}</option>
 
-                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["time"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {tables.map((table, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>{table.table_name}</td>
-                                                                        <td>{table.create_by?.fullname}</td>
-                                                                        <td>{formatDate(table.create_at)}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>Chưa có dữ liệu bảng</p>
-                                                    </div>
-                                                )
-                                            }
+                                                {apis.filter(api => api.api_method.toLowerCase() === 'get').map((api) => (
+                                                    <option key={api.api_id} value={api.api_id}>{api.api_name}</option>
+                                                ))}
+
+                                            </select>
                                         </div>
-                                    </div>
+                                    )}
+
+
+
+                                    {/* Chọn các bảng */}
+                                    {Number(modalTemp.layout_id) !== 2 ? (
+
+
+                                        <div class="col-md-12 col-lg-12 bordered mb-3">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <p class="font-weight-bold">{lang["selected table"]} <span className='red_star'> *</span> </p>
+                                                {errorUi.tables && <p className="text-danger">{(errorUi.tables)}</p>}
+                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTables">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="table-responsive">
+                                                {
+                                                    tables && tables.length > 0 ? (
+                                                        <>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+
+                                                                        <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["time"]}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {tables.map((table, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>{table.table_name}</td>
+                                                                            <td>{table.create_by?.fullname}</td>
+                                                                            <td>{formatDate(table.create_at)}</td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>Chưa có dữ liệu bảng</p>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>) : null
+                                    }
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
@@ -825,19 +905,21 @@ export default () => {
                                             null
                                         )
                                     }
-                                    {tables && tables.length > 0 ? (
+                                    {(tables && tables.length > 0) || (modalTemp.api_id && modalTemp.api_id !== "") ? (
                                         <div className="mt-2 d-flex justify-content-end ml-auto">
-                                            {modalTemp.layout_id == 0 ?
-                                                <button type="button" onClick={() => handleClickLayout(0)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                :
-                                                <button type="button" onClick={() => handleClickLayout(1)} class="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                            {modalTemp.layout_id === 0 ?
+                                                <button type="button" onClick={() => handleClickLayout(0)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                : modalTemp.layout_id === 1 ?
+                                                    <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                    :
+                                                    <button type="button" onClick={() => handleClickLayout(2)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
                                             }
-                                            <button type="button" onClick={addUI} class="btn btn-success mr-2">{lang["btn.create"]}</button>
-                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
-                                            </button>
+
+                                            <button type="button" onClick={addUI} className="btn btn-success mr-2">{lang["btn.create"]}</button>
+                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" className="btn btn-danger">{lang["btn.close"]}</button>
                                         </div>
-                                    ) : null
-                                    }
+                                    ) : null}
+
                                 </div>
                             </div>
                         </div>
@@ -1385,6 +1467,7 @@ export default () => {
                                         <>
                                             {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                             {layout === 1 && <Layout2 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>
                                 </form>
