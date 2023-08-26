@@ -80,8 +80,106 @@ export default () => {
                 }
             })
     }, [])
+    console.log(project)
+    
+    
+
+    
+    const handleOpenAdminPopup = () => {
+        setShowAdminPopup(true);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+        setTempSelectedUsers([...selectedUsers]);
+    };
+    const handleOpenImplementationPopup = () => {
+        setShowAdminPopup(false);
+        setShowImplementationPopup(true);
+        setShowMonitorPopup(false);
+        setTempSelectedImple([...selectedImple]);
+
+    };
+    
+    const handleClosePopup = () => {
+        setShowAdminPopup(false);
+        setShowImplementationPopup(false);
+        setShowMonitorPopup(false);
+
+    };
+
+    const [selectedUsers, setSelectedUsers] = useState([]); // admin
+    const [selectedImple, setSelectedImple] = useState([]);
+    const [selectedMonitor, setSelectedMonitor] = useState([]);
+    const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
+    const [tempSelectedImple, setTempSelectedImple] = useState([]);
+  console.log(selectedUsers)
+  const updateProjectMembers = () => {
+       
+    const updatedMembers = [
+        ...selectedUsers.map(user => ({
+            username: user.username,
+            fullname: user.fullname,
+            avatar: user.avatar,
+            permission: user.permission  
+        })),
+        ...selectedImple.map(imple => ({
+            username: imple.username,
+            fullname: imple.fullname,
+            avatar: imple.avatar,
+            permission: imple.permission
+        }))
+    ];
+
+    // Cập nhật project.members
+    project.members = updatedMembers;
+}
+    const handleAdminCheck = (user, role) => {
+        const userWithRole = { username: user.username, role };
+        setTempSelectedUsers(prevTempSelectedUsers => {
+            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
+                return prevTempSelectedUsers.filter(u => u.username !== user.username);
+            } else {
+                return [...prevTempSelectedUsers, userWithRole];
+            }
+        });
+    };
+
+    const handleImpleCheck = (user, role) => {
+        const userWithRole = { username: user.username, role };
+        setTempSelectedImple(prevTempSelectedImple => {
+            if (prevTempSelectedImple.some(u => u.username === user.username)) {
+                return prevTempSelectedImple.filter(u => u.username !== user.username);
+            } else {
+                return [...prevTempSelectedImple, userWithRole];
+            }
+        });
+        
+    };
+
+    
+    const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
+    const uniqueArray = Array.from(new Set(combinedArray.map(user => user.username)))
+        .map(username => {
+            return combinedArray.find(user => user.username === username);
+        });
+
+    const handleSaveUsers = () => {
+        setSelectedUsers(tempSelectedUsers);
+        setTempSelectedUsers([]);
+        setShowAdminPopup(false);
+    };
+    const handleSaveImple = () => {
+        setSelectedImple(tempSelectedImple);
+        setTempSelectedImple([]);
+        setShowImplementationPopup(false);
+    };
+    console.log('Before:', project.members);
+updateProjectMembers();
+console.log('After:', project.members);
+    
     const submitUpdateProject = async (e) => {
         e.preventDefault();
+        
+
         const { project_name, project_status } = project;
         const errors = {};
         if (!project_name) {
@@ -105,12 +203,13 @@ export default () => {
 
         const resp = await response.json();
         const { success, content, data, status } = resp;
+        console.log(resp)
 
-        if (success) {
-            showApiResponseMessage(status);
-        } else {
-            showApiResponseMessage(status);
-        }
+        // if (success) {
+        //     showApiResponseMessage(status);
+        // } else {
+        //     showApiResponseMessage(status);
+        // }
 
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
@@ -118,87 +217,6 @@ export default () => {
             // console.log("UPDATED")
             addMember(e);
         }
-    };
-    const handleOpenAdminPopup = () => {
-        setShowAdminPopup(true);
-        setShowImplementationPopup(false);
-        setShowMonitorPopup(false);
-        setTempSelectedUsers([...selectedUsers]);
-    };
-    const handleOpenImplementationPopup = () => {
-        setShowAdminPopup(false);
-        setShowImplementationPopup(true);
-        setShowMonitorPopup(false);
-        setTempSelectedImple([...selectedImple]);
-
-    };
-    const handleOpenMonitorPopup = () => {
-        setShowAdminPopup(false);
-        setShowImplementationPopup(false);
-        setShowMonitorPopup(true);
-        setTempSelectedMonitor([...selectedMonitor]);
-    };
-    const handleClosePopup = () => {
-        setShowAdminPopup(false);
-        setShowImplementationPopup(false);
-        setShowMonitorPopup(false);
-
-    };
-
-    const [selectedUsers, setSelectedUsers] = useState([]); // admin
-    const [selectedImple, setSelectedImple] = useState([]);
-    const [selectedMonitor, setSelectedMonitor] = useState([]);
-    const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
-    const [tempSelectedImple, setTempSelectedImple] = useState([]);
-    const [tempSelectedMonitor, setTempSelectedMonitor] = useState([]);
-
-    const handleAdminCheck = (user, role) => {
-        const userWithRole = { username: user.username, role };
-        setTempSelectedUsers(prevTempSelectedUsers => {
-            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
-                return prevTempSelectedUsers.filter(u => u.username !== user.username);
-            } else {
-                return [...prevTempSelectedUsers, userWithRole];
-            }
-        });
-    };
-
-    const handleImpleCheck = (user, role) => {
-        const userWithRole = { username: user.username, role };
-        setTempSelectedImple(prevTempSelectedUsers => {
-            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
-                return prevTempSelectedUsers.filter(u => u.username !== user.username);
-            } else {
-                return [...prevTempSelectedUsers, userWithRole];
-            }
-        });
-    };
-
-    const handleMonitorCheck = (user, role) => {
-        const userWithRole = { username: user.username, role };
-        setTempSelectedMonitor(prevTempSelectedUsers => {
-            if (prevTempSelectedUsers.some(u => u.username === user.username)) {
-                return prevTempSelectedUsers.filter(u => u.username !== user.username);
-            } else {
-                return [...prevTempSelectedUsers, userWithRole];
-            }
-        });
-    };
-    const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
-    const uniqueArray = Array.from(new Set(combinedArray.map(user => user.username)))
-        .map(username => {
-            return combinedArray.find(user => user.username === username);
-        });
-
-    const handleSaveUsers = () => {
-        setSelectedUsers(tempSelectedUsers);
-        setTempSelectedUsers([]);
-        setShowAdminPopup(false);
-    };
-    const handleSaveImple = () => {
-        setSelectedImple(tempSelectedImple);
-        setTempSelectedImple([]);
-        setShowImplementationPopup(false);
     };
     const addMember = (e) => {
         e.preventDefault();
@@ -217,9 +235,9 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                if (success) {
-                    showApiResponseMessage(status);
-                }
+                // if (success) {
+                //     showApiResponseMessage(status);
+                // }
             })
 
 
@@ -445,7 +463,8 @@ export default () => {
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                         onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                   <span class="user-name" onClick={() => handleImpleCheck(user, 'deployer')}>
+
 
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 

@@ -1406,7 +1406,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
-                                                                                <td>{modalTemp.fields.filter(field => statistic.group_by.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
+                                                                                <td>{modalTemp.fields.filter(field => statistic.group_by?.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
 
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>

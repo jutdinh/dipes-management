@@ -420,12 +420,32 @@ export default () => {
         }
     }, [projects])
     // console.log(projects)
+    const sortedProjects = projects.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 8;
+
+    const totalPages = Math.ceil(projects.length / rowsPerPage);
+
+    const indexOfLastProject = currentPage * rowsPerPage;
+    const indexOfFirstProject = indexOfLastProject - rowsPerPage;
+
+    const currentProjects = sortedProjects.slice(indexOfFirstProject, indexOfLastProject);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber < 1) return;
+        if (pageNumber > totalPages) return;
+        setCurrentPage(pageNumber);
+    };
+    
+
+
     return (
         <div className="container-fluid">
             <div class="midde_cont">
                 <div class="row column_title">
                     <div class="col-md-12">
-                        <div class="page_title d-flex align-items-center">
+                        <div class="page_title d-flex align-items-center ">
                             <h4>{lang["projects.title"]}</h4>
                             {
                                 ["ad", "uad"].indexOf(auth.role) != -1 ?
@@ -520,141 +540,141 @@ export default () => {
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder={lang["p.projectdescripton"]} />
                                         </div>
-                                        
+
                                         <div className="form-group col-lg-12">
-                                        <label>{lang["projectmember"]}</label>
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <div class="option">
+                                            <label>{lang["projectmember"]}</label>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <div class="option">
 
-                                                    <div className="option-header">
-                                                        <h5>{lang["supervisor"]}</h5>
+                                                        <div className="option-header">
+                                                            <h5>{lang["supervisor"]}</h5>
 
-                                                        <i class="fa fa-plus-square size-32 icon-add pointer  mb-10 " onClick={handleOpenAdminPopup} aria-hidden="true"></i>
-                                                    </div>
-                                                    <div class="div-to-scroll">
-                                                        {selectedUsers.length > 0 ? (
-                                                            selectedUsers.map((user, index) => {
-                                                                if (user.username === manager) {
-                                                                    return null;
-                                                                }
-                                                                const userData = users.find(u => u.username === user.username);
-                                                                return (
-                                                                    <div key={user.username}>
-                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                    </div>
-                                                                )
-                                                            })
+                                                            <i class="fa fa-plus-square size-32 icon-add pointer  mb-10 " onClick={handleOpenAdminPopup} aria-hidden="true"></i>
+                                                        </div>
+                                                        <div class="div-to-scroll">
+                                                            {selectedUsers.length > 0 ? (
+                                                                selectedUsers.map((user, index) => {
+                                                                    if (user.username === manager) {
+                                                                        return null;
+                                                                    }
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
 
-                                                        ) :
-                                                            <div className="no-data-message">
-                                                                {lang["not found user"]}
-                                                            </div>
+                                                            ) :
+                                                                <div className="no-data-message">
+                                                                    {lang["not found user"]}
+                                                                </div>
 
-                                                        }
+                                                            }
+                                                        </div>
+
                                                     </div>
 
                                                 </div>
+                                                <div className="col-md-6">
+                                                    <div class="option">
 
-                                            </div>
-                                            <div className="col-md-6">
-                                                <div class="option">
+                                                        <div className="option-header">
+                                                            <h5>{lang["deployers"]}</h5>
 
-                                                    <div className="option-header">
-                                                        <h5>{lang["deployers"]}</h5>
+                                                            <i class="fa fa-plus-square size-32 icon-add pointer mb-10 " onClick={handleOpenImplementationPopup} aria-hidden="true"></i>
+                                                        </div>
 
-                                                        <i class="fa fa-plus-square size-32 icon-add pointer mb-10 " onClick={handleOpenImplementationPopup} aria-hidden="true"></i>
+                                                        <div class="div-to-scroll">
+                                                            {selectedImple.length > 0 ? (
+                                                                selectedImple.map((user, index) => {
+                                                                    if (user.username === manager) {
+                                                                        return null;
+                                                                    }
+                                                                    const userData = users.find(u => u.username === user.username);
+                                                                    return (
+                                                                        <div key={user.username}>
+                                                                            <p>{userData ? userData.fullname : 'User not found'}</p>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            ) :
+                                                                <div className="no-data-message">
+                                                                    {lang["not found user"]}
+                                                                </div>
+                                                            }
+                                                        </div>
                                                     </div>
 
-                                                    <div class="div-to-scroll">
-                                                        {selectedImple.length > 0 ? (
-                                                            selectedImple.map((user, index) => {
-                                                                if (user.username === manager) {
-                                                                    return null;
-                                                                }
-                                                                const userData = users.find(u => u.username === user.username);
-                                                                return (
-                                                                    <div key={user.username}>
-                                                                        <p>{userData ? userData.fullname : 'User not found'}</p>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        ) :
-                                                            <div className="no-data-message">
-                                                                {lang["not found user"]}
-                                                            </div>
-                                                        }
-                                                    </div>
                                                 </div>
-
                                             </div>
                                         </div>
-                                    </div>
-                                    {showAdminPopup && (
-                                        <div class="user-popup4">
-                                            <div class="user-popup-content">
-                                                {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
-                                                        return (
-                                                            <div key={user.username} class="user-item">
-                                                                <label class="pointer">
-                                                                    <input
-                                                                        class="user-checkbox"
-                                                                        type="checkbox"
-                                                                        checked={tempSelectedUsers.some(u => u.username === user.username)}
-                                                                        onChange={() => handleAdminCheck(user, 'supervisor')}
-                                                                    />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                        {showAdminPopup && (
+                                            <div class="user-popup4">
+                                                <div class="user-popup-content">
+                                                    {users && users.map(user => {
+                                                        if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                            return (
+                                                                <div key={user.username} class="user-item">
+                                                                    <label class="pointer">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                            onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
 
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        )
-                                                    }
-                                                    return null;
-                                                })}
+                                                                        </span>
+                                                                    </label>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </div>
+                                                <div className="user-popup-actions">
+                                                    <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                </div>
                                             </div>
-                                            <div className="user-popup-actions">
-                                                <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
-                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {showImplementationPopup && (
-                                        <div class="user-popup2">
-                                            <div class="user-popup-content">
-                                                {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
-                                                        return (
-                                                            <div key={user.username} class="user-item">
-                                                                <label class="pointer">
-                                                                    <input
-                                                                        class="user-checkbox"
-                                                                        type="checkbox"
-                                                                        checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                        onChange={() => handleImpleCheck(user, 'deployer')}
-                                                                    />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                        )}
+                                        {showImplementationPopup && (
+                                            <div class="user-popup2">
+                                                <div class="user-popup-content">
+                                                    {users && users.map(user => {
+                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                            return (
+                                                                <div key={user.username} class="user-item">
+                                                                    <label class="pointer">
+                                                                        <input
+                                                                            class="user-checkbox"
+                                                                            type="checkbox"
+                                                                            checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                            onChange={() => handleImpleCheck(user, 'deployer')}
+                                                                        />
+                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
 
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                                            <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
 
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        )
-                                                    }
-                                                    return null;
-                                                })}
+                                                                        </span>
+                                                                    </label>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </div>
+                                                <div className="user-popup-actions">
+                                                    <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
+                                                    <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
+                                                </div>
                                             </div>
-                                            <div className="user-popup-actions">
-                                                <button class="btn btn-success" onClick={handleSaveImple}>{lang["btn.update"]}</button>
-                                                <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
-                                            </div>
-                                        </div>
-                                    )}
+                                        )}
                                     </div>
                                 </form>
                             </div>
@@ -681,14 +701,14 @@ export default () => {
                                                 loaded ? (
                                                     <>
                                                         {
-                                                            projects && projects.length > 0 ? (
-                                                                projects.map((item) => (
+                                                            currentProjects && currentProjects.length > 0 ? (
+                                                                currentProjects.map((item) => (
                                                                     (item.members.find(member => member.username === _users.username)
                                                                         || item.manager.username === _users.username
                                                                         || ["ad", "uad"].indexOf(auth.role) !== -1)
                                                                     && (
-                                                                        <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-                                                                            <div class="card project-block">
+                                                                        <div class="col-lg-3 col-md-6 col-sm-6 mb-1">
+                                                                            <div class="card">
                                                                                 <div class="card-body">
                                                                                     <div class="row project-name-min-height">
                                                                                         <div class="col-sm-10" >
@@ -787,12 +807,35 @@ export default () => {
                                                     <div class="d-flex justify-content-center align-items-center w-100 responsive-div" >
                                                         {/* {lang["projects.noprojectfound"]} */}
                                                         <img width={350} className="scaled-hover-target" src="/images/icon/loading.gif" ></img>
-
                                                     </div>
                                                 )
                                             }
-
+                                           
                                         </div>
+                                        <div className="d-flex justify-content-between align-items-center mt-1">
+                                                <p>{lang["show"]} {indexOfFirstProject + 1} - {Math.min(indexOfLastProject, projects.length)} {lang["of"]} {projects.length} {lang["results"]}</p>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul className="pagination mb-0">
+                                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                                &laquo;
+                                                            </button>
+                                                        </li>
+                                                        {Array(totalPages).fill().map((_, index) => (
+                                                            <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                    {index + 1}
+                                                                </button>
+                                                            </li>
+                                                        ))}
+                                                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                                &raquo;
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                     </div>
                                 </div>
                             </div>

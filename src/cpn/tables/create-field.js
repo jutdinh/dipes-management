@@ -767,7 +767,8 @@ export default () => {
                                             }
                                         </div>
                                         {
-                                            tempFields && tempFields.length > 0 ? (
+                                            // tempFields && tempFields.length > 0 ? (
+                                                table.table_name &&  table.table_name !== "" ? (
                                                 <div className="button-container mt-4">
 
                                                     <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.update"]}</button>

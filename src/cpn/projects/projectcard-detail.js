@@ -1710,7 +1710,6 @@ export default () => {
                             </div>
                         </div>
                     </div>
-
                     {/* View Description Project */}
                     <div class={`modal ${showModal ? 'show' : ''}`} id="viewDescription">
                         <div class="modal-dialog modal-dialog-center">

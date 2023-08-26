@@ -1,3 +1,15 @@
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* background-color: #fff;  */
+    z-index: 1000; 
+    padding: 10px 0; 
+}
+
+
+
 .my-confirm-button-class {
     background-color: rgb(209, 72, 81);
 }
@@ -1427,7 +1439,12 @@ img[class="scaled-hover-target"] {
 }
 
 .icon-detail {
-    color: #0056b3;
+    color: #0d49b8;
+    
+    background-color: #e9ecef;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .icon-add {
@@ -1436,6 +1453,13 @@ img[class="scaled-hover-target"] {
     width: 24px;
     height: 27px;
 }
+.color-tr{
+    background-color: #f0eaea;
+}
+/* .column1 {
+    max-height: 85vh; 
+    overflow-y: auto;  
+} */
 
 .icon-export {
     color: #269c1b;
@@ -1447,7 +1471,7 @@ img[class="scaled-hover-target"] {
 .icon-detail-project {
     color: #0d49b8;
     font-size: 24px;
-    background-color: rgb(240, 240, 240);
+    background-color: #e9ecef;
     padding: 5px;
     border-radius: 5px;
     cursor: pointer;

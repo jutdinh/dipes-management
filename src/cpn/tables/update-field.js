@@ -1003,7 +1003,7 @@ export default () => {
                                             className="form-control"
                                             defaultValue={getTableFields.table_name}
                                             onChange={(e) => setTableFields({ ...getTableFields, table_name: e.target.value })}
-                                            readOnly
+                                            // readOnly
                                         />
                                     </div>
                                     {/* Field */}
