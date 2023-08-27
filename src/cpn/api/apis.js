@@ -13,29 +13,13 @@ import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
-    const { project_id, version_id } = useParams();
+    const { version_id } = useParams();
+    const storedProjectId = localStorage.getItem('project_id');
     let navigate = useNavigate();
-    // const showApiResponseMessage = (status) => {
-    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-    //     const message = responseMessages[status];
-
-    //     const title = message?.[langItem]?.type || "Unknown error";
-    //     const description = message?.[langItem]?.description || "Unknown error";
-    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-
-    //     Swal.fire({
-    //         title,
-    //         text: description,
-    //         icon,
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //     }).then(() => {
-    //         if (icon === "success") {
-    //             window.location.reload();
-
-    //         }
-    //     });
-    // };
+    const back = () => {
+        navigate(`/projects/detail/${storedProjectId}`);
+    };
+    
     const [apis, setApis] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/apis/v/${version_id}`, {
@@ -263,7 +247,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                <h5><label  class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["manage api"]}
+                                <h5><label  class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["manage api"]}
                                     </label> </h5>
                                 </div>
                                 <div class="ml-auto" onClick={downloadAPI}>

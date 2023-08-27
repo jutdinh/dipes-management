@@ -13,6 +13,10 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
+    const storedProjectId = localStorage.getItem('project_id');
+    const back = () => {
+        navigate(`/projects/detail/${storedProjectId}`);
+    };
 
 
 
@@ -166,7 +170,7 @@ export default () => {
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                        
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2 "></i>{lang["manage ui"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2 "></i>{lang["manage ui"]}
                                     </label> </h5>
                                 </div>
                                 {/* <div class="ml-auto">

@@ -25,6 +25,9 @@ export default () => {
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/${version_id}/apis`);
+    };
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
     const [fieldsShow, setFieldShow] = useState({ id: null, display_name: null, formular: null });
     const defaultValues = {
@@ -835,7 +838,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create api"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create api"]}
                                     </label> </h5>
 
                                 </div>
@@ -1520,7 +1523,7 @@ export default () => {
                                     }
                                     <div className="mt-2 d-flex justify-content-end ml-auto">
                                         <button type="button" onClick={handleSubmitModal} class="btn btn-success mr-2">{lang["btn.update"]}</button>
-                                        <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                        <button type="button" onClick={() => back()} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                         </button>
                                     </div>
                                     {/* </>

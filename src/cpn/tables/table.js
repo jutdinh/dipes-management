@@ -22,9 +22,14 @@ export default () => {
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
 
+const storedProjectId = localStorage.getItem('project_id');
+
     const dispatch = useDispatch();
 
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/detail/${storedProjectId}`);
+    };
     const handleCloseModal = () => {
         setShowModal(false);
     };
@@ -132,7 +137,7 @@ export default () => {
         });
     }
     const [currentPageTable, setCurrentPageTable] = useState(1);
-    const rowsPerPageTable = 12;
+    const rowsPerPageTable = 15;
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
@@ -168,7 +173,7 @@ export default () => {
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["managetable"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["managetable"]}
                                     </label> </h5>
                                 </div>
 

@@ -29,6 +29,9 @@ export default () => {
     const [selectedMemberTask, setSelectedMemberTask] = useState([]);
     const [showFull, setShowFull] = useState(false);
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects`);
+    };
     const [showViewMore, setShowViewMore] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -181,7 +184,13 @@ export default () => {
         setShowModal(false);
     };
 
-    const { project_id } = useParams()
+    const { project_id } = useParams();
+
+    useEffect(() => {
+        
+        localStorage.setItem('project_id', project_id);
+        
+    }, [project_id]);
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [project, setProject] = useState({}); //// Update project
     const [projectmember, setProjectMember] = useState([]);
@@ -1097,7 +1106,7 @@ export default () => {
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
+                            <h4><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
                             </label> </h4>
                         </div>
                     </div>

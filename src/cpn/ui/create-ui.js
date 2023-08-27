@@ -25,6 +25,9 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
 
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/${version_id}/uis`);
+    };
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
 
     const [layout, setLayout] = useState(0); // Default is Layout 1
@@ -701,7 +704,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create ui"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left  mr-2"></i>{lang["create ui"]}
                                     </label> </h5>
                                 </div>
                             </div>
@@ -916,7 +919,7 @@ export default () => {
                                             }
 
                                             <button type="button" onClick={addUI} className="btn btn-success mr-2">{lang["btn.create"]}</button>
-                                            <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" className="btn btn-danger">{lang["btn.close"]}</button>
+                                            <button type="button" onClick={() => back()} data-dismiss="modal" className="btn btn-danger">{lang["btn.close"]}</button>
                                         </div>
                                     ) : null}
 

@@ -42,6 +42,9 @@ export default () => {
     const { project_id, version_id, table_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/${version_id}/tables`);
+    };
     const [fieldTemp, setFieldTemp] = useState({});
 
 
@@ -287,10 +290,15 @@ export default () => {
                     field: { ...modalTemp, index: tempCounter }
                 }
             })
+           
             setModalTemp((prevModalTemp) => ({
                 ...prevModalTemp,
                 ...defaultValues,
             }));
+            if(modalTemp.length > 0){
+                addField(modalTemp);
+            }
+            
             setModalTemp({
                 field_name: '',
                 DATATYPE: '',
@@ -305,9 +313,22 @@ export default () => {
                 DEFAULT_TRUE: '',
                 DEFAULT_FALSE: ''
             });
+            
             $("#closeAddFieldTemp").click()
+            
         }
     };
+    // useEffect(() => {
+    //     console.log("tempFields changed: ", tempFields);
+    //     if(tempFields.length > 0){
+    //         addField(tempFields);
+    //     }
+    // }, [tempFields]);
+    console.log(tempFields)
+    
+    
+    
+
     const validateUpdateFieldTemp = () => {
         let temp = {};
 
@@ -872,7 +893,7 @@ export default () => {
                 ...tempFields
             ],
         };
-        // console.log("field", fieldRequestBody)
+        console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -919,7 +940,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: foreignKeys
         };
-        // console.log("KLey", KeyRequestBody)
+        console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -933,11 +954,11 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 // console.log(resp)
-                functions.showApiResponseMessage(status);
+                // functions.showApiResponseMessage(status);
             });
     };
     const [currentPageTable, setCurrentPageTable] = useState(1);
-    const rowsPerPageTable = 7;
+    const rowsPerPageTable = 12;
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
@@ -959,8 +980,8 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    // console.log("p key", foreignKey)
-    // console.log("f key", foreignKeys)
+    console.log("p key", primaryKey)
+    console.log("f key", foreignKeys)
     // console.log(foreignKey)
     // console.log(tempFields)
     // console.log(primaryKey)
@@ -990,7 +1011,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit table"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit table"]}
                                     </label> </h5>
                                 </div>
                             </div>
@@ -1034,7 +1055,7 @@ export default () => {
                                                             <tbody>
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
-                                                                        <td scope="row">{index + 1}</td>
+                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
                                                                         <td class="align-center"> {primaryKey.includes(field.id) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
                                                                             {foreignKeys.some((fk) => fk.field_id === field.id) && (
                                                                                 <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />
@@ -1100,11 +1121,11 @@ export default () => {
                                             }
                                         </div>
                                         {
-                                            currentTable && currentTable.length > 0 ? (
+                                            currentTable ? (
                                                 <div className="button-container mt-4">
 
                                                     <button type="button" onClick={updateTable} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                    <button type="button" onClick={() => navigate(-1)} class="btn btn-danger ">{lang["btn.close"]}</button>
+                                                    <button type="button" onClick={() => back()} class="btn btn-danger ">{lang["btn.close"]}</button>
                                                 </div>) : null}
                                     </div>
                                     {/* field add */}
@@ -1136,7 +1157,7 @@ export default () => {
                                                                 <tbody>
                                                                     {currentFields.map((field, index) => (
                                                                         <tr key={field.id}>
-                                                                            <td scope="row">{index + 1}</td>
+                                                                            <td scope="row">{indexOfFirstFields + index + 1}</td>
                                                                             <td class="align-center"> {primaryKey.includes(field.index) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
                                                                                 {foreignKeys.some((fk) => fk.index === field.index) && (
                                                                                     <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />

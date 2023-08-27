@@ -37,6 +37,9 @@ export default () => {
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser)
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/${version_id}/tables`);
+    };
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     const [statusCreate, setStatusCreate] = useState({});
@@ -356,16 +359,16 @@ export default () => {
     const addTable = (e) => {
         e.preventDefault();
         if (!isTableCreated) {
-            if (primaryKey.length === 0) {
-                Swal.fire({
-                    title: lang["error.title"],
-                    text: lang["primary-table"],
-                    icon: "error",
-                    showConfirmButton: true,
+            // if (primaryKey.length === 0) {
+            //     Swal.fire({
+            //         title: lang["error.title"],
+            //         text: lang["primary-table"],
+            //         icon: "error",
+            //         showConfirmButton: true,
 
-                });
-                return;
-            }
+            //     });
+            //     return;
+            // }
             if (validateTablename()) {
                 // console.log( table )
                 const tableRequestBody = {
@@ -387,11 +390,15 @@ export default () => {
                     .then((resp) => {
                         const { success, content, data, status } = resp;
                         if (success) {
-                //    console.log(resp)
-                           
-                           
-                            const tableId = data.table.id; // Lấy id bảng vừa tạo
-                            addField(tableId, status);
+                            if (tempFields.length > 0) {
+                                const tableId = data.table.id; // Lấy id bảng vừa tạo
+                                addField(tableId, status);
+                            } else {
+                                functions.showApiResponseMessage(status);
+                            }
+
+
+
                         } else {
                             functions.showApiResponseMessage(status);
                         }
@@ -403,8 +410,8 @@ export default () => {
 
 
     };
+    console.log(tempFields)
 
-      
     const addField = (tableId, prevStatus = undefined) => {
         if (primaryKey.length !== 0) {
             const fieldRequestBody = {
@@ -473,7 +480,7 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 functions.showApiResponseMessage(prevStatus);
-             
+
             });
     };
 
@@ -651,7 +658,7 @@ export default () => {
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
 
-                                    <h5><label onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create table"]}
+                                    <h5><label onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create table"]}
                                     </label> </h5>
                                 </div>
                             </div>
@@ -768,11 +775,11 @@ export default () => {
                                         </div>
                                         {
                                             // tempFields && tempFields.length > 0 ? (
-                                                table.table_name &&  table.table_name !== "" ? (
+                                            table.table_name && table.table_name !== "" ? (
                                                 <div className="button-container mt-4">
 
                                                     <button type="button" onClick={addTable} class="btn btn-success ">{lang["btn.update"]}</button>
-                                                    <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
+                                                    <button type="button" onClick={() => back()} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                                     </button>
 
                                                 </div>) : null
@@ -832,7 +839,7 @@ export default () => {
                                                 onClick={handleClickForenkey}
                                             ></i>
                                         </div> */}
-                                          <div class="form-group col-lg-12 d-flex align-items-center ml-4">
+                                        <div class="form-group col-lg-12 d-flex align-items-center ml-4">
                                             <label class="mr-2">{lang["pkey"]}</label>
                                             <img
                                                 src={isOn ? '/images/icon/on.png' : '/images/icon/off.png'}

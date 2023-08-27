@@ -177,7 +177,14 @@ export default () => {
         setShowModal(false);
     };
 
-    const { project_id } = useParams()
+    const { project_id, version_id } = useParams();
+
+useEffect(() => {
+    
+    localStorage.setItem('project_id', project_id);
+    localStorage.setItem('version_id', version_id);
+}, [project_id, version_id]);
+
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [project, setProject] = useState({}); //// Update project
     const [projectmember, setProjectMember] = useState([]);

@@ -15,7 +15,9 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-
+    const back = () => {
+        navigate(`/projects/detail/${project_id}`);
+    };
     const { showApiResponseMessage } = functions
     const statusProject = [
         StatusEnum.INITIALIZATION,
@@ -282,7 +284,7 @@ console.log('After:', project.members);
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                    <h5><label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2"></i>
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>
 
                                         {lang["project.info"]} </label>
                                         <i class="fa fa-chevron-right mr-2 ml-2" aria-hidden="true"></i>

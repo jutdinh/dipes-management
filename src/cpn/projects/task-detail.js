@@ -18,6 +18,9 @@ export default () => {
     const { project_id, version_id } = useParams();
     const { removeVietnameseTones } = functions
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/detail/${project_id}`);
+    };
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [projectmember, setProjectMember] = useState([]);
@@ -490,7 +493,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title">
                             <h4>
-                                <label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
+                                <label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
                                     {lang["projectprocess"]}: {project.project_name}
                                 </label>
                             </h4>
