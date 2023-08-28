@@ -406,7 +406,8 @@ export default {
     "error.taskname": "Vui lòng nhập tên yêu cầu công việc",
     "error.start": "Vui lòng chọn ngày bắt đầu",
     "error.end": "Vui lòng chọn ngày kết thúc",
-    "error.checkday": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+    "error.checkday_start": "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
+    "error.checkday_end": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
     "error.task_description": "Vui lòng nhập mô tả cho yêu cầu công việc",
     "error.members": "Vui lòng chọn người thực hiện yêu cầu",
     "error.task_priority":" Vui lòng chọn mức độ ưu tiên",
@@ -444,7 +445,8 @@ export default {
     "all.status": "Tất cả trạng thái" ,
     "search.name":"Tìm theo tên dự án...",
     "search.code":"Tìm theo mã dự án...",
-    "reload": "Tải lại"
+    "reload": "Tải lại",
+    "error.checkday_timeline": "Timeline phải nằm trong khoảng thời gian của công việc"
 
 
 

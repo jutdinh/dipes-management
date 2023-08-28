@@ -401,7 +401,8 @@ export default {
     "error.taskname": "Please enter the name of the task",
     "error.start": "Please select a start date",
     "error.end": "Please select an end date",
-    "error.checkday": "The end date must be greater than to the start date",
+    "error.checkday_start": "The start date must be less than the end date",
+    "error.checkday_end": "The end date must be greater than to the start date",
     "error.task_description": "Please enter a description",
     "error.members": "Please select the person to carry out the task",
     "error.task_priority":" Please choose a priority",
@@ -440,6 +441,7 @@ export default {
     "search.code":"Search by project code...",
     "reload": "Reload",
     "title.task": "Task",
+    "error.checkday_timeline": "The timeline must be within the time period of the task"
 
 
 }

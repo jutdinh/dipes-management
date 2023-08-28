@@ -202,7 +202,11 @@ export default () => {
             errors.end = lang["error.end"];
         }
         if (new Date(task.start) > new Date(task.end)) {
-            errors.checkday = lang["error.checkday"];
+            errors.checkday = lang["error.checkday_end"];
+        }
+       
+        if (new Date(task.start) > new Date(task.timeline)|| new Date(task.timeline) > new Date(task.end)) {
+            errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!task.task_description) {
             errors.task_description = lang["error.task_description"];
@@ -214,6 +218,7 @@ export default () => {
             setErrorMessagesadd(errors);
             return;
         }
+        console.log(errors)
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -268,7 +273,10 @@ export default () => {
             errors.end = lang["error.end"];
         }
         if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.end)) {
-            errors.checkday = lang["error.checkday"];
+            errors.checkday = lang["error.checkday_end"];
+        }
+        if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.timeline)|| new Date(updateTaskinfo.timeline) > new Date(updateTaskinfo.end)) {
+            errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!updateTaskinfo.task_description) {
             errors.task_description = lang["error.task_description"];
@@ -286,6 +294,7 @@ export default () => {
             task_name: updateTaskinfo.task_name,
             start: updateTaskinfo.start,
             end: updateTaskinfo.end,
+            timeline: updateTaskinfo.timeline,
             // members: selectedMemberTask,
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
@@ -663,7 +672,7 @@ export default () => {
                                                         {lang["log.daystart"]}
                                                         <FilterableDate
                                                             label="Bắt đầu"
-                                                            
+
                                                             dateValue={startDateFilter}
                                                             setDateValue={setStartDateFilter}
                                                             iconLabel="Icon 1"
@@ -677,6 +686,10 @@ export default () => {
                                                             setDateValue={setEndDateFilter}
                                                             iconLabel="Icon 2"
                                                         />
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        Timeline
+                                                        
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
                                                         {lang["log.create_user"]}
@@ -782,6 +795,9 @@ export default () => {
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
                                                                     {formatDateTask(task.end)}
                                                                 </td>
+                                                                <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                    {formatDateTask(task.timeline) }
+                                                                </td>
                                                                 <td>
                                                                     {
                                                                         task.members && task.members.length > 0 ?
@@ -881,27 +897,31 @@ export default () => {
                                                                 <input type="date" className="form-control" value={task.end} onChange={
                                                                     (e) => { setTask({ ...task, end: e.target.value }) }
                                                                 } />
-                                                                {!errorMessagesadd.checkday ? (
+                                                               
                                                                     <div style={{ minHeight: '20px' }}>
                                                                         {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
                                                                     </div>
-                                                                ) : null
+                                                              
 
-                                                                }
-                                                            </div>
-                                                            <div className="col-lg-6">
-                                                                <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.start} onChange={
-                                                                    (e) => { setTask({ ...task, start: e.target.value }) }
-                                                                } />
-                                                                <div style={{ minHeight: '20px' }}>
-                                                                    {errorMessagesadd.start && <span class="error-message">{errorMessagesadd.start}</span>}
-                                                                </div>
+                                                                
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
                                                                 {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                                             </div>
+                                                            <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" className="form-control" value={task.timeline} onChange={
+                                                                    (e) => { setTask({ ...task, timeline: e.target.value }) }
+                                                                } />
+                                                               
+                                                                    <div style={{ minHeight: '20px' }}>
+                                                                        {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                    </div>
+                                                                
+                                                            </div>
+                                                            
+                                                            
 
                                                             <div class="form-group col-lg-12">
                                                                 <label>{lang["p.description"]} <span className='red_star'>*</span></label>
@@ -1003,6 +1023,15 @@ export default () => {
                                                                 ) : null
 
                                                                 }
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" className="form-control" value={updateTaskinfo.timeline} onChange={
+                                                                    (e) => { setUpdateTask({ ...updateTaskinfo, timeline: e.target.value }) }
+                                                                } />
+                                                               <div style={{ minHeight: '20px' }}>
+                                                                        {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                    </div>
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
