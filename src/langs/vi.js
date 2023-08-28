@@ -101,22 +101,23 @@ export default {
     "updateproject": "Cập nhật dự án",
 
     //Task  
-    "tasklist": "Danh sách các yêu cầu",
-    "detailtask": "Chi tiết yêu cầu",
-    "addtask": "Thêm yêu cầu",
-    "taskname": "Tên yêu cầu",
-    "p.taskname": "Nhập tên yều cầu",
+    "title.task": "Công việc",
+    "tasklist": "Danh sách các công việc",
+    "detailtask": "Chi tiết công việc",
+    "addtask": "Thêm công việc",
+    "taskname": "Tên công việc",
+    "p.taskname": "Nhập tên công việc",
     "taskstatus": "Trạng thái",
     "task_priority": "Mức độ ưu tiên",
     "taskmember": "Thành viên",
-    "p.description": "Mô tả yêu cầu",
+    "p.description": "Mô tả công việc",
     "updatestatus": "Cập nhật trạng thái",
     "viewdetail": "Xem chi tiết",
     "delete": "Xóa",
     "edit": "Chỉnh sửa",
-    "edittask": "Chỉnh sửa yêu cầu",
-    "await": "Chờ duyệt",
-    "approved": "Đã duyệt",
+    "edittask": "Chỉnh sửa công việc",
+    "await": "Chờ xác nhận",
+    "approved": "Đã xác nhận",
     "choose": "Chọn",
     "user change": "Người thay đổi",
     //Managers
@@ -439,7 +440,11 @@ export default {
     "data": "Dữ liệu",
     "deleteall": "Xóa tất cả",
     "api auto": "API tự động",
-    "api custom": "API View"
+    "api custom": "API View",
+    "all.status": "Tất cả trạng thái" ,
+    "search.name":"Tìm theo tên dự án...",
+    "search.code":"Tìm theo mã dự án...",
+    "reload": "Tải lại"
 
 
 

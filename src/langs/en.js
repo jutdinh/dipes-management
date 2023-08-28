@@ -434,7 +434,12 @@ export default {
     "data": "Data",
     "deleteall": "Delete all",
     "api auto": "API Auto",
-    "api custom": "API View"
+    "api custom": "API View",
+    "all.status": "All status",
+    "search.name":"Search by project name...",
+    "search.code":"Search by project code...",
+    "reload": "Reload",
+    "title.task": "Task",
 
 
 }

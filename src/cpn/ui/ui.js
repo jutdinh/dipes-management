@@ -169,7 +169,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                       
+
                                     <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2 "></i>{lang["manage ui"]}
                                     </label> </h5>
                                 </div>
@@ -238,35 +238,60 @@ export default () => {
                                                         </table>
                                                     </div>
                                                     <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}</p>
+                                                        <p>
+                                                            {lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis.length)} {lang["of"]} {uis.length} {lang["results"]}
+                                                        </p>
                                                         <nav aria-label="Page navigation example">
                                                             <ul className="pagination mb-0">
+                                                                {/* Nút đến trang đầu */}
                                                                 <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi - 1)}>
+                                                                    <button className="page-link" onClick={() => paginateUi(1)}>
+                                                                        &#8810;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(Math.max(1, currentPageUi - 1))}>
                                                                         &laquo;
                                                                     </button>
                                                                 </li>
-                                                                {Array(totalPagesUi).fill().map((_, index) => (
-                                                                    <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateUi(index + 1)}>
-                                                                            {index + 1}
-                                                                        </button>
-                                                                    </li>
-                                                                ))}
+                                                                {currentPageUi > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                {Array(totalPagesUi).fill().map((_, index) => {
+                                                                    if (
+                                                                        index + 1 === currentPageUi ||
+                                                                        (index + 1 >= currentPageUi - 1 && index + 1 <= currentPageUi + 1)
+                                                                    ) {
+                                                                        return (
+                                                                            <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateUi(index + 1)}>
+                                                                                    {index + 1}
+                                                                                </button>
+                                                                            </li>
+                                                                        );
+                                                                    }
+                                                                    return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                                })}
+                                                                {currentPageUi < totalPagesUi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
                                                                 <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateUi(currentPageUi + 1)}>
+                                                                    <button className="page-link" onClick={() => paginateUi(Math.min(totalPagesUi, currentPageUi + 1))}>
                                                                         &raquo;
+                                                                    </button>
+                                                                </li>
+                                                                {/* Nút đến trang cuối */}
+                                                                <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateUi(totalPagesUi)}>
+                                                                        &#8811;
                                                                     </button>
                                                                 </li>
                                                             </ul>
                                                         </nav>
                                                     </div>
+
                                                 </>
                                             ) : (
                                                 <div>
                                                     <p>{lang["not found"]}</p>
                                                 </div>
-                                                
+
                                             )
                                         }
                                     </div>
@@ -301,7 +326,7 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["log.type"]}</b></label>
-                                            <span className="d-block"> {detailUi.type === "ui" ? lang["api auto"]: lang["api custom"]} </span>
+                                            <span className="d-block"> {detailUi.type === "ui" ? lang["api auto"] : lang["api custom"]} </span>
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["creator"]}</b></label>

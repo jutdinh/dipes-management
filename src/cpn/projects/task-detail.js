@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
+import FilterableDate from '../common/searchDate';
 import Gantt from "./gantt"
 import { formatDate } from "../../redux/configs/format-date";
 
@@ -29,6 +30,17 @@ export default () => {
     const [selectedUsers, setSelectedUsers] = useState([]); // admin
     const [selectedImple, setSelectedImple] = useState([]);
     const [project, setProject] = useState({}); //// Update project
+
+    function formatDateTask(input) {
+        const dateParts = input.split('-');
+        if (dateParts.length !== 3) return null;
+        const [year, month, day] = dateParts;
+        return `${month}/${day}/${year}`;
+    }
+
+
+
+
     const statusProject = [
         StatusEnum.INITIALIZATION,
         StatusEnum.IMPLEMENT,
@@ -75,7 +87,7 @@ export default () => {
     const [fakeTasks, setFakeTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
-    console.log(taskDetail)
+    console.log(task)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -108,18 +120,24 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                console.log(resp)
                 if (success) {
                     if (data) {
+                        // data.sort((a, b) => {
+                        //     if (a.task_priority == b.task_priority) {
+                        //         const aDate = new Date(a.raw_create_at)
+                        //         const bDate = new Date(b.raw_create_at)
+                        //         return aDate > b.Date ? -1 : 1
+                        //     } else {
+                        //         return a.task_priority > b.task_priority ? 1 : -1
+                        //     }
+                        // })
                         data.sort((a, b) => {
-                            if (a.task_priority == b.task_priority) {
-                                const aDate = new Date(a.raw_create_at)
-                                const bDate = new Date(b.raw_create_at)
-                                return aDate > b.Date ? -1 : 1
-                            } else {
-                                return a.task_priority > b.task_priority ? 1 : -1
-                            }
-                        })
+                            const aDate = new Date(a.create_at);
+                            const bDate = new Date(b.create_at);
+                            return bDate - aDate;
+                        });
+
                         setTasks(data);
                         setFakeTasks(data)
                     }
@@ -485,7 +503,27 @@ export default () => {
         }
         setConfrimFilter(newFilter);
     };
-    // console.log(taskDetail.members)
+    const priorityFilterOptions = statusPriority.map(priority => ({ label: lang[priority.label], value: priority.value, id: priority.id }));
+    const [priorityFilter, setPriorityFilter] = useState([]);
+    const addOrRemovePriority = (priority) => {
+        const newFilter = [...priorityFilter];
+        const index = newFilter.findIndex(item => item.id === priority.id);
+        if (index !== -1) {
+            newFilter.splice(index, 1);
+        } else {
+            newFilter.push(priority);
+        }
+        setPriorityFilter(newFilter);
+    };
+    const [startDateFilter, setStartDateFilter] = useState(null);
+    const [endDateFilter, setEndDateFilter] = useState(null);
+    const [showDateInputs, setShowDateInputs] = useState(false);
+
+    function getTaskPriorityLabel(taskPriority) {
+        const item = statusPriority.find(item => item.value === parseInt(taskPriority));
+        return item ? lang[item.label] || '' : '';
+    }
+    console.log(tasks)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -545,11 +583,11 @@ export default () => {
                                                         {lang["log.no"]}
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
-                                                        {lang["task"]}
+                                                        {lang["title.task"]}
                                                         <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
                                                         {tableFilter.task_name &&
                                                             <div className="position-relative">
-                                                                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px" }}>
                                                                     <FloatingTextBox
                                                                         title={lang["task"]}
                                                                         initialData={taskNameFilter.name}
@@ -577,6 +615,23 @@ export default () => {
                                                             </div>
                                                         }
                                                     </th>
+                                                    <th class="font-weight-bold align-center position-relative" scope="col">
+                                                        {lang["task_priority"]}
+                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_priority: !tableFilter.task_apptask_priorityrove }) }} />
+                                                        {tableFilter.task_priority &&
+                                                            <div className="position-relative">
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                    <CheckList
+                                                                        title={lang["task_priority"]}
+                                                                        initialData={priorityFilter}
+                                                                        setDataFunction={addOrRemovePriority}
+                                                                        data={priorityFilterOptions}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_priority: false }); }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </th>
                                                     <th class="font-weight-bold align-center" scope="col">%
                                                         {lang["complete"]}
                                                     </th>
@@ -597,11 +652,31 @@ export default () => {
                                                             </div>
                                                         }
                                                     </th>
-                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                    {/* <th class="font-weight-bold align-center" scope="col" >
                                                         {lang["log.daystart"]}
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col" >
                                                         {lang["log.dayend"]}
+                                                    </th> */}
+
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        {lang["log.daystart"]}
+                                                        <FilterableDate
+                                                            label="Bắt đầu"
+                                                            
+                                                            dateValue={startDateFilter}
+                                                            setDateValue={setStartDateFilter}
+                                                            iconLabel="Icon 1"
+                                                        />
+                                                    </th>
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        {lang["log.dayend"]}
+                                                        <FilterableDate
+                                                            label="Kết thúc"
+                                                            dateValue={endDateFilter}
+                                                            setDateValue={setEndDateFilter}
+                                                            iconLabel="Icon 2"
+                                                        />
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
                                                         {lang["log.create_user"]}
@@ -622,9 +697,17 @@ export default () => {
                                                             let taskStatus = task && task.task_status ? task.task_status : '';
                                                             let filterConfirmValues = confirmFilter.map(item => item.value);
                                                             let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                            let filterPriorityValues = priorityFilter.map(item => item.value);
+                                                            let taskPriority = task && task.task_priority ? parseInt(task.task_priority) : null;
+                                                            let taskStart = new Date(task.start);
+                                                            let taskEnd = new Date(task.end);
+
                                                             return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
                                                                 (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
-                                                                (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
+                                                                (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true) &&
+                                                                (filterPriorityValues.length > 0 ? filterPriorityValues.includes(taskPriority) : true) &&
+                                                                (!startDateFilter || taskStart >= new Date(startDateFilter)) &&
+                                                                (!endDateFilter || taskEnd <= new Date(endDateFilter));
                                                         }).map((task, index) => (
                                                             <tr key={task.id}>
                                                                 <td style={{ width: "45px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
@@ -638,7 +721,7 @@ export default () => {
                                                                         {task.task_name}
                                                                     </div>
                                                                 </td>
-                                                                <td class="align-center" >
+                                                                <td class="align-center" style={{ width: "140px" }}>
                                                                     <select
                                                                         className="form-control"
                                                                         value={task.task_status}
@@ -657,6 +740,7 @@ export default () => {
                                                                         })}
                                                                     </select>
                                                                 </td>
+                                                                <td class="align-center">{getTaskPriorityLabel(task.task_priority)}</td>
                                                                 <td class="font-weight-bold">
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || task.members?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) ?
@@ -693,10 +777,10 @@ export default () => {
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {task.start}
+                                                                    {formatDateTask(task.start)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {task.end}
+                                                                    {formatDateTask(task.end)}
                                                                 </td>
                                                                 <td>
                                                                     {
@@ -804,7 +888,15 @@ export default () => {
                                                                 ) : null
 
                                                                 }
-
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" className="form-control" value={task.start} onChange={
+                                                                    (e) => { setTask({ ...task, start: e.target.value }) }
+                                                                } />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.start && <span class="error-message">{errorMessagesadd.start}</span>}
+                                                                </div>
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
@@ -1029,6 +1121,10 @@ export default () => {
                                                                 <label><b>{lang["taskname"]}</b></label>
                                                                 <span className="d-block"> {taskDetail.task_name} </span>
                                                             </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label><b>{lang["description"]}</b></label>
+                                                                <span className="d-block"> {taskDetail.task_description} </span>
+                                                            </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["log.daystart"]}</b></label>
                                                                 <span className="d-block"> {taskDetail.start} </span>
@@ -1051,7 +1147,7 @@ export default () => {
                                                             </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["create-at"]}</b></label>
-                                                                <span className="d-block"> {taskDetail.create_at} </span>
+                                                                <span className="d-block"> {formatDate(taskDetail.create_at)} </span>
                                                             </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["creator"]}</b></label>
@@ -1087,41 +1183,41 @@ export default () => {
                                                                 </span>
                                                             </div> */}
                                                             <div class="form-group col-lg-12">
-                                                            <div class="table-responsive">
-                                                                {
-                                                                    taskDetail.members && taskDetail.members.length > 0 ? (
-                                                                        <>
-                                                                            <table class="table table-striped ">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                        <th class="font-weight-bold" scope="col">{lang["members"]}</th>
-                                                                                        <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
-                                                                                       
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    { taskDetail.members.map((member, index) => (
-                                                                                        <tr key={member.username}>
-                                                                                            <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                                            <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
-                                                                                            <td>{member.fullname}</td>
-                                                                                            
-                                                                                           
+                                                                <div class="table-responsive">
+                                                                    {
+                                                                        taskDetail.members && taskDetail.members.length > 0 ? (
+                                                                            <>
+                                                                                <table class="table table-striped ">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+
                                                                                         </tr>
-                                                                                    ))}
-                                                                                </tbody>
-                                                                            </table>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        {taskDetail.members.map((member, index) => (
+                                                                                            <tr key={member.username}>
+                                                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                                                <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                                                <td>{member.fullname}</td>
 
 
-                                                                        </>
-                                                                    ) : (
-                                                                        <div class="list_cont ">
-                                                                            <p>{lang["empty.member"]}</p>
-                                                                        </div>
-                                                                    )
-                                                                }
-                                                            </div>
+                                                                                            </tr>
+                                                                                        ))}
+                                                                                    </tbody>
+                                                                                </table>
+
+
+                                                                            </>
+                                                                        ) : (
+                                                                            <div class="list_cont ">
+                                                                                <p>{lang["empty.member"]}</p>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                </div>
                                                             </div>
 
                                                             {/* <div class="form-group col-lg-12">
@@ -1145,14 +1241,11 @@ export default () => {
                                                                     }</span>
                                                             </div> */}
 
-                                                            <div class="form-group col-lg-12">
-                                                                <label><b>{lang["description"]}</b></label>
-                                                                <span className="d-block"> {taskDetail.task_description} </span>
-                                                            </div>
+
                                                             <div class="form-group col-lg-12">
                                                                 <label><b>Lịch sử</b></label>
-                                                               
-                                                                    {/* {
+
+                                                                {/* {
                                                         currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
                                                             <>
                                                                 <table class="table table-striped">
@@ -1218,76 +1311,76 @@ export default () => {
                                                             </div>
                                                         )
                                                     } */}
-                                                                    {
-                                                                        taskDetail.history && taskDetail.history.length > 0 ? (
-                                                                            <>
-                                                                                <div class="table-outer">
-                                                                                    <table class="table-head">
-                                                                                        <thead>
-                                                                                            <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
-                                                                                            <th class="scrollbar-measure"></th>
-                                                                                        </thead>
+                                                                {
+                                                                    taskDetail.history && taskDetail.history.length > 0 ? (
+                                                                        <>
+                                                                            <div class="table-outer">
+                                                                                <table class="table-head">
+                                                                                    <thead>
+                                                                                        <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
+                                                                                        <th class="scrollbar-measure"></th>
+                                                                                    </thead>
+                                                                                </table>
+                                                                                <div class="table-body">
+                                                                                    <table class="table table-striped">
+                                                                                        <tbody>
+                                                                                            {taskDetail.history.reverse().map((task, index) => (
+                                                                                                <tr key={task.id}>
+                                                                                                    <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
+                                                                                                    <td scope="row">
+                                                                                                        {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                                            task.modified_what === "infor" ? lang["log.information"] :
+                                                                                                                task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                                    task.modified_what}
+                                                                                                    </td>
+                                                                                                    <td scope="row">
+                                                                                                        {
+                                                                                                            task.old_value === true ? lang["approved"] :
+                                                                                                                task.old_value === false ? lang["await"] :
+                                                                                                                    !isNaN(task.old_value) ?
+                                                                                                                        lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                        :
+                                                                                                                        // `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+                                                                                                                        `${task.old_value}`
+
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                    <td scope="row">
+                                                                                                        {
+                                                                                                            task.new_value === true ? lang["approved"] :
+                                                                                                                task.new_value === false ? lang["await"] :
+                                                                                                                    !isNaN(task.new_value) ?
+                                                                                                                        lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                        :
+                                                                                                                        `${task.new_value}`
+                                                                                                            // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                                        }
+                                                                                                    </td>
+
+                                                                                                    <td scope="row">{formatDate(task.modified_at)}</td>
+                                                                                                    <td scope="row">
+                                                                                                        <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                                        {task.modified_by?.fullname}
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            ))}
+                                                                                        </tbody>
                                                                                     </table>
-                                                                                    <div class="table-body">
-                                                                                        <table class="table table-striped">
-                                                                                            <tbody>
-                                                                                                {taskDetail.history.reverse().map((task, index) => (
-                                                                                                    <tr key={task.id}>
-                                                                                                        <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
-                                                                                                        <td scope="row">
-                                                                                                            {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                                                task.modified_what === "infor" ? lang["log.information"] :
-                                                                                                                    task.modified_what === "status" ? lang["taskstatus"] :
-                                                                                                                        task.modified_what}
-                                                                                                        </td>
-                                                                                                        <td scope="row">
-                                                                                                            {
-                                                                                                                task.old_value === true ? lang["approved"] :
-                                                                                                                    task.old_value === false ? lang["await"] :
-                                                                                                                        !isNaN(task.old_value) ?
-                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                            :
-                                                                                                                            // `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
-                                                                                                                            `${task.old_value}`
-
-                                                                                                            }
-                                                                                                        </td>
-                                                                                                        <td scope="row">
-                                                                                                            {
-                                                                                                                task.new_value === true ? lang["approved"] :
-                                                                                                                    task.new_value === false ? lang["await"] :
-                                                                                                                        !isNaN(task.new_value) ?
-                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                            :
-                                                                                                                            `${task.new_value}`
-                                                                                                                // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
-                                                                                                            }
-                                                                                                        </td>
-
-                                                                                                        <td scope="row">{formatDate(task.modified_at)}</td>
-                                                                                                        <td scope="row">
-                                                                                                            <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
-                                                                                                            {task.modified_by?.fullname}
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                ))}
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
                                                                                 </div>
-                                                                            </>
-                                                                        ) : (
-                                                                            <div class="list_cont ">
-                                                                                <p>Chưa có lịch sử</p>
                                                                             </div>
-                                                                        )
-                                                                    }
-                                                               
+                                                                        </>
+                                                                    ) : (
+                                                                        <div class="list_cont ">
+                                                                            <p>Chưa có lịch sử</p>
+                                                                        </div>
+                                                                    )
+                                                                }
+
                                                             </div>
                                                         </div>
                                                     </form>

@@ -8,8 +8,23 @@
     padding: 10px 0; 
 }
 
-
-
+.column1_project {
+    
+    max-height: 83.5vh; 
+    overflow-y: auto;  
+}
+.graph_head_project {
+    padding: 5px 15px 5px 15px;
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
+.heading1_project {
+    float: left;
+    padding: 0;
+    width: 100%;
+    margin-top: 50px;
+}
 .my-confirm-button-class {
     background-color: rgb(209, 72, 81);
 }

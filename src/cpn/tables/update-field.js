@@ -46,7 +46,9 @@ export default () => {
         navigate(`/projects/${version_id}/tables`);
     };
     const [fieldTemp, setFieldTemp] = useState({});
-
+    //primary
+    const [isOn, setIsOn] = useState(false);
+    const [primaryKey, setPrimaryKey] = useState([]);
 
 
     const defaultValues = {
@@ -204,8 +206,8 @@ export default () => {
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             } else {
-                const updatedForeignKeys = foreignKeys.filter( key => key.field_id != fieldTempUpdate.id )
-                
+                const updatedForeignKeys = foreignKeys.filter(key => key.field_id != fieldTempUpdate.id)
+
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             }
@@ -290,15 +292,15 @@ export default () => {
                     field: { ...modalTemp, index: tempCounter }
                 }
             })
-           
+
             setModalTemp((prevModalTemp) => ({
                 ...prevModalTemp,
                 ...defaultValues,
             }));
-            if(modalTemp.length > 0){
-                addField(modalTemp);
-            }
-            
+
+
+
+
             setModalTemp({
                 field_name: '',
                 DATATYPE: '',
@@ -313,21 +315,17 @@ export default () => {
                 DEFAULT_TRUE: '',
                 DEFAULT_FALSE: ''
             });
-            
+
             $("#closeAddFieldTemp").click()
-            
+
         }
     };
-    // useEffect(() => {
-    //     console.log("tempFields changed: ", tempFields);
-    //     if(tempFields.length > 0){
-    //         addField(tempFields);
-    //     }
-    // }, [tempFields]);
+
+
     console.log(tempFields)
-    
-    
-    
+
+
+
 
     const validateUpdateFieldTemp = () => {
         let temp = {};
@@ -482,7 +480,7 @@ export default () => {
 
         const foreignKeys = getTableFields.foreign_keys ? getTableFields.foreign_keys : [];
         const foreignKey = foreignKeys.find(key => key.field_id == field_id);
-     
+
         if (foreignKey) {
             const foreignTable = tables.tables?.find(tb => tb.id == foreignKey.table_id);
             if (foreignTable) {
@@ -743,9 +741,7 @@ export default () => {
             });
     }
 
-    //primary
-    const [isOn, setIsOn] = useState(false);
-    const [primaryKey, setPrimaryKey] = useState([]);
+
 
 
     const handleClickPrimary = () => {
@@ -886,6 +882,7 @@ export default () => {
 
 
     const addField = (tableId) => {
+        console.log("Call AddField")
         const fieldRequestBody = {
             version_id,
             table_id: getTableFields.id,
@@ -917,22 +914,22 @@ export default () => {
     };
 
     const addKey = ({ tableId, data }) => {
+        console.log("Call add Key")
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
         const newPrimaryKey = [...getTableFields.primary_key, ...primaryKeyid]
-        
+
         // console.log( foreignKeys )
 
         for (let i = 0; i < foreignKeys.length; i++) {
             for (let j = 0; j < data.length; j++) {
-                if( data[j].index != undefined ){
+                if (data[j].index != undefined) {
                     if (foreignKeys[i].index === data[j].index) {
                         foreignKeys[i].field_id = data[j].id
                     }
                 }
             }
         }
-   
 
         const KeyRequestBody = {
             version_id,
@@ -954,7 +951,7 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 // console.log(resp)
-                // functions.showApiResponseMessage(status);
+                functions.showApiResponseMessage(status);
             });
     };
     const [currentPageTable, setCurrentPageTable] = useState(1);
@@ -963,11 +960,16 @@ export default () => {
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
     const currentTable = getTableFields.fields?.slice(indexOfFirstTable, indexOfLastTable);
-
+    console.log(currentTable)
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(getTableFields.fields?.length / rowsPerPageTable);
+    /// Add field
+    useEffect(() => {
 
-
+        if (tempFields.length > 0) {
+            addField(getTableFields.id);
+        }
+    }, [tempFields, currentTable, primaryKey, foreignKeys]);
 
 
     const [currentPageFields, setCurrentPageFields] = useState(1);
@@ -994,6 +996,40 @@ export default () => {
     // console.log(fieldNew)
     // console.log(getTableFields)
     // console.log(isOnforenkey)
+
+    const moveField = (index, direction) => {
+        const newFields = [...getTableFields.fields]; 
+
+        const realIndex = indexOfFirstTable + index;
+
+        if (direction === 'up' && realIndex > 0) {
+            const temp = newFields[realIndex];
+            newFields[realIndex] = newFields[realIndex - 1];
+            newFields[realIndex - 1] = temp;
+        } else if (direction === 'down' && realIndex < newFields.length - 1) {
+            const temp = newFields[realIndex];
+            newFields[realIndex] = newFields[realIndex + 1];
+            newFields[realIndex + 1] = temp;
+        }
+
+        setTableFields({ ...getTableFields, fields: newFields });
+        
+        localStorage.setItem('fieldsData', JSON.stringify(newFields));
+    };
+
+    useEffect(() => {
+        const savedFields = localStorage.getItem('fieldsData');
+        if (savedFields) {
+            try {
+                const parsedFields = JSON.parse(savedFields);
+                setTableFields({ ...getTableFields, fields: parsedFields });
+            } catch (error) {
+                console.error("Error parsing saved fields:", error);
+            }
+        }
+    }, []);  // [] để đảm bảo rằng hiệu ứng này chỉ chạy một lần khi component được gắn kết.
+    
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1024,7 +1060,7 @@ export default () => {
                                             className="form-control"
                                             defaultValue={getTableFields.table_name}
                                             onChange={(e) => setTableFields({ ...getTableFields, table_name: e.target.value })}
-                                            // readOnly
+                                        // readOnly
                                         />
                                     </div>
                                     {/* Field */}
@@ -1048,14 +1084,18 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["datatype"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["null"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["create-at"]}</th>
+                                                                    <th class="font-weight-bold " scope="col">{lang["create-at"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
+
+
+
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
                                                                         <td scope="row">{indexOfFirstTable + index + 1}</td>
+
                                                                         <td class="align-center"> {primaryKey.includes(field.id) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
                                                                             {foreignKeys.some((fk) => fk.field_id === field.id) && (
                                                                                 <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />
@@ -1079,8 +1119,10 @@ export default () => {
                                                                         )}
                                                                         </td>
                                                                         <td>{users.fullname}</td>
-                                                                        <td>{field.create_at.toString()}</td>
+                                                                        <td>{formatDate(field.create_at.toString())}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                            {/* <i class="fa fa-arrow-up size pointer icon-margin" onClick={() => moveField(index, 'up')}></i>
+                                                                            <i class="fa fa-arrow-down size pointer icon-margin" onClick={() => moveField(index, 'down')}></i> */}
                                                                             <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdField(field)} data-toggle="modal" data-target="#editField" title={lang["edit"]}></i>
                                                                             <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteField(field)} title={lang["delete"]}></i>
                                                                         </td>
@@ -1128,113 +1170,7 @@ export default () => {
                                                     <button type="button" onClick={() => back()} class="btn btn-danger ">{lang["btn.close"]}</button>
                                                 </div>) : null}
                                     </div>
-                                    {/* field add */}
-                                    {currentFields && currentFields.length > 0 ? (
-                                        <div class="col-md-12 col-lg-12">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <p class="font-weight-bold">{lang["list add fields"]} </p>
-                                                {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addField">
-                                                <i class="fa fa-plus"></i>
-                                            </button> */}
-                                            </div>
-                                            <div class="table-responsive">
-                                                {
-                                                    currentFields && currentFields.length > 0 ? (
-                                                        <>
-                                                            <table class="table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["key"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["datatype"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["null"]}</th>
-                                                                        <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
-                                                                        <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
-                                                                        <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {currentFields.map((field, index) => (
-                                                                        <tr key={field.id}>
-                                                                            <td scope="row">{indexOfFirstFields + index + 1}</td>
-                                                                            <td class="align-center"> {primaryKey.includes(field.index) ? <img src="/images/icon/p-key.png" width={14} alt="Key" /> : null}
-                                                                                {foreignKeys.some((fk) => fk.index === field.index) && (
-                                                                                    <img src="/images/icon/f-key.png" width={14} alt="Foreign Key" />
-                                                                                )}
-                                                                            </td>
-                                                                            <td style={{ maxWidth: "100px" }}>
-                                                                                <div style={{
-                                                                                    width: "100%",
-                                                                                    overflow: "hidden",
-                                                                                    textOverflow: "ellipsis",
-                                                                                    whiteSpace: "nowrap"
-                                                                                }}>
-                                                                                    {field.field_name}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>{field.DATATYPE}</td>
-                                                                            <td>
-                                                                                {field.NULL ? (
-                                                                                    <span>Null</span>
-                                                                                ) : (
-                                                                                    <span>Not null</span>
-                                                                                )}
-                                                                            </td>
 
-                                                                            <td>{users.fullname}</td>
-                                                                            <td>{formatDate(field.create_at.toISOString())}</td>
-
-                                                                            <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdFieldTempNew(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
-                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>
-                                                                            </td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                            <div className="d-flex justify-content-between align-items-center">
-                                                                <p>{lang["show"]} {indexOfFirstFields + 1}-{Math.min(indexOfLastFields, tempFields?.length)} {lang["of"]} {tempFields?.length} {lang["results"]}</p>
-                                                                <nav aria-label="Page navigation example">
-                                                                    <ul className="pagination mb-0">
-                                                                        <li className={`page-item ${currentPageFields === 1 ? 'disabled' : ''}`}>
-                                                                            <button className="page-link" onClick={() => paginateFields(currentPageFields - 1)}>
-                                                                                &laquo;
-                                                                            </button>
-                                                                        </li>
-                                                                        {Array(totalPagesFields).fill().map((_, index) => (
-                                                                            <li className={`page-item ${currentPageFields === index + 1 ? 'active' : ''}`}>
-                                                                                <button className="page-link" onClick={() => paginateFields(index + 1)}>
-                                                                                    {index + 1}
-                                                                                </button>
-                                                                            </li>
-                                                                        ))}
-                                                                        <li className={`page-item ${currentPageFields === totalPagesFields ? 'disabled' : ''}`}>
-                                                                            <button className="page-link" onClick={() => paginateFields(currentPageFields + 1)}>
-                                                                                &raquo;
-                                                                            </button>
-                                                                        </li>
-                                                                    </ul>
-                                                                </nav>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <div class="list_cont ">
-                                                            <p>Chưa có trường</p>
-                                                        </div>
-                                                    )
-                                                }
-                                            </div>
-                                            {
-                                                currentFields && currentFields.length > 0 ? (
-                                                    <div className="button-container mt-4">
-
-                                                        <button type="button" onClick={addField} class="btn btn-success ">{lang["btn.addfield"]}</button>
-                                                        <button type="button" onClick={handleDelete} class="btn btn-danger ">{lang["btn.cancel"]}</button>
-                                                    </div>) : null}
-                                        </div>
-                                    ) : null
-                                    }
                                 </div>
                             </div>
                         </div>
@@ -1353,7 +1289,7 @@ export default () => {
 
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["null"]} </label>
+                                            <label>{lang["null"]} <span className='red_star'>*</span> </label>
                                             <select className="form-control" onChange={(e) => setModalTemp({ ...modalTemp, NULL: e.target.value == "true" ? true : false })}>
                                                 {/* <option value={false}>{lang["choose"]}</option> */}
                                                 {typenull.map((item, index) => {
@@ -1366,7 +1302,7 @@ export default () => {
                                             </select>
                                         </div>
                                         <div class={`form-group col-lg-12`}>
-                                            <label> {lang["datatype"]} </label>
+                                            <label> {lang["datatype"]} <span className='red_star'>*</span> </label>
                                             <select
                                                 className="form-control"
                                                 value={modalTemp.DATATYPE}
@@ -1463,7 +1399,7 @@ export default () => {
                                             })}
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label>{lang["creator"]} </label>
+                                            <label>{lang["creator"]}  </label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
                                         </div>
                                         <div class="form-group col-lg-6">
@@ -1533,7 +1469,7 @@ export default () => {
                                                     handleSelectTable(e);
 
                                                     setForeignKey({ ...foreignKey, table_id: e.target.value })
-                                                   
+
                                                 }}
                                                 disabled={!isOnforenkey}>
                                                 <option value="">{lang["choose"]}</option>
@@ -1567,7 +1503,7 @@ export default () => {
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
-                                                   
+
                                                     autoType(e.target.value) // ? type
                                                 }}
                                             > <option>{lang["choose"]}</option>
@@ -1829,9 +1765,9 @@ export default () => {
                                                         );
                                                     } else {
                                                         <option value={""}>{lang["choose"]}</option>
-                                                     return (
+                                                        return (
                                                             <option key={index} value={table.id}>
-                                                             {table.table_name}
+                                                                {table.table_name}
                                                             </option>
                                                         );
                                                     }

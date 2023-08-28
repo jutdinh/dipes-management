@@ -35,7 +35,7 @@ export default () => {
         event_description: ""
     })
 
-    
+
 
     const languages = langItem.toLowerCase();
 
@@ -149,7 +149,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         const formatedData = data.map(log => {
@@ -181,7 +181,7 @@ export default () => {
     }, [logs])
 
     const detailLogs = async (logid) => {
-        // console.log(logid)
+        console.log(logid)
         setLogDetail(logid)
     };
 
@@ -250,6 +250,7 @@ export default () => {
         }
         return indices
     }
+    console.log(logDetail.ip);
 
     return (
         <div class="midde_cont">
@@ -526,15 +527,16 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label><b>{lang["log.create_at"]}</b> </label>
-                                            <span className="d-block">{logDetail.create_at} </span>
+                                            <span className="d-block">{formatDate(logDetail?.create_at)||""} </span>
+                                            
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label><b>IP:</b></label>
 
                                             {
                                                 (() => {
-                                                    if (logDetail.ip) {
-                                                        let ipString = logDetail.ip;
+                                                    if (logDetail.user_ip) {
+                                                        let ipString = logDetail.user_ip;
                                                         let ipParts = ipString.split("::ffff:");
                                                         let ipAddress = ipParts.length > 1 ? ipParts[1] : ipParts[0];
 

@@ -145,10 +145,10 @@ export default () => {
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
-            // console.log("adddsa")
+            console.log("adddsa")
             addApi();
         }
-    }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
+    }, [tempFieldParam]); 
 
     const addApi = () => {
         const requestBody = {
@@ -435,7 +435,7 @@ export default () => {
     // console.log("FieldParams", selectedFields)
 
     function isPrimaryKey(tableId, fieldId) {
-        return tableFields[tableId].primary_key.includes(fieldId);
+        return tableFields[tableId]?.primary_key.includes(fieldId);
     }
 
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
@@ -1638,7 +1638,7 @@ export default () => {
                                                         }
 
                                                         function isPrimaryKey(tableId, fieldId) {
-                                                            return tableFields[tableId].primary_key.includes(fieldId);
+                                                            return tableFields[tableId]?.primary_key.includes(fieldId);
                                                         }
 
 
@@ -1692,11 +1692,6 @@ export default () => {
                                                 </div>
                                             </div>
                                         ))}
-
-
-
-
-
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>{lang["creator"]} </label>

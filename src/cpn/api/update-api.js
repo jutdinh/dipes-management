@@ -237,9 +237,10 @@ export default () => {
                 // console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
             });
     };
+    console.log(allApi)
     const copyURL = () => {
 
-        clipboardCopy(proxy + allApi.url)
+        clipboardCopy(allApi.cai_gi_cung_dc_het_tron_a)
             .then(() => {
                 // console.log('Đã sao chép dữ liệu vào clipboard.');
             })
@@ -590,7 +591,7 @@ export default () => {
         }
     };
     function isPrimaryKey(tableId, fieldId) {
-        return tableFields[tableId].primary_key.includes(fieldId);
+        return tableFields[tableId]?.primary_key.includes(fieldId);
     }
     
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
@@ -1553,7 +1554,7 @@ export default () => {
                                                         } 
                                                         
                                                         function isPrimaryKey(tableId, fieldId) {
-                                                            return tableFields[tableId].primary_key.includes(fieldId);
+                                                            return tableFields[tableId]?.primary_key.includes(fieldId);
                                                         }
 
                                                         // Check if the field is of type 'date'

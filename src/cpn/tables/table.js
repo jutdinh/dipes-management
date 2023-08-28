@@ -22,7 +22,7 @@ export default () => {
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
 
-const storedProjectId = localStorage.getItem('project_id');
+    const storedProjectId = localStorage.getItem('project_id');
 
     const dispatch = useDispatch();
 
@@ -35,8 +35,8 @@ const storedProjectId = localStorage.getItem('project_id');
     };
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
- 
-    const [ section, setSection ] = useState(DIAGRAM)
+
+    const [section, setSection] = useState(DIAGRAM)
 
     useEffect(() => {
 
@@ -50,7 +50,7 @@ const storedProjectId = localStorage.getItem('project_id');
                 const { success, data, status, content } = resp;
                 // console.log(resp)
 
-                if (success) {                   
+                if (success) {
 
                     if (data) {
                         setTables(data);
@@ -75,7 +75,7 @@ const storedProjectId = localStorage.getItem('project_id');
     }
     useEffect(() => {
         // console.log(tableUpdate);
-        
+
     }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -131,7 +131,7 @@ const storedProjectId = localStorage.getItem('project_id');
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                       functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                     });
             }
         });
@@ -153,7 +153,7 @@ const storedProjectId = localStorage.getItem('project_id');
         window.location.href = `/projects/${version_id}/table/${tableid.id}`;
     };
     // console.log(currentTable)
-   
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -172,19 +172,19 @@ const storedProjectId = localStorage.getItem('project_id');
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                               
+
                                     <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["managetable"]}
                                     </label> </h5>
                                 </div>
 
-                                <div class="ml-auto" onClick={ () => { setSection( section === TABLES ? DIAGRAM : TABLES ) } }>
+                                <div class="ml-auto" onClick={() => { setSection(section === TABLES ? DIAGRAM : TABLES) }}>
                                     <i class="fa fa-database pointer icon-database"></i>
                                 </div>
 
                             </div>
 
                             <div class={`table_section padding_infor_info`}>
-                                <div class={`row column1 ${ section == TABLES ? "": "d-none" }`}>
+                                <div class={`row column1 ${section == TABLES ? "" : "d-none"}`}>
                                     <div class="form-group col-lg-4">
                                         {/* <label class="font-weight-bold">Tên bảng <span className='red_star'>*</span></label>
                                                 <input type="text" class="form-control" 
@@ -219,7 +219,7 @@ const storedProjectId = localStorage.getItem('project_id');
                                                             <tbody>
                                                                 {currentTable.map((table, index) => (
                                                                     <tr key={table.id}>
-                                                                        <td scope="row">{ indexOfFirstTable+ index + 1}</td>
+                                                                        <td scope="row">{indexOfFirstTable + index + 1}</td>
                                                                         <td style={{ maxWidth: "100px" }}>
                                                                             <div style={{
                                                                                 width: "100%",
@@ -233,9 +233,9 @@ const storedProjectId = localStorage.getItem('project_id');
                                                                         <td>{table.create_by?.fullname}</td>
                                                                         <td>{formatDate(table.create_at)}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                      
-                                                                        {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}
-                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() =>   openPageUpdateTable(table)}  title={lang["edit"]}></i>
+
+                                                                            {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTable(table)} data-toggle="modal" data-target="#editTable" title={lang["edit"]}></i> */}
+                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => openPageUpdateTable(table)} title={lang["edit"]}></i>
 
                                                                             <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTable(table)} title={lang["delete"]}></i>
                                                                         </td>
@@ -245,29 +245,54 @@ const storedProjectId = localStorage.getItem('project_id');
                                                             </tbody>
                                                         </table>
                                                         <div className="d-flex justify-content-between align-items-center">
-                                                            <p>{lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}</p>
+                                                            <p>
+                                                                {lang["show"]} {indexOfFirstTable + 1}-{Math.min(indexOfLastTable, tables.tables.length)} {lang["of"]} {tables.tables.length} {lang["results"]}
+                                                            </p>
                                                             <nav aria-label="Page navigation example">
                                                                 <ul className="pagination mb-0">
+                                                                    {/* Nút đến trang đầu */}
                                                                     <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable - 1)}>
+                                                                        <button className="page-link" onClick={() => paginateTable(1)}>
+                                                                            &#8810;
+                                                                        </button>
+                                                                    </li>
+                                                                    <li className={`page-item ${currentPageTable === 1 ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(Math.max(1, currentPageTable - 1))}>
                                                                             &laquo;
                                                                         </button>
                                                                     </li>
-                                                                    {Array(totalPagesTable).fill().map((_, index) => (
-                                                                        <li key={index} className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
-                                                                            <button className="page-link" onClick={() => paginateTable(index + 1)}>
-                                                                                {index + 1}
-                                                                            </button>
-                                                                        </li>
-                                                                    ))}
+                                                                    {currentPageTable > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                    {Array(totalPagesTable).fill().map((_, index) => {
+                                                                        if (
+                                                                            index + 1 === currentPageTable ||
+                                                                            (index + 1 >= currentPageTable - 1 && index + 1 <= currentPageTable + 1)
+                                                                        ) {
+                                                                            return (
+                                                                                <li key={index} className={`page-item ${currentPageTable === index + 1 ? 'active' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginateTable(index + 1)}>
+                                                                                        {index + 1}
+                                                                                    </button>
+                                                                                </li>
+                                                                            );
+                                                                        }
+                                                                        return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                                    })}
+                                                                    {currentPageTable < totalPagesTable - 1 && <li className="page-item"><span className="page-link">...</span></li>}
                                                                     <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateTable(currentPageTable + 1)}>
+                                                                        <button className="page-link" onClick={() => paginateTable(Math.min(totalPagesTable, currentPageTable + 1))}>
                                                                             &raquo;
+                                                                        </button>
+                                                                    </li>
+                                                                    {/* Nút đến trang cuối */}
+                                                                    <li className={`page-item ${currentPageTable === totalPagesTable ? 'disabled' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginateTable(totalPagesTable)}>
+                                                                            &#8811;
                                                                         </button>
                                                                     </li>
                                                                 </ul>
                                                             </nav>
                                                         </div>
+
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
@@ -278,16 +303,16 @@ const storedProjectId = localStorage.getItem('project_id');
                                         </div>
                                     </div>
                                 </div>
-                            
-                                <div class={`row column1 ${ section == DIAGRAM? "": "d-none" }`}>                                    
-                                    <Diagram/>                                    
+
+                                <div class={`row column1 ${section == DIAGRAM ? "" : "d-none"}`}>
+                                    <Diagram />
                                 </div>
 
                             </div>
                         </div>
                     </div>
                 </div>
-               
+
             </div >
         </div >
     )

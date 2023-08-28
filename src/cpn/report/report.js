@@ -201,12 +201,11 @@ export default () => {
             for (let j = 0; j < data[i].length; j++) {
                 const cellAddress = `${String.fromCharCode(65 + j)}${5 + i}`;
 
-                // Kiểm tra nếu ô không tồn tại, tạo mới
+
                 if (!ws[cellAddress]) {
                     ws[cellAddress] = { t: 's', v: "" };
                 }
 
-                // Sau khi đảm bảo ô tồn tại, thiết lập style cho nó
                 if (j === 0) {
                     ws[cellAddress].s = centerStyle;
                 } else {

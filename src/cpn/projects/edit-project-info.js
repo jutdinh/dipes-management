@@ -34,7 +34,7 @@ export default () => {
     const [showAdminPopup, setShowAdminPopup] = useState(false);
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
     const [showMonitorPopup, setShowMonitorPopup] = useState(false);
-    const [manager, setManager] = useState("")
+    const [manager, setManager] = useState({})
 
 
 
@@ -83,10 +83,15 @@ export default () => {
             })
     }, [])
     console.log(project)
-    
-    
 
-    
+    // useEffect(() => {
+    //     if(project.project_type === "database") {
+    //     project.proxy_server = proxy;
+    // }
+    // }, [])
+
+
+
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
         setShowImplementationPopup(false);
@@ -100,7 +105,7 @@ export default () => {
         setTempSelectedImple([...selectedImple]);
 
     };
-    
+
     const handleClosePopup = () => {
         setShowAdminPopup(false);
         setShowImplementationPopup(false);
@@ -113,27 +118,27 @@ export default () => {
     const [selectedMonitor, setSelectedMonitor] = useState([]);
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
-  console.log(selectedUsers)
-  const updateProjectMembers = () => {
-       
-    const updatedMembers = [
-        ...selectedUsers.map(user => ({
-            username: user.username,
-            fullname: user.fullname,
-            avatar: user.avatar,
-            permission: user.permission  
-        })),
-        ...selectedImple.map(imple => ({
-            username: imple.username,
-            fullname: imple.fullname,
-            avatar: imple.avatar,
-            permission: imple.permission
-        }))
-    ];
+    console.log(selectedUsers)
+    const updateProjectMembers = () => {
 
-    // Cập nhật project.members
-    project.members = updatedMembers;
-}
+        const updatedMembers = [
+            ...selectedUsers.map(user => ({
+                username: user.username,
+                fullname: user.fullname,
+                avatar: user.avatar,
+                permission: user.permission
+            })),
+            ...selectedImple.map(imple => ({
+                username: imple.username,
+                fullname: imple.fullname,
+                avatar: imple.avatar,
+                permission: imple.permission
+            }))
+        ];
+
+        // Cập nhật project.members
+        project.members = updatedMembers;
+    }
     const handleAdminCheck = (user, role) => {
         const userWithRole = { username: user.username, role };
         setTempSelectedUsers(prevTempSelectedUsers => {
@@ -154,10 +159,10 @@ export default () => {
                 return [...prevTempSelectedImple, userWithRole];
             }
         });
-        
+
     };
 
-    
+
     const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
     const uniqueArray = Array.from(new Set(combinedArray.map(user => user.username)))
         .map(username => {
@@ -174,13 +179,17 @@ export default () => {
         setTempSelectedImple([]);
         setShowImplementationPopup(false);
     };
-    console.log('Before:', project.members);
-updateProjectMembers();
-console.log('After:', project.members);
-    
+
+    console.log(manager)
+    const dataManager = users.find(user => user.username === manager);
+    console.log(dataManager)
+    updateProjectMembers();
     const submitUpdateProject = async (e) => {
         e.preventDefault();
-        
+        if (project.project_type === "database") {
+            project.proxy_server = proxy;
+        }
+        const dataManager = users.find(user => user.username === manager);
 
         const { project_name, project_status } = project;
         const errors = {};
@@ -194,29 +203,42 @@ console.log('After:', project.members);
             setErrorMessagesedit(errors);
             return;
         }
+        const requestBody = {
+            project: {
+                ...project,
+                project_status: parseInt(project.project_status),
+                manager: {
+                    username: dataManager.username,
+                    fullname: dataManager.fullname,
+                    avatar: dataManager.avatar
+                }
+            }
+
+
+        }
+        console.log(requestBody)
         const response = await fetch(`${proxy}/projects/update`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
             },
-            body: JSON.stringify({ project: { ...project, project_status: parseInt(project.project_status) } }),
+            body: JSON.stringify(requestBody),
         });
 
         const resp = await response.json();
         const { success, content, data, status } = resp;
         console.log(resp)
 
-        // if (success) {
-        //     showApiResponseMessage(status);
-        // } else {
-        //     showApiResponseMessage(status);
-        // }
+        if (success) {
+            showApiResponseMessage(status);
+        } else {
+            showApiResponseMessage(status);
+        }
 
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
         if (!areTwoArraysEqual(uniqueArray, projectmember)) {
-            // console.log("UPDATED")
             addMember(e);
         }
     };
@@ -266,6 +288,8 @@ console.log('After:', project.members);
         }
         return valid
     }
+
+    console.log(users)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -342,7 +366,19 @@ console.log('After:', project.members);
                                             </div>
                                             : null
                                     }
+                                    <div className="form-group col-lg-12">
+                                        <label htmlFor="sel1">{lang["projectrole"]} <span className="red_star">*</span></label>
+                                        <select className="form-control" value={manager || project.manager?.username}
+                                            onChange={(e) => { setManager(e.target.value) }}>
+                                            <option value="">{lang["p.projectrole"]}</option>
+                                            {users && users.map((user, index) => {
+                                                return (
+                                                    <option key={index} value={user.username}>{user.fullname}</option>
+                                                );
+                                            })}
+                                        </select>
 
+                                    </div>
                                     <div class="form-group col-lg-12 ">
                                         <label>{lang["projectdescripton"]} </label>
                                         <textarea rows="7" type="text" class="form-control" value={project.project_description} onChange={
@@ -465,7 +501,7 @@ console.log('After:', project.members);
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                         onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                   <span class="user-name" onClick={() => handleImpleCheck(user, 'deployer')}>
+                                                                    <span class="user-name" onClick={() => handleImpleCheck(user, 'deployer')}>
 
 
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}

@@ -19,7 +19,7 @@ export default () => {
     const back = () => {
         navigate(`/projects/detail/${storedProjectId}`);
     };
-    
+
     const [apis, setApis] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/apis/v/${version_id}`, {
@@ -46,88 +46,89 @@ export default () => {
     const handleGetApi = (apiid) => {
         // console.log("api", apiid)
     }
-
+    console.log(apis);
     const downloadAPI = () => {
         // console.log(apis);
-      
+
         const header = ["ID", "Tên API", "URL", "Phương thức", "Ngày tạo"];
-      
+
         const reportData = apis.map(item => {
-          return [
-            item.api_id,
-            item.api_name,
-            item.cai_gi_cung_dc_het_tron_a, // cong.huynh đặt tên ????
-            item.api_method,
-            item.create_at,
-          ];
+            return [
+                item.api_id,
+                item.api_name,
+                item.cai_gi_cung_dc_het_tron_a, // cong.huynh đặt tên ????
+                item.api_method,
+                item.create_at,
+            ];
         });
-      
+        const projectName = apis.project_name
         const now = new Date();
         const date = now.toLocaleDateString("vi-VN", {
-          day: "numeric",
-          month: "numeric",
-          year: "numeric"
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
         });
-      
+
         const title = ["THÔNG TIN MÔ TẢ API"];
         const projectMasterInfo = [`Nhân viên xuất: ${auth.fullname}`];
         const datex = [`Ngày xuất: ${date}`];
         const formattedData = [
-          title,
-          projectMasterInfo,
-          datex,
-          header,
-          ...reportData
+            title,
+            projectMasterInfo,
+            datex,
+            header,
+            ...reportData
         ];
-      
+
         const ws = XLSX.utils.aoa_to_sheet(formattedData);
-      
+
         const mergeTitle = { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } };
         const mergeInfo = { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }; // gộp hàng từ A2 đến D2
         const mareDate = { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } };
-         // gộp hàng từ A1 đến D1
-         ws["!merges"] = [mergeTitle, mergeInfo, mareDate];
-      
+        // gộp hàng từ A1 đến D1
+        ws["!merges"] = [mergeTitle, mergeInfo, mareDate];
+
         const titleStyle = {
-          font: { bold: true, color: { rgb: "FFFFFF" } },
-          fill: { fgColor: { rgb: "008000" } },
-          alignment: { horizontal: "center", vertical: "center" },
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "008000" } },
+            alignment: { horizontal: "center", vertical: "center" },
         };
         const infoStyle = {
-          alignment: { horizontal: "center", vertical: "center" },
+            alignment: { horizontal: "center", vertical: "center" },
         };
         const headerStyle = {
-          font: { bold: true, color: { rgb: "FFFFFF" } },
-          fill: { fgColor: { rgb: "008000" } },
-          alignment: { horizontal: "center", vertical: "center" },
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "008000" } },
+            alignment: { horizontal: "center", vertical: "center" },
         };
-      
+
         // Thêm định dạng cho tiêu đề
         ws["A1"].s = titleStyle;
-      
+
         // Thêm định dạng cho thông tin
         // ws["A2"].s = infoStyle;
         // ws["A3"].s = infoStyle;
-      
+
         // Thêm định dạng cho header
         ws["A4"].s = headerStyle;
         ws["B4"].s = headerStyle;
         ws["C4"].s = headerStyle;
         ws["D4"].s = headerStyle;
         ws["E4"].s = headerStyle;
-      
-        ws["!cols"] = [{ width: 45}, { width: 60 }, { width: 60 }, { width: 20 }, { width: 35 }, { width: 20 }, { width: 40 }];
+
+        ws["!cols"] = [{ width: 45 }, { width: 60 }, { width: 60 }, { width: 20 }, { width: 35 }, { width: 20 }, { width: 40 }];
         ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
         // Tạo một Workbook mới và thêm Worksheet vào Workbook
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "APIs");
-      
+
         // Ghi Workbook ra file Excel
         XLSX.writeFile(wb, "APIs.xlsx");
-      };
-      
-      
-      
+        XLSX.writeFile(wb, `API Description-${(new Date()).getTime()}.xlsx`);
+    };
+
+
+
 
 
     const handleUpdateStatus = (apiid) => {
@@ -198,39 +199,41 @@ export default () => {
             });
     }
 
-    const [currentPageApi, setCurrentPageApi] = useState(1);
-    const rowsPerPageApi = 11;
 
-    const indexOfLastApi = currentPageApi * rowsPerPageApi;
-    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
-    const currentApi = apis.slice(indexOfFirstApi, indexOfLastApi);
-
-    const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
-    const totalPagesApi = Math.ceil(apis.length / rowsPerPageApi);
 
     const apisManager = (project) => {
         window.location.href = `/projects/${version_id}/apis/create`;
         // window.location.href = `tables`;
     };
     const updateApi = (apiData) => {
-        // console.log(apiData)
+        console.log(apiData)
         window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };
 
 
 
-
-
+    const [currentPageApi, setCurrentPageApi] = useState(1);
+    const rowsPerPageApi = 12;
     const [nameFilter, setNameFilter] = useState("");
     const [methodFilter, setMethodFilter] = useState("");
 
-    const filteredApi = currentApi.filter(api =>
+    // Áp dụng bộ lọc trên toàn bộ danh sách `apis`
+    const filteredApi = apis.filter(api =>
         api.api_name.toLowerCase().includes(nameFilter.toLowerCase()) &&
         api.api_method.toLowerCase().includes(methodFilter.toLowerCase())
     );
-    const methods = ['GET', 'POST', 'PUT', 'DELETE'];
 
+    // Tính chỉ mục dựa trên danh sách đã lọc
+    const indexOfLastApi = currentPageApi * rowsPerPageApi;
+    const indexOfFirstApi = indexOfLastApi - rowsPerPageApi;
+    const currentApiPage = filteredApi.slice(indexOfFirstApi, indexOfLastApi);
+
+    const paginateApi = (pageNumber) => setCurrentPageApi(pageNumber);
+    const totalPagesApi = Math.ceil(filteredApi.length / rowsPerPageApi);
+
+    const methods = ['GET', 'POST', 'PUT', 'DELETE'];
+console.log(currentApiPage)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -247,7 +250,7 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
-                                <h5><label  class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["manage api"]}
+                                    <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["manage api"]}
                                     </label> </h5>
                                 </div>
                                 <div class="ml-auto" onClick={downloadAPI}>
@@ -295,7 +298,7 @@ export default () => {
                                             placeholder="Lọc theo tên API"
                                         /> */}
                                         {
-                                            filteredApi && filteredApi.length > 0 ? (
+                                            currentApiPage && currentApiPage.length > 0 ? (
                                                 <>
                                                     <div class="table-responsive">
                                                         <table class="table table-striped">
@@ -312,7 +315,7 @@ export default () => {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {filteredApi.map((api, index) => (
+                                                                {currentApiPage.map((api, index) => (
                                                                     <tr key={index}>
                                                                         <td>{indexOfFirstApi + index + 1}</td>
                                                                         <td style={{ textTransform: 'uppercase' }}>{api.api_method}</td>
@@ -340,29 +343,57 @@ export default () => {
                                                         </table>
                                                     </div>
                                                     <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfLastApi, filteredApi.length)} {lang["of"]} {filteredApi.length} {lang["results"]}</p>
+                                                        <p>
+                                                            {lang["show"]} {indexOfFirstApi + 1}-{Math.min(indexOfFirstApi + currentApiPage.length, filteredApi.length)} {lang["of"]} {filteredApi.length} {lang["results"]}
+                                                        </p>
                                                         <nav aria-label="Page navigation example">
                                                             <ul className="pagination mb-0">
+                                                                {/* Nút đến trang đầu */}
                                                                 <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi - 1)}>
+                                                                    <button className="page-link" onClick={() => paginateApi(1)}>
+                                                                        &#8810;
+                                                                    </button>
+                                                                </li>
+                                                                <li className={`page-item ${currentPageApi === 1 ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(Math.max(1, currentPageApi - 1))}>
                                                                         &laquo;
                                                                     </button>
                                                                 </li>
-                                                                {Array(totalPagesApi).fill().map((_, index) => (
-                                                                    <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
-                                                                        <button className="page-link" onClick={() => paginateApi(index + 1)}>
-                                                                            {index + 1}
-                                                                        </button>
-                                                                    </li>
-                                                                ))}
+                                                                {currentPageApi > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                {Array(totalPagesApi).fill().map((_, index) => {
+                                                                    if (
+                                                                        index + 1 === currentPageApi ||
+                                                                        (index + 1 >= currentPageApi - 1 && index + 1 <= currentPageApi + 1)
+                                                                    ) {
+                                                                        return (
+                                                                            <li key={index} className={`page-item ${currentPageApi === index + 1 ? 'active' : ''}`}>
+                                                                                <button className="page-link" onClick={() => paginateApi(index + 1)}>
+                                                                                    {index + 1}
+                                                                                </button>
+                                                                            </li>
+                                                                        );
+                                                                    }
+                                                                    return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                                })}
+                                                                {currentPageApi < totalPagesApi - 1 && <li className="page-item"><span className="page-link">...</span></li>}
                                                                 <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
-                                                                    <button className="page-link" onClick={() => paginateApi(currentPageApi + 1)}>
+                                                                    <button className="page-link" onClick={() => paginateApi(Math.min(totalPagesApi, currentPageApi + 1))}>
                                                                         &raquo;
+                                                                    </button>
+                                                                </li>
+                                                                {/* Nút đến trang cuối */}
+                                                                <li className={`page-item ${currentPageApi === totalPagesApi ? 'disabled' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginateApi(totalPagesApi)}>
+                                                                        &#8811;
                                                                     </button>
                                                                 </li>
                                                             </ul>
                                                         </nav>
                                                     </div>
+
+
+
+
                                                 </>
                                             ) : (
                                                 <div class="list_cont ">

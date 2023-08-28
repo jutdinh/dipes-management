@@ -187,9 +187,9 @@ export default () => {
     const { project_id } = useParams();
 
     useEffect(() => {
-        
+
         localStorage.setItem('project_id', project_id);
-        
+
     }, [project_id]);
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [project, setProject] = useState({}); //// Update project
@@ -1244,29 +1244,54 @@ export default () => {
                                         }
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <p>{lang["show"]} {indexOfFirstMember + 1} - {Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}</p>
+                                        <p>
+                                            {lang["show"]} {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}
+                                        </p>
                                         <nav aria-label="Page navigation example">
                                             <ul className="pagination mb-0">
+                                                {/* Nút đến trang đầu */}
                                                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+                                                    <button className="page-link" onClick={() => paginate(1)}>
+                                                        &#8810;
+                                                    </button>
+                                                </li>
+                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
                                                         &laquo;
                                                     </button>
                                                 </li>
-                                                {Array(totalPages).fill().map((_, index) => (
-                                                    <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                        <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                            {index + 1}
-                                                        </button>
-                                                    </li>
-                                                ))}
+                                                {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                {Array(totalPages).fill().map((_, index) => {
+                                                    if (
+                                                        index + 1 === currentPage ||
+                                                        (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
+                                                    ) {
+                                                        return (
+                                                            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                    {index + 1}
+                                                                </button>
+                                                            </li>
+                                                        );
+                                                    }
+                                                    return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                })}
+                                                {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
                                                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+                                                    <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
                                                         &raquo;
+                                                    </button>
+                                                </li>
+                                                {/* Nút đến trang cuối */}
+                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={() => paginate(totalPages)}>
+                                                        &#8811;
                                                     </button>
                                                 </li>
                                             </ul>
                                         </nav>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

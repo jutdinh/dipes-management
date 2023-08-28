@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import responseMessages from "../enum/response-code";
 import Swal from 'sweetalert2';
 import { Header } from '../common';
+import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
 import $ from 'jquery';
 import { formatDate } from '../../redux/configs/format-date';
 export default () => {
@@ -182,6 +183,14 @@ export default () => {
         { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
     ]
 
+    const statusProject = [
+        StatusEnum.INITIALIZATION,
+        StatusEnum.IMPLEMENT,
+        StatusEnum.DEPLOY,
+        StatusEnum.COMPLETE,
+        StatusEnum.PAUSE
+
+    ]
 
     const [showModal, setShowModal] = useState(false);
     const _token = localStorage.getItem("_token");
@@ -296,6 +305,9 @@ export default () => {
     const submit = (e) => {
         e.preventDefault();
         if (validateAddProject()) {
+            if (project.project_type === "database") {
+                project.proxy_server = "http://123";
+            }
             const body = {
                 project,
                 manager: { username: manager },
@@ -421,23 +433,47 @@ export default () => {
     }, [projects])
     // console.log(projects)
     const sortedProjects = projects.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+    const [searchName, setSearchName] = useState('');
+    const [searchCode, setSearchCode] = useState('');
+    const [searchDate, setSearchDate] = useState('');
+    const [searchStatus, setSearchStatus] = useState(null);
+
+    console.log(searchStatus)
+    const filteredProjects = sortedProjects.filter(project =>
+        (project.project_name ? project.project_name.toLowerCase() : "").includes(searchName.toLowerCase()) &&
+        (project.project_code ? project.project_code.toLowerCase() : "").includes(searchCode.toLowerCase()) &&
+        (searchDate ? new Date(project.create_at).toDateString() === new Date(searchDate).toDateString() : true) &&
+        (!searchStatus || project.project_status === searchStatus)
+    );
+
+
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 8;
 
-    const totalPages = Math.ceil(projects.length / rowsPerPage);
+    const totalPages = Math.ceil(filteredProjects.length / rowsPerPage);
+
 
     const indexOfLastProject = currentPage * rowsPerPage;
     const indexOfFirstProject = indexOfLastProject - rowsPerPage;
 
-    const currentProjects = sortedProjects.slice(indexOfFirstProject, indexOfLastProject);
+    const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
 
     const paginate = (pageNumber) => {
         if (pageNumber < 1) return;
         if (pageNumber > totalPages) return;
         setCurrentPage(pageNumber);
     };
-    
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchName, searchCode, searchDate, searchStatus]);
+const clearSearch = () =>{
+    setSearchName('')
+    setSearchCode('')
+    setSearchDate('')
+    setSearchStatus(null)
+}
 
 
     return (
@@ -447,6 +483,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center ">
                             <h4>{lang["projects.title"]}</h4>
+                            
                             {
                                 ["ad", "uad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
@@ -455,7 +492,9 @@ export default () => {
                                     <button type="button" class="btn btn-danger custom-buttonwarn ml-auto" data-toggle="modal" onClick={showNoPrivilegeAlarm}>
                                         <i class="fa fa-info font-weight-bold" ></i>
                                     </button>
+
                             }
+                            
                         </div>
                     </div>
                 </div>
@@ -685,18 +724,69 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                <div class="row column1">
+                <div class="row column1_project ">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            {/* <div class="full graph_head">
-                                <div class="heading1 margin_0">
-                                    <h4>{lang["project list"]}</h4>
+                            <div class="full graph_head_project">
+                                <div class="heading1_project margin_0">
+                                    <div class="row">
+                                    <div class="col-md-3 mb-1 mt-1">
+                                            <select
+                                                class="form-control pointer"
+                                                value={searchStatus}
+                                                onChange={(e) => setSearchStatus(Number(e.target.value))}
+                                            >
+                                                <option value="">{lang["all.status"]}</option>
+
+                                                {statusProject.map((status, index) => {
+                                                    return (
+                                                        <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-1 mt-1">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder={lang["search.name"]}
+                                                value={searchName}
+                                                onChange={(e) => setSearchName(e.target.value)}
+                                            />
+                                        </div>
+                                        <div class="col-md-3 mb-1 mt-1">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder={lang["search.code"]}
+                                                value={searchCode}
+                                                onChange={(e) => setSearchCode(e.target.value)}
+                                            />
+                                        </div>
+                                        <div class="col-md-2 mb-1 mt-1">
+                                            <input
+                                                type="date"
+                                                class="form-control "
+                                                placeholder={lang["search.code"]}
+                                                value={searchDate}
+                                                onChange={(e) => setSearchDate(e.target.value)}
+                                            />
+                                        </div>
+                                        
+                                        
+                                        <div class="col-md-1 mt-2">
+                                            <i class="fa fa-refresh pointer size-24"onClick={clearSearch}aria-hidden="true" title={lang["reload"]}></i>
+                                        </div>
+
+                                    </div>
+
                                 </div>
-                            </div> */}
+                            </div>
                             <div class="full price_table padding_infor_info">
-                                <div class="row">
+                                <div class="row ">
+
                                     <div class="col-lg-12">
-                                        <div class="row">
+                                        <div class="row ">
                                             {
                                                 loaded ? (
                                                     <>
@@ -810,32 +900,58 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-                                           
+
                                         </div>
                                         <div className="d-flex justify-content-between align-items-center mt-1">
-                                                <p>{lang["show"]} {indexOfFirstProject + 1} - {Math.min(indexOfLastProject, projects.length)} {lang["of"]} {projects.length} {lang["results"]}</p>
-                                                <nav aria-label="Page navigation example">
-                                                    <ul className="pagination mb-0">
-                                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                                                &laquo;
-                                                            </button>
-                                                        </li>
-                                                        {Array(totalPages).fill().map((_, index) => (
-                                                            <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                                    {index + 1}
-                                                                </button>
-                                                            </li>
-                                                        ))}
-                                                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                            <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                                                &raquo;
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <p>
+                                                {lang["show"]} {indexOfFirstProject + 1}-{Math.min(indexOfLastProject, filteredProjects.length)} {lang["of"]} {filteredProjects.length} {lang["results"]}
+
+                                            </p>
+                                            <nav aria-label="Page navigation example">
+                                                <ul className="pagination mb-0">
+                                                    {/* Nút đến trang đầu */}
+                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(1)}>
+                                                            &#8810;
+                                                        </button>
+                                                    </li>
+                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
+                                                            &laquo;
+                                                        </button>
+                                                    </li>
+                                                    {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                    {Array(totalPages).fill().map((_, index) => {
+                                                        if (
+                                                            index + 1 === currentPage ||
+                                                            (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
+                                                        ) {
+                                                            return (
+                                                                <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                        {index + 1}
+                                                                    </button>
+                                                                </li>
+                                                            );
+                                                        }
+                                                        return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                    })}
+                                                    {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
+                                                            &raquo;
+                                                        </button>
+                                                    </li>
+                                                    {/* Nút đến trang cuối */}
+                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(totalPages)}>
+                                                            &#8811;
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
