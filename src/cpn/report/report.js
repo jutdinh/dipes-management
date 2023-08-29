@@ -64,9 +64,7 @@ export default () => {
                     dispatch({
                         branch: "default",
                         type: "setProjects",
-                        payload: {
-                            projects: data
-                        }
+                        payload: data
                     })
                     setLoaded(true)
                 } else {

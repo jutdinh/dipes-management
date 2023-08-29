@@ -8,8 +8,10 @@ import Swal from 'sweetalert2';
 import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
 import FilterableDate from '../common/searchDate';
+import XLSX from 'xlsx-js-style'
 import Gantt from "./gantt"
 import { formatDate } from "../../redux/configs/format-date";
+import { da } from "date-fns/locale";
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -30,16 +32,17 @@ export default () => {
     const [selectedUsers, setSelectedUsers] = useState([]); // admin
     const [selectedImple, setSelectedImple] = useState([]);
     const [project, setProject] = useState({}); //// Update project
+    const [showStartDateInput, setShowStartDateInput] = useState(false);
+    const [showEndDateInput, setShowEndDateInput] = useState(false);
+
+
 
     function formatDateTask(input) {
         const dateParts = input.split('-');
         if (dateParts.length !== 3) return null;
         const [year, month, day] = dateParts;
-        return `${month}/${day}/${year}`;
+        return `${day}/${month}/${year}`;
     }
-
-
-
 
     const statusProject = [
         StatusEnum.INITIALIZATION,
@@ -204,8 +207,8 @@ export default () => {
         if (new Date(task.start) > new Date(task.end)) {
             errors.checkday = lang["error.checkday_end"];
         }
-       
-        if (new Date(task.start) > new Date(task.timeline)|| new Date(task.timeline) > new Date(task.end)) {
+
+        if (new Date(task.start) > new Date(task.timeline) || new Date(task.timeline) > new Date(task.end)) {
             errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!task.task_description) {
@@ -275,7 +278,7 @@ export default () => {
         if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.end)) {
             errors.checkday = lang["error.checkday_end"];
         }
-        if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.timeline)|| new Date(updateTaskinfo.timeline) > new Date(updateTaskinfo.end)) {
+        if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.timeline) || new Date(updateTaskinfo.timeline) > new Date(updateTaskinfo.end)) {
             errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!updateTaskinfo.task_description) {
@@ -441,7 +444,210 @@ export default () => {
                 }
             });
     }
+    console.log(tasks)
+    console.log(project)
 
+    const statusMapping = {
+        1: "Khởi tạo",
+        2: "Thực hiện",
+        3: "Hoàn thành",
+        4: "Tạm dừng"
+    };
+    const priorityMapping = {
+        1: "Cao",
+        2: "Trung bình",
+        3: "Thấp"
+    };
+    const exportToExcel = () => {
+        console.log(project)
+
+        // console.log(dataExport)
+        const projectTasks = project.tasks;
+        // console.log(projectTasks)
+        // if (!projectTasks || projectTasks.length === 0) {
+        //     console.error(`No tasks found for project ID: ${projectId}`);
+        //     return;
+        // }
+
+        const dataExport = project
+
+        const projectName = project.project_name
+        const projectMaster = project.manager.fullname;
+        const header = [
+            "STT",
+            "Công việc",
+            "Mô tả",
+            "Người thực hiện",
+            "Trạng thái",
+            "Mức độ ưu tiên",
+            "% Hoàn thành",
+            "Xác nhận",
+            "Ngày bắt đầu (dd/MM/yyyy)",
+            "Ngày kết thúc (dd/MM/yyyy)",
+            "Timeline (dd/MM/yyyy)",
+
+
+        ];
+        const data = tasks.map((task, index) => {
+
+            let changedAt = task.history.modified_at ? new Date(task.history.modified_at).toLocaleDateString("vi-VN") : '';
+            // let status = statusTaskView.find((s) => s.value === task.task_status) || "Trạng thái không xác định";
+            let status = statusMapping[task.task_status] || "Trạng thái không xác định";
+            let priority = priorityMapping[task.task_priority] || "Mức độ ưu tiên không xác định";
+            let complete = task.task_progress;
+            let approve = task.task_approve ? "Đã xác nhận" : "Chờ xác nhận"
+            let daystart = formatDateTask(task.start)
+            let dayend = formatDateTask(task.end)
+            let timeline = formatDateTask(task.timeline)
+            let joinedNames = "";
+            if (task.members) {
+                joinedNames = task.members.map(mem => mem.fullname).join(', ');
+            }
+            return [
+                index + 1,
+                task.task_name,
+                task.task_description,
+                joinedNames || "Chưa có người thực hiện",
+                status,
+                priority,
+                `${complete}%`,
+                approve,
+                daystart,
+                dayend,
+                timeline,
+
+
+            ];
+        });
+
+
+
+        const now = new Date();
+        const date = now.toLocaleDateString("vi-VN", {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet([
+            [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , , ,],
+            [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", ""],
+            [`Ngày (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", ""],
+            header,
+            ...data
+        ]);
+
+        const borderStyle = {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } }
+        };
+
+        const centerStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "center", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+        const rightStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "right", vertical: "right", wrapText: true },
+            border: borderStyle
+        };
+
+        const titleStyle = {
+            font: { name: "UTM Avo", sz: 13, bold: true, color: { rgb: "FF000000" } },
+            fill: { fgColor: { rgb: "70ad47" } },
+            alignment: { horizontal: "center", vertical: "center" },
+            border: borderStyle
+        };
+
+        const athurStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            border: borderStyle
+        };
+
+        const headerStyle = {
+            font: { name: "UTM Avo", sz: 11, bold: true, color: { rgb: "FF000000" } },
+            fill: { fgColor: { rgb: "a9d08f" } },
+            alignment: { horizontal: "center", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+
+        ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 40 }, { width: 30 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }];
+        ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
+        ws["A1"].s = titleStyle;
+        ws["A2"].s = athurStyle;
+        ws["B2"].s = athurStyle;
+        ws["E2"].s = athurStyle;
+        ws["F2"].s = athurStyle;
+        ws["A3"].s = athurStyle;
+        ws["B3"].s = athurStyle;
+        ws["C2"].s = athurStyle;
+        ws["C3"].s = athurStyle;
+        ws["D2"].s = athurStyle;
+        ws["D3"].s = athurStyle;
+        ws["E2"].s = athurStyle;
+        ws["E3"].s = athurStyle;
+        ws["F2"].s = athurStyle;
+        ws["F3"].s = athurStyle;
+        ws["G2"].s = athurStyle;
+        ws["G3"].s = athurStyle;
+        ws["H2"].s = athurStyle;
+        ws["H3"].s = athurStyle;
+        ws["I2"].s = athurStyle;
+        ws["I3"].s = athurStyle;
+        ws["J2"].s = athurStyle;
+        ws["K2"].s = athurStyle;
+        ws["K3"].s = athurStyle;
+
+
+        ws["A4"].s = headerStyle;
+        ws["B4"].s = headerStyle;
+        ws["C4"].s = headerStyle;
+        ws["D4"].s = headerStyle;
+        ws["E4"].s = headerStyle;
+        ws["F4"].s = headerStyle;
+        ws["G4"].s = headerStyle;
+        ws["H4"].s = headerStyle;
+        ws["I4"].s = headerStyle;
+        ws["J4"].s = headerStyle;
+        ws["K4"].s = headerStyle;
+
+        const bodyStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "left", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < data[i].length; j++) {
+                const cellAddress = `${String.fromCharCode(65 + j)}${5 + i}`;
+
+
+                if (!ws[cellAddress]) {
+                    ws[cellAddress] = { t: 's', v: "" };
+                }
+
+                if (j === 0) {
+                    ws[cellAddress].s = centerStyle;
+                } else {
+                    ws[cellAddress].s = bodyStyle;
+                }
+            }
+        }
+
+        ws["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } },
+            { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }
+        ];
+        const wb = XLSX.utils.book_new();
+        const projectCode = project.project_code;
+        XLSX.utils.book_append_sheet(wb, ws, `Project-${dataExport.project_id}`);
+        XLSX.writeFile(wb, `Project-${projectCode}-${projectName}-${(new Date()).getTime()}.xlsx`);
+    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 4;
@@ -557,6 +763,9 @@ export default () => {
                                         {lang["listtask"]}
                                     </h5>
                                 </div>
+                                <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
+                                    <i class="fa fa-download pointer icon-ui"></i>
+                                </div>
                             </div>
                             <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
@@ -593,7 +802,7 @@ export default () => {
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
                                                         {lang["title.task"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
                                                         {tableFilter.task_name &&
                                                             <div className="position-relative">
                                                                 <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px" }}>
@@ -609,10 +818,10 @@ export default () => {
                                                     </th>
                                                     <th class="font-weight-bold align-center position-relative" scope="col">
                                                         {lang["taskstatus"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_status: !tableFilter.task_status }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_status: !tableFilter.task_status }) }} />
                                                         {tableFilter.task_status &&
                                                             <div className="position-relative">
-                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "155px" }}>
                                                                     <CheckList
                                                                         title={lang["taskstatus"]}
                                                                         initialData={statusFilter}
@@ -626,7 +835,7 @@ export default () => {
                                                     </th>
                                                     <th class="font-weight-bold align-center position-relative" scope="col">
                                                         {lang["task_priority"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_priority: !tableFilter.task_apptask_priorityrove }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_priority: !tableFilter.task_apptask_priorityrove }) }} />
                                                         {tableFilter.task_priority &&
                                                             <div className="position-relative">
                                                                 <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
@@ -646,7 +855,7 @@ export default () => {
                                                     </th>
                                                     <th class="font-weight-bold align-center position-relative" scope="col">
                                                         {lang["confirm"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} />
                                                         {tableFilter.task_approve &&
                                                             <div className="position-relative">
                                                                 <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
@@ -667,29 +876,33 @@ export default () => {
                                                     <th class="font-weight-bold align-center" scope="col" >
                                                         {lang["log.dayend"]}
                                                     </th> */}
-
-                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                    <th className="font-weight-bold align-center">
                                                         {lang["log.daystart"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowStartDateInput(!showStartDateInput)} />
                                                         <FilterableDate
                                                             label="Bắt đầu"
-
                                                             dateValue={startDateFilter}
                                                             setDateValue={setStartDateFilter}
-                                                            iconLabel="Icon 1"
+                                                            iconLabel="Chọn ngày bắt đầu"
+                                                            showDateInput={showStartDateInput}
+                                                            closePopup={() => setShowStartDateInput(false)}
                                                         />
                                                     </th>
-                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                    <th className="font-weight-bold align-center">
                                                         {lang["log.dayend"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowEndDateInput(!showEndDateInput)} />
                                                         <FilterableDate
                                                             label="Kết thúc"
                                                             dateValue={endDateFilter}
                                                             setDateValue={setEndDateFilter}
-                                                            iconLabel="Icon 2"
+                                                            iconLabel="Chọn ngày kết thúc"
+                                                            showDateInput={showEndDateInput}
+                                                            closePopup={() => setShowEndDateInput(false)}
                                                         />
                                                     </th>
+
                                                     <th class="font-weight-bold align-center" scope="col" >
                                                         Timeline
-                                                        
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
                                                         {lang["log.create_user"]}
@@ -723,7 +936,7 @@ export default () => {
                                                                 (!endDateFilter || taskEnd <= new Date(endDateFilter));
                                                         }).map((task, index) => (
                                                             <tr key={task.id}>
-                                                                <td style={{ width: "45px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
+                                                                <td style={{ width: "40px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
                                                                 <td style={{ maxWidth: "100px" }}>
                                                                     <div style={{
                                                                         width: "100%",
@@ -734,7 +947,7 @@ export default () => {
                                                                         {task.task_name}
                                                                     </div>
                                                                 </td>
-                                                                <td class="align-center" style={{ width: "140px" }}>
+                                                                <td class="align-center" style={{ width: "135px" }}>
                                                                     <select
                                                                         className="form-control"
                                                                         value={task.task_status}
@@ -796,7 +1009,7 @@ export default () => {
                                                                     {formatDateTask(task.end)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {formatDateTask(task.timeline) }
+                                                                    {formatDateTask(task.timeline)}
                                                                 </td>
                                                                 <td>
                                                                     {
@@ -885,7 +1098,7 @@ export default () => {
 
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.start} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.start} onChange={
                                                                     (e) => { setTask({ ...task, start: e.target.value }) }
                                                                 } />
                                                                 <div style={{ minHeight: '20px' }}>
@@ -894,16 +1107,16 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.end} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.end} onChange={
                                                                     (e) => { setTask({ ...task, end: e.target.value }) }
                                                                 } />
-                                                               
-                                                                    <div style={{ minHeight: '20px' }}>
-                                                                        {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
-                                                                    </div>
-                                                              
 
-                                                                
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
+                                                                </div>
+
+
+
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
@@ -911,17 +1124,17 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.timeline} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.timeline} onChange={
                                                                     (e) => { setTask({ ...task, timeline: e.target.value }) }
                                                                 } />
-                                                               
-                                                                    <div style={{ minHeight: '20px' }}>
-                                                                        {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
-                                                                    </div>
-                                                                
+
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                </div>
+
                                                             </div>
-                                                            
-                                                            
+
+
 
                                                             <div class="form-group col-lg-12">
                                                                 <label>{lang["p.description"]} <span className='red_star'>*</span></label>
@@ -1004,7 +1217,7 @@ export default () => {
 
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={updateTaskinfo.start} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.start} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, start: e.target.value }) }
                                                                 } />
                                                                 <div style={{ minHeight: '20px' }}>
@@ -1013,7 +1226,7 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={updateTaskinfo.end} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.end} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, end: e.target.value }) }
                                                                 } />
                                                                 {!errorMessagesadd.checkday ? (
@@ -1026,12 +1239,12 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={updateTaskinfo.timeline} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.timeline} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, timeline: e.target.value }) }
                                                                 } />
-                                                               <div style={{ minHeight: '20px' }}>
-                                                                        {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
-                                                                    </div>
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                </div>
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
@@ -1447,10 +1660,18 @@ export default () => {
                                                         let taskStatus = task && task.task_status ? task.task_status : '';
                                                         let filterConfirmValues = confirmFilter.map(item => item.value);
                                                         let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                        let filterPriorityValues = priorityFilter.map(item => item.value);
+                                                        let taskPriority = task && task.task_priority ? parseInt(task.task_priority) : null;
+                                                        let taskStart = new Date(task.start);
+                                                        let taskEnd = new Date(task.end);
+
                                                         return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
                                                             (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
-                                                            (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
-                                                    })} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
+                                                            (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true) &&
+                                                            (filterPriorityValues.length > 0 ? filterPriorityValues.includes(taskPriority) : true) &&
+                                                            (!startDateFilter || taskStart >= new Date(startDateFilter)) &&
+                                                            (!endDateFilter || taskEnd <= new Date(endDateFilter));
+                                                    })} project={projectdetail} data_raw={filteredTasks} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
                                     </div>

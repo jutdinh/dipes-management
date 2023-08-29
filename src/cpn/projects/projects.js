@@ -9,6 +9,7 @@ import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const storedProjects = useSelector(state => state.projects)
+    console.log(storedProjects)
     const dispatch = useDispatch()
 
     const [errors, setErrors] = useState({});
@@ -198,6 +199,7 @@ export default () => {
     // const users = JSON.parse(stringifiedUser)
     const [project, setProject] = useState({ project_type: "database" });
     const [projects, setProjects] = useState(storedProjects);
+    // const [projects, setProjects] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
@@ -212,7 +214,7 @@ export default () => {
                     const { success, data, status, content } = resp;
                     // console.log(resp)
                     if (success) {
-                        if (data != undefined && data.length > 0) {
+                        if (data !== undefined && data !== null && data.length > 0) {
                             setProjects(data);
                             dispatch({
                                 branch: "default",
@@ -306,7 +308,7 @@ export default () => {
         e.preventDefault();
         if (validateAddProject()) {
             if (project.project_type === "database") {
-                project.proxy_server = "http://123";
+                project.proxy_server = proxy;
             }
             const body = {
                 project,
@@ -412,33 +414,33 @@ export default () => {
         // console.log(project)
         window.location.href = `projects/detail/${project.project_id}`;
     };
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        // Get the search params from the URL
-        const searchParams = new URLSearchParams(url.search);
-        // Access individual parameters
-        const action = searchParams.get('action');
-        switch (action) {
-            case "create":
+    // useEffect(() => {
+    //     const url = new URL(window.location.href);
+    //     // Get the search params from the URL
+    //     const searchParams = new URLSearchParams(url.search);
+    //     // Access individual parameters
+    //     const action = searchParams.get('action');
+    //     switch (action) {
+    //         case "create":
 
-                $('#create-btn').click()
-                break;
-            case "export":
+    //             $('#create-btn').click()
+    //             break;
+    //         case "export":
 
-                $('#create-btn-export').click()
-                break;
-            default:
-                break;
-        }
-    }, [projects])
-    // console.log(projects)
-    const sortedProjects = projects.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+    //             $('#create-btn-export').click()
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }, [projects])
+    console.log(projects)
+    const sortedProjects = projects?.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
     const [searchName, setSearchName] = useState('');
     const [searchCode, setSearchCode] = useState('');
     const [searchDate, setSearchDate] = useState('');
     const [searchStatus, setSearchStatus] = useState(null);
 
-    console.log(searchStatus)
+
     const filteredProjects = sortedProjects.filter(project =>
         (project.project_name ? project.project_name.toLowerCase() : "").includes(searchName.toLowerCase()) &&
         (project.project_code ? project.project_code.toLowerCase() : "").includes(searchCode.toLowerCase()) &&
@@ -468,12 +470,12 @@ export default () => {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchName, searchCode, searchDate, searchStatus]);
-const clearSearch = () =>{
-    setSearchName('')
-    setSearchCode('')
-    setSearchDate('')
-    setSearchStatus(null)
-}
+    const clearSearch = () => {
+        setSearchName('')
+        setSearchCode('')
+        setSearchDate('')
+        setSearchStatus(null)
+    }
 
 
     return (
@@ -483,7 +485,7 @@ const clearSearch = () =>{
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center ">
                             <h4>{lang["projects.title"]}</h4>
-                            
+
                             {
                                 ["ad", "uad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
@@ -494,7 +496,7 @@ const clearSearch = () =>{
                                     </button>
 
                             }
-                            
+
                         </div>
                     </div>
                 </div>
@@ -730,7 +732,7 @@ const clearSearch = () =>{
                             <div class="full graph_head_project">
                                 <div class="heading1_project margin_0">
                                     <div class="row">
-                                    <div class="col-md-3 mb-1 mt-1">
+                                        <div class="col-md-3 mb-1 mt-1">
                                             <select
                                                 class="form-control pointer"
                                                 value={searchStatus}
@@ -772,10 +774,10 @@ const clearSearch = () =>{
                                                 onChange={(e) => setSearchDate(e.target.value)}
                                             />
                                         </div>
-                                        
-                                        
+
+
                                         <div class="col-md-1 mt-2">
-                                            <i class="fa fa-refresh pointer size-24"onClick={clearSearch}aria-hidden="true" title={lang["reload"]}></i>
+                                            <i class="fa fa-refresh pointer size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
                                         </div>
 
                                     </div>
@@ -824,7 +826,7 @@ const clearSearch = () =>{
                                                                                     <div class="profile_contacts">
 
                                                                                         <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
-
+                                                                                        {item.manager?.fullname}
                                                                                     </div>
                                                                                     <p class="font-weight-bold">{lang["projectmember"]}</p>
 
@@ -837,10 +839,12 @@ const clearSearch = () =>{
                                                                                                         src={proxy + member.avatar}
                                                                                                         alt={member.username}
                                                                                                     />
+
                                                                                                 )) : <div class="profile_contacts">
                                                                                                     <p>{lang["projectempty"]} </p>
                                                                                                 </div>
                                                                                         }
+                                                                                    
                                                                                         {/* {
                                                                     item.members.length > 2 &&
                                                                     <div className="img-responsive circle-image extra-images">
@@ -904,8 +908,7 @@ const clearSearch = () =>{
                                         </div>
                                         <div className="d-flex justify-content-between align-items-center mt-1">
                                             <p>
-                                                {lang["show"]} {indexOfFirstProject + 1}-{Math.min(indexOfLastProject, filteredProjects.length)} {lang["of"]} {filteredProjects.length} {lang["results"]}
-
+                                                {lang["show"]} {filteredProjects.length > 0 ? indexOfFirstProject + 1 : 0}-{Math.min(indexOfLastProject, filteredProjects.length)} {lang["of"]} {filteredProjects.length} {lang["results"]}
                                             </p>
                                             <nav aria-label="Page navigation example">
                                                 <ul className="pagination mb-0">

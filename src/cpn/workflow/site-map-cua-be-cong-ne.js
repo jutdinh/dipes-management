@@ -103,7 +103,7 @@ export default () => {
                     background: "purple",
                     foreground: "#ffffff",
                     vine: "blue",
-                    children: [{ leaf: "Create project", link: "/projects?action=create" }]
+                    children: [{ leaf: lang["createproject"], link: "/projects?action=create" }]
                 }
 
                 projects.map(project => {

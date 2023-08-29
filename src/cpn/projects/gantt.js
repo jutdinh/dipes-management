@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const clickElement = element => alert(`Clicked element\n${JSON.stringify(element, null, 2)}`);
 const MIN_ZOOM = 30;
-const MAX_ZOOM = 37;
+const MAX_ZOOM = 38;
 
-const TimelineChart = ({ data, project }) => {
+const TimelineChart = ({ data, project, data_raw }) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const [open, setOpen] = useState(false);
     const [zoom, setZoom] = useState(MAX_ZOOM);
@@ -19,8 +19,8 @@ const TimelineChart = ({ data, project }) => {
     const [timebar, setTimebar] = useState([]);
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
-    // const [selectedMonth, setSelectedMonth] = useState(moment().month());
-    const [selectedMonth, setSelectedMonth] = useState();
+    const [selectedMonth, setSelectedMonth] = useState(moment().month());
+    console.log(selectedMonth)
     // ///focus đến tháng hiện tại
     // useEffect(() => {
     //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
@@ -123,13 +123,14 @@ const TimelineChart = ({ data, project }) => {
                     cells: monthsCells,
                 };
             });
-        
+
             return [
+
                 { id: 'yearMonths', title: lang["gantt.yearmonths"], cells: years.flatMap(year => year.cells) },
                 { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(month => month.children)) },
             ];
         };
-        
+
         const statusTaskView = [
             StatusTask.INITIALIZATION.color,
             StatusTask.IMPLEMENT.color,
@@ -198,7 +199,7 @@ const TimelineChart = ({ data, project }) => {
         setTimebar(buildTimebar());
         setTracks(tracks);
 
-    }, [data, lang, selectedYear, selectedMonth]); // dependencies for useEffect, adjust as needed
+    }, [data, lang, selectedYear, selectedMonth]); 
 
     const handleToggleOpen = () => setOpen(!open);
     const handleZoomIn = () => setZoom(Math.min(zoom + 4, MAX_ZOOM));
@@ -209,6 +210,18 @@ const TimelineChart = ({ data, project }) => {
         setZoom(newZoom);
     }
     const now = moment().toDate();
+    //set năm
+    function getYearsFromTasks(data_raw) {
+        const years = new Set();
+        data_raw.forEach(task => {
+            const startYear = new Date(task.start).getFullYear();
+            const endYear = new Date(task.end).getFullYear();
+            years.add(startYear);
+            years.add(endYear);//Set chỉ chứa các giá trị duy nhất, nên nếu một năm đã được thêm trước đó, nó sẽ không được thêm lại.
+        });
+
+        return Array.from(years);
+    }
 
     useEffect(() => {
         setTimeout(() => {
@@ -228,34 +241,34 @@ const TimelineChart = ({ data, project }) => {
     let isDown = false;
     let startX;
     let scrollLeft;
-    
+
     const timeline = document.querySelector('.rt-layout__timeline');
-    if(timeline){
+    if (timeline) {
         timeline.addEventListener('mousedown', (e) => {
             isDown = true;
             timeline.classList.add('active'); // Thêm class 'active' khi chuột nhấn xuống
             startX = e.pageX - timeline.offsetLeft;
             scrollLeft = timeline.scrollLeft;
-          });
-          timeline.addEventListener('mousemove', (e) => {
-            if(!isDown) return;
+        });
+        timeline.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - timeline.offsetLeft;
             const walk = (x - startX);
             timeline.scrollLeft = scrollLeft - walk;
-          });
-          timeline.addEventListener('mouseup', () => {
+        });
+        timeline.addEventListener('mouseup', () => {
             isDown = false;
             timeline.classList.remove('active'); // Xóa class 'active' khi chuột nhả ra
-          });
-          timeline.addEventListener('mouseleave', () => {
+        });
+        timeline.addEventListener('mouseleave', () => {
             isDown = false;
             timeline.classList.remove('active'); // Xóa class 'active' khi chuột rời khỏi
-          });
+        });
     }
-   
-    
-      
+
+
+
 
     return (
         <div className="app app1">
@@ -263,23 +276,24 @@ const TimelineChart = ({ data, project }) => {
                 <div class="col-md-6">
                     <div class="row mt-2">
                         <div class="col-sm-6 col-md-4">
-                            <select class="form-control mt-1 ml-1"
+                            <select class="form-control mt-1"
                                 value={selectedYear}
                                 onChange={(e) => {
                                     const newYear = parseInt(e.target.value);
                                     setSelectedYear(newYear);
-                                    setSelectedMonth(0); // Reset month to January when year changes
+                                    setSelectedMonth(13); // Reset month to January when year changes
                                     setStart(moment({ year: newYear }).startOf('year').toDate());
                                     setEnd(moment({ year: newYear }).endOf('year').toDate());
                                 }}
                             >
-                                {Array.from({ length: 5 }, (_, i) => 2021 + i).map((year) => (
+                                {getYearsFromTasks(data).map((year) => (
                                     <option key={year} value={year}>
                                         {year}
                                     </option>
                                 ))}
                             </select>
                         </div>
+
                         <div class="col-sm-6 col-md-4">
                             <select class="form-control mt-1"
                                 style={{ minWidth: "95px" }}
@@ -294,10 +308,10 @@ const TimelineChart = ({ data, project }) => {
                                         timeline.scrollLeft = newScrollPosition;
                                     }
                                 }}
-                                >
-                                     <option>
-                                        {lang["choose"]}
-                                    </option>
+                            >
+                                <option value={13}>
+                                    {lang["choose"]}
+                                </option>
                                 {months.map((month, i) => (
                                     <option key={i} value={i}>
                                         {month}
@@ -318,8 +332,8 @@ const TimelineChart = ({ data, project }) => {
                         start,
                         end,
                         zoom,
-                        zoomMin: MIN_ZOOM,
-                        zoomMax: MAX_ZOOM,
+                        // zoomMin: MIN_ZOOM,
+                        // zoomMax: MAX_ZOOM,
                     }}
                     isOpen={open}
                     toggleOpen={handleToggleOpen}
@@ -328,39 +342,40 @@ const TimelineChart = ({ data, project }) => {
                     // clickElement={clickElement}
                     timebar={timebar}
                     tracks={
-                        selectedMonth !== undefined ? (
+                        selectedMonth !== 13 ? (
                             tracks.filter(track => {
                                 const trackStartDate = moment(track.elements[0].start);
                                 const trackEndDate = moment(track.elements[0].end);
-                    
                                 const selectedStartDate = moment().year(selectedYear).month(selectedMonth).date(1);
                                 const selectedEndDate = moment(selectedStartDate).endOf('month');
-                    
-                                return trackStartDate.isBetween(selectedStartDate, selectedEndDate, null, '[]') ||
-                                       trackEndDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                                
+                                console.log("Track Start Date:", trackStartDate.format('YYYY-MM-DD'));
+                                console.log("Track End Date:", trackEndDate.format('YYYY-MM-DD'));
+                                console.log("Selected Start Date:", selectedStartDate.format('YYYY-MM-DD'));
+                                console.log("Selected End Date:", selectedEndDate.format('YYYY-MM-DD'));
+
+                                const isTrackStartBetween = trackStartDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                                const isTrackEndBetween = trackEndDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                                const isTrackSpanningSelectedStart = trackStartDate.isBefore(selectedStartDate) && trackEndDate.isAfter(selectedStartDate);
+                                const isTrackSpanningSelectedEnd = trackStartDate.isBefore(selectedEndDate) && trackEndDate.isAfter(selectedEndDate);
+                            
+                                return isTrackStartBetween || isTrackEndBetween || isTrackSpanningSelectedStart || isTrackSpanningSelectedEnd;
                             })
                         ) : (
-                            tracks
+                            tracks.filter(track => {
+                                const trackYear = moment(track.elements[0].start).year();
+                                return trackYear === selectedYear;
+                            })
                         )
                     }
-                    
-                    
-                    
                     // tracks={
                     //     tracks.filter(track => {
                     //     const trackStartDate = moment(track.elements[0].start);
                     //     return trackStartDate.year() === selectedYear && trackStartDate.month() === selectedMonth;
                     // })}
-                    
                     now={now}
                     enableSticky
                     scrollToNow
-                    // renderElementTooltip={({ element }) => (
-                    //     <div>
-                    //         <div>{element.data.customStart}</div>
-                    //         <div>{element.data.customEnd}</div>
-                    //     </div>
-                    // )}
                 />
             </div>
         </div>

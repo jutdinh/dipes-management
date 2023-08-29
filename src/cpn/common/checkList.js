@@ -91,25 +91,33 @@ export default (props) => {
                     <input type="search" id="form1" class="form-control" onChange={filteringOptions} />
                 </div>
             </div>
+
             <div style={styles.scrollList}>
                 <ul style={styles.list}>
                     {data && renderFilter().map(item =>
-                        <li key={item.id} style={styles.listItem} onClick={() => { addOrRemoveFilter(item) }}>
-
+                        <li key={item.id} style={styles.listItem}>
+                           <label style={{ display: 'flex', alignItems: 'center' }}>
                                 {isChecked(item) ?
-                                    <input type="checkbox" onClick={() => { addOrRemoveFilter(item) }}
+                                    <input
+                                        type="checkbox"
+                                        id={`checkbox-${item.id}`}
+                                        onClick={() => { addOrRemoveFilter(item) }}
                                         checked
                                     />
                                     :
-                                    <input type="checkbox" onClick={() => { addOrRemoveFilter(item) }} />
+                                    <input
+                                        type="checkbox"
+                                        id={`checkbox-${item.id}`}
+                                        onClick={() => { addOrRemoveFilter(item) }}
+                                    />
                                 }
-                            <label >
                                 <span style={styles.itemLabel}>{item.label}</span>
                             </label>
                         </li>
                     )}
                 </ul>
             </div>
+
         </div>
     )
 }

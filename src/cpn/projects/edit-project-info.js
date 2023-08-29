@@ -355,18 +355,7 @@ export default () => {
                                             <option value="api">API</option>
                                         </select>
                                     </div>
-
-                                    {
-                                        project.project_type == "api" ?
-                                            <div class="form-group col-lg-6  col-sm-4 ml-auto">
-                                                <label>{lang["projectproxyserver"]}</label>
-                                                <input type="text" class="form-control" value={project.proxy_server} onChange={
-                                                    (e) => { setProject({ ...project, proxy_server: e.target.value }) }
-                                                } placeholder="http://example.com || http://127.0.0.1" />
-                                            </div>
-                                            : null
-                                    }
-                                    <div className="form-group col-lg-12">
+                                    <div className="form-group col-lg-6  col-sm-4">
                                         <label htmlFor="sel1">{lang["projectrole"]} <span className="red_star">*</span></label>
                                         <select className="form-control" value={manager || project.manager?.username}
                                             onChange={(e) => { setManager(e.target.value) }}>
@@ -379,6 +368,17 @@ export default () => {
                                         </select>
 
                                     </div>
+                                    {
+                                        project.project_type == "api" ?
+                                            <div class="form-group col-lg-6  col-sm-4 ml-auto">
+                                                <label>{lang["projectproxyserver"]}</label>
+                                                <input type="text" class="form-control" value={project.proxy_server} onChange={
+                                                    (e) => { setProject({ ...project, proxy_server: e.target.value }) }
+                                                } placeholder="http://example.com || http://127.0.0.1" />
+                                            </div>
+                                            : null
+                                    }
+                                   
                                     <div class="form-group col-lg-12 ">
                                         <label>{lang["projectdescripton"]} </label>
                                         <textarea rows="7" type="text" class="form-control" value={project.project_description} onChange={

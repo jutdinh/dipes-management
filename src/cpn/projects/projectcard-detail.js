@@ -1181,13 +1181,13 @@ export default () => {
                                                     <table class="table table-striped ">
                                                         <thead>
                                                             <tr>
-                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                                <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["members"]}</th>
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
-                                                                <th class="font-weight-bold" scope="col">{lang["duty"]}</th>
+                                                                <th class="font-weight-bold"style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
                                                                     ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
-                                                                    <th class="font-weight-bold">{lang["log.action"]}</th>
+                                                                    <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.action"]}</th>
                                                                 }
                                                             </tr>
                                                         </thead>
@@ -1195,7 +1195,7 @@ export default () => {
                                                             {currentMembers.map((member, index) => (
                                                                 <tr key={member.username}>
                                                                     <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                    <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                    <td><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
                                                                     <td>{member.fullname}</td>
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (

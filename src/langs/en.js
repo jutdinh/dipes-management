@@ -441,7 +441,9 @@ export default {
     "search.code":"Search by project code...",
     "reload": "Reload",
     "title.task": "Task",
-    "error.checkday_timeline": "The timeline must be within the time period of the task"
+    "error.checkday_timeline": "The timeline must be within the time period of the task",
+    "export task": "Export task list",
+    "createproject":"Create project",
 
 
 }
