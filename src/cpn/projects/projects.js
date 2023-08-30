@@ -768,7 +768,7 @@ export default () => {
                                         <div class="col-md-2 mb-1 mt-1">
                                             <input
                                                 type="date"
-                                                class="form-control "
+                                                class="form-control pointer"
                                                 placeholder={lang["search.code"]}
                                                 value={searchDate}
                                                 onChange={(e) => setSearchDate(e.target.value)}

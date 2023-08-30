@@ -294,7 +294,7 @@ export default () => {
                     </div>
                 </div>
                 <div class="row column1">
-                    <div class="col-md-2 col-lg-2">
+                    <div class=" col-xs-12 col-md-2 col-lg-2">
                         <div class="row">
                             <div class="full counter_section_cus margin_bottom_30">
                                 <div class="couter_icon">
@@ -340,7 +340,7 @@ export default () => {
 
 
                     </div>
-                    <div class="col-md-5 col-lg-5">
+                    <div class="col-xs-12 col-md-5 col-lg-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -352,7 +352,7 @@ export default () => {
                                     <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">
-                                                <PieChart width={300} height={260}>
+                                                <PieChart width={250} height={260}>
                                                     <Pie
                                                         dataKey="value"
                                                         startAngle={360}
@@ -377,7 +377,7 @@ export default () => {
                                             </div>
 
                                         </div>
-                                        <div className="col-md-6 ml-2">
+                                        <div className="col-md-7">
                                             <div class="table-responsive mt-4">
                                                 <table class="table table1 no-border-table no-border ">
                                                     <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
@@ -419,7 +419,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 col-lg-5">
+                    <div class="col-xs-12 col-md-5 col-lg-5">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
@@ -451,19 +451,19 @@ export default () => {
                                         </div>
                                         <div className="col-md-8">
                                             <div class="table-responsive mt-4">
-                                                <table class="table table1 no-border-table no-border ">
-                                                    <thead class="no-border" style={{ borderCollapse: 'inherit' }}>
+                                                <table class="table table1 no-border-table no-border-lead ">
+                                                    <thead class="no-border-lead" style={{ borderCollapse: 'inherit' }}>
                                                         <tr>
                                                             <th>{lang["projects manager"]}</th>
-                                                            <th>{totalSumLead} {lang["project"]}</th>
+                                                            <th class="mr-4">{totalSumLead} {lang["project"]}</th>
                                                             <th>%</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody className="scrollable-tbody">
                                                         {statisLead?.map((statis, index) => (
                                                             <tr key={index}>
 
-                                                                <td>
+                                                                <td >
                                                                     <div class="profile_contacts_chart">
                                                                         <div style={{
                                                                             display: 'inline-block',
@@ -477,6 +477,7 @@ export default () => {
                                                                         {statis.fullname}
                                                                     </div>
                                                                 </td>
+                                                               
                                                                 <td>{statis.total}</td>
                                                                 <td>{statis.percentage}</td>
                                                             </tr>

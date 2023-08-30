@@ -1168,6 +1168,62 @@ img[class="scaled-hover-target"] {
     transform: translateX(-50%); 
     z-index: 10;          
 }
+.scrollable-tbody {
+    display: block;
+    max-height: 195px;  
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-shadow: -10px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table1 th {
+    width:55%; 
+}
+
+.table1 td {
+    width:70%; 
+}
+
+/* Style cho nhãn giả mạo */
+.date-label {
+    position: absolute;
+    pointer-events: none;
+    left: 10px;  /* giá trị này có thể cần điều chỉnh dựa vào padding của bạn */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;  /* màu giả mạo của placeholder */
+}
+
+/* Ẩn nhãn khi input có giá trị hoặc được focus */
+input[type="date"]:focus + .date-label,
+input[type="date"]:valid + .date-label {
+    display: none;
+}
+
+
+
+.no-border-lead thead {
+    display: table;
+    width: 100%;
+}
+
+
+.no-border-lead thead th {
+    border-bottom: 1px solid #000 !important;
+    background: none !important;
+}
+
+
+.no-border-lead tr th {
+    border: none;
+    border-collapse: collapse;
+    padding: 12px;
+}
+
+
+
+
 
 
 .copy-alert i {

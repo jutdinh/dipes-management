@@ -795,7 +795,6 @@ export default () => {
                                                 </button>
                                             }
                                         </div>
-                                      
                                         <div class="table-outer">
                                             <table class="table-head">
                                                 <thead>
