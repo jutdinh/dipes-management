@@ -1126,7 +1126,7 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.timeline} onChange={
+                                                                <input type="date" min={task.start} max={task.end}  className="form-control" value={task.timeline} onChange={
                                                                     (e) => { setTask({ ...task, timeline: e.target.value }) }
                                                                 } />
 
@@ -1241,7 +1241,7 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.timeline} onChange={
+                                                                <input type="date" min={updateTaskinfo.start} max={updateTaskinfo.end} className="form-control" value={updateTaskinfo.timeline} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, timeline: e.target.value }) }
                                                                 } />
                                                                 <div style={{ minHeight: '20px' }}>
