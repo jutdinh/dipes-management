@@ -805,7 +805,7 @@ export default () => {
                                                                                     <div class="row project-name-min-height">
                                                                                         <div class="col-sm-10" >
 
-                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 55)}{item.project_name.length > 55 ? "..." : ""}</h5>
+                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 50)}{item.project_name.length > 50 ? "..." : ""}</h5>
                                                                                         </div>
 
                                                                                         <div class="col-sm-2 cross-hide pointer scaled-hover">
@@ -813,7 +813,7 @@ export default () => {
 
                                                                                         </div>
                                                                                     </div>
-                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code}</p>
+                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 24)}{item.project_code?.length > 24 ? "..." : ""}</p>
                                                                                     <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
 
                                                                                     <p>{lang["time"]}: {

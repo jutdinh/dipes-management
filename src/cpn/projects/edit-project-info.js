@@ -378,7 +378,7 @@ export default () => {
                                             </div>
                                             : null
                                     }
-                                   
+
                                     <div class="form-group col-lg-12 ">
                                         <label>{lang["projectdescripton"]} </label>
                                         <textarea rows="7" type="text" class="form-control" value={project.project_description} onChange={
@@ -457,19 +457,22 @@ export default () => {
                                     </div>
                                     {showAdminPopup && (
                                         <div class="user-popup4">
+                                            <div class="user-popup-title"> 
+                                            <h5>{lang["supervisor"]}</h5>
+                                            </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
                                                     if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
                                                         return (
                                                             <div key={user.username} class="user-item">
-                                                                <label class="pointer">
+                                                                <label class="pointer" onClick={() => handleAdminCheck(user, 'supervisor')}>
                                                                     <input
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                         onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                    <span class="user-name">
 
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
@@ -482,26 +485,29 @@ export default () => {
                                                 })}
                                             </div>
                                             <div className="user-popup-actions">
-                                                <button class="btn btn-success" onClick={handleSaveUsers}>Lưu</button>
-                                                <button class="btn btn-danger" onClick={handleClosePopup}>Đóng</button>
+                                                <button class="btn btn-success" onClick={handleSaveUsers}>{lang["btn.update"]}</button>
+                                                <button class="btn btn-danger" onClick={handleClosePopup}>{lang["btn.close"]}</button>
                                             </div>
                                         </div>
                                     )}
                                     {showImplementationPopup && (
                                         <div class="user-popup2">
+                                            <div class="user-popup-title"> 
+                                            <h5>{lang["deployers"]}</h5>
+                                            </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
                                                     if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
                                                         return (
                                                             <div key={user.username} class="user-item">
-                                                                <label class="pointer">
+                                                                <label class="pointer" onClick={() => handleImpleCheck(user, 'deployer')}>
                                                                     <input
                                                                         class="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                         onChange={() => handleImpleCheck(user, 'deployer')}
                                                                     />
-                                                                    <span class="user-name" onClick={() => handleImpleCheck(user, 'deployer')}>
+                                                                    <span class="user-name">
 
 
                                                                         <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}

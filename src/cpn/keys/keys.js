@@ -5,7 +5,9 @@ import { StatusEnum, StatusTask } from '../enum/status';
 import Swal from 'sweetalert2';
 import { Header } from '../common';
 import $, { data } from 'jquery';
-import { formatDate  } from '../../redux/configs/format-date';
+import { formatDate } from '../../redux/configs/format-date';
+import copy from 'copy-to-clipboard';
+import { da } from 'date-fns/locale';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const dispatch = useDispatch()
@@ -22,7 +24,8 @@ export default () => {
         { id: 3, label: lang["complete"], value: 4, color: "#ff8042" },
         { id: 4, label: lang["pause"], value: 5, color: "#FF0000" }
     ]
-
+    const [key, setKey] = useState({ MAC: "", activated: true });
+    const [isCopied, setIsCopied] = useState(false);
 
     useEffect(() => {
         fetch(`${proxy}/activation/keys`, {
@@ -47,8 +50,26 @@ export default () => {
             })
 
     }, [])
+    const handleCopy = (data) => {
+        console.log(data)
+        copy(data.key);
+
+        setIsCopied(true);
 
 
+        setTimeout(() => {
+            setIsCopied(false);
+        }, 2000);
+    };
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 9;
+
+    const indexOfLastKey = currentPage * rowsPerPage;
+    const indexOfFirstKey = indexOfLastKey - rowsPerPage;
+    const currentKey = projects.slice(indexOfFirstKey, indexOfLastKey);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const totalPages = Math.ceil(projects.length / rowsPerPage);
     // console.log(projects)
     return (
         <div className="container-fluid">
@@ -85,60 +106,122 @@ export default () => {
                                                     <>
                                                         {
                                                             projects && projects.length > 0 ? (
-                                                                projects.map((item) => (
+                                                                <div class="col-md-12">
+                                                                    <div class="table-responsive">
+                                                                        {
+                                                                            currentKey && currentKey.length > 0 ? (
+                                                                                <>
+                                                                                    <table class="table table-striped ">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["projectname"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["projectcode"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "180px" }} scope="col">UUID:</th>
+                                                                                                <th class="font-weight-bold align-center" style={{ width: "300px" }} scope="col">{lang["key"]}</th>
 
-                                                                    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                                                                        <div class="card project-block">
-                                                                            <div class="card-body">
-                                                                                <div class="row project-name-min-height">
-                                                                                    <div class="col-sm-10" >
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            {currentKey.map((project, index) => (
+                                                                                                <tr key={index}>
+                                                                                                    <td>{indexOfFirstKey + index + 1}</td>
+                                                                                                    <td>{project.project?.project_name?.slice(0, 55)}{project.project?.project_name?.length > 55 ? "..." : ""}</td>
+                                                                                                    <td>{project.project.project_code}</td>
+                                                                                                    <td>{project.uuid}</td>
+                                                                                                    <td>
+                                                                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                                                            <textarea
+                                                                                                                type="text"
+                                                                                                                class="form-control"
+                                                                                                                value={project.key}
+                                                                                                                style={{ minHeight: 50 }}
+                                                                                                                spellCheck={false}
+                                                                                                            />
+                                                                                                            <i
+                                                                                                                className="fa fa-clipboard ml-3 pointer"
+                                                                                                                onClick={() => handleCopy(project)}
+                                                                                                                style={{ fontSize: '24px' }}
+                                                                                                                title='Copy'
+                                                                                                            ></i>
+                                                                                                        </div>
 
-                                                                                        <h5 class="project-name d-flex align-items-center" >{item.project?.project_name?.slice(0, 55)}{item.project?.project_name?.length > 55 ? "..." : ""}</h5>
-                                                                                    </div>
+                                                                                                        {isCopied &&
+                                                                                                            <div className="copy-alert" style={{
+                                                                                                                animation: 'fadeInOut 3s ease-out',
+                                                                                                                position: 'absolute',
+                                                                                                                top: '1%',
+                                                                                                                left: '40%',
+                                                                                                                transform: 'translate(10px, -50%)',
+                                                                                                                zIndex: 1
+                                                                                                            }}>
+                                                                                                                <i className='fa fa-check-circle mr-1 mt-1'></i> {lang["copied"]}
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                    </td>
 
-                                                                                    <div class="col-sm-2 pointer scaled-hover">
 
-
-                                                                                    </div>
+                                                                                                </tr>
+                                                                                            ))}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </>
+                                                                            ) : (
+                                                                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                                                                    {lang["projects.noprojectfound"]}
                                                                                 </div>
-                                                                                <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project.project_code}</p>
-                                                                                <p class="card-text">{lang["createby"]}: {item.project.create_by}</p>
-
-                                                                                <p>{lang["time"]}: {
-                                                                                    lang["time"] === "Time" ?
-                                                                                        item.project.create_at?.replace("lúc", "at") :
-                                                                                        formatDate(item.project.create_at)
-                                                                                }</p>
-
-
-
-                                                                                <div className="d-flex position-relative">
-                                                                                    <p class="card-title font-weight-bold mt-1 mr-2">{lang["projectstatus"]}: </p>
-                                                                                    <div>
-                                                                                        <span className="d-block status-label" style={{
-                                                                                            backgroundColor: (status.find((s) => s.value === item.project.project_status) || {}).color
-                                                                                        }}>
-                                                                                            {(status.find((s) => s.value === item.project.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                        </span>
-
-                                                                                    </div>
-
-                                                                                </div>
-                                                                                {/* <p class="card-title font-weight-bold mt-1 mr-2">{lang["activation"]}:  </p> */}
-                                                                                <p class="mt-1 mr-2">UUID: {item.uuid} </p>
-                                                                                <p class="card-title font-weight-bold mt-1 mr-2">{lang["key"]}:  </p>
-                                                                                <textarea type="text" class="form-control" value={item.key}
-                                                                                    style={{ minHeight: 270 }}
-                                                                                    spellCheck={false}
-                                                                                />
-                                                                                
-
-
-                                                                            </div>
-                                                                        </div>
+                                                                            )
+                                                                        }
                                                                     </div>
-
-                                                                ))
+                                                                    <div className="d-flex justify-content-between align-items-center mt-2">
+                                                                        <p>
+                                                                            {lang["show"]} {indexOfFirstKey + 1}-{Math.min(indexOfLastKey, projects.length)} {lang["of"]} {projects.length} {lang["results"]}
+                                                                        </p>
+                                                                        <nav aria-label="Page navigation example">
+                                                                            <ul className="pagination mb-0">
+                                                                                {/* Nút đến trang đầu */}
+                                                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginate(1)}>
+                                                                                        &#8810;
+                                                                                    </button>
+                                                                                </li>
+                                                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
+                                                                                        &laquo;
+                                                                                    </button>
+                                                                                </li>
+                                                                                {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                                {Array(totalPages).fill().map((_, index) => {
+                                                                                    if (
+                                                                                        index + 1 === currentPage ||
+                                                                                        (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
+                                                                                    ) {
+                                                                                        return (
+                                                                                            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                                                <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                                                    {index + 1}
+                                                                                                </button>
+                                                                                            </li>
+                                                                                        );
+                                                                                    }
+                                                                                    return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                                                })}
+                                                                                {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
+                                                                                        &raquo;
+                                                                                    </button>
+                                                                                </li>
+                                                                                {/* Nút đến trang cuối */}
+                                                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                                                    <button className="page-link" onClick={() => paginate(totalPages)}>
+                                                                                        &#8811;
+                                                                                    </button>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </nav>
+                                                                    </div>
+                                                                </div>
                                                             ) :
                                                                 <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
                                                                     {lang["projects.noprojectfound"]}
@@ -155,6 +238,7 @@ export default () => {
                                             }
 
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

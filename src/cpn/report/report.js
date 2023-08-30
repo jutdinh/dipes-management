@@ -73,7 +73,7 @@ export default () => {
             })
     }, [])
     // console.log(projects.tasks.hitory)
-    const exportToExcel = ( project ) => {
+    const exportToExcel = (project) => {
         // console.log(dataExport)
         const projectTasks = project.tasks;
         // console.log(projectTasks)
@@ -88,11 +88,11 @@ export default () => {
         const projectMaster = project.manager;
         const header = [
             "STT",
-            "Yêu cầu",
+            "Công việc",
             "Người thực hiện",
             "Trạng thái",
             "Ngày cập nhật (dd/MM/yyyy)",
-            "Ghi chú"
+            "Mô tả"
         ];
         const data = projectTasks.map((task, index) => {
 
@@ -227,19 +227,21 @@ export default () => {
 
     const handleStatusChange = (event) => {
         setFilterStatus(event.target.value);
+        setCurrentPage(1)
     }
 
     const onClickTrigger = (project) => {
-        fetch(`${ proxy }/projects/p/${ project.project_id }/report/data`,{
+        fetch(`${proxy}/projects/p/${project.project_id}/report/data`, {
             headers: {
                 Authorization: _token
             }
-        }).then( res => res.json() ).then( res => {
+        }).then(res => res.json()).then(res => {
             const { success } = res;
-            if( success ){
+            console.log(res)
+            if (success) {
                 const { data } = res;
-                const { project } = data                
-                exportToExcel( project )
+                const { project } = data
+                exportToExcel(project)
             }
         })
     }
@@ -253,6 +255,15 @@ export default () => {
         // Nếu có trạng thái được chọn, chỉ hiển thị dự án với trạng thái tương ứng
         return project.project_status == filterStatus;
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 13;
+
+    const indexOfLastReport = currentPage * rowsPerPage;
+    const indexOfFirstReport = indexOfLastReport - rowsPerPage;
+    const currentReport = filteredProjects.slice(indexOfFirstReport, indexOfLastReport);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const totalPages = Math.ceil(filteredProjects.length / rowsPerPage);
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -268,47 +279,135 @@ export default () => {
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             {loaded ? (
-                                <><div class="full price_table padding_infor_info">
+                                <><div class="full padding_infor_info">
 
                                     <div className="container-fluid">
-                                        <div class="d-flex align-items-center mb-4">
-                                            <div class="col-sm-2">
-                                                <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
-                                                    <option value="">{lang["allstatus"]}</option>
-                                                    {statusProject.map(status =>
-                                                        <option value={status.value}>{lang[`${status.label}`]}</option>
-                                                    )}
-                                                </select>
+                                        <div class="col-md-12">
+                                            <div class=" align-items-center ml-3 mb-1">
+                                                <div class="col-sm-4" style={{ maxWidth: "150", width: "200px" }}>
+                                                    <select value={filterStatus} class=" form-control mt-2 mrl-15" onChange={handleStatusChange}>
+                                                        <option value="">{lang["allstatus"]}</option>
+                                                        {statusProject.map(status =>
+                                                            <option value={status.value}>{lang[`${status.label}`]}</option>
+                                                        )}
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        {
-                                            filteredProjects && filteredProjects.length > 0 ? (
-                                                <>{filteredProjects.map((project) => (
-                                                    <div key={project.project_id} class="row group">
-                                                        <div class="col-md-12 col-lg-12">
-                                                            <p>{lang["projectname"]}: <b class="font-weight-bold">{project.project_name}</b></p>
-                                                            <p>{lang["projectcode"]}: {project.project_code} </p>
-                                                            <p>{lang["log.create_at"]}: {formatDate(project.create_at)}</p>
-                                                            <p>{lang["projectstatus"]}:
-                                                                <span className="status-label d-inline-block ml-1" style={{
-                                                                    backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
-                                                                    whiteSpace: "nowrap",
-                                                                }}>
-                                                                    {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                                </span>
-                                                            </p>
-                                                            <button type="button" style={{ width: "90px" }} class="btn btn-primary mt-3" onClick={() => onClickTrigger(project)}>
-                                                                {lang["export"]}
-                                                            </button>
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                {
+                                                    currentReport && currentReport.length > 0 ? (
+                                                        <>
+                                                            <table class="table table-striped ">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold" scope="col">{lang["projectname"]}</th>
+                                                                        <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["projectcode"]}</th>
+                                                                        <th class="font-weight-bold" style={{ width: "180px" }} scope="col">{lang["log.create_at"]}</th>
+                                                                        <th class="font-weight-bold align-center" style={{ width: "100px" }} scope="col">{lang["projectstatus"]}</th>
+                                                                        {
+                                                                            ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                            <th class="font-weight-bold align-center" style={{ width: "80px" }}>{lang["log.action"]}</th>
+                                                                        }
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {currentReport.map((project, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>{indexOfFirstReport + index + 1}</td>
+                                                                            <td style={{ maxWidth: "700px" }}>
+                                                                                <div style={{
+                                                                                    width: "100%",
+                                                                                    overflow: "hidden",
+                                                                                    textOverflow: "ellipsis",
+                                                                                    whiteSpace: "nowrap"
+                                                                                }}>
+                                                                                    {project.project_name}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td style={{ maxWidth: "200px" }}>
+                                                                                <div style={{
+                                                                                    width: "100%",
+                                                                                    overflow: "hidden",
+                                                                                    textOverflow: "ellipsis",
+                                                                                    whiteSpace: "nowrap"
+                                                                                }}>
+                                                                                    {project.project_code}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>{formatDate(project.create_at)}</td>
+                                                                            <td><span className="status-label d-inline-block align-center" style={{
+                                                                                backgroundColor: (statusProject.find((s) => s.value === project.project_status) || {}).color,
+                                                                                whiteSpace: "nowrap", minWidth: "100px"
+                                                                            }}>
+                                                                                {lang[`${(statusProject.find((s) => s.value === project.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                                                            </span></td>
+                                                                            <td> <span type="button" style={{ width: "90px" }} class="btn btn-primary" onClick={() => onClickTrigger(project)}>
+                                                                                {lang["export"]}
+                                                                            </span></td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </>
+                                                    ) : (
+                                                        <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
+                                                            {lang["projects.noprojectfound"]}
                                                         </div>
-                                                    </div>
-                                                ))}
-                                                </>) : (
-                                                <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
-                                                    {lang["projects.noprojectfound"]}
-                                                </div>
-                                            )
-                                        }
+                                                    )
+                                                }
+                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <p>
+                                                    {lang["show"]} {indexOfFirstReport + 1}-{Math.min(indexOfLastReport, filteredProjects.length)} {lang["of"]} {filteredProjects.length} {lang["results"]}
+                                                </p>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul className="pagination mb-0">
+                                                        {/* Nút đến trang đầu */}
+                                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(1)}>
+                                                                &#8810;
+                                                            </button>
+                                                        </li>
+                                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
+                                                                &laquo;
+                                                            </button>
+                                                        </li>
+                                                        {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                        {Array(totalPages).fill().map((_, index) => {
+                                                            if (
+                                                                index + 1 === currentPage ||
+                                                                (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
+                                                            ) {
+                                                                return (
+                                                                    <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                        <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                            {index + 1}
+                                                                        </button>
+                                                                    </li>
+                                                                );
+                                                            }
+                                                            return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                        })}
+                                                        {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
+                                                                &raquo;
+                                                            </button>
+                                                        </li>
+                                                        {/* Nút đến trang cuối */}
+                                                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                            <button className="page-link" onClick={() => paginate(totalPages)}>
+                                                                &#8811;
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 </>

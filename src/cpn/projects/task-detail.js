@@ -38,6 +38,7 @@ export default () => {
 
 
     function formatDateTask(input) {
+        if (input === null || input === undefined) return null
         const dateParts = input.split('-');
         if (dateParts.length !== 3) return null;
         const [year, month, day] = dateParts;

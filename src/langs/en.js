@@ -444,6 +444,8 @@ export default {
     "error.checkday_timeline": "The timeline must be within the time period of the task",
     "export task": "Export task list",
     "createproject":"Create project",
+    "avatar": "Avatar",
+    "copied":"Copied"
 
 
 }

@@ -448,7 +448,9 @@ export default {
     "search.code":"Tìm theo mã dự án...",
     "reload": "Tải lại",
     "error.checkday_timeline": "Timeline phải nằm trong khoảng thời gian của công việc",
-    "export task": "Xuất danh sách công việc"
+    "export task": "Xuất danh sách công việc",
+    "avatar": "Ảnh đại diện",
+    "copied":"Đã sao chép"
 
 
 

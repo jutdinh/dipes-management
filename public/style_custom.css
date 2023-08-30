@@ -7,6 +7,9 @@
     z-index: 1000; 
     padding: 10px 0; 
 }
+.user-name {
+    user-select: none;
+}
 
 .column1_project {
     
@@ -1007,6 +1010,14 @@ img[class="scaled-hover-target"] {
 
 
 /* CSS cho phần popup */
+
+.user-popup-title {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+}
+
 .user-popup {
     position: fixed;
     font-size: 14px;
@@ -1031,9 +1042,10 @@ img[class="scaled-hover-target"] {
     position: fixed;
     font-size: 14px;
     top: 50%;
-    left: 60%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    width: 350px;
+    max-width: 350px; 
+    width: 90%;
     padding: 5px;
     background-color: white;
     border: 1px solid #ccc;
@@ -1049,10 +1061,11 @@ img[class="scaled-hover-target"] {
 .user-popup3 {
     position: fixed;
     font-size: 14px;
-    top: 50%;
-    left: 70%;
+    top: 40%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    width: 350px;
+    max-width: 350px; 
+    width: 90%;
     padding: 5px;
     background-color: white;
     border: 1px solid #ccc;
@@ -1068,10 +1081,11 @@ img[class="scaled-hover-target"] {
 .user-popup4 {
     position: fixed;
     font-size: 14px;
-    top: 35%;
-    left: 60%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    width: 350px;
+    max-width: 350px; 
+    width: 90%;
     padding: 5px;
     background-color: white;
     border: 1px solid #ccc;
@@ -1141,7 +1155,25 @@ img[class="scaled-hover-target"] {
     border: none;
     cursor: pointer;
 }
+.copy-alert {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;   
+    top: 10%;          
+    left: 50%;           
+    transform: translateX(-50%); 
+    z-index: 10;          
+}
 
+
+.copy-alert i {
+    color: #4CAF50;
+    margin-right: 5px;
+}
 .container-custom {
     display: flex;
     justify-content: space-between;
@@ -1151,6 +1183,10 @@ img[class="scaled-hover-target"] {
     margin-right: 30px;
 }
 
+.icon-exchange {
+    cursor: pointer;
+    margin-left: 10px;
+}
 
 .bordered {
     border: 1px solid #ced4da;
@@ -1175,7 +1211,14 @@ img[class="scaled-hover-target"] {
     padding-bottom: 5px;
     min-height: 50px;
 }
-
+.profile_contacts_list_user {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 3px;
+    padding-bottom: 5px;
+    
+}
 .profile_contacts_chart {
     display: flex;
     justify-content: start;
