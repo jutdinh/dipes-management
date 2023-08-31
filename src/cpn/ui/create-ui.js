@@ -33,8 +33,10 @@ export default () => {
     const [layout, setLayout] = useState(0); // Default is Layout 1
 
     const handleClickLayout = (layoutNumber) => {
+        console.log(layoutNumber)
         setLayout(layoutNumber);
     }
+    // console.log(layout)
 
     const defaultValues = {
         title: "",
@@ -687,6 +689,11 @@ export default () => {
     // console.log(modalTemp.layout_id)
     // console.log(apis)
 
+    useEffect(() => {
+        console.log(modalTemp)
+    }, [modalTemp])
+
+
 
     return (
         <div class="midde_cont">
@@ -743,7 +750,7 @@ export default () => {
                                         <select
                                             className="form-control mb-3"
                                             value={modalTemp.layout_id}
-                                            onChange={(e) => setModalTemp({ ...modalTemp, layout_id: e.target.value })}
+                                            onChange={(e) => setModalTemp({ ...modalTemp, layout_id: parseInt(e.target.value) })}
                                         >
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
@@ -815,6 +822,7 @@ export default () => {
                                         tables && tables.length > 0 ? (
                                             <>
                                                 {/* Chọn trường tính toán */}
+                                               { Number(modalTemp.layout_id) !== 2 ? (
                                                 <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["calculated fields"]}</p>
@@ -858,7 +866,9 @@ export default () => {
                                                         }
                                                     </div>
                                                 </div>
+                                               ) : null}
                                                 {/* Chọn trường thống kê */}
+                                                { Number(modalTemp.layout_id) !== 2 ? (
                                                 <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["statistical fields"]}</p>
@@ -903,6 +913,7 @@ export default () => {
                                                         }
                                                     </div>
                                                 </div>
+                                                ) : null}
                                             </>
                                         ) : (
                                             null

@@ -95,18 +95,18 @@ export default (props) => {
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head_cus d-flex">
                             <div class="heading1_cus margin_0 ">
-                            <div class="tab_style2">
-                                            <div class="tabbar">
-                                                <nav>
-                                                    <div class="nav nav-tabs" style={{ borderBottomStyle: "0px" }} id="nav-tab" role="tablist">
-                                                        
-                                                        
-                                                             <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" >  <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || lang["ui.table"]}</h5></a>
-                                                      
-                                                    </div>
-                                                </nav>
+                                <div class="tab_style2">
+                                    <div class="tabbar">
+                                        <nav>
+                                            <div class="nav nav-tabs" style={{ borderBottomStyle: "0px" }} id="nav-tab" role="tablist">
+
+
+                                                <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" >  <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || lang["ui.table"]}</h5></a>
+
                                             </div>
-                                        </div>
+                                        </nav>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -116,17 +116,17 @@ export default (props) => {
                                     <div class="table-responsive">
                                         {
                                             data && data.length > 0 ? (
-                                                <table class="table table-striped">
+                                                <table class="table table-hover">
                                                     <thead>
-                                                        <tr>
-                                                            <th class="font-weight-bold" style={{width: "80px"}}>{lang["log.no"]}</th>
+                                                        <tr class="color-tr">
+                                                            <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.no"]}</th>
                                                             {data[0]?.fields.map((ui, index) => (
                                                                 <th class="font-weight-bold">{ui.field_name}</th>
                                                             ))}
                                                             {calculate.map((cal, index) => (
                                                                 <th class="font-weight-bold">{cal.display_name}</th>
                                                             ))}
-                                                            
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -139,7 +139,7 @@ export default (props) => {
                                                                 {uis_temp_cal.map((calc, calcIndex) => (
                                                                     <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>
                                                                 ))}
-                                                                
+
                                                             </tr>
                                                         ))}
                                                         {/* {statistic && statistic.map((stat, index) => (
@@ -155,10 +155,10 @@ export default (props) => {
                                             ) : (
                                                 <table class="table table-hover ">
                                                     <thead>
-                                                        <tr>
-                                                            <th class="font-weight-bold" style={{width: "80px"}}>{lang["log.no"]}</th>
+                                                        <tr class="color-tr">
+                                                            <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.no"]}</th>
                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                            
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -166,7 +166,7 @@ export default (props) => {
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
                                                                 <td>{ui.data}</td>
-                                                               
+
                                                             </tr>
                                                         ))}
                                                         {/* <tr>
@@ -206,7 +206,7 @@ export default (props) => {
                         </div>
                     </div>
                 </div>
-             
+
             </div>
         </div>
     )

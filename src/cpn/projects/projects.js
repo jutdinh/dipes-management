@@ -732,7 +732,7 @@ export default () => {
                             <div class="full graph_head_project">
                                 <div class="heading1_project margin_0">
                                     <div class="row">
-                                        <div class="col-md-3 mb-1 mt-1">
+                                        <div class="col-md-3 ml-3 mb-1 mt-1">
                                             <select
                                                 class="form-control pointer"
                                                 value={searchStatus}
@@ -747,7 +747,7 @@ export default () => {
                                                 })}
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-1 mt-1">
+                                        <div class="col-md-3 mb-1 ml-3 mt-1">
                                             <input
                                                 type="text"
                                                 class="form-control"
@@ -756,7 +756,7 @@ export default () => {
                                                 onChange={(e) => setSearchName(e.target.value)}
                                             />
                                         </div>
-                                        <div class="col-md-3 mb-1 mt-1">
+                                        <div class="col-md-3 mb-1 ml-3 mt-1">
                                             <input
                                                 type="text"
                                                 class="form-control"
@@ -765,7 +765,7 @@ export default () => {
                                                 onChange={(e) => setSearchCode(e.target.value)}
                                             />
                                         </div>
-                                        <div class="col-md-2 mb-1 mt-1">
+                                        <div class="col-md-2 mb-1 ml-3 mt-1">
                                             <input
                                                 type="date"
                                                 class="form-control pointer"
@@ -774,11 +774,9 @@ export default () => {
                                                 onChange={(e) => setSearchDate(e.target.value)}
                                             />
                                         </div>
+                                        <i class="fa fa-refresh pointer ml-4 mt-2 size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
 
-
-                                        <div class="col-md-1 mt-2">
-                                            <i class="fa fa-refresh pointer size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
-                                        </div>
+                                       
 
                                     </div>
 
