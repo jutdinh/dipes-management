@@ -1174,6 +1174,7 @@ export default () => {
                                             <i class="fa fa-edit"></i>
                                         </button> */}
                                     </div>
+
                                     <div class="table-responsive">
                                         {
                                             sortedMembers && sortedMembers.length > 0 ? (
@@ -1184,7 +1185,7 @@ export default () => {
                                                                 <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["members"]}</th>
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
-                                                                <th class="font-weight-bold"style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
+                                                                <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
                                                                     ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                     <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.action"]}</th>
@@ -1243,54 +1244,57 @@ export default () => {
                                             )
                                         }
                                     </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <p>
-                                            {lang["show"]} {indexOfFirstMember + 1}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}
-                                        </p>
-                                        <nav aria-label="Page navigation example">
-                                            <ul className="pagination mb-0">
-                                                {/* Nút đến trang đầu */}
-                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(1)}>
-                                                        &#8810;
-                                                    </button>
-                                                </li>
-                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
-                                                        &laquo;
-                                                    </button>
-                                                </li>
-                                                {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                {Array(totalPages).fill().map((_, index) => {
-                                                    if (
-                                                        index + 1 === currentPage ||
-                                                        (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
-                                                    ) {
-                                                        return (
-                                                            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                                                <button className="page-link" onClick={() => paginate(index + 1)}>
-                                                                    {index + 1}
-                                                                </button>
-                                                            </li>
-                                                        );
-                                                    }
-                                                    return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
-                                                })}
-                                                {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
-                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
-                                                        &raquo;
-                                                    </button>
-                                                </li>
-                                                {/* Nút đến trang cuối */}
-                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(totalPages)}>
-                                                        &#8811;
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </div>
+                                    {currentMembers && currentMembers.length > 0 ? (
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <p>
+                                                {lang["show"]} {currentMembers.length > 0 ? indexOfFirstMember + 1 : 0}-{Math.min(indexOfLastMember, sortedMembers.length)} {lang["of"]} {sortedMembers.length} {lang["results"]}
+                                            </p>
+                                            <nav aria-label="Page navigation example">
+                                                <ul className="pagination mb-0">
+                                                    {/* Nút đến trang đầu */}
+                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(1)}>
+                                                            &#8810;
+                                                        </button>
+                                                    </li>
+                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(Math.max(1, currentPage - 1))}>
+                                                            &laquo;
+                                                        </button>
+                                                    </li>
+                                                    {currentPage > 2 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                    {Array(totalPages).fill().map((_, index) => {
+                                                        if (
+                                                            index + 1 === currentPage ||
+                                                            (index + 1 >= currentPage - 1 && index + 1 <= currentPage + 1)
+                                                        ) {
+                                                            return (
+                                                                <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                    <button className="page-link" onClick={() => paginate(index + 1)}>
+                                                                        {index + 1}
+                                                                    </button>
+                                                                </li>
+                                                            );
+                                                        }
+                                                        return null;  // Đảm bảo trả về null nếu không có gì được hiển thị
+                                                    })}
+                                                    {currentPage < totalPages - 1 && <li className="page-item"><span className="page-link">...</span></li>}
+                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(Math.min(totalPages, currentPage + 1))}>
+                                                            &raquo;
+                                                        </button>
+                                                    </li>
+                                                    {/* Nút đến trang cuối */}
+                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                        <button className="page-link" onClick={() => paginate(totalPages)}>
+                                                            &#8811;
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    ) : (null)
+                                    }
 
                                 </div>
                             </div>

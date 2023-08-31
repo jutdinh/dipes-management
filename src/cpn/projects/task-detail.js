@@ -764,9 +764,14 @@ export default () => {
                                         {lang["listtask"]}
                                     </h5>
                                 </div>
-                                <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
-                                    <i class="fa fa-download pointer icon-ui"></i>
-                                </div>
+                                {
+                                    tasks && tasks.length > 0 ? (
+                                        <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
+                                            <i class="fa fa-download pointer icon-ui"></i>
+                                        </div>
+                                    ) : null
+                                }
+
                             </div>
                             <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
@@ -795,7 +800,7 @@ export default () => {
                                                 </button>
                                             }
                                         </div>
-                                      
+
                                         <div class="table-outer">
                                             <table class="table-head">
                                                 <thead>
@@ -1126,7 +1131,7 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>Timeline <span className='red_star'>*</span></label>
-                                                                <input type="date" min={task.start} max={task.end}  className="form-control" value={task.timeline} onChange={
+                                                                <input type="date" min={task.start} max={task.end} className="form-control" value={task.timeline} onChange={
                                                                     (e) => { setTask({ ...task, timeline: e.target.value }) }
                                                                 } />
 

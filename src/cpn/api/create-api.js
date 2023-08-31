@@ -44,6 +44,8 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
+
+    console.log(modalTemp)
     // const showApiResponseMessage = (status) => {
     //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
     //     const message = responseMessages[status];
@@ -373,35 +375,49 @@ export default () => {
 
     const [tableFields, setTableFields] = useState([]);
     console.log(tableFields)
-    useEffect(() => {
-        const fetchFields = async (tableId) => {
-            const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
-                headers: {
-                    Authorization: _token
+        useEffect(() => {
+            const fetchFields = async (tableId) => {
+                console.log(tableId)
+                const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
+                    headers: {
+                        Authorization: _token
+                    }
+                });
+                const resp = await res.json();
+
+                if (resp.success) {
+                    return resp.data; // Trả về toàn bộ đối tượng data
+                } else {
+                    console.error('Error fetching fields:', resp.content);
+                    return null; // Trả về null nếu có lỗi
                 }
-            });
-            const resp = await res.json();
-
-            if (resp.success) {
-                return resp.data; // Trả về toàn bộ đối tượng data
-            } else {
-                console.error('Error fetching fields:', resp.content);
-                return null; // Trả về null nếu có lỗi
             }
-        }
 
-        const fetchAllFields = async () => {
-            const fieldsByTable = {};
-            for (const tableId of modalTemp.tables) {
-                const fields = await fetchFields(tableId);
-                fieldsByTable[tableId] = fields;
+            const fetchAllFields = async () => {
+                const promises = modalTemp.tables.map(async tableId => {
+                    const fields = await fetchFields(tableId);
+                    return { tableId, fields };
+                });
+            
+                const results = await Promise.all(promises);
+                console.log(1111111111,results)
+                
+                const fieldsByTable = {};
+                for (const { tableId, fields } of results) {
+                    console.log(tableId)
+                    fieldsByTable[tableId] = fields;
+                }
+                               
+                // const fieldsByTable = results.map(({ tableId, fields }) => ({ [tableId]: fields }));
+            
+                console.log(1232132132131231233123213,fieldsByTable);
+                setTableFields(fieldsByTable);
             }
-            setTableFields(fieldsByTable);
-        }
+            
 
-        fetchAllFields();
+            fetchAllFields();
 
-    }, [modalTemp.tables]);
+        }, [modalTemp.tables]);
 
     // luu truong body 
     const [selectedFieldsBody, setSelectedFieldsBody] = useState({});
@@ -432,7 +448,7 @@ export default () => {
     // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
-    // console.log("FieldParams", selectedFields)
+    console.log("Fieldshow", selectedFieldsModal2)
 
     function isPrimaryKey(tableId, fieldId) {
         return tableFields[tableId]?.primary_key.includes(fieldId);
@@ -1640,10 +1656,6 @@ export default () => {
                                                         function isPrimaryKey(tableId, fieldId) {
                                                             return tableFields[tableId]?.primary_key.includes(fieldId);
                                                         }
-
-
-
-
                                                         // Check if the field is of type 'date'
                                                         let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
 
@@ -2106,7 +2118,7 @@ export default () => {
                     </div>
                 </div>
                 {/*add Field statistical */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">padding_infor_info
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
