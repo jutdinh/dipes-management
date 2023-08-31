@@ -364,7 +364,11 @@ export default (props) => {
                                 </div>
                                
                             </div> */}
-                            <i class="fa fa-exchange icon-exchange pointer size-24 mt-1 mb-2 ml-4" onClick={toggleTable} title='View'></i>
+                            <div class="col-md-12 d-flex"> 
+                            <i class="fa fa-exchange icon-exchange ml-auto pointer size-24 mt-1 mb-2 mr-1" onClick={toggleTable} title='View'></i>
+
+                            </div>
+                           
                             {/* Modal add */}
                             <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
                                 <div class="modal-dialog modal-lg modal-dialog-center" role="document">
@@ -576,12 +580,13 @@ export default (props) => {
                                                                                         profile.role}</td>
                                                                         <td>{profile.email}</td>
                                                                         <td>{profile.phone}</td>
-                                                                        <td class="align-center">{<div class="profile_contacts_listuser ">
-                                                                            <img class="img-responsive" width={32} src={proxy + profile.avatar} alt="#" />
+                                                                        <td class="align-center">{
+                                                                            <div class="profile_contacts_list_user ">
+                                                                            <img class="img-responsive circle-image_list_user" src={proxy + profile.avatar} alt="#" />
                                                                         </div>}</td>
                                                                         <td class="align-center">
-                                                                            <i class="fa fa-edit icon-edit pointer size-24" onClick={() => handleUpdateUser(profile)} data-toggle="modal" data-target="#myEditmodal"></i>
-                                                                            <i class="fa fa-trash-o icon-delete pointer size-24 mb-1 ml-2" onClick={() => handleDeleteUser(profile)}></i>
+                                                                            <i class="fa fa-edit icon-edit pointer  size-24" onClick={() => handleUpdateUser(profile)} data-toggle="modal" data-target="#myEditmodal"></i>
+                                                                            <i class="fa fa-trash-o icon-delete pointer size-24  ml-2" onClick={() => handleDeleteUser(profile)}></i>
 
                                                                         </td>
                                                                     </tr>
@@ -591,7 +596,7 @@ export default (props) => {
                                                     </>
                                                 ) : (
                                                     <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
-                                                        {lang["projects.noprojectfound"]}
+                                                          {lang["not found user"]}
                                                     </div>
                                                 )
                                             }

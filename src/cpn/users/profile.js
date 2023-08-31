@@ -6,7 +6,7 @@ import { Profile } from '.';
 import responseMessages from "../enum/response-code";
 
 export default (props) => {
-    const { lang, proxy } = useSelector(state => state);
+    const { lang, proxy, functions } = useSelector(state => state);
 
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
@@ -14,27 +14,27 @@ export default (props) => {
     const [profile, setProfile] = useState({});
     const [editUser, setEditUser] = useState({});
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
-    const showApiResponseMessage = (status) => {
-        const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
-        const message = responseMessages[status];
+    // const showApiResponseMessage = (status) => {
+    //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
+    //     const message = responseMessages[status];
 
-        const title = message?.[langItem]?.type || "Unknown error";
-        const description = message?.[langItem]?.description || "Unknown error";
-        const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
+    //     const title = message?.[langItem]?.type || "Unknown error";
+    //     const description = message?.[langItem]?.description || "Unknown error";
+    //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
 
-        Swal.fire({
-            title,
-            text: description,
-            icon,
-            showConfirmButton: false,
-            timer: 1500,
-        }).then(() => {
-            if (icon === "success") {
-                window.location.reload();
+    //     Swal.fire({
+    //         title,
+    //         text: description,
+    //         icon,
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //     }).then(() => {
+    //         if (icon === "success") {
+    //             window.location.reload();
 
-            }
-        });
-    };
+    //         }
+    //     });
+    // };
 
     useEffect(() => {
         fetch(`${proxy}/auth/u/${user.username}`, {
@@ -81,7 +81,7 @@ export default (props) => {
                     .then((data) => {
                         const { success, content, status } = data;
 
-                        showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status);
                     })
                     .catch((error) => {
                         // Handle any errors that occur during the request
@@ -163,9 +163,9 @@ export default (props) => {
                 if (success) {
                     const stringifiedUser = JSON.stringify(requestBody.account)
                     localStorage.setItem("user", stringifiedUser)
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 } else {
-                    showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             });
     }
@@ -270,7 +270,7 @@ export default (props) => {
                                                     alt="#"
                                                 />
                                                 <input type="file"
-                                                    accept='image/*'
+                                                    accept="image/png, image/jpeg, image/jpg, image/gif"
                                                     ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload} />
                                             </div>
                                             <div class="profile_contant">

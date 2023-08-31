@@ -173,6 +173,11 @@
     width: 48px;
 }
 
+.circle-image_list_user {
+    border-radius: 100%;
+    width: 32px;
+}
+
 .circle-image-home {
     border-radius: 100%;
     width: 25px;
@@ -1272,7 +1277,10 @@ input[type="date"]:valid + .date-label {
     justify-content: start;
     align-items: center;
     gap: 3px;
-    padding-bottom: 5px;
+    padding-bottom: 1px;
+    /* min-height: 50px; */
+    display: inline-block; 
+    vertical-align: middle;
     
 }
 .profile_contacts_chart {
