@@ -237,7 +237,7 @@ export default () => {
             }
         }).then(res => res.json()).then(res => {
             const { success } = res;
-            console.log(res)
+            // console.log(res)
             if (success) {
                 const { data } = res;
                 const { project } = data

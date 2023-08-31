@@ -84,7 +84,7 @@ export default () => {
 
         return Object.values(temp).every(x => x === "");
     }
-    console.log(errorUi)
+    // console.log(errorUi)
     // const handleSubmitModal = () => {
     //     if (validateApiname()) {
     //         setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -104,7 +104,7 @@ export default () => {
     //         addUI();
     //     }
     // }, [tempFieldParam]);
-    console.log(modalTemp.api_id)
+    // console.log(modalTemp.api_id)
     const addUI = () => {
         if (validateUiname()) {
 
@@ -144,7 +144,7 @@ export default () => {
 
 
 
-            console.log(dataBody)
+            // console.log(dataBody)
             const apiUrl = modalTemp.layout_id === "2" ? `${proxy}/uis/apiview` : `${proxy}/uis/ui`;
             fetch(apiUrl, {
                 method: "POST",

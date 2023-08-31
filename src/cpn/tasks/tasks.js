@@ -97,12 +97,12 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    console.log("a", combinedArray)
+    // console.log("a", combinedArray)
 
 
-    console.log("admin", selectedUsers)
-    console.log("imple", selectedImple)
-    console.log("monitor", selectedMonitor)
+    // console.log("admin", selectedUsers)
+    // console.log("imple", selectedImple)
+    // console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -162,7 +162,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(users)
+    // console.log(users)
     useEffect(() => {
         fetch(`${proxy}/auth/all/accounts`, {
             headers: {
@@ -305,7 +305,7 @@ export default () => {
             username: member.username
 
         };
-        console.log(requestBody)
+        // console.log(requestBody)
         Swal.fire({
             title: 'Xác nhận xóa',
             text: 'Bạn có chắc chắn muốn xóa thành viên này?',
@@ -327,7 +327,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        console.log(resp)
+                        // console.log(resp)
                         if (status === "0x52404") {
                             Swal.fire({
                                 title: "Cảnh báo!",

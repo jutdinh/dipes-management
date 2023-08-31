@@ -206,7 +206,7 @@ export default () => {
         // window.location.href = `tables`;
     };
     const updateApi = (apiData) => {
-        console.log(apiData)
+        // console.log(apiData)
         window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };
@@ -233,7 +233,7 @@ export default () => {
     const totalPagesApi = Math.ceil(filteredApi.length / rowsPerPageApi);
 
     const methods = ['GET', 'POST', 'PUT', 'DELETE'];
-console.log(currentApiPage)
+// console.log(currentApiPage)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

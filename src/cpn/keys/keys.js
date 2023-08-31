@@ -51,7 +51,7 @@ export default () => {
 
     }, [])
     const handleCopy = (data) => {
-        console.log(data)
+        // console.log(data)
         copy(data.key);
 
         setIsCopied(true);

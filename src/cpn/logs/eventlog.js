@@ -149,7 +149,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         const formatedData = data.map(log => {
@@ -181,7 +181,7 @@ export default () => {
     }, [logs])
 
     const detailLogs = async (logid) => {
-        console.log(logid)
+        // console.log(logid)
         setLogDetail(logid)
     };
 
@@ -250,7 +250,7 @@ export default () => {
         }
         return indices
     }
-    console.log(logDetail.ip);
+    // console.log(logDetail.ip);
 
     return (
         <div class="midde_cont">

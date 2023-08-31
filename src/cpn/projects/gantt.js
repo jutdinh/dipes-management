@@ -20,7 +20,7 @@ const TimelineChart = ({ data, project, data_raw }) => {
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
     const [selectedMonth, setSelectedMonth] = useState(moment().month());
-    console.log(selectedMonth)
+    // console.log(selectedMonth)
     // ///focus đến tháng hiện tại
     // useEffect(() => {
     //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
@@ -349,10 +349,10 @@ const TimelineChart = ({ data, project, data_raw }) => {
                                 const selectedStartDate = moment().year(selectedYear).month(selectedMonth).date(1);
                                 const selectedEndDate = moment(selectedStartDate).endOf('month');
                                 
-                                console.log("Track Start Date:", trackStartDate.format('YYYY-MM-DD'));
-                                console.log("Track End Date:", trackEndDate.format('YYYY-MM-DD'));
-                                console.log("Selected Start Date:", selectedStartDate.format('YYYY-MM-DD'));
-                                console.log("Selected End Date:", selectedEndDate.format('YYYY-MM-DD'));
+                                // console.log("Track Start Date:", trackStartDate.format('YYYY-MM-DD'));
+                                // console.log("Track End Date:", trackEndDate.format('YYYY-MM-DD'));
+                                // console.log("Selected Start Date:", selectedStartDate.format('YYYY-MM-DD'));
+                                // console.log("Selected End Date:", selectedEndDate.format('YYYY-MM-DD'));
 
                                 const isTrackStartBetween = trackStartDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
                                 const isTrackEndBetween = trackEndDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');

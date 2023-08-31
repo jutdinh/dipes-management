@@ -45,7 +45,7 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
 
-    console.log(modalTemp)
+    // console.log(modalTemp)
     // const showApiResponseMessage = (status) => {
     //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
     //     const message = responseMessages[status];
@@ -147,7 +147,7 @@ export default () => {
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
-            console.log("adddsa")
+            // console.log("adddsa")
             addApi();
         }
     }, [tempFieldParam]); 
@@ -159,7 +159,7 @@ export default () => {
                 ...tempFieldParam
             }
         }
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/apis/api`, {
             method: "POST",
             headers: {
@@ -374,7 +374,7 @@ export default () => {
     // console.log(tables)
 
     const [tableFields, setTableFields] = useState([]);
-    console.log(tableFields)
+    // console.log(tableFields)
         useEffect(() => {
             const fetchFields = async (tableId) => {
                 console.log(tableId)
@@ -400,7 +400,7 @@ export default () => {
                 });
             
                 const results = await Promise.all(promises);
-                console.log(1111111111,results)
+                // console.log(1111111111,results)
                 
                 const fieldsByTable = {};
                 for (const { tableId, fields } of results) {
@@ -410,7 +410,7 @@ export default () => {
                                
                 // const fieldsByTable = results.map(({ tableId, fields }) => ({ [tableId]: fields }));
             
-                console.log(1232132132131231233123213,fieldsByTable);
+                // console.log(1232132132131231233123213,fieldsByTable);
                 setTableFields(fieldsByTable);
             }
             

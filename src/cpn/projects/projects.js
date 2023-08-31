@@ -9,7 +9,7 @@ import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const storedProjects = useSelector(state => state.projects)
-    console.log(storedProjects)
+    // console.log(storedProjects)
     const dispatch = useDispatch()
 
     const [errors, setErrors] = useState({});
@@ -433,7 +433,7 @@ export default () => {
     //             break;
     //     }
     // }, [projects])
-    console.log(projects)
+    // console.log(projects)
     const sortedProjects = projects?.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
     const [searchName, setSearchName] = useState('');
     const [searchCode, setSearchCode] = useState('');

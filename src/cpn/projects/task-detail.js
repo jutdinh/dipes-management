@@ -91,7 +91,7 @@ export default () => {
     const [fakeTasks, setFakeTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
-    console.log(task)
+    // console.log(task)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -124,7 +124,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data) {
                         // data.sort((a, b) => {
@@ -222,7 +222,7 @@ export default () => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(errors)
+        // console.log(errors)
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -445,8 +445,8 @@ export default () => {
                 }
             });
     }
-    console.log(tasks)
-    console.log(project)
+    // console.log(tasks)
+    // console.log(project)
 
     const statusMapping = {
         1: "Khởi tạo",
@@ -460,7 +460,7 @@ export default () => {
         3: "Thấp"
     };
     const exportToExcel = () => {
-        console.log(project)
+        // console.log(project)
 
         // console.log(dataExport)
         const projectTasks = project.tasks;
@@ -739,7 +739,7 @@ export default () => {
         const item = statusPriority.find(item => item.value === parseInt(taskPriority));
         return item ? lang[item.label] || '' : '';
     }
-    console.log(tasks)
+    // console.log(tasks)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

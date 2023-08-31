@@ -48,7 +48,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     if (data) {
 
@@ -82,7 +82,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(project)
+    // console.log(project)
 
     // useEffect(() => {
     //     if(project.project_type === "database") {
@@ -118,7 +118,7 @@ export default () => {
     const [selectedMonitor, setSelectedMonitor] = useState([]);
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
-    console.log(selectedUsers)
+    // console.log(selectedUsers)
     const updateProjectMembers = () => {
 
         const updatedMembers = [
@@ -180,9 +180,9 @@ export default () => {
         setShowImplementationPopup(false);
     };
 
-    console.log(manager)
+    // console.log(manager)
     const dataManager = users.find(user => user.username === manager);
-    console.log(dataManager)
+    // console.log(dataManager)
     updateProjectMembers();
     const submitUpdateProject = async (e) => {
         e.preventDefault();
@@ -216,7 +216,7 @@ export default () => {
 
 
         }
-        console.log(requestBody)
+        // console.log(requestBody)
         const response = await fetch(`${proxy}/projects/update`, {
             method: "PUT",
             headers: {
@@ -228,7 +228,7 @@ export default () => {
 
         const resp = await response.json();
         const { success, content, data, status } = resp;
-        console.log(resp)
+        // console.log(resp)
 
         if (success) {
             showApiResponseMessage(status);
@@ -289,7 +289,7 @@ export default () => {
         return valid
     }
 
-    console.log(users)
+    // console.log(users)
     return (
         <div class="midde_cont">
             <div class="container-fluid">

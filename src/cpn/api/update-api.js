@@ -237,7 +237,7 @@ export default () => {
                 // console.error('Lỗi khi sao chép dữ liệu vào clipboard:', error);
             });
     };
-    console.log(allApi)
+    // console.log(allApi)
     const copyURL = () => {
 
         clipboardCopy(allApi.cai_gi_cung_dc_het_tron_a)
@@ -379,7 +379,7 @@ export default () => {
     // };
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
-        console.log("a")
+        // console.log("a")
         const selectedTableData = allTable.find(
             (table) => table.table_name === selectedTableName
         );
@@ -792,13 +792,13 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+        // console.log(sta)
         setStatisticalUpdate(sta)
-        console.log(modalTemp.fields)
+        // console.log(modalTemp.fields)
 
         const raw_group_by = modalTemp.fields.filter(field => sta.group_by.includes(field.fomular_alias));
         setGroupBy(raw_group_by)
-        console.log(raw_group_by)
+        // console.log(raw_group_by)
     }
     const validateStatisticalUpdate = () => {
         let temp = {};
@@ -884,9 +884,9 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
     const [groupBy, setGroupBy] = useState([])
-    console.log(groupBy)
+    // console.log(groupBy)
     const addOrRemoveGroupByField = (id) => {
-        console.log(id)
+        // console.log(id)
         const corespondingGroupByField = groupBy.find(f => f.id == id);
         let newGroupBy = [...groupBy];
         if (corespondingGroupByField) {
@@ -896,7 +896,7 @@ export default () => {
             const field = modalTemp.fields.flat().find(f => f.id == id);
             if (field) {
                 newGroupBy = [...groupBy, field];
-                console.log(newGroupBy)
+                // console.log(newGroupBy)
             }
         }
         setGroupBy(newGroupBy);

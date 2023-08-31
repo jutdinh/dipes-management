@@ -322,7 +322,7 @@ export default () => {
     };
 
 
-    console.log(tempFields)
+    // console.log(tempFields)
 
 
 
@@ -781,9 +781,7 @@ export default () => {
 
     }
     const [tableUpdate, setUpdateTable] = useState([]);
-    useEffect(() => {
-        // console.log(tableUpdate);
-    }, [tableUpdate]);
+
     // console.log(fieldTempUpdate)
     const updateTable = (e) => {
         e.preventDefault();
@@ -882,7 +880,7 @@ export default () => {
 
 
     const addField = (tableId) => {
-        console.log("Call AddField")
+        // console.log("Call AddField")
         const fieldRequestBody = {
             version_id,
             table_id: getTableFields.id,
@@ -890,7 +888,7 @@ export default () => {
                 ...tempFields
             ],
         };
-        console.log("field", fieldRequestBody)
+        // console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -914,7 +912,7 @@ export default () => {
     };
 
     const addKey = ({ tableId, data }) => {
-        console.log("Call add Key")
+        // console.log("Call add Key")
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
         const newPrimaryKey = [...getTableFields.primary_key, ...primaryKeyid]
@@ -937,7 +935,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: foreignKeys
         };
-        console.log("KLey", KeyRequestBody)
+        // console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -960,7 +958,7 @@ export default () => {
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
     const currentTable = getTableFields.fields?.slice(indexOfFirstTable, indexOfLastTable);
-    console.log(currentTable)
+    // console.log(currentTable)
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(getTableFields.fields?.length / rowsPerPageTable);
     /// Add field
@@ -982,8 +980,8 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    console.log("p key", primaryKey)
-    console.log("f key", foreignKeys)
+    // console.log("p key", primaryKey)
+    // console.log("f key", foreignKeys)
     // console.log(foreignKey)
     // console.log(tempFields)
     // console.log(primaryKey)

@@ -27,7 +27,7 @@ export default (props) => {
         setShowTable(!showTable);
     }
 
-    console.log(showTable)
+    // console.log(showTable)
 
 
     // const showApiResponseMessage = (status) => {

@@ -410,7 +410,7 @@ export default () => {
 
 
     };
-    console.log(tempFields)
+    // console.log(tempFields)
 
     const addField = (tableId, prevStatus = undefined) => {
         if (primaryKey.length !== 0) {

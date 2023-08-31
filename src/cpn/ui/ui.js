@@ -65,7 +65,7 @@ export default () => {
                 }
             })
     }, [])
-    console.log(uis)
+    // console.log(uis)
 
     const handleUpdateStatus = (uiid) => {
         // console.log("ui", uiid)
