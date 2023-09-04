@@ -147,7 +147,7 @@ export default () => {
 
 
             // console.log(dataBody)
-            const apiUrl = modalTemp.layout_id === "2" ? `${proxy}/uis/apiview` : `${proxy}/uis/ui`;
+            const apiUrl = modalTemp.layout_id === 2 ? `${proxy}/uis/apiview` : `${proxy}/uis/ui`;
             fetch(apiUrl, {
                 method: "POST",
                 headers: {
