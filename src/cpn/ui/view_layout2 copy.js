@@ -85,7 +85,7 @@ export default (props) => {
             <div class="row column_title">
                 <div class="col-md-12">
                     <div class="page_title" style={{ marginLeft: "0px", marginRight: "0px" }}>
-                        <h4 style={{ marginLeft: "-30px" }}>Layout 1</h4>
+                        <h4 style={{ marginLeft: "-30px" }}>Layout 2</h4>
                     </div>
                 </div>
             </div>

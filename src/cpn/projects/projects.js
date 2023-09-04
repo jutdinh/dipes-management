@@ -665,7 +665,7 @@ export default () => {
                                                                             checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                             onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                         />
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                                        <span class="user-name" >
 
                                                                             <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
@@ -697,7 +697,7 @@ export default () => {
                                                                             checked={tempSelectedImple.some(u => u.username === user.username)}
                                                                             onChange={() => handleImpleCheck(user, 'deployer')}
                                                                         />
-                                                                        <span class="user-name" onClick={() => handleAdminCheck(user, 'deployer')}>
+                                                                        <span class="user-name" >
 
                                                                             <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
 
@@ -730,55 +730,60 @@ export default () => {
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head_project">
-                                <div class="heading1_project margin_0">
+                                <div class="heading1_project margin_0 ">
                                     <div class="row">
-                                        <div class="col-md-3 ml-3 mb-1 mt-1">
-                                            <select
-                                                class="form-control pointer"
-                                                value={searchStatus}
-                                                onChange={(e) => setSearchStatus(Number(e.target.value))}
-                                            >
-                                                <option value="">{lang["all.status"]}</option>
+                                        <div class="col-md-12">
+                                            <div class="row">
 
-                                                {statusProject.map((status, index) => {
-                                                    return (
-                                                        <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-1 ml-3 mt-1">
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder={lang["search.name"]}
-                                                value={searchName}
-                                                onChange={(e) => setSearchName(e.target.value)}
-                                            />
-                                        </div>
-                                        <div class="col-md-3 mb-1 ml-3 mt-1">
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder={lang["search.code"]}
-                                                value={searchCode}
-                                                onChange={(e) => setSearchCode(e.target.value)}
-                                            />
-                                        </div>
-                                        <div class="col-md-2 mb-1 ml-3 mt-1">
-                                            <input
-                                                type="date"
-                                                class="form-control pointer"
-                                                placeholder={lang["search.code"]}
-                                                value={searchDate}
-                                                onChange={(e) => setSearchDate(e.target.value)}
-                                            />
-                                        </div>
-                                        <i class="fa fa-refresh pointer ml-4 mt-2 size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
+                                                <div class="col-md-3 ml-3 mb-1 mt-1">
+                                                    <select
+                                                        class="form-control pointer"
+                                                        value={searchStatus}
+                                                        onChange={(e) => setSearchStatus(Number(e.target.value))}
+                                                    >
+                                                        <option value="">{lang["all.status"]}</option>
 
-                                       
+                                                        {statusProject.map((status, index) => {
+                                                            return (
+                                                                <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
+                                                            );
+                                                        })}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mb-1 ml-p-3 mt-1">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        placeholder={lang["search.name"]}
+                                                        value={searchName}
+                                                        onChange={(e) => setSearchName(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div class="col-md-3 mb-1 ml-p-3 mt-1">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        placeholder={lang["search.code"]}
+                                                        value={searchCode}
+                                                        onChange={(e) => setSearchCode(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div class="col-md-3 mb-1 ml-p-3 mt-1 d-flex align-items-center">
+                                                    <input
+                                                        type="date"
+                                                        class="form-control pointer mr-3"
+                                                        placeholder={lang["search.code"]}
+                                                        value={searchDate}
+                                                        onChange={(e) => setSearchDate(e.target.value)}
+                                                    />
+                                                    <i class="fa fa-refresh pointer ml-p-20 mt- size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
+                                                </div>
 
+
+                                            </div>
+                                        </div>
                                     </div>
+
 
                                 </div>
                             </div>
@@ -842,7 +847,7 @@ export default () => {
                                                                                                     <p>{lang["projectempty"]} </p>
                                                                                                 </div>
                                                                                         }
-                                                                                    
+
                                                                                         {/* {
                                                                     item.members.length > 2 &&
                                                                     <div className="img-responsive circle-image extra-images">

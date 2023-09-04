@@ -1,3 +1,20 @@
+
+.pie-chart-container {
+    width: 60%;
+}
+
+.pie-legend-container {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+
+
+
+
 .fixed-header {
     position: fixed;
     top: 0;
@@ -1755,6 +1772,12 @@ input[type="date"]:valid + .date-label {
     width: 18px;
     border-radius: 100%;
 
+}
+.ml-p-3{
+    margin-left: -10px;
+}
+.ml-p-20{
+    margin-left: 20px;
 }
 
 .error-login {
