@@ -428,12 +428,13 @@ export default () => {
                                             </li>
 
                                             {getRelativeIndex(currentPage, MOVE_STEP).map(page =>
-                                                <li key={page} className={`page-item ${page == currentPage ? "disabled" : ""}}`}>
-                                                    <button className="page-link" onClick={() => { setCurrentPage(page) }}>
+                                                <li key={page} className={`page-item ${page == currentPage ? "active" : ""}`}>
+                                                    <button className={`page-link ${page == currentPage ? "bg-primary text-white" : ""}`} onClick={() => { setCurrentPage(page) }}>
                                                         {page}
                                                     </button>
                                                 </li>
                                             )}
+
 
                                             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                                                 <button className="page-link" onClick={() => { setCurrentPage(currentPage + 1) }}>
