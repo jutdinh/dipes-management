@@ -334,7 +334,7 @@ export default () => {
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["time"]}</b></label>
-                                            <span className="d-block"> {detailUi?.create_at} </span>
+                                            <span className="d-block"> {formatDate(detailUi?.create_at)} </span>
                                         </div>
 
                                     </div>

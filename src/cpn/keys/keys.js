@@ -62,7 +62,7 @@ export default () => {
         }, 2000);
     };
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 9;
+    const rowsPerPage =11;
 
     const indexOfLastKey = currentPage * rowsPerPage;
     const indexOfFirstKey = indexOfLastKey - rowsPerPage;

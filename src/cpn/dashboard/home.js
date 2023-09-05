@@ -341,7 +341,7 @@ export default () => {
 
                     </div>
                     <div class="col-xs-12 col-md-5 col-lg-5">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full ">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["project-status-chart"]}</h5>
@@ -420,7 +420,7 @@ export default () => {
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-5 col-lg-5">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full ">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["project-lead-chart"]}</h5>
@@ -501,14 +501,14 @@ export default () => {
 
                 <div class="row column1">
                     <div class="col-lg-12 col-lg-3">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full ">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["project-status-chart-year"]}</h5>
                                 </div>
                             </div>
                             <div class="map_section padding_infor_info_statis">
-                                <ResponsiveContainer width="90%" height={370}>
+                                <ResponsiveContainer width="90%" height={360}>
                                     <BarChart
                                         style={{ margin: 'auto', display: 'block' }}
                                         width={1100}

@@ -51,10 +51,7 @@ export default (props) => {
                 "id": 4,
                 "data": lang["data"] + " 4"
             },
-            {
-                "id": 5,
-                "data": lang["data"] + " 5"
-            }
+           
         ]
     }
 
@@ -107,10 +104,7 @@ export default (props) => {
                 "id": 4,
                 "data": lang["data"] + " 4"
             },
-            {
-                "id": 5,
-                "data": lang["data"] + " 5"
-            }
+            
         ];
 
         let pieData = [];
@@ -186,7 +180,7 @@ export default (props) => {
                                     <div class="tabbar">
                                         <nav>
                                             <div class="nav nav-tabs" style={{ borderBottomStyle: "0px" }} id="nav-tab" role="tablist">
-                                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" aria-selected="true">   <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || lang["ui.table"]}</h5></a>
+                                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" aria-selected="true">   <h5> <a ></a>{title || lang["ui.table"]}</h5></a>
                                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile_s2" role="tab" aria-controls="nav-profile_s2" aria-selected="false"> <h5>{lang["statistic"]}: {title || lang["ui.table_statis"]}</h5></a>
                                             </div>
                                         </nav>
@@ -198,7 +192,6 @@ export default (props) => {
 
                                 <FontAwesomeIcon icon={faSquarePlus} className="icon-add" />
                             </div>
-
 
                             <div class="ml-4 mt-2 pointer" data-toggle="modal" data-target="#exportExcel" title="Export to file">
 

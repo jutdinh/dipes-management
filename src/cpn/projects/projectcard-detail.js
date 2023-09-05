@@ -1868,7 +1868,7 @@ export default () => {
                 {/* Website info */}
                 <div class="row">
                     <div style={{ paddingLeft: "10px" }} class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>

@@ -328,7 +328,7 @@ export default (props) => {
 
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 14;
+    const rowsPerPage = 13;
 
     const indexOfLastUser = currentPage * rowsPerPage;
     const indexOfFirstUser = indexOfLastUser - rowsPerPage;

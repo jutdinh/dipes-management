@@ -277,7 +277,7 @@ export default () => {
                 </div>
                 <div class="row column1">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full ">
                             {loaded ? (
                                 <><div class="full padding_infor_info">
 

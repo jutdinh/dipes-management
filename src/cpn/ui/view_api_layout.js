@@ -101,7 +101,7 @@ export default (props) => {
                                             <div class="nav nav-tabs" style={{ borderBottomStyle: "0px" }} id="nav-tab" role="tablist">
 
 
-                                                <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" >  <h5> <a ><i class="fa fa-chevron-circle-left mr-3"></i></a>{title || lang["ui.table"]}</h5></a>
+                                                <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="#nav-home_s2" role="tab" aria-controls="nav-home_s2" >  <h5>{title || lang["ui.table"]}</h5></a>
 
                                             </div>
                                         </nav>

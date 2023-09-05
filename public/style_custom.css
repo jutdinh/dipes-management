@@ -10,7 +10,14 @@
     align-items: flex-start;
     justify-content: center;
 }
-
+#content {
+    width: 100%;
+    min-height: 100vh;
+    transition: ease all 0.3s;
+    position: relative;
+    padding: 60px 25px 20px 305px;
+    background: #f8f8f8;
+}
 
 
 
@@ -716,7 +723,7 @@ table tr {
 .price_table table th,
 .price_table table td {
     border: 1px solid #ced4da;
-    padding: 10px 15px;
+    padding: 3px 15px;
     font-size: 14px;
     color: #666;
     vertical-align: middle;
@@ -1466,10 +1473,10 @@ input[type="date"]:valid + .date-label {
 }
 
 .padding_infor_info-logs {
-    padding: 10px 35px;
+    padding: 0px 35px;
     float: left;
     width: 100%;
-    min-height: 125px;
+    /* min-height: 125px; */
 }
 
 .icon::before {

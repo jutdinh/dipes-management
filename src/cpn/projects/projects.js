@@ -728,7 +728,7 @@ export default () => {
                 </div>
                 <div class="row column1_project ">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             <div class="full graph_head_project">
                                 <div class="heading1_project margin_0 ">
                                     <div class="row">
