@@ -733,8 +733,8 @@ export default () => {
                                                                         <td>{users.fullname}</td>
                                                                         <td>{formatDate(field.create_at.toISOString())}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdFieldTemp(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getIdFieldTemp(field)} data-toggle="modal" data-target="#editFieldTemp" title={lang["edit"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => deleteFieldTemp(field)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}

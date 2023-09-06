@@ -111,13 +111,13 @@ export default () => {
                                                                         {
                                                                             currentKey && currentKey.length > 0 ? (
                                                                                 <>
-                                                                                    <table class="table table-striped ">
+                                                                                    <table class="table table ">
                                                                                         <thead>
-                                                                                            <tr>
-                                                                                                <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
+                                                                                            <tr class="color-tr" style={{height:"40px"}}> 
+                                                                                                <th class="font-weight-bold" style={{ width: "20px" }} scope="col">{lang["log.no"]}</th>
                                                                                                 <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["projectname"]}</th>
                                                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["projectcode"]}</th>
-                                                                                                <th class="font-weight-bold" style={{ width: "180px" }} scope="col">UUID:</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "180px" }} scope="col">UUID</th>
                                                                                                 <th class="font-weight-bold align-center" style={{ width: "300px" }} scope="col">{lang["key"]}</th>
 
                                                                                             </tr>

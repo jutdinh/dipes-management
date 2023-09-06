@@ -740,11 +740,11 @@ export default () => {
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <label class="font-weight-bold">Layout</label>
                                             {modalTemp.layout_id == 0 ?
-                                                <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
+                                                <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
                                                 : modalTemp.layout_id == 1 ?
-                                                    <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
                                                     :
-                                                    <i class="fa fa-eye size pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(2)} data-toggle="modal" data-target="#preview"></i>
+                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(2)} data-toggle="modal" data-target="#preview"></i>
                                             }
                                         </div>
                                         <select
@@ -851,8 +851,8 @@ export default () => {
                                                                             <td>{calculate.fomular_alias}</td>
                                                                             <td>{calculate.fomular}</td>
                                                                             <td class="align-center " style={{ minWidth: "130px" }}>
-                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
-                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
+                                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
                                                                             </td>
                                                                         </tr>
                                                                     ))}
@@ -898,8 +898,8 @@ export default () => {
                                                                             <td>{statistic.group_by?.map(field => field.field_name).join(", ")}</td>
                                                                             <td>{statistic.fomular}</td>
                                                                             <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
-                                                                                <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
+                                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
                                                                             </td>
                                                                         </tr>
                                                                     ))}

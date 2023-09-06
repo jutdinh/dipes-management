@@ -224,8 +224,8 @@ export default (props) => {
                                                                                     <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>
                                                                                 ))}
                                                                                 <td class="align-center" >
-                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
+                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" title={lang["delete"]}></i>
                                                                                 </td>
                                                                             </tr>
                                                                         ))}
@@ -254,8 +254,8 @@ export default (props) => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{ui.data}</td>
                                                                                 <td class="align-center" >
-                                                                                    <i class="fa fa-edit size pointer icon-margin icon-edit" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size pointer icon-margin icon-delete" title={lang["delete"]}></i>
+                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" title={lang["delete"]}></i>
                                                                                 </td>
                                                                             </tr>
                                                                         ))}

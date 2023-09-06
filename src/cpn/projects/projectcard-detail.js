@@ -1183,7 +1183,7 @@ export default () => {
                                                         <thead>
                                                             <tr>
                                                                 <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["members"]}</th>
+                                                                <th class="font-weight-bold align-center" style={{ width: "100px" }} scope="col">{lang["members"]}</th>
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
@@ -1196,7 +1196,7 @@ export default () => {
                                                             {currentMembers.map((member, index) => (
                                                                 <tr key={member.username}>
                                                                     <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                                                    <td><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                    <td class="align-center"><img src={proxy + member.avatar} class="img-responsive circle-image-cus " alt="#" /></td>
                                                                     <td>{member.fullname}</td>
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
@@ -1229,7 +1229,7 @@ export default () => {
                                                                     {
                                                                         ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
                                                                         <td class="align-center">
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     }
                                                                 </tr>

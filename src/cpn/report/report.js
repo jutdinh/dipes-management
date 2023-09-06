@@ -299,9 +299,9 @@ export default () => {
                                                 {
                                                     currentReport && currentReport.length > 0 ? (
                                                         <>
-                                                            <table class="table table-striped ">
+                                                            <table class="table table">
                                                                 <thead>
-                                                                    <tr>
+                                                                    <tr class="color-tr">
                                                                         <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
                                                                         <th class="font-weight-bold" scope="col">{lang["projectname"]}</th>
                                                                         <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["projectcode"]}</th>

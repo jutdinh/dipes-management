@@ -228,9 +228,9 @@ export default () => {
                                                                         </td>
                                                                         <td>{ui.type === `ui` ? lang["api auto"] : lang["api custom"]}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
+                                                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
                                                                             {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}

@@ -551,9 +551,9 @@ export default (props) => {
                                             {
                                                 currentUser && currentUser.length > 0 ? (
                                                     <>
-                                                        <table class="table table-striped ">
+                                                        <table class="table table ">
                                                             <thead>
-                                                                <tr>
+                                                                <tr class="color-tr">
                                                                     <th class="font-weight-bold" style={{ width: "30px" }} scope="col">{lang["log.no"]}</th>
                                                                     <th class="font-weight-bold" scope="col">{lang["username"]}</th>
                                                                     <th class="font-weight-bold" style={{ width: "300px" }} scope="col">{lang["fullname"]}</th>
@@ -585,8 +585,8 @@ export default (props) => {
                                                                             <img class="img-responsive circle-image_list_user" src={proxy + profile.avatar} alt="#" />
                                                                         </div>}</td>
                                                                         <td class="align-center">
-                                                                            <i class="fa fa-edit icon-edit pointer  size-24" onClick={() => handleUpdateUser(profile)} data-toggle="modal" data-target="#myEditmodal"></i>
-                                                                            <i class="fa fa-trash-o icon-delete pointer size-24  ml-2" onClick={() => handleDeleteUser(profile)}></i>
+                                                                            <i class="fa fa-edit icon-edit pointer size-24" onClick={() => handleUpdateUser(profile)} data-toggle="modal" data-target="#myEditmodal"></i>
+                                                                            <i class="fa fa-trash-o icon-delete pointer size-24 ml-2" onClick={() => handleDeleteUser(profile)}></i>
 
                                                                         </td>
                                                                     </tr>

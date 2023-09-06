@@ -41,9 +41,9 @@ export default () => {
 
 
     const eventType = {}
-    eventType[lang["log.information"]] = { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-log " }
-    eventType[lang["log.warning"]] = { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-log " }
-    eventType[lang["log.error"]] = { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-log " }
+    eventType[lang["log.information"]] = { id: 0, label: lang["log.information"], value: 1, color: "#3029F7", icon: "fa fa-info-circle size-24 " }
+    eventType[lang["log.warning"]] = { id: 1, label: lang["log.warning"], value: 2, color: "#f3632e", icon: "fa fa-warning size-24 " }
+    eventType[lang["log.error"]] = { id: 2, label: lang["log.error"], value: 3, color: "#FF0000", icon: "fa fa-times-circle size-24 " }
 
 
 
@@ -316,7 +316,7 @@ export default () => {
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h5>{lang["log.listlog"]}</h5>
@@ -325,9 +325,9 @@ export default () => {
                             <div class="table_section padding_infor_info">
                                 <div class="table-responsive" style={{ minHeight: "50vh" }}>
                                     {/* Qua tr met */}
-                                    <table class="table table-striped">
+                                    <table class="table table">
                                         <thead>
-                                            <tr>
+                                            <tr class="color-tr">
                                                 <th scope="col">{lang["log.no"]}</th>
                                                 <th scope="col" class="align-center pointer">
                                                     <div className="d-flex align-items-center"
@@ -401,7 +401,7 @@ export default () => {
                                                     <td>{log.event_description.slice(0, 100)}{log.event_description.length > 100 ? "..." : ""}</td>
                                                     <td>{formatDate(log.create_at)}</td>
                                                     <td class="align-center">
-                                                        <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
+                                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => detailLogs(log)} data-toggle="modal" data-target="#viewLog" style={{ color: "green" }} title={lang["btn.viewdetail"]}></i>
 
                                                     </td>
                                                 </tr>

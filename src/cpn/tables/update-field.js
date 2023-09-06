@@ -1121,8 +1121,8 @@ export default () => {
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             {/* <i class="fa fa-arrow-up size pointer icon-margin" onClick={() => moveField(index, 'up')}></i>
                                                                             <i class="fa fa-arrow-down size pointer icon-margin" onClick={() => moveField(index, 'down')}></i> */}
-                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdField(field)} data-toggle="modal" data-target="#editField" title={lang["edit"]}></i>
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => deleteField(field)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getIdField(field)} data-toggle="modal" data-target="#editField" title={lang["edit"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => deleteField(field)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}
