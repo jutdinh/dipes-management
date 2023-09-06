@@ -1038,7 +1038,7 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                <td class="align-center" style={{ width: "150px" }}>
                                                                     <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
