@@ -759,7 +759,7 @@ export default () => {
                                     </div>
                                     {Number(modalTemp.layout_id) === 2 && (
                                         <div className="form-group col-lg-6">
-                                            <label htmlFor="sel1">API <span className='red_star'>*</span></label>
+                                            <label class="font-weight-bold" htmlFor="sel1">API <span className='red_star'>*</span></label>
                                             <select className="form-control" name="role" value={modalTemp.api_id} onChange={(e) => setModalTemp({ ...modalTemp, api_id: e.target.value })}>
                                                 <option value={""}>{lang["choose"]}</option>
 
