@@ -22,4 +22,14 @@ router.delete("/remove/project/member", async (req, res) => {
         res.send({ success: false, status: "0x4501246" })
     }
 })
+
+router.delete("/project/:project_id/period/:period_id", async (req, res) => { 
+    // try{
+        await ProjectsController.removeTaskPeriod(req, res, [ permission.uad, permission.ad ]) 
+    // }catch{
+    //     res.send({ success: false, status: "0x4501246" })
+    // }
+})
+
+
 module.exports = router;

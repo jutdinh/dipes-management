@@ -695,7 +695,7 @@ class ProjectsController extends Controller {
             if( period ){
                 period.tasks = Object.values( period.tasks )
                 period.period_members = Object.values( period.period_members )
-                
+
                 context.data = period
                 context.status = "0x4501256"
                 context.content = "Lấy thông tin giai đoạn thành công"
@@ -869,7 +869,27 @@ class ProjectsController extends Controller {
     }
 
     removeTaskPeriod = async ( req, res ) => {
-        this.writeReq(req)     
+        this.writeReq(req)
+
+        const { project_id, period_id } = req.params                
+                
+        const context = await this.projectGeneralCheck(req, project_id)        
+        const { success, objects } = context;
+
+        if( success ){
+            const { Project } = objects;
+            const project  = Project.getData()
+    
+            const { tasks } = project
+            if( tasks ){
+                delete tasks[`${ period_id }`]
+                await Project.__modifyAndSaveChange__( "tasks", tasks )
+            }
+            context.status = "0x4501258"
+            context.content = "Xóa giai đoạn thành công"
+        }
+        delete context.objects
+        res.status(200).send(context)
     }
 
     createTask = async (req, res) => {
