@@ -116,7 +116,7 @@
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, .125);
     border-radius: .25rem;
-    min-height: 415px;
+    /* min-height: 415px; */
 }
 
 .counter_section_about {
@@ -592,7 +592,7 @@
     width: 100%;
     border-top: solid #ddd 1px;
     margin-top: 3px;
-    padding: 10px 0px 0px 0px;
+    padding: 5px 0px 5px 0px;
 }
 
 .card-body {
@@ -600,7 +600,7 @@
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     padding: 1.25rem;
-    padding-top: 1.25rem;
+    padding-top: 0.75rem;
     padding-right: 1.25rem;
     padding-bottom: 3px;
     padding-left: 1.25rem;
@@ -1418,7 +1418,18 @@ input[type="date"]:valid + .date-label {
     min-height: 500px;
 
 }
+.list_project {
+    padding: 10px 15px !important;
+   
 
+}
+.padding_infor_info_list {
+    padding: 0px 35px;
+    float: left;
+    width: 100%;
+    min-height: 500px;
+
+}
 .padding_infor_info_245 {
     padding: 10px 35px;
     float: left;

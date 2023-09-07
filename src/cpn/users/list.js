@@ -365,7 +365,7 @@ export default (props) => {
                                
                             </div> */}
                             <div class="col-md-12 d-flex"> 
-                            <i class="fa fa-exchange icon-exchange ml-auto pointer size-24 mt-1 mb-2 mr-1" onClick={toggleTable} title='View'></i>
+                            <i class="fa fa-list icon-exchange ml-auto pointer size-24 mt-1 mb-1 mr-1" onClick={toggleTable} title='View'></i>
 
                             </div>
                            
@@ -656,13 +656,13 @@ export default (props) => {
                                             loaded ? (
                                                 <>
                                                     {profiles && profiles.length > 0 ? (
-                                                        <div class="full price_table padding_infor_info">
+                                                        <div class="full price_table padding_infor_info_list">
                                                             <div class="container-fluid">
                                                                 {admins.length > 0 && (
                                                                     <div class="row group">
                                                                         <h5 class="col-lg-12 mb-1">{lang["administrator"]}</h5>
                                                                         {admins.map((item) => (
-                                                                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                                                                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details">
                                                                                 <div class="contact_blog">
                                                                                     <div class="contact_inner">
                                                                                         <div class="left-cus">

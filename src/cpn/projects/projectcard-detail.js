@@ -197,7 +197,7 @@ export default () => {
     const [versions, setProjectVersion] = useState([]);
     const [users, setUsers] = useState([]);
     const [projectmanager, setProjectManager] = useState({});
-
+    // console.log(projectdetail)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -1127,19 +1127,20 @@ export default () => {
                                 <div class="table_section padding_infor_info">
                                     <p class="font-weight-bold">{lang["projectname"]}:</p>
                                     <p class="mb-2">{projectdetail.project_name}</p>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                  
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
                                             <p class="mb-2">{projectdetail.project_code}</p>
                                         </div>
-                                        <div>
-                                            <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                        <div class="col-md-4">
+                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
                                             {versions.map(version => (
                                                 <p class="mb-2">{version.version_name}</p>
                                             ))}
                                         </div>
-                                        <div>
-                                            <p class="font-weight-bold">{lang["projecttype"]}:</p>
+                                        <div class="col-md-4">
+                                        <p class="font-weight-bold">{lang["projecttype"]}:</p>
                                             <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
                                         </div>
                                     </div>
@@ -1163,11 +1164,24 @@ export default () => {
                                             )}
                                         </div>
                                     </div>
-                                    <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
-                                    <div class="profile_contacts">
-                                        <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
-                                        {projectdetail.manager?.fullname}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p class="font-weight-bold mt-2">{lang["projectmanager"]}: </p>
+                                            <div class="profile_contacts">
+                                                <img class="img-responsive circle-image" src={proxy + projectdetail.manager?.avatar} alt="#" />
+                                                {projectdetail.manager?.fullname}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="font-weight-bold mt-2">{lang["createby"]}:</p>
+                                            <p> {projectdetail.create_by?.fullname}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="font-weight-bold mt-2">{lang["time"]}:</p>
+                                            <p> {formatDate(projectdetail.create_at)}</p>
+                                        </div>
                                     </div>
+
                                     <div class="d-flex align-items-center mb-1">
                                         <p class="font-weight-bold">{lang["projectmember"]}: </p>
                                         {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto mb-1" data-toggle="modal" data-target="#editMember">

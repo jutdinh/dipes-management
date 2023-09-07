@@ -734,15 +734,9 @@ export default () => {
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="row">
-
-                                                <div class="col-md-3 ml-3 mb-1 mt-1">
-                                                    <select
-                                                        class="form-control pointer"
-                                                        value={searchStatus}
-                                                        onChange={(e) => setSearchStatus(Number(e.target.value))}
-                                                    >
+                                                <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                                    <select class="form-control pointer" value={searchStatus} onChange={(e) => setSearchStatus(Number(e.target.value))}>
                                                         <option value="">{lang["all.status"]}</option>
-
                                                         {statusProject.map((status, index) => {
                                                             return (
                                                                 <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
@@ -750,44 +744,25 @@ export default () => {
                                                         })}
                                                     </select>
                                                 </div>
-                                                <div class="col-md-3 mb-1 ml-p-3 mt-1">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        placeholder={lang["search.name"]}
-                                                        value={searchName}
-                                                        onChange={(e) => setSearchName(e.target.value)}
-                                                    />
+                                                <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                                    <input type="text" class="form-control" placeholder={lang["search.name"]} value={searchName} onChange={(e) => setSearchName(e.target.value)} />
                                                 </div>
-                                                <div class="col-md-3 mb-1 ml-p-3 mt-1">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        placeholder={lang["search.code"]}
-                                                        value={searchCode}
-                                                        onChange={(e) => setSearchCode(e.target.value)}
-                                                    />
+                                                <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                                    <input type="text" class="form-control" placeholder={lang["search.code"]} value={searchCode} onChange={(e) => setSearchCode(e.target.value)} />
                                                 </div>
-                                                <div class="col-md-3 mb-1 ml-p-3 mt-1 d-flex align-items-center">
-                                                    <input
-                                                        type="date"
-                                                        class="form-control pointer mr-3"
-                                                        placeholder={lang["search.code"]}
-                                                        value={searchDate}
-                                                        onChange={(e) => setSearchDate(e.target.value)}
-                                                    />
-                                                    <i class="fa fa-refresh pointer ml-p-20 mt- size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
+                                                <div class="col-lg-3 col-md-6 col-sm-12 mb-2 d-flex align-items-center">
+                                                    <input type="date" class="form-control pointer mr-3" placeholder={lang["search.code"]} value={searchDate} onChange={(e) => setSearchDate(e.target.value)} />
+                                                    <i class="fa fa-refresh pointer ml-3 size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
                                                 </div>
-
-
                                             </div>
+
                                         </div>
                                     </div>
 
 
                                 </div>
                             </div>
-                            <div class="full price_table padding_infor_info">
+                            <div class="full price_table padding_infor_info list_project">
                                 <div class="row ">
 
                                     <div class="col-lg-12">
@@ -805,10 +780,10 @@ export default () => {
                                                                         <div class="col-lg-3 col-md-6 col-sm-6 mb-1">
                                                                             <div class="card">
                                                                                 <div class="card-body">
-                                                                                    <div class="row project-name-min-height">
+                                                                                    <div class="row">
                                                                                         <div class="col-sm-10" >
 
-                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 50)}{item.project_name.length > 50 ? "..." : ""}</h5>
+                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 25)}{item.project_name.length > 50 ? "..." : ""}</h5>
                                                                                         </div>
 
                                                                                         <div class="col-sm-2 cross-hide pointer scaled-hover">
@@ -816,14 +791,14 @@ export default () => {
 
                                                                                         </div>
                                                                                     </div>
-                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 24)}{item.project_code?.length > 24 ? "..." : ""}</p>
-                                                                                    <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p>
+                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 22)}{item.project_code?.length > 22 ? "..." : ""}</p>
+                                                                                    {/* <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p> */}
 
-                                                                                    <p>{lang["time"]}: {
+                                                                                    {/* <p>{lang["time"]}: {
                                                                                         lang["time"] === "Time" ?
                                                                                             formatDate(item.create_at.replace("lúc", "at")) :
                                                                                             formatDate(item.create_at)
-                                                                                    }</p>
+                                                                                    }</p> */}
                                                                                     {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
                                                                                     <p class="font-weight-bold">{lang["projectmanager"]}</p>
                                                                                     <div class="profile_contacts">
@@ -846,14 +821,6 @@ export default () => {
                                                                                                 )) : <div class="profile_contacts">
                                                                                                     <p>{lang["projectempty"]} </p>
                                                                                                 </div>
-                                                                                        }
-
-                                                                                        {/* {
-                                                                    item.members.length > 2 &&
-                                                                    <div className="img-responsive circle-image extra-images">
-                                                                        +{item.members.length - 2}
-                                                                    </div>
-                                                                } */
                                                                                         }
                                                                                         {
                                                                                             item.members.length > 2 &&
