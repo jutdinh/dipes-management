@@ -190,39 +190,64 @@ class Projects extends Model {
         /* TASK & TASK MODIFIES */
 
         this.__addProperty__("tasks", Model.types.model)
-        this.tasks.__addProperty__("task_id", Model.types.int, { auto: true })
-        this.tasks.__addProperty__("task_name", Model.types.string)
-        this.tasks.__addProperty__("task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
-        this.tasks.__addProperty__("task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
-        this.tasks.__addProperty__("task_priority", Model.types.int, { default: 1 })
-        this.tasks.__addProperty__("task_approve", Model.types.bool, { default: false })
+        this.tasks.__addProperty__("period_id", Model.types.int, { auto: true })
+        this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới" })
         this.tasks.__addProperty__("start", Model.types.datetime)
-        this.tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
-        this.tasks.__addProperty__("task_progress", Model.types.int, { default: 0 })
 
-        this.tasks.__addProperty__("members", Model.types.model)
-        this.tasks.members.__addProperty__("username", Model.types.string)
-        this.tasks.members.__addProperty__("fullname", Model.types.string)
-        this.tasks.members.__addProperty__("avatar", Model.types.string)
+        this.tasks.__addProperty__("period_members", Model.types.model)
+        this.tasks.period_members.__addProperty__("username", Model.types.string)
+        this.tasks.period_members.__addProperty__("fullname", Model.types.string)
+        this.tasks.period_members.__addProperty__("avatar", Model.types.string)
 
-        this.tasks.__addProperty__("task_modified", Model.types.model)
+        this.tasks.__addProperty__("tasks", Model.types.model)
+        this.tasks.tasks.__addProperty__("task_id", Model.types.int, { auto: true })
+        this.tasks.tasks.__addProperty__("task_name", Model.types.string)
+        this.tasks.tasks.__addProperty__("task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.tasks.__addProperty__("task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
+        this.tasks.tasks.__addProperty__("task_priority", Model.types.int, { default: 1 })
+        this.tasks.tasks.__addProperty__("task_approve", Model.types.bool, { default: false })
+        this.tasks.tasks.__addProperty__("start", Model.types.datetime)
+        this.tasks.tasks.__addProperty__("timeline", Model.types.datetime)
+        this.tasks.tasks.__addProperty__("end", Model.types.datetime)
+        this.tasks.tasks.__addProperty__("task_progress", Model.types.int, { default: 0 })
 
-        this.tasks.task_modified.__addProperty__("id", Model.types.int, { auto: true })
-        this.tasks.task_modified.__addProperty__("modified_by", Model.types.json)
-        this.tasks.task_modified.modified_by.__addProperty__("username", Model.types.string, { required: true })
-        this.tasks.task_modified.modified_by.__addProperty__("fullname", Model.types.string)
-        this.tasks.task_modified.modified_by.__addProperty__("avatar", Model.types.string)
+        this.tasks.tasks.__addProperty__("child_tasks", Model.types.model)
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_id", Model.types.int, { auto: true })
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string)
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })       
+        this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
+        this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)
+        this.tasks.tasks.child_tasks.__addProperty__("end", Model.types.datetime)   
+        
+        this.tasks.tasks.child_tasks.__addProperty__("members", Model.types.model)
+        this.tasks.tasks.child_tasks.members.__addProperty__("username", Model.types.string)
+        this.tasks.tasks.child_tasks.members.__addProperty__("fullname", Model.types.string)
+        this.tasks.tasks.child_tasks.members.__addProperty__("avatar", Model.types.string)
 
-        this.tasks.task_modified.__addProperty__("modified_at", Model.types.datetime, { format: "DD-MM-YYYY lúc hh:mm" } )
-        this.tasks.task_modified.__addProperty__("modified_what", Model.types.enum, { values: ["infor", "status", "approve", "other"] })
-        this.tasks.task_modified.__addProperty__("old_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
-        this.tasks.task_modified.__addProperty__("new_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.tasks.__addProperty__("members", Model.types.model)
+        this.tasks.tasks.members.__addProperty__("username", Model.types.string)
+        this.tasks.tasks.members.__addProperty__("fullname", Model.types.string)
+        this.tasks.tasks.members.__addProperty__("avatar", Model.types.string)
 
-        this.tasks.__addProperty__("create_by", Model.types.json);
-        this.tasks.create_by.__addProperty__("username", Model.types.string, { required: true })
-        this.tasks.create_by.__addProperty__("fullname", Model.types.string)
-        this.tasks.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
+        this.tasks.tasks.__addProperty__("task_modified", Model.types.model)
+
+        this.tasks.tasks.task_modified.__addProperty__("id", Model.types.int, { auto: true })
+        this.tasks.tasks.task_modified.__addProperty__("modified_by", Model.types.json)
+        this.tasks.tasks.task_modified.modified_by.__addProperty__("username", Model.types.string, { required: true })
+        this.tasks.tasks.task_modified.modified_by.__addProperty__("fullname", Model.types.string)
+        this.tasks.tasks.task_modified.modified_by.__addProperty__("avatar", Model.types.string)
+
+        this.tasks.tasks.task_modified.__addProperty__("modified_at", Model.types.datetime, { format: "DD-MM-YYYY lúc hh:mm" } )
+        this.tasks.tasks.task_modified.__addProperty__("modified_what", Model.types.enum, { values: ["infor", "status", "approve", "other"] })
+        this.tasks.tasks.task_modified.__addProperty__("old_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.tasks.task_modified.__addProperty__("new_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+
+        this.tasks.tasks.__addProperty__("create_by", Model.types.json);
+        this.tasks.tasks.create_by.__addProperty__("username", Model.types.string, { required: true })
+        this.tasks.tasks.create_by.__addProperty__("fullname", Model.types.string)
+        this.tasks.tasks.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
 
 
 
@@ -407,7 +432,18 @@ class ProjectsRecord extends Projects {
         this.setData(data)
     }
 
-    addTask = async (task) => {
+    createPeriod = async ( period ) => {
+        const data = this.getData()
+        const model = this.getModel()
+        const id = await model.__getNewId__()
+        period.period_id = id;
+
+        const { tasks } = data;
+        data.tasks = { ...tasks, [`${id}`]: period }
+        this.setData( data )
+    }
+
+    addTask = async (period_id, task) => {
         const data = this.getData()
         const model = this.getModel()
         const id = await model.__getNewId__()
@@ -417,8 +453,18 @@ class ProjectsRecord extends Projects {
         serializedData[`${id}`] = task;
 
         const { tasks } = data;
-        data.tasks = { ...tasks, ...serializedData };
-        this.setData(data)
+        const period = tasks[`${ period_id }`]
+        
+        if( period ){
+            if( !period.tasks ){
+                period.tasks = {}
+            }
+            period.tasks[`${ id }`] = task 
+            tasks[`${ period_id }`] = period
+    
+            data.tasks = tasks
+            this.setData(data)
+        }
     }
 
     makeModified = async (modified_what, modified_by, old_value, new_value, modified_at = new Date()) => {

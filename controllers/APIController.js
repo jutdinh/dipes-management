@@ -87,7 +87,7 @@ class APIController extends Controller {
                 api.cai_gi_cung_dc_het_tron_a = api.proxy_server + api.url + '/' + this.stringifyParams( tables, api.params )
             })            
 
-            // context.data = { apis: apis.filter( api => api.api_scope == "public" ) }
+            context.data = { apis: apis.filter( api => api.api_scope == "public" ) }
             context.data = { apis: apis }
         }
         

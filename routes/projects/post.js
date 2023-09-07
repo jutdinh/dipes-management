@@ -22,6 +22,13 @@ router.post('/members/', async (req, res) => {
     }
 })
 
+router.post("/periods", async (req, res) => { 
+    try{
+        await ProjectsController.createTaskPeriod(req, res)         
+   }catch{
+       res.send({ success: false, status: "0x4501246" })
+   }
+})
 
 router.post('/project/:project_id/task/',  async (req, res ) => { 
     try{
