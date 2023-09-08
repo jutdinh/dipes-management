@@ -12,6 +12,7 @@ import XLSX from 'xlsx-js-style'
 import Gantt from "./gantt"
 import { formatDate } from "../../redux/configs/format-date";
 import { da } from "date-fns/locale";
+import Stage from "./stage"
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -34,16 +35,10 @@ export default () => {
     const [project, setProject] = useState({}); //// Update project
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
+    console.log(projectdetail)
 
 
 
-    function formatDateTask(input) {
-        if (input === null || input === undefined) return null
-        const dateParts = input.split('-');
-        if (dateParts.length !== 3) return null;
-        const [year, month, day] = dateParts;
-        return `${day}/${month}/${year}`;
-    }
 
     const statusProject = [
         StatusEnum.INITIALIZATION,
@@ -91,6 +86,10 @@ export default () => {
     const [fakeTasks, setFakeTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
+
+    const [stage, setStage] = useState([]);
+    console.log(stage)
+    const [stageData, setStageData] = useState([]);
     // console.log(task)
     const [process, setProcess] = useState({});
     useEffect(() => {
@@ -150,6 +149,26 @@ export default () => {
                 }
             })
     }, [])
+    useEffect(() => {
+        fetch(`${proxy}/projects/project/${project_id}/periods`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                // console.log(166,resp)
+                if (success) {
+                    if (data && data.length > 0) {
+                        setStageData(data)
+
+                    }
+                }
+            })
+    }, [])
+
+    //    console.log(stageData)
     const filteredTasks = tasks.filter(task =>
         task.members?.some(member => member.username === _users.username) ||
         ["ad", "uad"].indexOf(auth.role) !== -1
@@ -186,6 +205,69 @@ export default () => {
         if (corespondingData != task.task_progress) {
         }
     }
+    console.log(stage)
+    const submitAddStage = (e) => {
+        e.preventDefault();
+        stage.members = selectedMemberTask.map(user => user.username);
+        const errors = {};
+        if (!stage.stage_name) {
+            errors.stage_name = lang["error.stagename"];
+        }
+        if (!stage.stage_start) {
+            errors.stage_start = lang["error.start"];
+        }
+        if (!stage.stage_end) {
+            errors.stage_end = lang["error.end"];
+        }
+        if (new Date(stage.stage_start) > new Date(stage.stage_end)) {
+            errors.checkday = lang["error.checkday_end"];
+        }
+
+
+
+
+        if (!stage.members || stage.members.length === 0) {
+            errors.members = lang["error.members"];
+        }
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesadd(errors);
+            return;
+        }
+
+        const requestBody = {
+            project_id: parseInt(project_id),
+            period: {
+                period_name: stage.stage_name,
+                start: stage.stage_start,
+                end: stage.stage_end,
+                members: stage.members,
+            }
+
+        }
+        console.log(requestBody)
+
+        fetch(`${proxy}/projects/periods`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then(res => res && res.json())
+            .then((resp) => {
+                if (resp) {
+                    const { success, content, data, status } = resp;
+                    if (success) {
+                        functions.showApiResponseMessage(status);
+                    } else {
+                        functions.showApiResponseMessage(status);
+                    }
+                }
+            })
+
+    }
+
 
     // console.log(selectedMemberTask)
     const submitAddTask = (e) => {
@@ -497,9 +579,9 @@ export default () => {
             let priority = priorityMapping[task.task_priority] || "Mức độ ưu tiên không xác định";
             let complete = task.task_progress;
             let approve = task.task_approve ? "Đã xác nhận" : "Chờ xác nhận"
-            let daystart = formatDateTask(task.start)
-            let dayend = formatDateTask(task.end)
-            let timeline = formatDateTask(task.timeline)
+            let daystart = functions.ormatDateTask(task.start)
+            let dayend = functions.formatDateTask(task.end)
+            let timeline = functions.formatDateTask(task.timeline)
             let joinedNames = "";
             if (task.members) {
                 joinedNames = task.members.map(mem => mem.fullname).join(', ');
@@ -739,7 +821,30 @@ export default () => {
         const item = statusPriority.find(item => item.value === parseInt(taskPriority));
         return item ? lang[item.label] || '' : '';
     }
+
+
+
+
+
+
+
+
+
+
+
+
     // console.log(tasks)
+
+
+
+
+
+
+
+
+
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -763,10 +868,21 @@ export default () => {
                                     <h5>
                                         {lang["listtask"]}
                                     </h5>
+
                                 </div>
+                                {/* <div class="ml-auto">
+                                    <select
+                                        class="form-control ml-4 pointer">
+                                        <option>Giai đoạn 1</option>
+                                        <option>Giai đoạn 2</option>
+                                    </select>
+                                </div> */}
+                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
+                                    <i class="fa fa-plus" title={lang["btn.create"]}></i>
+                                </button>
                                 {
                                     tasks && tasks.length > 0 ? (
-                                        <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
+                                        <div class="ml-2" title={lang["export task"]} onClick={exportToExcel}>
                                             <i class="fa fa-download pointer icon-ui"></i>
                                         </div>
                                     ) : null
@@ -775,6 +891,96 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
+                                    {/* Add Stage */}
+                                    <div class={`modal ${showModal ? 'show' : ''}`} id="addStage">
+                                        <div class="modal-dialog modal-dialog-center">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">{lang["addstage"]}</h4>
+                                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form>
+                                                        <div class="row">
+                                                            <div class="form-group col-lg-12">
+                                                                <label>{lang["stagename"]} <span className='red_star'>*</span></label>
+                                                                <input type="text" class="form-control" value={task.stage_name} onChange={
+                                                                    (e) => { setStage({ ...stage, stage_name: e.target.value }) }
+                                                                } placeholder={lang["p.stagename"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.stage_name && <span class="error-message">{errorMessagesadd.stage_name}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={stage.stage_start} onChange={
+                                                                    (e) => { setStage({ ...stage, stage_start: e.target.value }) }
+                                                                } />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.stage_start && <span class="error-message">{errorMessagesadd.stage_start}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={stage.stage_end} onChange={
+                                                                    (e) => { setStage({ ...stage, stage_end: e.target.value }) }
+                                                                } />
+
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.stage_end && <span class="error-message">{errorMessagesadd.stage_end}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                                                {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
+                                                                <div class="user-checkbox-container">
+                                                                    {projectdetail.members?.map((user, index) => (
+                                                                        <div key={index} class="user-checkbox-item">
+                                                                            <label>
+                                                                                <input
+                                                                                    type="checkbox" class="mr-1"
+                                                                                    value={JSON.stringify(user)}
+                                                                                    onChange={(e) => {
+                                                                                        let selectedUser = JSON.parse(e.target.value);
+                                                                                        let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
+                                                                                        if (alreadySelected) {
+                                                                                            setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
+                                                                                        } else {
+                                                                                            setSelectedMemberTask([...selectedMemberTask, selectedUser]);
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                                {user.fullname}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+
+
+
+
+
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" onClick={submitAddStage} class="btn btn-success ">{lang["btn.create"]}</button>
+                                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Stage */}
+                                
+                                        < Stage data={stageData} members={projectdetail} />
+                                   
+
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
                                         <div className="d-flex">
@@ -1010,13 +1216,13 @@ export default () => {
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {formatDateTask(task.start)}
+                                                                    {functions.formatDateTask(task.start)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {formatDateTask(task.end)}
+                                                                    {functions.formatDateTask(task.end)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {formatDateTask(task.timeline)}
+                                                                    {functions.formatDateTask(task.timeline)}
                                                                 </td>
                                                                 <td>
                                                                     {
@@ -1257,18 +1463,6 @@ export default () => {
                                                             <div class="form-group col-lg-6">
                                                                 {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                                             </div>
-                                                            {/* <div class="form-group col-lg-6 ">
-                                                <label>{lang["taskstatus"]} <span className='red_star'>*</span></label>
-                                                <select className="form-control" value={updateTaskinfo.task_status} onChange={(e) => { setUpdateTask({ ...updateTaskinfo, task_status: e.target.value }) }}>
-                                                    <option value="">Chọn</option>
-                                                    {statusTaskView.map((status, index) => {
-                                                        return (
-                                                            <option key={index} value={status.value}>{lang[`${status.label}`]}</option>
-                                                        );
-                                                    })}
-                                                </select>
-                                            </div> */}
-
 
                                                             <div class="form-group col-lg-12">
                                                                 <label>{lang["p.description"]}</label>
@@ -1291,60 +1485,7 @@ export default () => {
                                                                 }
                                                                 </span>
                                                             </div>
-                                                            {/* <div class="form-group col-lg-12">
-                                                                <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
 
-                                                                {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
-
-                                                                <div class="user-checkbox-container">
-                                                                    {projectdetail.members?.map((user, index) => (
-                                                                        <div key={index} class="user-checkbox-item">
-                                                                            <label>
-                                                                                <input
-                                                                                    type="checkbox" class="mr-1"
-                                                                                    value={JSON.stringify(user)}
-                                                                                    checked={selectedMemberTask.find(u => u.username === user.username) ? true : false} // this line checks if the user was previously selected
-                                                                                    onChange={(e) => {
-                                                                                        let selectedUser = JSON.parse(e.target.value);
-                                                                                        let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
-                                                                                        if (alreadySelected) {
-                                                                                            setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
-                                                                                        } else {
-                                                                                            setSelectedMemberTask([...selectedMemberTask, selectedUser]);
-                                                                                        }
-                                                                                    }}
-                                                                                />
-                                                                                {user.fullname}
-                                                                            </label>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div> */}
-
-
-                                                            {/* <div class="form-group col-lg-12">
-                                                <label>Quản lý</label>
-                                                <div class="user-checkbox-container">
-                                                    {updateTaskinfo.members?.map((user, index) => (
-                                                        <div key={index} class="user-checkbox-item">
-                                                            <input
-                                                                type="checkbox"
-                                                                value={JSON.stringify(user)}
-                                                                onChange={(e) => {
-                                                                    let selectedUser = JSON.parse(e.target.value);
-                                                                    let alreadySelected = selectedMemberTask.find(u => u.username === selectedUser.username);
-                                                                    if (alreadySelected) {
-                                                                        setSelectedMemberTask(selectedMemberTask.filter(u => u.username !== selectedUser.username));
-                                                                    } else {
-                                                                        setSelectedMemberTask([...selectedMemberTask, selectedUser]);
-                                                                    }
-                                                                }}
-                                                            />
-                                                            <label>{user.fullname}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div> */}
                                                         </div>
                                                     </form>
                                                 </div>

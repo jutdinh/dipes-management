@@ -445,7 +445,14 @@ export default {
     "export task": "Export task list",
     "createproject":"Create project",
     "avatar": "Avatar",
-    "copied":"Copied"
+    "copied":"Copied",
+    "addstage": "Add Stage",
+    "updatestage": "Update Stage",
+    "stagename": "Stage name",
+    "p.stagename": "Enter a stage name",
+    "error.stagename": "Please enter a stage name",
+    "delete.stage": "Are you sure you want to delete this Stage ?",
+    "edittaskchild":" Edit subtasks"
 
 
 }

@@ -149,7 +149,15 @@ const removeVietnameseTones = (str) => {
     return str;
 }
 
+function formatDateTask(input) {
+    if (input === null || input === undefined) return null
+    const dateParts = input.split('-');
+    if (dateParts.length !== 3) return null;
+    const [year, month, day] = dateParts;
+    return `${day}/${month}/${year}`;
+}
+
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage, removeVietnameseTones 
+    showApiResponseMessage, removeVietnameseTones, formatDateTask 
 }

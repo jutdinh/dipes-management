@@ -450,7 +450,14 @@ export default {
     "error.checkday_timeline": "Timeline phải nằm trong khoảng thời gian của công việc",
     "export task": "Xuất danh sách công việc",
     "avatar": "Ảnh đại diện",
-    "copied":"Đã sao chép"
+    "copied":"Đã sao chép",
+    "addstage": "Thêm mới giai đoạn",
+    "updatestage": "Cập nhật giai đoạn",
+    "stagename": "Tên giai đoạn",
+    "p.stagename": "Nhập tên giai đoạn",
+    "error.stagename": "Vui lòng nhập tên giai đoạn",
+    "delete.stage": "Bạn có chắc chắn muốn xóa giai đoạn này?",
+    "edittaskchild":" Chỉnh sửa công việc con"
 
 
 

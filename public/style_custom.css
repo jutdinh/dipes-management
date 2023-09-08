@@ -2,7 +2,13 @@
 .pie-chart-container {
     width: 60%;
 }
-
+.sub-task {
+    background-color: #f5f1f1; 
+}
+.toggle-subtasks {
+    cursor: pointer;
+    color: blue;
+} 
 .pie-legend-container {
     width: 40%;
     display: flex;

@@ -7,8 +7,11 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
+import FilterableDate from '../common/searchDate';
+import XLSX from 'xlsx-js-style'
 import Gantt from "./gantt"
-
+import { formatDate } from "../../redux/configs/format-date";
+import { da } from "date-fns/locale";
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -18,6 +21,9 @@ export default () => {
     const { project_id, version_id } = useParams();
     const { removeVietnameseTones } = functions
     let navigate = useNavigate();
+    const back = () => {
+        navigate(`/projects/detail/${project_id}`);
+    };
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
     const [projectmember, setProjectMember] = useState([]);
@@ -26,6 +32,19 @@ export default () => {
     const [selectedUsers, setSelectedUsers] = useState([]); // admin
     const [selectedImple, setSelectedImple] = useState([]);
     const [project, setProject] = useState({}); //// Update project
+    const [showStartDateInput, setShowStartDateInput] = useState(false);
+    const [showEndDateInput, setShowEndDateInput] = useState(false);
+
+
+
+    function formatDateTask(input) {
+        if (input === null || input === undefined) return null
+        const dateParts = input.split('-');
+        if (dateParts.length !== 3) return null;
+        const [year, month, day] = dateParts;
+        return `${day}/${month}/${year}`;
+    }
+
     const statusProject = [
         StatusEnum.INITIALIZATION,
         StatusEnum.IMPLEMENT,
@@ -72,6 +91,7 @@ export default () => {
     const [fakeTasks, setFakeTasks] = useState([]);
     const [task, setTask] = useState({ task_status: 1 });
     const [taskDetail, setTaskDetail] = useState([]);
+    // console.log(task)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -107,15 +127,21 @@ export default () => {
                 // console.log(resp)
                 if (success) {
                     if (data) {
+                        // data.sort((a, b) => {
+                        //     if (a.task_priority == b.task_priority) {
+                        //         const aDate = new Date(a.raw_create_at)
+                        //         const bDate = new Date(b.raw_create_at)
+                        //         return aDate > b.Date ? -1 : 1
+                        //     } else {
+                        //         return a.task_priority > b.task_priority ? 1 : -1
+                        //     }
+                        // })
                         data.sort((a, b) => {
-                            if (a.task_priority == b.task_priority) {
-                                const aDate = new Date(a.raw_create_at)
-                                const bDate = new Date(b.raw_create_at)
-                                return aDate > b.Date ? -1 : 1
-                            } else {
-                                return a.task_priority > b.task_priority ? 1 : -1
-                            }
-                        })
+                            const aDate = new Date(a.create_at);
+                            const bDate = new Date(b.create_at);
+                            return bDate - aDate;
+                        });
+
                         setTasks(data);
                         setFakeTasks(data)
                     }
@@ -160,6 +186,51 @@ export default () => {
         if (corespondingData != task.task_progress) {
         }
     }
+    const submitAddStage = (e) => {
+        e.preventDefault();
+      
+        const errors = {};
+        if (!task.task_name) {
+            errors.task_name = lang["error.taskname"];
+        }
+        
+        if (Object.keys(errors).length > 0) {
+            setErrorMessagesadd(errors);
+            return;
+        }
+        const requestBody = {
+            project_id: project_id,
+            // period: {
+            //     period_name,
+		    //     start,	
+		    //     end,	
+		    //     members, 
+            // }
+
+        }
+
+        fetch(`${proxy}/tasks/periods`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then(res => res && res.json())
+            .then((resp) => {
+                if (resp) {
+                    const { success, content, data, status } = resp;
+                    if (success) {
+                        functions.showApiResponseMessage(status);
+                    } else {
+                        functions.showApiResponseMessage(status);
+                    }
+                }
+            })
+
+    }
+    
 
     // console.log(selectedMemberTask)
     const submitAddTask = (e) => {
@@ -180,7 +251,11 @@ export default () => {
             errors.end = lang["error.end"];
         }
         if (new Date(task.start) > new Date(task.end)) {
-            errors.checkday = lang["error.checkday"];
+            errors.checkday = lang["error.checkday_end"];
+        }
+
+        if (new Date(task.start) > new Date(task.timeline) || new Date(task.timeline) > new Date(task.end)) {
+            errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!task.task_description) {
             errors.task_description = lang["error.task_description"];
@@ -192,6 +267,7 @@ export default () => {
             setErrorMessagesadd(errors);
             return;
         }
+        // console.log(errors)
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -246,7 +322,10 @@ export default () => {
             errors.end = lang["error.end"];
         }
         if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.end)) {
-            errors.checkday = lang["error.checkday"];
+            errors.checkday = lang["error.checkday_end"];
+        }
+        if (new Date(updateTaskinfo.start) > new Date(updateTaskinfo.timeline) || new Date(updateTaskinfo.timeline) > new Date(updateTaskinfo.end)) {
+            errors.checkday_timeline = lang["error.checkday_timeline"];
         }
         if (!updateTaskinfo.task_description) {
             errors.task_description = lang["error.task_description"];
@@ -264,6 +343,7 @@ export default () => {
             task_name: updateTaskinfo.task_name,
             start: updateTaskinfo.start,
             end: updateTaskinfo.end,
+            timeline: updateTaskinfo.timeline,
             // members: selectedMemberTask,
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
@@ -410,7 +490,210 @@ export default () => {
                 }
             });
     }
+    // console.log(tasks)
+    // console.log(project)
 
+    const statusMapping = {
+        1: "Khởi tạo",
+        2: "Thực hiện",
+        3: "Hoàn thành",
+        4: "Tạm dừng"
+    };
+    const priorityMapping = {
+        1: "Cao",
+        2: "Trung bình",
+        3: "Thấp"
+    };
+    const exportToExcel = () => {
+        // console.log(project)
+
+        // console.log(dataExport)
+        const projectTasks = project.tasks;
+        // console.log(projectTasks)
+        // if (!projectTasks || projectTasks.length === 0) {
+        //     console.error(`No tasks found for project ID: ${projectId}`);
+        //     return;
+        // }
+
+        const dataExport = project
+
+        const projectName = project.project_name
+        const projectMaster = project.manager.fullname;
+        const header = [
+            "STT",
+            "Công việc",
+            "Mô tả",
+            "Người thực hiện",
+            "Trạng thái",
+            "Mức độ ưu tiên",
+            "% Hoàn thành",
+            "Xác nhận",
+            "Ngày bắt đầu (dd/MM/yyyy)",
+            "Ngày kết thúc (dd/MM/yyyy)",
+            "Timeline (dd/MM/yyyy)",
+
+
+        ];
+        const data = tasks.map((task, index) => {
+
+            let changedAt = task.history.modified_at ? new Date(task.history.modified_at).toLocaleDateString("vi-VN") : '';
+            // let status = statusTaskView.find((s) => s.value === task.task_status) || "Trạng thái không xác định";
+            let status = statusMapping[task.task_status] || "Trạng thái không xác định";
+            let priority = priorityMapping[task.task_priority] || "Mức độ ưu tiên không xác định";
+            let complete = task.task_progress;
+            let approve = task.task_approve ? "Đã xác nhận" : "Chờ xác nhận"
+            let daystart = formatDateTask(task.start)
+            let dayend = formatDateTask(task.end)
+            let timeline = formatDateTask(task.timeline)
+            let joinedNames = "";
+            if (task.members) {
+                joinedNames = task.members.map(mem => mem.fullname).join(', ');
+            }
+            return [
+                index + 1,
+                task.task_name,
+                task.task_description,
+                joinedNames || "Chưa có người thực hiện",
+                status,
+                priority,
+                `${complete}%`,
+                approve,
+                daystart,
+                dayend,
+                timeline,
+
+
+            ];
+        });
+
+
+
+        const now = new Date();
+        const date = now.toLocaleDateString("vi-VN", {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet([
+            [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , , ,],
+            [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", ""],
+            [`Ngày (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", ""],
+            header,
+            ...data
+        ]);
+
+        const borderStyle = {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } }
+        };
+
+        const centerStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "center", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+        const rightStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "right", vertical: "right", wrapText: true },
+            border: borderStyle
+        };
+
+        const titleStyle = {
+            font: { name: "UTM Avo", sz: 13, bold: true, color: { rgb: "FF000000" } },
+            fill: { fgColor: { rgb: "70ad47" } },
+            alignment: { horizontal: "center", vertical: "center" },
+            border: borderStyle
+        };
+
+        const athurStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            border: borderStyle
+        };
+
+        const headerStyle = {
+            font: { name: "UTM Avo", sz: 11, bold: true, color: { rgb: "FF000000" } },
+            fill: { fgColor: { rgb: "a9d08f" } },
+            alignment: { horizontal: "center", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+
+        ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 40 }, { width: 30 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }];
+        ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
+        ws["A1"].s = titleStyle;
+        ws["A2"].s = athurStyle;
+        ws["B2"].s = athurStyle;
+        ws["E2"].s = athurStyle;
+        ws["F2"].s = athurStyle;
+        ws["A3"].s = athurStyle;
+        ws["B3"].s = athurStyle;
+        ws["C2"].s = athurStyle;
+        ws["C3"].s = athurStyle;
+        ws["D2"].s = athurStyle;
+        ws["D3"].s = athurStyle;
+        ws["E2"].s = athurStyle;
+        ws["E3"].s = athurStyle;
+        ws["F2"].s = athurStyle;
+        ws["F3"].s = athurStyle;
+        ws["G2"].s = athurStyle;
+        ws["G3"].s = athurStyle;
+        ws["H2"].s = athurStyle;
+        ws["H3"].s = athurStyle;
+        ws["I2"].s = athurStyle;
+        ws["I3"].s = athurStyle;
+        ws["J2"].s = athurStyle;
+        ws["K2"].s = athurStyle;
+        ws["K3"].s = athurStyle;
+
+
+        ws["A4"].s = headerStyle;
+        ws["B4"].s = headerStyle;
+        ws["C4"].s = headerStyle;
+        ws["D4"].s = headerStyle;
+        ws["E4"].s = headerStyle;
+        ws["F4"].s = headerStyle;
+        ws["G4"].s = headerStyle;
+        ws["H4"].s = headerStyle;
+        ws["I4"].s = headerStyle;
+        ws["J4"].s = headerStyle;
+        ws["K4"].s = headerStyle;
+
+        const bodyStyle = {
+            font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+            alignment: { horizontal: "left", vertical: "center", wrapText: true },
+            border: borderStyle
+        };
+
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < data[i].length; j++) {
+                const cellAddress = `${String.fromCharCode(65 + j)}${5 + i}`;
+
+
+                if (!ws[cellAddress]) {
+                    ws[cellAddress] = { t: 's', v: "" };
+                }
+
+                if (j === 0) {
+                    ws[cellAddress].s = centerStyle;
+                } else {
+                    ws[cellAddress].s = bodyStyle;
+                }
+            }
+        }
+
+        ws["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } },
+            { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }
+        ];
+        const wb = XLSX.utils.book_new();
+        const projectCode = project.project_code;
+        XLSX.utils.book_append_sheet(wb, ws, `Project-${dataExport.project_id}`);
+        XLSX.writeFile(wb, `Project-${projectCode}-${projectName}-${(new Date()).getTime()}.xlsx`);
+    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 4;
@@ -470,7 +753,7 @@ export default () => {
     };
 
     const [confirmFilter, setConfrimFilter] = useState([]);
-    const confirmFilterOptions = statusTask.map(status => ({ label:  lang[status.label], value: status.value, id: status.id }));
+    const confirmFilterOptions = statusTask.map(status => ({ label: lang[status.label], value: status.value, id: status.id }));
     const addOrRemoveConfirm = (status) => {
         const newFilter = [...confirmFilter];
         const index = newFilter.findIndex(item => item.id === status.id);
@@ -481,7 +764,27 @@ export default () => {
         }
         setConfrimFilter(newFilter);
     };
+    const priorityFilterOptions = statusPriority.map(priority => ({ label: lang[priority.label], value: priority.value, id: priority.id }));
+    const [priorityFilter, setPriorityFilter] = useState([]);
+    const addOrRemovePriority = (priority) => {
+        const newFilter = [...priorityFilter];
+        const index = newFilter.findIndex(item => item.id === priority.id);
+        if (index !== -1) {
+            newFilter.splice(index, 1);
+        } else {
+            newFilter.push(priority);
+        }
+        setPriorityFilter(newFilter);
+    };
+    const [startDateFilter, setStartDateFilter] = useState(null);
+    const [endDateFilter, setEndDateFilter] = useState(null);
+    const [showDateInputs, setShowDateInputs] = useState(false);
 
+    function getTaskPriorityLabel(taskPriority) {
+        const item = statusPriority.find(item => item.value === parseInt(taskPriority));
+        return item ? lang[item.label] || '' : '';
+    }
+    // console.log(tasks)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -489,7 +792,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title">
                             <h4>
-                                <label class="pointer" onClick={() => navigate(-1)}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
+                                <label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
                                     {lang["projectprocess"]}: {project.project_name}
                                 </label>
                             </h4>
@@ -506,9 +809,52 @@ export default () => {
                                         {lang["listtask"]}
                                     </h5>
                                 </div>
+                                {
+                                    tasks && tasks.length > 0 ? (
+                                        <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
+                                            <i class="fa fa-download pointer icon-ui"></i>
+                                        </div>
+                                    ) : null
+                                }
+
                             </div>
                             <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
+                                      {/* Add Stage */}
+                                      <div class={`modal ${showModal ? 'show' : ''}`} id="addStage">
+                                        <div class="modal-dialog modal-dialog-center">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">{lang["addtask"]}</h4>
+                                                    <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form>
+                                                        <div class="row">
+                                                            <div class="form-group col-lg-12">
+                                                                <label>{lang["taskname"]} <span className='red_star'>*</span></label>
+                                                                <input type="text" class="form-control" value={task.task_name} onChange={
+                                                                    (e) => { setTask({ ...task, task_name: e.target.value }) }
+                                                                } placeholder={lang["p.taskname"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.task_name && <span class="error-message">{errorMessagesadd.task_name}</span>}
+                                                                </div>
+                                                            </div>
+
+
+                                                       
+
+                    
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" onClick={submitAddTask} class="btn btn-success ">{lang["btn.create"]}</button>
+                                                    <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
                                         <div className="d-flex">
@@ -534,6 +880,7 @@ export default () => {
                                                 </button>
                                             }
                                         </div>
+
                                         <div class="table-outer">
                                             <table class="table-head">
                                                 <thead>
@@ -541,11 +888,11 @@ export default () => {
                                                         {lang["log.no"]}
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
-                                                        {lang["task"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
+                                                        {lang["title.task"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
                                                         {tableFilter.task_name &&
                                                             <div className="position-relative">
-                                                                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px" }}>
                                                                     <FloatingTextBox
                                                                         title={lang["task"]}
                                                                         initialData={taskNameFilter.name}
@@ -558,10 +905,10 @@ export default () => {
                                                     </th>
                                                     <th class="font-weight-bold align-center position-relative" scope="col">
                                                         {lang["taskstatus"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_status: !tableFilter.task_status }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_status: !tableFilter.task_status }) }} />
                                                         {tableFilter.task_status &&
                                                             <div className="position-relative">
-                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "155px" }}>
                                                                     <CheckList
                                                                         title={lang["taskstatus"]}
                                                                         initialData={statusFilter}
@@ -573,12 +920,29 @@ export default () => {
                                                             </div>
                                                         }
                                                     </th>
+                                                    <th class="font-weight-bold align-center position-relative" scope="col">
+                                                        {lang["task_priority"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_priority: !tableFilter.task_apptask_priorityrove }) }} />
+                                                        {tableFilter.task_priority &&
+                                                            <div className="position-relative">
+                                                                <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
+                                                                    <CheckList
+                                                                        title={lang["task_priority"]}
+                                                                        initialData={priorityFilter}
+                                                                        setDataFunction={addOrRemovePriority}
+                                                                        data={priorityFilterOptions}
+                                                                        destructFunction={() => { setTableFilter({ ...tableFilter, task_priority: false }); }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </th>
                                                     <th class="font-weight-bold align-center" scope="col">%
                                                         {lang["complete"]}
                                                     </th>
                                                     <th class="font-weight-bold align-center position-relative" scope="col">
                                                         {lang["confirm"]}
-                                                        <i className="fa fa-filter icon-view block ml-4" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} />
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} />
                                                         {tableFilter.task_approve &&
                                                             <div className="position-relative">
                                                                 <div className="position-absolute shadow" style={{ top: 0, left: 0, width: "150px" }}>
@@ -593,11 +957,39 @@ export default () => {
                                                             </div>
                                                         }
                                                     </th>
-                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                    {/* <th class="font-weight-bold align-center" scope="col" >
                                                         {lang["log.daystart"]}
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col" >
                                                         {lang["log.dayend"]}
+                                                    </th> */}
+                                                    <th className="font-weight-bold align-center">
+                                                        {lang["log.daystart"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowStartDateInput(!showStartDateInput)} />
+                                                        <FilterableDate
+                                                            label="Bắt đầu"
+                                                            dateValue={startDateFilter}
+                                                            setDateValue={setStartDateFilter}
+                                                            iconLabel="Chọn ngày bắt đầu"
+                                                            showDateInput={showStartDateInput}
+                                                            closePopup={() => setShowStartDateInput(false)}
+                                                        />
+                                                    </th>
+                                                    <th className="font-weight-bold align-center">
+                                                        {lang["log.dayend"]}
+                                                        <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowEndDateInput(!showEndDateInput)} />
+                                                        <FilterableDate
+                                                            label="Kết thúc"
+                                                            dateValue={endDateFilter}
+                                                            setDateValue={setEndDateFilter}
+                                                            iconLabel="Chọn ngày kết thúc"
+                                                            showDateInput={showEndDateInput}
+                                                            closePopup={() => setShowEndDateInput(false)}
+                                                        />
+                                                    </th>
+
+                                                    <th class="font-weight-bold align-center" scope="col" >
+                                                        Timeline
                                                     </th>
                                                     <th class="font-weight-bold align-center" scope="col">
                                                         {lang["log.create_user"]}
@@ -617,13 +1009,21 @@ export default () => {
                                                             let filterStatusValues = statusFilter.map(item => item.value);
                                                             let taskStatus = task && task.task_status ? task.task_status : '';
                                                             let filterConfirmValues = confirmFilter.map(item => item.value);
-                                                            let taskConfirm = task && task.task_approve ? 1 : 0; 
+                                                            let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                            let filterPriorityValues = priorityFilter.map(item => item.value);
+                                                            let taskPriority = task && task.task_priority ? parseInt(task.task_priority) : null;
+                                                            let taskStart = new Date(task.start);
+                                                            let taskEnd = new Date(task.end);
+
                                                             return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
                                                                 (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
-                                                                (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true);
+                                                                (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true) &&
+                                                                (filterPriorityValues.length > 0 ? filterPriorityValues.includes(taskPriority) : true) &&
+                                                                (!startDateFilter || taskStart >= new Date(startDateFilter)) &&
+                                                                (!endDateFilter || taskEnd <= new Date(endDateFilter));
                                                         }).map((task, index) => (
                                                             <tr key={task.id}>
-                                                                <td style={{ width: "45px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
+                                                                <td style={{ width: "40px" }} class="align-center" scope="row">{indexOfFirstMemberTask + index + 1}</td>
                                                                 <td style={{ maxWidth: "100px" }}>
                                                                     <div style={{
                                                                         width: "100%",
@@ -634,7 +1034,7 @@ export default () => {
                                                                         {task.task_name}
                                                                     </div>
                                                                 </td>
-                                                                <td class="align-center" >
+                                                                <td class="align-center" style={{ width: "135px" }}>
                                                                     <select
                                                                         className="form-control"
                                                                         value={task.task_status}
@@ -653,6 +1053,7 @@ export default () => {
                                                                         })}
                                                                     </select>
                                                                 </td>
+                                                                <td class="align-center">{getTaskPriorityLabel(task.task_priority)}</td>
                                                                 <td class="font-weight-bold">
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || task.members?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) ?
@@ -689,10 +1090,13 @@ export default () => {
                                                                     {getStatusLabel(task.task_approve ? 1 : 0)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {task.start}
+                                                                    {formatDateTask(task.start)}
                                                                 </td>
                                                                 <td class="font-weight-bold" style={{ textAlign: "center" }}>
-                                                                    {task.end}
+                                                                    {formatDateTask(task.end)}
+                                                                </td>
+                                                                <td class="font-weight-bold" style={{ textAlign: "center" }}>
+                                                                    {formatDateTask(task.timeline)}
                                                                 </td>
                                                                 <td>
                                                                     {
@@ -714,21 +1118,21 @@ export default () => {
                                                                         </div>
                                                                     }
                                                                 </td>
-                                                                <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                    <i class="fa fa-eye size pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                                <td class="align-center" style={{ width: "150px" }}>
+                                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => detailTask(task)} data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                                     {
                                                                         (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                         <>
-                                                                            <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getIdTask(task)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                                             {task.task_approve
                                                                                 ? (task.task_status !== StatusTask.NOT_APPROVED
-                                                                                    ? <i class="fa fa-times-circle-o size pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                    : <i class="fa fa-times-circle-o size pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                                    ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                                 : (task.task_status === StatusTask.COMPLETE.value
-                                                                                    ? <i class="fa fa-check-circle-o size pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
-                                                                                    : <i class="fa fa-check-circle-o size pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                                    ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(task)} title={lang["updatestatus"]}></i>
+                                                                                    : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                             }
-                                                                            <i class="fa fa-trash-o size pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTask(task)} title={lang["delete"]}></i>
                                                                         </>
                                                                     }
                                                                 </td>
@@ -781,7 +1185,7 @@ export default () => {
 
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.start} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.start} onChange={
                                                                     (e) => { setTask({ ...task, start: e.target.value }) }
                                                                 } />
                                                                 <div style={{ minHeight: '20px' }}>
@@ -790,22 +1194,34 @@ export default () => {
                                                             </div>
                                                             <div className="col-lg-6">
                                                                 <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                                                <input type="date" className="form-control" value={task.end} onChange={
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.end} onChange={
                                                                     (e) => { setTask({ ...task, end: e.target.value }) }
                                                                 } />
-                                                                {!errorMessagesadd.checkday ? (
-                                                                    <div style={{ minHeight: '20px' }}>
-                                                                        {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
-                                                                    </div>
-                                                                ) : null
 
-                                                                }
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
+                                                                </div>
+
+
 
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
                                                                 {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                                             </div>
+                                                            <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" min={task.start} max={task.end} className="form-control" value={task.timeline} onChange={
+                                                                    (e) => { setTask({ ...task, timeline: e.target.value }) }
+                                                                } />
+
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                </div>
+
+                                                            </div>
+
+
 
                                                             <div class="form-group col-lg-12">
                                                                 <label>{lang["p.description"]} <span className='red_star'>*</span></label>
@@ -887,8 +1303,8 @@ export default () => {
                                                             </div>  <div class="form-group col-lg-8"></div>
 
                                                             <div className="col-lg-6">
-                                                                <label>{lang["log.daystart"]}:</label>
-                                                                <input type="date" className="form-control" value={updateTaskinfo.start} onChange={
+                                                                <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.start} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, start: e.target.value }) }
                                                                 } />
                                                                 <div style={{ minHeight: '20px' }}>
@@ -896,8 +1312,8 @@ export default () => {
                                                                 </div>
                                                             </div>
                                                             <div className="col-lg-6">
-                                                                <label>{lang["log.dayend"]}:</label>
-                                                                <input type="date" className="form-control" value={updateTaskinfo.end} onChange={
+                                                                <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={updateTaskinfo.end} onChange={
                                                                     (e) => { setUpdateTask({ ...updateTaskinfo, end: e.target.value }) }
                                                                 } />
                                                                 {!errorMessagesadd.checkday ? (
@@ -907,6 +1323,15 @@ export default () => {
                                                                 ) : null
 
                                                                 }
+                                                            </div>
+                                                            <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" min={updateTaskinfo.start} max={updateTaskinfo.end} className="form-control" value={updateTaskinfo.timeline} onChange={
+                                                                    (e) => { setUpdateTask({ ...updateTaskinfo, timeline: e.target.value }) }
+                                                                } />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
+                                                                </div>
                                                             </div>
                                                             <div class="form-group col-lg-6"></div>
                                                             <div class="form-group col-lg-6">
@@ -1025,6 +1450,10 @@ export default () => {
                                                                 <label><b>{lang["taskname"]}</b></label>
                                                                 <span className="d-block"> {taskDetail.task_name} </span>
                                                             </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label><b>{lang["description"]}</b></label>
+                                                                <span className="d-block"> {taskDetail.task_description} </span>
+                                                            </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["log.daystart"]}</b></label>
                                                                 <span className="d-block"> {taskDetail.start} </span>
@@ -1047,7 +1476,7 @@ export default () => {
                                                             </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["create-at"]}</b></label>
-                                                                <span className="d-block"> {taskDetail.create_at} </span>
+                                                                <span className="d-block"> {formatDate(taskDetail.create_at)} </span>
                                                             </div>
                                                             <div class="form-group col-lg-4">
                                                                 <label><b>{lang["creator"]}</b></label>
@@ -1067,7 +1496,7 @@ export default () => {
                                                             <div class="form-group col-lg-4">
 
                                                             </div>
-                                                            <div class="form-group col-lg-12">
+                                                            {/* <div class="form-group col-lg-12">
                                                                 <label><b>{lang["members"]}</b></label>
                                                                 <span className="d-block"> {
                                                                     taskDetail.members && taskDetail.members.length > 0 ?
@@ -1081,6 +1510,43 @@ export default () => {
                                                                         <p>{lang["projectempty"]} </p>
                                                                 }
                                                                 </span>
+                                                            </div> */}
+                                                            <div class="form-group col-lg-12">
+                                                                <div class="table-responsive">
+                                                                    {
+                                                                        taskDetail.members && taskDetail.members.length > 0 ? (
+                                                                            <>
+                                                                                <table class="table table-striped ">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["members"]}</th>
+                                                                                            <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        {taskDetail.members.map((member, index) => (
+                                                                                            <tr key={member.username}>
+                                                                                                <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                                                                                <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
+                                                                                                <td>{member.fullname}</td>
+
+
+                                                                                            </tr>
+                                                                                        ))}
+                                                                                    </tbody>
+                                                                                </table>
+
+
+                                                                            </>
+                                                                        ) : (
+                                                                            <div class="list_cont ">
+                                                                                <p>{lang["empty.member"]}</p>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                </div>
                                                             </div>
 
                                                             {/* <div class="form-group col-lg-12">
@@ -1104,14 +1570,11 @@ export default () => {
                                                                     }</span>
                                                             </div> */}
 
-                                                            <div class="form-group col-lg-12">
-                                                                <label><b>{lang["description"]}</b></label>
-                                                                <span className="d-block"> {taskDetail.task_description} </span>
-                                                            </div>
+
                                                             <div class="form-group col-lg-12">
                                                                 <label><b>Lịch sử</b></label>
-                                                                <div class="table-responsive">
-                                                                    {/* {
+
+                                                                {/* {
                                                         currentMembersViewDetailTask && currentMembersViewDetailTask.length > 0 ? (
                                                             <>
                                                                 <table class="table table-striped">
@@ -1177,74 +1640,76 @@ export default () => {
                                                             </div>
                                                         )
                                                     } */}
-                                                                    {
-                                                                        taskDetail.history && taskDetail.history.length > 0 ? (
-                                                                            <>
-                                                                                <div class="table-outer">
-                                                                                    <table class="table-head">
-                                                                                        <thead>
-                                                                                            <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
-                                                                                            <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
-                                                                                            <th class="scrollbar-measure"></th>
-                                                                                        </thead>
+                                                                {
+                                                                    taskDetail.history && taskDetail.history.length > 0 ? (
+                                                                        <>
+                                                                            <div class="table-outer">
+                                                                                <table class="table-head">
+                                                                                    <thead>
+                                                                                        <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
+                                                                                        <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
+                                                                                        <th class="scrollbar-measure"></th>
+                                                                                    </thead>
+                                                                                </table>
+                                                                                <div class="table-body">
+                                                                                    <table class="table table-striped">
+                                                                                        <tbody>
+                                                                                            {taskDetail.history.reverse().map((task, index) => (
+                                                                                                <tr key={task.id}>
+                                                                                                    <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
+                                                                                                    <td scope="row">
+                                                                                                        {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                                            task.modified_what === "infor" ? lang["log.information"] :
+                                                                                                                task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                                    task.modified_what}
+                                                                                                    </td>
+                                                                                                    <td scope="row">
+                                                                                                        {
+                                                                                                            task.old_value === true ? lang["approved"] :
+                                                                                                                task.old_value === false ? lang["await"] :
+                                                                                                                    !isNaN(task.old_value) ?
+                                                                                                                        lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                        :
+                                                                                                                        // `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
+                                                                                                                        `${task.old_value}`
+
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                    <td scope="row">
+                                                                                                        {
+                                                                                                            task.new_value === true ? lang["approved"] :
+                                                                                                                task.new_value === false ? lang["await"] :
+                                                                                                                    !isNaN(task.new_value) ?
+                                                                                                                        lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
+                                                                                                                        :
+                                                                                                                        `${task.new_value}`
+                                                                                                            // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                                        }
+                                                                                                    </td>
+
+                                                                                                    <td scope="row">{formatDate(task.modified_at)}</td>
+                                                                                                    <td scope="row">
+                                                                                                        <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                                        {task.modified_by?.fullname}
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            ))}
+                                                                                        </tbody>
                                                                                     </table>
-                                                                                    <div class="table-body">
-                                                                                        <table class="table table-striped">
-                                                                                            <tbody>
-                                                                                                {taskDetail.history.reverse().map((task, index) => (
-                                                                                                    <tr key={task.id}>
-                                                                                                        <td scope="row" style={{ maxWidth: "80px" }}>{index + 1}</td>
-                                                                                                        <td scope="row">
-                                                                                                            {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                                                task.modified_what === "infor" ? lang["log.information"] :
-                                                                                                                    task.modified_what === "status" ? lang["taskstatus"] :
-                                                                                                                        task.modified_what}
-                                                                                                        </td>
-                                                                                                        <td scope="row">
-                                                                                                            {
-                                                                                                                task.old_value === "true" ? lang["approved"] :
-                                                                                                                    task.old_value === "false" ? lang["await"] :
-                                                                                                                        !isNaN(task.old_value) ?
-                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.old_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                            :
-                                                                                                                            `${task.old_value.slice(0, 100)}${task.old_value.length > 100 ? '...' : ''}`
-
-                                                                                                            }
-                                                                                                        </td>
-                                                                                                        <td scope="row">
-                                                                                                            {
-                                                                                                                task.new_value === "true" ? lang["approved"] :
-                                                                                                                    task.new_value === "false" ? lang["await"] :
-                                                                                                                        !isNaN(task.new_value) ?
-                                                                                                                            lang[`${(statusTaskView.find((s) => s.value === Number(task.new_value)) || {}).label || 'Trạng thái không xác định'}`]
-                                                                                                                            :
-                                                                                                                            `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
-                                                                                                            }
-                                                                                                        </td>
-
-                                                                                                        <td scope="row">{task.modified_at}</td>
-                                                                                                        <td scope="row">
-                                                                                                            <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
-                                                                                                            {task.modified_by?.fullname}
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                ))}
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
                                                                                 </div>
-                                                                            </>
-                                                                        ) : (
-                                                                            <div class="list_cont ">
-                                                                                <p>Chưa có lịch sử</p>
                                                                             </div>
-                                                                        )
-                                                                    }
-                                                                </div>
+                                                                        </>
+                                                                    ) : (
+                                                                        <div class="list_cont ">
+                                                                            <p>Chưa có lịch sử</p>
+                                                                        </div>
+                                                                    )
+                                                                }
+
                                                             </div>
                                                         </div>
                                                     </form>
@@ -1274,7 +1739,26 @@ export default () => {
                                     <div class="table_section padding_infor_info_gantt_chart">
                                         {
                                             filteredTasks && filteredTasks.length > 0 ? (
-                                                <Gantt data={filteredTasks} project={projectdetail} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
+                                                <Gantt data={
+                                                    filteredTasks.filter((task) => {
+                                                        let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
+                                                        let taskName = task && task.task_name ? task.task_name.toLowerCase() : '';
+                                                        let filterStatusValues = statusFilter.map(item => item.value);
+                                                        let taskStatus = task && task.task_status ? task.task_status : '';
+                                                        let filterConfirmValues = confirmFilter.map(item => item.value);
+                                                        let taskConfirm = task && task.task_approve ? 1 : 0;
+                                                        let filterPriorityValues = priorityFilter.map(item => item.value);
+                                                        let taskPriority = task && task.task_priority ? parseInt(task.task_priority) : null;
+                                                        let taskStart = new Date(task.start);
+                                                        let taskEnd = new Date(task.end);
+
+                                                        return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
+                                                            (filterStatusValues.length > 0 ? filterStatusValues.includes(taskStatus) : true) &&
+                                                            (filterConfirmValues.length > 0 ? filterConfirmValues.includes(taskConfirm) : true) &&
+                                                            (filterPriorityValues.length > 0 ? filterPriorityValues.includes(taskPriority) : true) &&
+                                                            (!startDateFilter || taskStart >= new Date(startDateFilter)) &&
+                                                            (!endDateFilter || taskEnd <= new Date(endDateFilter));
+                                                    })} project={projectdetail} data_raw={filteredTasks} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
                                     </div>
