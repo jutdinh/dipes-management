@@ -25,7 +25,16 @@ router.delete("/remove/project/member", async (req, res) => {
 
 router.delete("/project/:project_id/period/:period_id", async (req, res) => { 
     try{
-        await ProjectsController.removeTaskPeriod(req, res, [ permission.uad, permission.ad ]) 
+        await ProjectsController.removeTaskPeriod(req, res, [ permission.uad, permission.ad ])  // privilege currently ignored
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
+
+router.delete("/project/:project_id/period/:period_id/task/:task_id", async (req, res) => { 
+    try{
+        await ProjectsController.removeTask(req, res, [ permission.uad, permission.ad ]) // privilege currently ignored
     }catch{
         res.send({ success: false, status: "0x4501246" })
     }
