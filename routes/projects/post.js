@@ -39,11 +39,11 @@ router.post('/project/:project_id/task/',  async (req, res ) => {
 })
 
 router.post('/project/:project_id/period/:period_id/task/:task_id',  async (req, res ) => { 
-    // try{
+    try{
          await ProjectsController.createChildTask(req, res, [ permission.ad, permission.uad ])         
-    // }catch{
-        // res.send({ success: false, status: "0x4501246" })
-    // }
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
 })
 
 router.post('/search',  async (req, res ) => {     

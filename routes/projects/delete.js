@@ -24,11 +24,11 @@ router.delete("/remove/project/member", async (req, res) => {
 })
 
 router.delete("/project/:project_id/period/:period_id", async (req, res) => { 
-    // try{
+    try{
         await ProjectsController.removeTaskPeriod(req, res, [ permission.uad, permission.ad ]) 
-    // }catch{
-    //     res.send({ success: false, status: "0x4501246" })
-    // }
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
 })
 
 
