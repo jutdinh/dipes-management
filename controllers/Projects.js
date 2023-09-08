@@ -1227,7 +1227,7 @@ class ProjectsController extends Controller {
                         context.status = "0x4501161"
                         context.success = true
                         
-                        // this.saveLog("info", req.ip, "__purgetask", `__taskname ${ task.task_name }`, decodedToken.username )
+                        this.saveLog("info", req.ip, "__purgetask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } |  __taskname ${ task.task_name }`, decodedToken.username )
                     } else {
                         context.content = "Khum có quyền thực hiện thao tác này"
                         context.status = "0x4501162"
