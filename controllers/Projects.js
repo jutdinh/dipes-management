@@ -666,14 +666,30 @@ class ProjectsController extends Controller {
             periods.map( period => {
                 period.tasks = Object.values( period.tasks )
                 period.period_members = Object.values( period.period_members )
+                let period_progress = 0
                 period.tasks.map( task => {
                     task.members = Object.values( task.members )
                     task.child_tasks = Object.values( task.child_tasks )
-
-                    task.child_tasks.map( c_task => {
+                    let task_progress = 0
+                    task.child_tasks.map( c_task => {   
                         c_task.members = Object.values(c_task.members)
+                        task_progress += c_task.progress
                     })
+                    if( task.child_tasks.length > 0 ){
+                        const calculated = task_progress / task.child_tasks.length 
+                        task.progress = calculated.toFixed(2)
+                        period_progress += calculated
+                    }else{
+                        task.progress = 0
+                    }
                 })
+
+                if( period.tasks.length > 0 ){
+                    const period_calculated = period_progress / period.tasks.length 
+                    period.progress = period_calculated.toFixed(2)
+                }else{
+                    period.progress = 0
+                }
             })
 
             context.data = periods
@@ -703,14 +719,30 @@ class ProjectsController extends Controller {
             if( period ){
                 period.tasks = Object.values( period.tasks )
                 period.period_members = Object.values( period.period_members )
+                let period_progress = 0
                 period.tasks.map( task => {
                     task.members = Object.values( task.members )
                     task.child_tasks = Object.values( task.child_tasks )
-
-                    task.child_tasks.map( c_task => {
+                    let task_progress = 0
+                    task.child_tasks.map( c_task => {   
                         c_task.members = Object.values(c_task.members)
+                        task_progress += c_task.progress
                     })
+                    if( task.child_tasks.length > 0 ){
+                        const calculated = task_progress / task.child_tasks.length 
+                        task.progress = calculated.toFixed(2)
+                        period_progress += calculated
+                    }else{
+                        task.progress = 0
+                    }
                 })
+
+                if( period.tasks.length > 0 ){
+                    const period_calculated = period_progress / period.tasks.length 
+                    period.progress = period_calculated.toFixed(2)
+                }else{
+                    period.progress = 0
+                }
 
                 context.data = period
                 context.status = "0x4501256"
@@ -1347,7 +1379,7 @@ class ProjectsController extends Controller {
                             
                             delete period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`]
                             await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
-                            
+
                             context.status = "0x4501119"
                             context.content = "Xóa yêu cầu con thành công"
                         } else {
