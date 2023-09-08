@@ -54,6 +54,20 @@ const vi = {
     "__versionname": "Tên phiên bản",
     "__versiondescription": "Mô tả phiên bản",
 
+    "__createTaskPeriod": "Tạo giai đoạn dự án",
+    "__updateTaskPeriod": "Cập nhật giai đoạn",
+    "__removeTaskPeriod": "Xóa giai đoạn",
+    "__project_code": "Mã dự án",
+    "__periodname": "Tên giai đoạn",
+    "__period_name": "Tên giai đoạn",
+    "__period_start": "Ngày bắt đầu",
+    "__period_end": "Ngày kết thúc",
+    "__member": "Thành viên",
+
+    "__createChildTask": "Tạo yêu cầu con",
+    "__childtaskname": "Tên yêu cầu con",
+    "__childtaskdescription": "Mô tả",
+    "__priority": "Độ ưu tiên",
 
     "__tablename": "Tên bảng",
     "__tablename": "Table name",

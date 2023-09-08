@@ -90,6 +90,21 @@ const en = {
     "__apiname": "API Name",
     "__apiurl": "URL",
 
+    "__createTaskPeriod": "Create task period",
+    "__updateTaskPeriod": "Update period",
+    "__removeTaskPeriod": "Remove period",
+    "__project_code": "project code",
+    "__periodname": "period name",
+    "__period_name": "period name",
+    "__period_start": "Start date",
+    "__period_end": "End date",
+    "__member": "Member",
+
+    "__createChildTask": "Create child task",
+    "__childtaskname": "Child task name",
+    "__childtaskdescription": "Child task description",
+    "__priority": "priority",
+
     "__createUI": "Create UI",
     "__updateUIstatus": "Update UI Status",
     "__removeUI": "Remove UI",

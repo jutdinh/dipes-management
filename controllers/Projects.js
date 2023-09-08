@@ -711,7 +711,7 @@ class ProjectsController extends Controller {
                         c_task.members = Object.values(c_task.members)
                     })
                 })
-                
+
                 context.data = period
                 context.status = "0x4501256"
                 context.content = "Lấy thông tin giai đoạn thành công"
@@ -746,13 +746,14 @@ class ProjectsController extends Controller {
                     const endDate = new Date( end )
 
                     if( endDate && startDate && endDate - startDate >= 0 ){
-
+                        const memberNames = []
                         if( members && Array.isArray(members)){
                             const AccountsModel = new Accounts()
                             const users = await AccountsModel.findAll({ username: { $in: members } })
                             const serializedUsers = {}
                             users.map(user => {
                                 serializedUsers[user.username] = user
+                                memberNames.push(user.fullname)
                             })    
                             period.period_members = serializedUsers
                         }
@@ -764,12 +765,14 @@ class ProjectsController extends Controller {
                         context.content = "Tạo giai đoạn thành công"    
                         context.success = true 
                         context.status = "0x4501253"
+                        const project = Project.getData()
+                        this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ period.period_name } | __members: ${ memberNames.join(", ") }`, decodedToken.username)
+
                     }else{                       
                         context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"    
                         context.success = true 
                         context.status = "0x4501252"
-                    }  
-    
+                    }      
     
                 }else{
                     if( !period.period_name ){
@@ -807,7 +810,7 @@ class ProjectsController extends Controller {
         const { success, objects } = context;
         
         if( success ){
-            const { Project } = objects;
+            const { Project, decodedToken } = objects;
             const project  = Project.getData()
     
             const { tasks } = project
@@ -826,13 +829,14 @@ class ProjectsController extends Controller {
                         const endDate = new Date( end )
     
                         if( endDate && startDate && endDate - startDate >= 0 ){
-    
+                            const newMemberNames = []
                             if( members && Array.isArray(members)){
                                 const AccountsModel = new Accounts()
                                 const users = await AccountsModel.findAll({ username: { $in: members } })
                                 const serializedUsers = {}
                                 users.map(user => {
                                     serializedUsers[user.username] = user
+                                    newMemberNames.push( user.fullname )
                                 })    
                                 period.period_members = serializedUsers
                             }
@@ -841,8 +845,11 @@ class ProjectsController extends Controller {
                             
                             delete newPeriod.members // this may cause error
 
+                            const oldMembers = Object.values(oldPeriod.period_members)
+                            const oldMemberNames = oldMembers.map( mem => mem.fullname )                            
+
                             await Project.__modifyAndSaveChange__(`tasks.${ period_id }`, newPeriod)
-    
+                            this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ oldPeriod.period_name } => ${ newPeriod.period_name } | __period_start: ${ oldPeriod.start } => ${ newPeriod.start } | __period_end: ${ oldPeriod.end } => ${ newPeriod.end } | __member: ${ oldMemberNames.join(", ") } => ${ newMemberNames.join(', ') }`, decodedToken.username)
                             context.content = "Cập nhật giai đoạn thành công"    
                             context.success = true 
                             context.status = "0x4501257"                            
@@ -893,13 +900,18 @@ class ProjectsController extends Controller {
         const { success, objects } = context;
 
         if( success ){
-            const { Project } = objects;
+            const { Project, decodedToken } = objects;
             const project  = Project.getData()
     
             const { tasks } = project
             if( tasks ){
-                delete tasks[`${ period_id }`]
+                const oldPeriod = {...tasks[`${ period_id }`]}
+                delete tasks[`${ period_id }`]                
                 await Project.__modifyAndSaveChange__( "tasks", tasks )
+
+                if( oldPeriod ){
+                    this.saveLog("info", req.ip, "__removeTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ oldPeriod.period_name }`, decodedToken.username)
+                }
             }
             context.status = "0x4501258"
             context.content = "Xóa giai đoạn thành công"
@@ -943,7 +955,7 @@ class ProjectsController extends Controller {
                         await Project.save()
                         const project = Project.getData()
         
-                        this.saveLog("info", req.ip, "__createtask", `__projectname: ${ project.project_name }| __taskname: ${ task.task_name } | __taskdescription: ${ task.task_description } | __taskpriority ${task.task_priority } | __taskmembers: ${ users.map( u => `${u.username}(${ u.fullname })` ).join(", ") }`, decodedToken.username)
+                        this.saveLog("info", req.ip, "__createtask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name }| __taskname: ${ task.task_name } | __taskdescription: ${ task.task_description } | __taskpriority ${task.task_priority } | __taskmembers: ${ users.map( u => `${u.username}(${ u.fullname })` ).join(", ") }`, decodedToken.username)
                         
                         context.content = "Thêm thành công"
                         context.status = "0x4501119"
@@ -1008,6 +1020,8 @@ class ProjectsController extends Controller {
                         childTask.members = serializedUsers;
                         await Project.addChildTask(period_id, task_id, childTask)
                         await Project.save()
+
+                        this.saveLog("info", req.ip, "__createChildTask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name }| __taskname: ${ task.task_name } | __childtaskname: ${ childTask.child_task_name } |  __childtaskdescription: ${ childTask.child_task_description } | __priority ${childTask.priority } | __taskmembers: ${ users.map( u => `${u.username}(${ u.fullname })` ).join(", ") }`, decodedToken.username)
                         
                         context.content = "Thêm thành công"
                         context.status = "0x4501119"                        
@@ -1068,82 +1082,112 @@ class ProjectsController extends Controller {
 
         /* Privilege fix required but not now */
         this.writeReq(req)
-
-        const { project_id, task_id } = req.body
+        const { project_id, period_id, task_id } = req.params
+        const { task } = req.body
 
         const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects, permission } = context;
         const start = new Date()
-        const { Project, decodedToken } = objects;
-
         if (success) {
+        
+            const { Project, decodedToken } = objects;
             const project = Project.getData()
-            const task = project.tasks[`${task_id}`]
-            if (task != undefined) {
-                const { create_by } = task
-                if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
-                    const newTask = { ...task, ...req.body }
-                    let newModified = {}   
-                    const inforFields = [ "task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress" ]                 
-                    switch (type) {
-                        case "infor":                            
-                            newModified = await Project.makeModified( 
-                                type, 
-                                decodedToken, 
-                                this.stringifyObject(task, inforFields),
-                                this.stringifyObject(newTask, inforFields)
-                            )  
-                            
-                            this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${ project.project_name }| __taskname ${ task.task_name } | __taskpriority: ${ task.task_priority } => ${ newTask.task_priority } |  __taskname ${ task.task_name } => ${ newTask.task_name } | __taskdescription: ${ task.task_description } => ${ newTask.task_description }`, decodedToken.username )
-                            break;
-                            
-                        case "status":
-                            newModified = await Project.makeModified( 
-                                type, 
-                                decodedToken, 
-                                task.task_status, 
-                                newTask.task_status
-                            )   
-                            const oldStatus = task.task_status;
-                            this.saveLog("info", req.ip, "__modifytaskstatus", `__projectname: ${ project.project_name }| __taskname ${ task.task_name } | __taskstatus ${ Projects.getTaskStatusName(oldStatus) } => ${ Projects.getTaskStatusName(newTask.task_status) }`, decodedToken.username )
-                            break;
+            const tasks = project.tasks ? project.tasks : {}
 
-                        case "approve":
-                            newModified = await Project.makeModified( 
-                                type, 
-                                decodedToken, 
-                                task.task_approve, 
-                                newTask.task_approve                             
-                            )   
-                            this.saveLog("info", req.ip, "__taskapprove", `__projectname: ${ project.project_name }| __taskname ${ task.task_name } | ${ task.task_approve ? "__approved": "__unapproved" } => ${ newTask.task_approve ? "__approved": "__unapproved" }`, decodedToken.username)
-                            break;                        
-                        default:
-                            newModified = await Project.makeModified( 
-                                type, 
-                                decodedToken, 
-                                this.stringifyObject(task), 
-                                this.stringifyObject(newTask) 
-                            )   
-                            break;
+            const period = tasks[`${ period_id }`]
+
+            if(period){
+                const oldTask = period.tasks[`${ task_id }`]
+
+                if (oldTask) {
+                    const { create_by } = oldTask
+                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
+                        const newTask = { ...oldTask, ...task }
+                        let newModified = {}   
+                        const inforFields = [ "task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress", "members" ]                 
+                        switch (type) {
+                            case "infor":                                                            
+                                const members = task.members ? task.members : []
+                                
+                                const AccountsModel = new Accounts()
+                                const users = await AccountsModel.findAll({ username: { $in: members } })
+                                const usernames = []
+                                const serializedUsers = {}
+                                users.map(user => {
+                                    serializedUsers[user.username] = user,
+                                    usernames.push( user.fullname )
+                                })
+
+                                if( members.length > 0 ){                                    
+                                    newTask.members = serializedUsers;
+                                }
+                                
+                                const oldUsernames = Object.values(oldTask.members).map( user => user.fullname ).join(", ")
+
+                                newModified = await Project.makeModified( 
+                                    type, 
+                                    decodedToken, 
+                                    this.stringifyObject({...oldTask, members: oldUsernames}, inforFields),
+                                    this.stringifyObject({...newTask, members: usernames.join(", ")}, inforFields)
+                                )                                                                
+                                this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | __taskpriority: ${ task.task_priority } => ${ newTask.task_priority } |  __taskname ${ task.task_name } => ${ newTask.task_name } | __taskdescription: ${ task.task_description } => ${ newTask.task_description }`, decodedToken.username )
+                                break;
+                                
+                            case "status":
+                                newModified = await Project.makeModified( 
+                                    type, 
+                                    decodedToken, 
+                                    oldTask.task_status, 
+                                    newTask.task_status
+                                )   
+                                const oldStatus = oldTask.task_status;
+                                this.saveLog("info", req.ip, "__modifytaskstatus", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | __taskstatus ${ Projects.getTaskStatusName(oldStatus) } => ${ Projects.getTaskStatusName(newTask.task_status) }`, decodedToken.username )
+                                break;
+    
+                            case "approve":
+                                newModified = await Project.makeModified( 
+                                    type, 
+                                    decodedToken, 
+                                    oldTask.task_approve, 
+                                    newTask.task_approve                             
+                                )   
+                                this.saveLog("info", req.ip, "__taskapprove", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | ${ task.task_approve ? "__approved": "__unapproved" } => ${ newTask.task_approve ? "__approved": "__unapproved" }`, decodedToken.username)
+                                break;                        
+                            default:
+                                newModified = await Project.makeModified( 
+                                    type, 
+                                    decodedToken, 
+                                    this.stringifyObject(oldTask), 
+                                    this.stringifyObject(newTask) 
+                                )   
+                                break;
+                        }
+                        newTask.task_modified = { ...task.task_modified, ...newModified }
+
+                        period.tasks[`${ task_id }`] = newTask
+
+                        project.tasks[`${ period_id }`] = period
+                        Project.setData(project)                       
+    
+                        await Project.save()
+                        context.status = "0x4501119"
+                        context.content = "Cập nhật thành công"
+                    } else {
+                        context.content = "Khum có quyền thực hiện thao tác này"
+                        context.status = "0x4501137"
+                        context.success = false
                     }
-                    newTask.task_modified = { ...task.task_modified, ...newModified }
-                    project.tasks[`${task_id}`] = newTask
-                    Project.setData(project)
-                    context.newTask = Project.getData()
-
-
-                    await Project.save()
-                    context.status = "0x4501133"
                 } else {
-                    context.content = "Khum có quyền thực hiện thao tác này"
+                    context.content = "Yêu cầu khum tồn tại"
                     context.status = "0x4501137"
                     context.success = false
                 }
-            } else {
-                context.content = "Yêu cầu khum tồn tại"
-                context.status = "0x4501137"
+            }else{
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
                 context.success = false
             }
+
         }
 
         const end = new Date()
