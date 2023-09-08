@@ -216,7 +216,8 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.__addProperty__("child_task_id", Model.types.int, { auto: true })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string)
         this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
-        this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })       
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })      
+        this.tasks.tasks.child_tasks.__addProperty__("priority", Model.types.int, { default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("end", Model.types.datetime)   
@@ -225,6 +226,11 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.members.__addProperty__("username", Model.types.string)
         this.tasks.tasks.child_tasks.members.__addProperty__("fullname", Model.types.string)
         this.tasks.tasks.child_tasks.members.__addProperty__("avatar", Model.types.string)
+
+        this.tasks.tasks.child_tasks.__addProperty__("create_by", Model.types.json);
+        this.tasks.tasks.child_tasks.create_by.__addProperty__("username", Model.types.string, { required: true })
+        this.tasks.tasks.child_tasks.create_by.__addProperty__("fullname", Model.types.string)
+        this.tasks.tasks.child_tasks.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
 
         this.tasks.tasks.__addProperty__("members", Model.types.model)
         this.tasks.tasks.members.__addProperty__("username", Model.types.string)
@@ -465,6 +471,16 @@ class ProjectsRecord extends Projects {
             data.tasks = tasks
             this.setData(data)
         }
+    }
+
+    addChildTask = async (period_id, task_id, childTask) => {
+        const data = this.getData() 
+        const model = this.getModel()
+        const id = await model.__getNewId__()
+        childTask.child_task_id = id;
+
+        data.tasks[`${ period_id }`].tasks[`${task_id}`].child_tasks[`${ id }`] = childTask
+        this.setData(data)
     }
 
     makeModified = async (modified_what, modified_by, old_value, new_value, modified_at = new Date()) => {
