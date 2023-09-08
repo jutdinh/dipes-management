@@ -41,4 +41,12 @@ router.delete("/project/:project_id/period/:period_id/task/:task_id", async (req
 })
 
 
+router.delete("/project/:project_id/period/:period_id/task/:task_id/child/:child_task_id", async (req, res) => { 
+    try{
+        await ProjectsController.removeChildTask(req, res, [ permission.uad, permission.ad ]) // privilege currently ignored
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
 module.exports = router;

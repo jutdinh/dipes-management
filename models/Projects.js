@@ -218,6 +218,7 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string)
         this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })      
+        this.tasks.tasks.child_tasks.__addProperty__("approve", Model.types.bool, { default: false })
         this.tasks.tasks.child_tasks.__addProperty__("priority", Model.types.int, { default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)

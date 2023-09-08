@@ -1114,8 +1114,8 @@ class ProjectsController extends Controller {
                                 const usernames = []
                                 const serializedUsers = {}
                                 users.map(user => {
-                                    serializedUsers[user.username] = user,
-                                    usernames.push( user.fullname )
+                                    serializedUsers[user.username] = user; 
+                                    usernames.push( user.fullname )                                    
                                 })
 
                                 newTask.members = serializedUsers;                                
@@ -1163,7 +1163,6 @@ class ProjectsController extends Controller {
                         newTask.task_modified = { ...oldTask.task_modified, ...newModified }
 
                         period.tasks[`${ task_id }`] = newTask
-
                         project.tasks[`${ period_id }`] = period
                             
     
@@ -1247,6 +1246,132 @@ class ProjectsController extends Controller {
 
         const end = new Date()
         console.log(`PROCCESSING TIME: ${end - start}`)
+        delete context.objects;
+        res.status(200).send(context)
+    }
+
+    updateChildTask = async (req, res, type = "infor") => {
+        this.writeReq(req)
+        const { project_id, period_id, task_id, child_task_id } = req.params
+        const { child_task } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects, permission } = context;
+        const start = new Date()
+
+        if(success){
+            const { Project, decodedToken } = objects;
+            const project = Project.getData()
+            const tasks = project.tasks ? project.tasks : {}
+
+            const period = tasks[`${ period_id }`]
+
+            if(period){
+                const task = period.tasks[`${ task_id }`]
+                if (task) {
+
+                    const oldChildTask = task.child_tasks[`${ child_task_id }`]
+                    if(oldChildTask){
+                        const { create_by } = oldChildTask
+    
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
+                            const newTask = { ...oldChildTask, ...child_task }
+
+                            const members = newTask.members ? newTask.members : []
+                                
+                                const AccountsModel = new Accounts()
+                                const users = await AccountsModel.findAll({ username: { $in: members } })                                
+                                const serializedUsers = {}
+                                users.map(user => {
+                                    serializedUsers[user.username] = user
+                                })
+
+                                newTask.members = serializedUsers;  
+                                period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`] = newTask;
+
+                                await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
+
+                            context.status = "0x4501119"
+                            context.content = "Cập nhật thành công"
+                        } else {
+                            context.content = "Khum có quyền thực hiện thao tác này"
+                            context.status = "0x4501137"
+                            context.success = false
+                        }
+                    }else{
+                        context.content = "Yêu cầu khum tồn tại"
+                        context.status = "0x4501137"
+                        context.success = false
+                    }                    
+                } else {
+                    context.content = "Yêu cầu khum tồn tại"
+                    context.status = "0x4501137"
+                    context.success = false
+                }
+            }else{
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
+                context.success = false
+            }
+
+        }       
+        delete context.objects;
+        res.status(200).send(context)
+    }
+
+    removeChildTask = async ( req, res ) => {
+        this.writeReq(req)
+        const { project_id, period_id, task_id, child_task_id } = req.params
+        const { child_task } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects, permission } = context;
+        const start = new Date()
+
+        if(success){
+            const { Project, decodedToken } = objects;
+            const project = Project.getData()
+            const tasks = project.tasks ? project.tasks : {}
+
+            const period = tasks[`${ period_id }`]
+
+            if(period){
+                const task = period.tasks[`${ task_id }`]
+                if (task) {
+
+                    const oldChildTask = task.child_tasks[`${ child_task_id }`]
+                    if(oldChildTask){
+                        const { create_by } = oldChildTask
+    
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
+                            
+                            delete period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`]
+                            await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
+                            
+                            context.status = "0x4501119"
+                            context.content = "Xóa yêu cầu con thành công"
+                        } else {
+                            context.content = "Khum có quyền thực hiện thao tác này"
+                            context.status = "0x4501137"
+                            context.success = false
+                        }
+                    }else{
+                        context.content = "Yêu cầu khum tồn tại"
+                        context.status = "0x4501137"
+                        context.success = false
+                    }                    
+                } else {
+                    context.content = "Yêu cầu khum tồn tại"
+                    context.status = "0x4501137"
+                    context.success = false
+                }
+            }else{
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
+                context.success = false
+            }
+
+        }       
         delete context.objects;
         res.status(200).send(context)
     }
