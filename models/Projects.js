@@ -211,7 +211,7 @@ class Projects extends Model {
         this.tasks.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.tasks.__addProperty__("end", Model.types.datetime)
-        this.tasks.tasks.__addProperty__("progress", Model.types.int, { default: 0 })
+        this.tasks.tasks.__addProperty__("progress", Model.types.number, { default: 0 })
 
         this.tasks.tasks.__addProperty__("child_tasks", Model.types.model)
         this.tasks.tasks.child_tasks.__addProperty__("child_task_id", Model.types.int, { auto: true })
@@ -223,7 +223,7 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("end", Model.types.datetime)   
-        this.tasks.tasks.child_tasks.__addProperty__("progress", Model.types.int, { default: 0 })
+        this.tasks.tasks.child_tasks.__addProperty__("progress", Model.types.number, { default: 0 })
         
         this.tasks.tasks.child_tasks.__addProperty__("members", Model.types.model)
         this.tasks.tasks.child_tasks.members.__addProperty__("username", Model.types.string)
