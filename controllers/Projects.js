@@ -1135,6 +1135,8 @@ class ProjectsController extends Controller {
                     const { create_by } = oldTask
                     if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
                         const newTask = { ...oldTask, ...task }
+                        newTask.child_tasks = oldTask.child_tasks;
+                        
                         let newModified = {}   
                         const inforFields = [ "task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress", "members" ]                 
                         switch (type) {
