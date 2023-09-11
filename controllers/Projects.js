@@ -1199,7 +1199,7 @@ class ProjectsController extends Controller {
                             
     
                         await Project.__modifyAndSaveChange__(`tasks`, project.tasks)
-                        context.status = "0x4501119"
+                        context.status = "0x4501155"
                         context.content = "Cập nhật thành công"
                     } else {
                         context.content = "Khum có quyền thực hiện thao tác này"
@@ -1323,7 +1323,7 @@ class ProjectsController extends Controller {
 
                                 await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
 
-                            context.status = "0x4501119"
+                            context.status = "0x4501261"
                             context.content = "Cập nhật thành công"
                         } else {
                             context.content = "Khum có quyền thực hiện thao tác này"
@@ -1380,7 +1380,7 @@ class ProjectsController extends Controller {
                             delete period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`]
                             await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
 
-                            context.status = "0x4501119"
+                            context.status = "0x4501260"
                             context.content = "Xóa yêu cầu con thành công"
                         } else {
                             context.content = "Khum có quyền thực hiện thao tác này"
