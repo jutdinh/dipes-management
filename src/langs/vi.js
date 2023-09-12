@@ -412,7 +412,7 @@ export default {
     "error.task_description": "Vui lòng nhập mô tả cho yêu cầu công việc",
     "error.members": "Vui lòng chọn người thực hiện yêu cầu",
     "error.task_priority":" Vui lòng chọn mức độ ưu tiên",
-
+    "error.members_stage": "Vui lòng chọn người thực hiện giai đoạn",
     "gantt.year": "Năm",
     "gantt.quarters": "Quý",
     "gantt.months": "Tháng",
@@ -457,7 +457,9 @@ export default {
     "p.stagename": "Nhập tên giai đoạn",
     "error.stagename": "Vui lòng nhập tên giai đoạn",
     "delete.stage": "Bạn có chắc chắn muốn xóa giai đoạn này?",
-    "edittaskchild":" Chỉnh sửa công việc con"
+    "edittaskchild":" Chỉnh sửa công việc con",
+    "collapse": "Thu gọn",
+    "expand": "Mở rộng"
 
 
 

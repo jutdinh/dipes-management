@@ -1,205 +1,3 @@
-// import React, { Component } from "react";
-// import Timeline from "react-timelines";
-// import moment from 'moment';
-// import { useState, useEffect, useRef } from 'react';
-// import "react-timelines/lib/css/style.css";
-// import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
-// import { useDispatch, useSelector } from 'react-redux';
-// // eslint-disable-next-line no-alert
-// const clickElement = element => alert(`Clicked element\n${JSON.stringify(element, null, 2)}`);
-
-
-
-// const MIN_ZOOM = 27;
-// const MAX_ZOOM = 35;
-
-// class TimelineChart extends Component {
-//     constructor(props) {
-//         super(props);
-//         const { data } = props;
-//         console.log(data)
-        
-//         const buildTimebar = () => {
-//             const { lang, proxy, auth, functions } = useSelector(state => state);
-//             const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-//             const months = [
-//                 lang["january"],
-//                 lang["february"],
-//                 lang["march"],
-//                 lang["april"],
-//                 lang["may"],
-//                 lang["june"],
-//                 lang["july"],
-//                 lang["august"],
-//                 lang["september"],
-//                 lang["october"],
-//                 lang["november"],
-//                 lang["december"],
-//             ];
-
-//             const years = Array.from({ length: 4 }, (_, i) => {
-//                 const year = moment().year() + i;  // bắt đầu từ năm hiện tại 
-//                 const quartersCells = quarters.map((q, j) => {
-//                     return {
-//                         id: `${year}-${q}`,
-//                         title: `${year} ${q}`,
-//                         start: moment({ year }).quarter(j + 1).startOf('quarter').toDate(),
-//                         end: moment({ year }).quarter(j + 1).endOf('quarter').toDate(),
-//                         children: Array.from({ length: 3 }, (_, k) => {
-//                             const month = j * 3 + k;
-//                             return {
-//                                 id: `${year}-${month + 1}`,
-//                                 title: months[month],
-//                                 start: moment({ year, month }).startOf('month').toDate(),
-//                                 end: moment({ year, month }).endOf('month').toDate(),
-//                                 children: Array.from({ length: moment({ year, month }).daysInMonth() }, (_, d) => {
-//                                     const day = d + 1;
-//                                     return {
-//                                         id: `${year}-${month + 1}-${day}`,
-//                                         title: `${day}`,
-//                                         start: moment({ year, month, day }).startOf('day').toDate(),
-//                                         end: moment({ year, month, day }).endOf('day').toDate(),
-//                                     };
-//                                 })
-//                             };
-//                         }),
-//                     };
-//                 });
-
-//                 return {
-//                     id: `${year}`,
-//                     title: `${year}`,
-//                     start: moment({ year }).startOf('year').toDate(),
-//                     end: moment({ year }).endOf('year').toDate(),
-//                     cells: quartersCells,
-//                 };
-//             });
-
-//             return [
-//                 { id: 'years', title: 'Năm', cells: years },
-//                 { id: 'quarters', title: 'Quý', cells: years.flatMap(year => year.cells) },
-//                 { id: 'months', title: 'Tháng', cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children)) },
-//                 { id: 'days', title: 'Ngày', cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children.flatMap(month => month.children))) },
-//             ];
-//         };
-
-//         const currentQuarter = moment().quarter();
-
-//         const statusTaskView = [
-//             StatusTask.INITIALIZATION.color,
-//             StatusTask.IMPLEMENT.color,
-//             StatusTask.COMPLETE.color,
-//             StatusTask.PAUSE.color
-//         ]
-//         console.log(statusTaskView[1])
-//         const tracks = data.map((task, index) => ({
-//             id: index + 1,
-//             title: `Task ${index + 1}`,
-//             elements: task.members.map((member, memberIndex) => ({
-//                 id: memberIndex + 1,
-//                 title: task.task_name,
-//                 start: moment(task.start).toDate(),
-//                 end: moment(task.end).toDate(),
-//                 style: {
-//                     backgroundColor: `${statusTaskView[task.task_status - 1]}`,
-//                     borderRadius: `4px`,
-//                     boxShadow: `1px 1px 0px rgba(0, 0, 0, 0.25)`
-//                 }
-//             })),
-//         }));
-
-//         this.state = {
-//             open: false,
-//             zoom: MAX_ZOOM, // Set initial zoom level to the maximum, adjust accordingly to show the current quarter only
-//             start: moment().startOf('quarter').toDate(),
-//             end: moment().quarter(currentQuarter).endOf('quarter').toDate(),
-
-//             tracks,
-//             timebar: buildTimebar(),
-//         };
-//     }
-
-//     handleToggleOpen = () => {
-//         this.setState(({ open }) => ({ open: !open }));
-//     };
-
-//     handleZoomIn = () => {
-//         this.setState(({ zoom }) => ({ zoom: Math.min(zoom + 4, MAX_ZOOM) }));
-//     };
-
-//     handleZoomOut = () => {
-//         this.setState(({ zoom }) => ({ 
-//             zoom: Math.max(zoom - 2, MIN_ZOOM), // Adjust zoom level
-//             start: moment().startOf('year').toDate(), // start of current year
-//             end: moment().add(0, 'year').endOf('quarter').toDate()// end of next 4 years
-//         }));
-//     };
-
-//     handleZoomOut = () => {
-//         this.setState(({ zoom }) => {
-//             const newZoom = Math.max(zoom - 2, MIN_ZOOM);
-//             let start, end;
-//             if (newZoom === MIN_ZOOM) {
-//                 // Display only the current quarter when minimum zoom is reached
-//                 start = moment().startOf('quarter').toDate();
-//                 end = moment().endOf('quarter').toDate();
-//             } else {
-//                 // Otherwise display the full range
-//                 start = moment().startOf('year').toDate();
-//                 end = moment().add(4, 'year').endOf('year').toDate();
-//             }
-//             return {
-//                 zoom: newZoom,
-//                 start: start,
-//                 end: end
-//             };
-//         });
-//     };
-
-//     render() {
-//         const { open, zoom, tracks } = this.state;
-//         // const start = moment().startOf('year').toDate();  // bắt đầu từ đầu năm hiện tại
-//         // const end = moment().add(3, 'year').toDate();    
-
-//         // const start = moment().startOf('year').toDate(); /// hiển thị tất cả quý của năm
-//         // const end = moment().endOf('year').toDate();
-
-//         // const start = moment().startOf('quarter').toDate(); // theo quý hiện tại
-//         // const end = moment().endOf('quarter').toDate();
-
-//         const start = moment().startOf('year').toDate();
-//         const end = moment().add(2, 'year').toDate();
-
-//         const now = moment().toDate();
-
-//         return (
-//             <div className="app">
-
-//                 <Timeline
-//                     scale={{
-//                         start,
-//                         end,
-//                         zoom,
-//                         zoomMin: MIN_ZOOM,
-//                         zoomMax: MAX_ZOOM
-//                     }}
-//                     isOpen={open}
-//                     toggleOpen={this.handleToggleOpen}
-//                     zoomIn={this.handleZoomIn}
-//                     zoomOut={this.handleZoomOut}
-//                     clickElement={clickElement}
-//                     timebar={this.state.timebar}
-//                     tracks={tracks}
-//                     now={now}
-//                     enableSticky
-//                     scrollToNow
-//                 />
-//             </div>
-//         );
-//     }
-// }
-
-// export default TimelineChart;
 import React, { useState, useEffect } from "react";
 import Timeline from "react-timelines";
 import moment from 'moment';
@@ -210,9 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const clickElement = element => alert(`Clicked element\n${JSON.stringify(element, null, 2)}`);
 const MIN_ZOOM = 30;
-const MAX_ZOOM = 37;
+const MAX_ZOOM = 38;
 
-const TimelineChart = ({ data, project }) => {
+const TimelineChart = ({ data, project, data_raw }) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const [open, setOpen] = useState(false);
     const [zoom, setZoom] = useState(MAX_ZOOM);
@@ -222,7 +20,7 @@ const TimelineChart = ({ data, project }) => {
     const [tracks, setTracks] = useState([]);
     const [selectedYear, setSelectedYear] = useState(moment().year());
     const [selectedMonth, setSelectedMonth] = useState(moment().month());
-
+    // console.log(selectedMonth)
     // ///focus đến tháng hiện tại
     // useEffect(() => {
     //     setStart(moment({ year: selectedYear, month: selectedMonth }).startOf('month').toDate());
@@ -251,7 +49,52 @@ const TimelineChart = ({ data, project }) => {
     ]
 
     useEffect(() => {
-       
+        // const buildTimebar = () => {
+        //     const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+        //     const years = Array.from({ length: 4 }, (_, i) => {
+        //         const year = selectedYear;
+        //         const quartersCells = quarters.map((q, j) => {
+        //             return {
+        //                 id: `${year}-${q}-${i}-${j}`,
+        //                 title: `${year} ${q}`,
+        //                 start: moment({ year }).quarter(j + 1).startOf('quarter').toDate(),
+        //                 end: moment({ year }).quarter(j + 1).endOf('quarter').toDate(),
+        //                 children: Array.from({ length: 3 }, (_, k) => {
+        //                     const month = j * 3 + k;
+        //                     return {
+        //                         id: `${year}-${month + 1}-${i}-${j}`,
+        //                         title: months[month],
+        //                         start: moment({ year, month }).startOf('month').toDate(),
+        //                         end: moment({ year, month }).endOf('month').toDate(),
+        //                         children: Array.from({ length: moment({ year, month }).daysInMonth() }, (_, d) => {
+        //                             const day = d + 1;
+        //                             return {
+        //                                 id: `${year}-${month + 1}-${day}-${i}-${j}-${k}-${d}`,
+        //                                 title: `${day}`,
+        //                                 start: moment({ year, month, day }).startOf('day').toDate(),
+        //                                 end: moment({ year, month, day }).endOf('day').toDate(),
+        //                             };
+        //                         })
+        //                     };
+        //                 }),
+        //             };
+        //         });
+        //         return {
+        //             id: `${year}-${i}`,
+        //             title: `${year}`,
+        //             start: moment({ year }).startOf('year').toDate(),
+        //             end: moment({ year }).endOf('year').toDate(),
+        //             cells: quartersCells,
+        //         };
+        //     });
+
+        //     return [
+        //         { id: 'years', title: lang["gantt.year"], cells: years },
+        //         { id: 'quarters', title: lang["gantt.quarters"], cells: years.flatMap(year => year.cells) },
+        //         { id: 'months', title: lang["gantt.months"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children)) },
+        //         { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(quarter => quarter.children.flatMap(month => month.children))) },
+        //     ];
+        // };
         const buildTimebar = () => {
             const years = Array.from({ length: 4 }, (_, i) => {
                 const year = selectedYear;
@@ -280,13 +123,14 @@ const TimelineChart = ({ data, project }) => {
                     cells: monthsCells,
                 };
             });
-        
+
             return [
+
                 { id: 'yearMonths', title: lang["gantt.yearmonths"], cells: years.flatMap(year => year.cells) },
                 { id: 'days', title: lang["gantt.day"], cells: years.flatMap(year => year.cells.flatMap(month => month.children)) },
             ];
         };
-        
+
         const statusTaskView = [
             StatusTask.INITIALIZATION.color,
             StatusTask.IMPLEMENT.color,
@@ -313,37 +157,21 @@ const TimelineChart = ({ data, project }) => {
         const tracks = data.map((task, index) => ({
             id: index + 1,
             title:
-                (<div class="row">
-                       <div class="col-md-6">
-                        <span>
-                            <div  className="task-name" style={{
-                                width: "99%",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                
-                            }}>
-                                {task.task_name}
+                (<div style={styles.container}>
+                    <div style={styles.images}>
+                        {task.members.slice(0, 1).map(mem =>
+                            <img style={{ width: "26px" }} class="img-responsive circle-image mt-1 ml-1" src={proxy + mem.avatar} alt="#" />
+                        )}
+                        {
+                            task.members.length > 1 &&
+                            <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{ width: "25px", backgroundImage: `url(${proxy + task.members[1].avatar})` }}>
+                                <span>+{task.members.length - 1}</span>
                             </div>
-                        </span>
+                        }
                     </div>
-                    <div class="col-md-6">
-                        <div style={styles.container}>
-                            <div style={styles.images}>
-                                {task.members.slice(0, 1).map(mem =>
-                                    <img style={{ width: "26px" }} class="img-responsive circle-image mt-1 ml-1" src={proxy + mem.avatar} alt="#" />
-                                )}
-                                {
-                                    task.members.length > 1 &&
-                                    <div className="img-responsive circle-image-gantt mt-1 ml-1" style={{ width: "25px", backgroundImage: `url(${proxy + task.members[1].avatar})` }}>
-                                        <span>+{task.members.length - 1}</span>
-                                    </div>
-                                }
-                            </div>  
-                        </div>
-                    </div>
-                </div>
-                ),
+                    <span> {lang["task"]} {index + 1}</span>
+
+                </div>),
             // title: `Task ${index + 1}`,
             elements: [{
                 id: 0,
@@ -382,6 +210,18 @@ const TimelineChart = ({ data, project }) => {
         setZoom(newZoom);
     }
     const now = moment().toDate();
+    //set năm
+    function getYearsFromTasks(data_raw) {
+        const years = new Set();
+        data_raw.forEach(task => {
+            const startYear = new Date(task.start).getFullYear();
+            const endYear = new Date(task.end).getFullYear();
+            years.add(startYear);
+            years.add(endYear);//Set chỉ chứa các giá trị duy nhất, nên nếu một năm đã được thêm trước đó, nó sẽ không được thêm lại.
+        });
+
+        return Array.from(years);
+    }
 
     useEffect(() => {
         setTimeout(() => {
@@ -397,6 +237,38 @@ const TimelineChart = ({ data, project }) => {
         }, 20);
     }, [selectedYear, selectedMonth, start, end]);
 
+    // console.log(document.querySelector('.rt-layout__timeline'));
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    const timeline = document.querySelector('.rt-layout__timeline');
+    if (timeline) {
+        timeline.addEventListener('mousedown', (e) => {
+            isDown = true;
+            timeline.classList.add('active'); // Thêm class 'active' khi chuột nhấn xuống
+            startX = e.pageX - timeline.offsetLeft;
+            scrollLeft = timeline.scrollLeft;
+        });
+        timeline.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - timeline.offsetLeft;
+            const walk = (x - startX);
+            timeline.scrollLeft = scrollLeft - walk;
+        });
+        timeline.addEventListener('mouseup', () => {
+            isDown = false;
+            timeline.classList.remove('active'); // Xóa class 'active' khi chuột nhả ra
+        });
+        timeline.addEventListener('mouseleave', () => {
+            isDown = false;
+            timeline.classList.remove('active'); // Xóa class 'active' khi chuột rời khỏi
+        });
+    }
+
+
+
 
     return (
         <div className="app app1">
@@ -404,23 +276,24 @@ const TimelineChart = ({ data, project }) => {
                 <div class="col-md-6">
                     <div class="row mt-2">
                         <div class="col-sm-6 col-md-4">
-                            <select class="form-control mt-1 ml-1"
+                            <select class="form-control mt-1"
                                 value={selectedYear}
                                 onChange={(e) => {
                                     const newYear = parseInt(e.target.value);
                                     setSelectedYear(newYear);
-                                    setSelectedMonth(0); // Reset month to January when year changes
+                                    setSelectedMonth(13); // Reset month to January when year changes
                                     setStart(moment({ year: newYear }).startOf('year').toDate());
                                     setEnd(moment({ year: newYear }).endOf('year').toDate());
                                 }}
                             >
-                                {Array.from({ length: 5 }, (_, i) => 2022+ i).map((year) => (
+                                {getYearsFromTasks(data).map((year) => (
                                     <option key={year} value={year}>
                                         {year}
                                     </option>
                                 ))}
                             </select>
                         </div>
+
                         <div class="col-sm-6 col-md-4">
                             <select class="form-control mt-1"
                                 style={{ minWidth: "95px" }}
@@ -435,7 +308,10 @@ const TimelineChart = ({ data, project }) => {
                                         timeline.scrollLeft = newScrollPosition;
                                     }
                                 }}
-                                >
+                            >
+                                <option value={13}>
+                                    {lang["choose"]}
+                                </option>
                                 {months.map((month, i) => (
                                     <option key={i} value={i}>
                                         {month}
@@ -456,8 +332,8 @@ const TimelineChart = ({ data, project }) => {
                         start,
                         end,
                         zoom,
-                        zoomMin: MIN_ZOOM,
-                        zoomMax: MAX_ZOOM,
+                        // zoomMin: MIN_ZOOM,
+                        // zoomMax: MAX_ZOOM,
                     }}
                     isOpen={open}
                     toggleOpen={handleToggleOpen}
@@ -465,11 +341,41 @@ const TimelineChart = ({ data, project }) => {
                     //   zoomOut={handleZoomOut}
                     // clickElement={clickElement}
                     timebar={timebar}
-                    tracks={tracks}
+                    tracks={
+                        selectedMonth !== 13 ? (
+                            tracks.filter(track => {
+                                const trackStartDate = moment(track.elements[0].start);
+                                const trackEndDate = moment(track.elements[0].end);
+                                const selectedStartDate = moment().year(selectedYear).month(selectedMonth).date(1);
+                                const selectedEndDate = moment(selectedStartDate).endOf('month');
+                                
+                                // console.log("Track Start Date:", trackStartDate.format('YYYY-MM-DD'));
+                                // console.log("Track End Date:", trackEndDate.format('YYYY-MM-DD'));
+                                // console.log("Selected Start Date:", selectedStartDate.format('YYYY-MM-DD'));
+                                // console.log("Selected End Date:", selectedEndDate.format('YYYY-MM-DD'));
+
+                                const isTrackStartBetween = trackStartDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                                const isTrackEndBetween = trackEndDate.isBetween(selectedStartDate, selectedEndDate, null, '[]');
+                                const isTrackSpanningSelectedStart = trackStartDate.isBefore(selectedStartDate) && trackEndDate.isAfter(selectedStartDate);
+                                const isTrackSpanningSelectedEnd = trackStartDate.isBefore(selectedEndDate) && trackEndDate.isAfter(selectedEndDate);
+                            
+                                return isTrackStartBetween || isTrackEndBetween || isTrackSpanningSelectedStart || isTrackSpanningSelectedEnd;
+                            })
+                        ) : (
+                            tracks.filter(track => {
+                                const trackYear = moment(track.elements[0].start).year();
+                                return trackYear === selectedYear;
+                            })
+                        )
+                    }
+                    // tracks={
+                    //     tracks.filter(track => {
+                    //     const trackStartDate = moment(track.elements[0].start);
+                    //     return trackStartDate.year() === selectedYear && trackStartDate.month() === selectedMonth;
+                    // })}
                     now={now}
                     enableSticky
                     scrollToNow
-                   
                 />
             </div>
         </div>

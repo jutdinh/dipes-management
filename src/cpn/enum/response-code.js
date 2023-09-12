@@ -15,7 +15,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -105,7 +105,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Some fields are blank or incorrect",
+            "description": "Some data fields are blank or incorrect",
             "type": "Error"
         }
     },
@@ -125,7 +125,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The account attribute was not found in req.body or the account has the value undefined",
+            "description": "The account attribute was not found in req.body or account has the value undefined",
             "type": "Error"
         }
     },
@@ -135,7 +135,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "User does not exist or has been deleted",
+            "description": "The user does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -145,7 +145,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You cannot delete users with permissions greater than or equal to yours",
+            "description": "You cannot remove users with authority greater than or equal to yours",
             "type": "Error"
         }
     },
@@ -155,7 +155,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Delete user successfully",
+            "description": "User deletion successful",
             "type": "Success"
         }
     },
@@ -175,7 +175,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "User information update successful",
+            "description": "User information updated successfully",
             "type": "Success"
         }
     },
@@ -185,7 +185,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You cannot update a new permission greater than or equal to yourself",
+            "description": "You cannot update a new permission that is greater than or equal to yourself",
             "type": "Error"
         }
     },
@@ -205,7 +205,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -245,7 +245,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "User information update successful",
+            "description": "User information updated successfully",
             "type": "Success"
         }
     },
@@ -255,7 +255,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Cannot update other user information using this API",
+            "description": "Other user information cannot be updated using this API",
             "type": "Error"
         }
     },
@@ -295,7 +295,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update avatar successfully",
+            "description": "Updated profile picture successfully",
             "type": "Success"
         }
     },
@@ -315,7 +315,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Do not have permission to perform this operation",
+            "description": "There is no permission to perform this operation",
             "type": "Error"
         }
     },
@@ -325,7 +325,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Account does not exist or has been deleted",
+            "description": "The account does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -345,7 +345,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -365,7 +365,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update avatar successfully",
+            "description": "Updated profile picture successfully",
             "type": "Success"
         }
     },
@@ -375,7 +375,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "User does not exist or has been deleted",
+            "description": "The user does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -435,7 +435,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -515,7 +515,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -545,7 +545,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create a successful project",
+            "description": "Create successful projects",
             "type": "Success"
         }
     },
@@ -555,7 +555,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create a project and add a successful manager",
+            "description": "Create project and add manager successfully",
             "type": "Success"
         }
     },
@@ -565,7 +565,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The specified user does not have permission to act as project manager",
+            "description": "The specified user does not have project manager permissions",
             "type": "Error"
         }
     },
@@ -575,7 +575,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project manager does not exist",
+            "description": "The project manager does not exist",
             "type": "Error"
         }
     },
@@ -605,7 +605,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -625,7 +625,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create success",
+            "description": "Created successfully",
             "type": "Success"
         }
     },
@@ -635,7 +635,7 @@ const responseMessages = {
             "type": "Cảnh báo"
         },
         "en": {
-            "description": "Some users are not added to the project because they do not exist, are not available, or are already present in the project.",
+            "description": "Some users were not added to the project because they did not exist, were unavailable, or were previously in the project",
             "type": "Warning"
         }
     },
@@ -645,7 +645,7 @@ const responseMessages = {
             "type": "Cảnh báo"
         },
         "en": {
-            "description": "No one can be added to the project because they don't exist, are not available, or are already present in the project",
+            "description": "No one is added to the project because they don't exist, aren't available, or were previously in the project",
             "type": "Warning"
         }
     },
@@ -665,7 +665,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -715,7 +715,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Project update successful",
+            "description": "Project updated successfully",
             "type": "Success"
         }
     },
@@ -725,7 +725,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -785,7 +785,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -795,7 +795,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Delete project successfully",
+            "description": "Deleted project successfully",
             "type": "Success"
         }
     },
@@ -805,7 +805,7 @@ const responseMessages = {
             "type": "Cảnh báo"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Warning"
         }
     },
@@ -845,7 +845,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -865,7 +865,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Change manager successfully",
+            "description": "Successful change of manager",
             "type": "Success"
         }
     },
@@ -875,7 +875,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The newly appointed manager does not exist or has been removed",
+            "description": "The newly assigned manager does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -885,7 +885,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -925,7 +925,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -965,7 +965,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Unable to change the rights of the person who has a greater right than the person who made it",
+            "description": "The rights of those who have greater rights than those who exercise them cannot be changed",
             "type": "Error"
         }
     },
@@ -975,7 +975,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The specified account is not part of the project",
+            "description": "The designated account is not part of the project",
             "type": "Error"
         }
     },
@@ -985,7 +985,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The specified account does not exist or is deleted",
+            "description": "The specified account does not exist or has been deleted",
             "type": "Error"
         }
     },
@@ -995,7 +995,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Do not have permission to perform this operation",
+            "description": "There is no permission to perform this operation",
             "type": "Error"
         }
     },
@@ -1015,7 +1015,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1075,7 +1075,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Delete successfully",
+            "description": "Deleted successfully",
             "type": "Success"
         }
     },
@@ -1085,7 +1085,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You cannot delete users with permissions greater than or equal to yours",
+            "description": "You cannot remove users with authority greater than or equal to yours",
             "type": "Error"
         }
     },
@@ -1155,7 +1155,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Calling data successful",
+            "description": "Called data successfully",
             "type": "Success"
         }
     },
@@ -1175,7 +1175,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1195,7 +1195,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Successful request creation",
+            "description": "Created request successfully",
             "type": "Success"
         }
     },
@@ -1205,7 +1205,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Request creation was successful but no one was added to the request because they are not part of the project or are no longer available",
+            "description": "The request was created successfully, but no one was added to the request because they are not part of the project or are no longer available",
             "type": "Success"
         }
     },
@@ -1215,7 +1215,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Request creation was successful but some members were not added because they are not part of the project or are no longer available",
+            "description": "The request was created successfully, but some members were not added because they are not part of the project or are no longer available",
             "type": "Success"
         }
     },
@@ -1245,7 +1245,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1265,7 +1265,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Request status update successful",
+            "description": "Update request status successfully",
             "type": "Success"
         }
     },
@@ -1295,7 +1295,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Request does not exist",
+            "description": "The request does not exist",
             "type": "Error"
         }
     },
@@ -1365,7 +1365,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Request does not exist",
+            "description": "The request does not exist",
             "type": "Error"
         }
     },
@@ -1405,7 +1405,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Successfully added members",
+            "description": "Added members successfully",
             "type": "Success"
         }
     },
@@ -1415,7 +1415,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Some members can't be added because they don't have permissions or aren't available",
+            "description": "Some members were not added because they did not have permissions or were unavailable",
             "type": "Success"
         }
     },
@@ -1425,7 +1425,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "No one has been added to the request because it has no permissions or is unavailable",
+            "description": "No one can be added to the request because they are not authorized or unavailable",
             "type": "Error"
         }
     },
@@ -1435,7 +1435,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Request does not exist",
+            "description": "The request does not exist",
             "type": "Error"
         }
     },
@@ -1455,7 +1455,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1485,7 +1485,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Delete successfully",
+            "description": "Deleted successfully",
             "type": "Success"
         }
     },
@@ -1505,7 +1505,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Request does not exist",
+            "description": "The request does not exist",
             "type": "Error"
         }
     },
@@ -1525,7 +1525,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1575,7 +1575,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Request does not exist",
+            "description": "The request does not exist",
             "type": "Error"
         }
     },
@@ -1595,7 +1595,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1635,7 +1635,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1765,7 +1765,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update version information successfully",
+            "description": "Updated version information successfully",
             "type": "Success"
         }
     },
@@ -1795,7 +1795,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -1805,7 +1805,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1845,7 +1845,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Do not have permission to perform this operation",
+            "description": "There is no permission to perform this operation",
             "type": "Error"
         }
     },
@@ -1865,7 +1865,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1915,7 +1915,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create success table",
+            "description": "Table created successfully",
             "type": "Success"
         }
     },
@@ -1925,7 +1925,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Do not have permission to perform this operation",
+            "description": "There is no permission to perform this operation",
             "type": "Error"
         }
     },
@@ -1935,7 +1935,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -1975,7 +1975,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Retrieving data successfully",
+            "description": "Retrieve data successfully",
             "type": "Success"
         }
     },
@@ -1985,7 +1985,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "You do not have permission to access this api",
+            "description": "You do not have permission to access this API",
             "type": "Error"
         }
     },
@@ -1995,7 +1995,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -2025,7 +2025,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Table update successful",
+            "description": "Table updated successfully",
             "type": "Success"
         }
     },
@@ -2035,7 +2035,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Delete the board successfully",
+            "description": "Table deleted successfully",
             "type": "Success"
         }
     },
@@ -2045,7 +2045,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "There is no permission to change because you are not part of the requesting team",
+            "description": "There is no permission to make changes because you are not part of the team making the request",
             "type": "Error"
         }
     },
@@ -2055,7 +2055,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Create successful fields",
+            "description": "Create fields successfully",
             "type": "Success"
         }
     },
@@ -2065,7 +2065,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "No field found in request body",
+            "description": "No fields found in request body",
             "type": "Error"
         }
     },
@@ -2085,7 +2085,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Retrieving information of successful table fields",
+            "description": "Get information about fields in the success table",
             "type": "Success"
         }
     },
@@ -2095,7 +2095,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update information of successful schools",
+            "description": "Successfully updated school information",
             "type": "Success"
         }
     },
@@ -2105,7 +2105,7 @@ const responseMessages = {
             "type": "Cảnh báo"
         },
         "en": {
-            "description": "At least one invalid field exists, valid cases will still be updated",
+            "description": "If at least one invalid field exists, valid fields will still be updated",
             "type": "Warning"
         }
     },
@@ -2115,7 +2115,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Successful field deletion",
+            "description": "Successfully deleted the field",
             "type": "Success"
         }
     },
@@ -2125,7 +2125,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The id list of the fields cannot be left blank",
+            "description": "The list of field ids cannot be left blank",
             "type": "Error"
         }
     },
@@ -2145,7 +2145,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project does not exist",
+            "description": "The project does not exist",
             "type": "Error"
         }
     },
@@ -2195,7 +2195,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "There exists at least one table without a primary key",
+            "description": "There exists at least one table that does not have a primary key",
             "type": "Error"
         }
     },
@@ -2205,7 +2205,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "There exists at least one invalid table id",
+            "description": "At least one invalid table id exists",
             "type": "Error"
         }
     },
@@ -2235,7 +2235,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "API does not exist or has been removed",
+            "description": "The API does not exist or has been removed",
             "type": "Error"
         }
     },
@@ -2245,7 +2245,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Successful API creation",
+            "description": "API created successfully",
             "type": "Success"
         }
     },
@@ -2265,7 +2265,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Remove API successfully",
+            "description": "Successfully deleted API",
             "type": "Success"
         }
     },
@@ -2275,7 +2275,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "The table is invalid because there is no primary key",
+            "description": "The table is invalid because it does not have a primary key",
             "type": "Error"
         }
     },
@@ -2325,7 +2325,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Successful UI Creation",
+            "description": "Created UI successfully",
             "type": "Success"
         }
     },
@@ -2335,7 +2335,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "UI status update successful",
+            "description": "Update UI status successfully",
             "type": "Success"
         }
     },
@@ -2355,7 +2355,7 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Remove UI successfully",
+            "description": "Successfully removed UI",
             "type": "Success"
         }
     },
@@ -2365,7 +2365,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Primary key field cannot be deleted",
+            "description": "Do not delete the primary key field",
             "type": "Error"
         }
     },
@@ -2395,7 +2395,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "No permission to generate keys",
+            "description": "Does not have permission to create keys",
             "type": "Error"
         }
     },
@@ -2445,7 +2445,7 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Invalid activation key",
+            "description": "Activation key is invalid",
             "type": "Error"
         }
     },
@@ -2465,19 +2465,170 @@ const responseMessages = {
             "type": "Lỗi"
         },
         "en": {
-            "description": "Project manager does not exist",
+            "description": "The project manager does not exist",
             "type": "Error"
         }
     },
     "0x4501246": {
         "vi": {
-            "description": "Lỗi server",
+            "description": "Lỗi server, vui lòng liên hệ Quản trị viên để được hỗ trợ!",
             "type": "Lỗi"
         },
         "en": {
-            "description": "Server error",
+            "description": "Server error, please contact Administrator for support!",
             "type": "Error"
         }
+    },
+    "0x4501247": {
+        "vi": {
+            "description": "Dự án không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The project does not exist",
+            "type": "Error"
+        }
+    },
+    "0x4501248": {
+        "vi": {
+            "description": "Tên giai đoạn không hợp lệ hoặc rỗng",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Phase name is invalid or empty",
+            "type": "Error"
+        }
+    },
+    "0x4501249": {
+        "vi": {
+            "description": "Thông tin giai đoạn không hợp lệ hoặc rỗng.",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Phase information is invalid or empty.",
+            "type": "Error"
+        }
+    },
+    "0x4501250": {
+        "vi": {
+            "description": "Ngày bắt đầu không hợp lệ hoặc rỗng",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Start date is invalid or empty",
+            "type": "Error"
+        }
+    },
+    "0x4501251": {
+        "vi": {
+            "description": "Ngày kết thúc không hợp lệ hoặc rỗng",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "End date is invalid or empty",
+            "type": "Error"
+        }
+    },
+    "0x4501252": {
+        "vi": {
+            "description": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The end date must be greater than the start date",
+            "type": "Error"
+        }
+    },
+    "0x4501253": {
+        "vi": {
+            "description": "Tạo Giai đoạn thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Create a Success Stage",
+            "type": "Success"
+        }
+    },
+    "0x4501254": {
+        "vi": {
+            "description": "Lấy thông tin các giai đoạn thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Get information about the stages of success",
+            "type": "Success"
+        }
+    },
+    "0x4501255": {
+        "vi": {
+            "description": "Giai đoạn không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "Phase does not exist",
+            "type": "Error"
+        }
+    },
+    "0x4501256": {
+        "vi": {
+            "description": "Lấy thông tin giai đoạn thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Get stage information successfully",
+            "type": "Success"
+        }
+    },
+    "0x4501257": {
+        "vi": {
+            "description": "Cập nhật giai đoạn thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Successful stage update",
+            "type": "Success"
+        }
+    },
+    "0x4501258": {
+        "vi": {
+            "description": "Xóa giai đoạn thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Delete stage successfully",
+            "type": "Success"
+        }
+    },
+    "0x4501259": {
+        "vi": {
+            "description": "Yêu cầu không tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The request does not exist",
+            "type": "Error"
+        }
+    },
+    "0x4501260": {
+        "vi": {
+            "description": "Xóa yêu cầu con thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Delete child request successfully",
+            "type": "Success"
+        }
+    },
+    "0x4501261": {
+        "vi": {
+            "description": "Cập nhật yêu cầu thành công",
+            "type": "Thành công"
+        },
+        "en": {
+            "description": "Update task successfully",
+            "type": "Success"
+        }
+       
     }
 }
   export default responseMessages;

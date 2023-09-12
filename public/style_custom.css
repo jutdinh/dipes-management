@@ -1,4 +1,67 @@
 
+.bar-milestone .bar-group rect.bar {
+    stroke: #f03f3f; 
+    stroke-width: 2; 
+}
+
+.bar-milestone .bar-group text.bar-label {
+    fill: #ffffff;
+    display: none;
+}
+
+.gantt .bar-label {
+    fill: #fff;
+    dominant-baseline: central;
+    text-anchor: middle;
+    font-size: 12px;
+    font-weight: lighter;
+    display: none;
+}
+.grid-row {
+    height: 50px !important;
+}
+
+
+  .cell-with-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* GanttTest.css */
+
+.gantt .bar-progress {
+    fill: #336dc4 !important;
+}
+
+.gantt-task {
+  stroke: red !important;
+}
+
+.details-container {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    width: 300px !important;
+    word-wrap: break-word;
+}
+.details-container .font-weight-bold {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px; 
+}
+
+.bar-milestone {
+    border: 2px solid red !important;
+}
+
+
+
+
+
 .pie-chart-container {
     width: 60%;
 }
@@ -9,6 +72,15 @@
     cursor: pointer;
     color: blue;
 } 
+
+.toggle-down {
+    cursor: pointer;
+    color: rgb(26, 26, 27);
+}
+.toggle-right {
+    cursor: pointer;
+    color: rgb(164, 164, 170);
+}
 .pie-legend-container {
     width: 40%;
     display: flex;

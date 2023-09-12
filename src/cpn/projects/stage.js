@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-
+import GanttTest from "./gantt-test"
 
 const Stage = (props) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -12,6 +12,7 @@ const Stage = (props) => {
     const [expandedTasks, setExpandedTasks] = useState({});
     const [expandedSubsubtasks, setExpandedSubsubtasks] = useState({});
 
+    const [dataGantt, setGanttData] = useState([]);
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
 
     const [dataStageUpdate, setDataStageUpdate] = useState([])
@@ -21,17 +22,21 @@ const Stage = (props) => {
     const [task, setTask] = useState({ task_status: 1 });
     const [taskUpdate, setTaskUpadte] = useState({});
     const [taskChild, setTaskChild] = useState({ child_task_status: 1 });
+
+
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedUsernames, setSelectedUsernames] = useState([]);
     const handleCloseModal = () => {
-        // setErrorMessagesadd({})
+        setErrorMessagesadd({})
     };
+
     const dataTask = props.data
     const membersProject = props.members.members
     console.log(dataTask)
     //drop
-    const [containerWidth, setContainerWidth] = useState('80%');
+    // console.log(props.data.period_members)
+    const [containerWidth, setContainerWidth] = useState('50%');
     const [isResizing, setIsResizing] = useState(false);
 
     const containerRef = useRef(null);
@@ -80,20 +85,69 @@ const Stage = (props) => {
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
     };
+    useEffect(() => {
+        // Khi component được mount, lấy trạng thái từ localStorage và đặt vào state
+        const savedExpandedTasks = JSON.parse(localStorage.getItem('expandedTasks')) || {};
+        const savedExpandedSubsubtasks = JSON.parse(localStorage.getItem('expandedSubsubtasks')) || {};
 
+        setExpandedTasks(savedExpandedTasks);
+        setExpandedSubsubtasks(savedExpandedSubsubtasks);
+    }, []);
+
+    // const handleToggle = (taskId) => {
+    //     const newExpandedTasks = { ...expandedTasks };
+    //     newExpandedTasks[taskId] = !newExpandedTasks[taskId];
+    //     setExpandedTasks(newExpandedTasks);
+
+    // };
+    // const handleSubsubtaskToggle = (childTaskId) => {
+    //     const newExpandedSubsubtasks = { ...expandedSubsubtasks };
+    //     newExpandedSubsubtasks[childTaskId] = !newExpandedSubsubtasks[childTaskId];
+    //     setExpandedSubsubtasks(newExpandedSubsubtasks);
+    // };
     const handleToggle = (taskId) => {
         const newExpandedTasks = { ...expandedTasks };
         newExpandedTasks[taskId] = !newExpandedTasks[taskId];
-        setExpandedTasks(newExpandedTasks);
 
+        // Lưu trạng thái mới vào localStorage
+        localStorage.setItem('expandedTasks', JSON.stringify(newExpandedTasks));
+
+        setExpandedTasks(newExpandedTasks);
     };
+
     const handleSubsubtaskToggle = (childTaskId) => {
         const newExpandedSubsubtasks = { ...expandedSubsubtasks };
         newExpandedSubsubtasks[childTaskId] = !newExpandedSubsubtasks[childTaskId];
+
+        // Lưu trạng thái mới vào localStorage
+        localStorage.setItem('expandedSubsubtasks', JSON.stringify(newExpandedSubsubtasks));
+
         setExpandedSubsubtasks(newExpandedSubsubtasks);
     };
 
+    useEffect(() => {
+        const newGanttData = dataTask.map(period => {
+            const tasks = expandedTasks[period.period_id]
+                ? period.tasks.map(task => {
+                    const child_tasks = expandedTasks[period.period_id] && expandedSubsubtasks[task.task_id]
+                        ? task.child_tasks.map(child_task => {
+                            return {
+                                ...child_task,
+                                child_tasks: expandedSubsubtasks[child_task.child_task_id] ? child_task.child_tasks : []
+                            };
+                        })
+                        : [];
+                    return { ...task, child_tasks };
+                })
+                : [];
+            return { ...period, tasks };
+        });
 
+        setGanttData(newGanttData);
+    }, [dataTask, expandedTasks, expandedSubsubtasks, expandedTasks]);
+
+
+    console.log(173, selectedUsernames)
 
 
     const statusPriority = [
@@ -124,7 +178,7 @@ const Stage = (props) => {
     };
     //info update task
     const getInfoTask = (taskId, periodId) => {
-
+        setTaskId(taskId.task_id)
         setTaskUpadte(taskId)
         setPeriodId(periodId)
 
@@ -262,7 +316,7 @@ const Stage = (props) => {
             }
         });
     }
-    console.log(task)
+
     const submitAddTask = (e) => {
         e.preventDefault();
         task.members = selectedUsernames;
@@ -362,7 +416,7 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-
+        console.log(requestBody)
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskUpdate.task_id}`, {
             method: "PUT",
             headers: {
@@ -477,35 +531,46 @@ const Stage = (props) => {
                 }
             })
     };
-    const updateTaskChild = (e) => {
-        e.preventDefault();
-        taskUpdate.members = selectedUsernames;
+    // console.log(selectedUsernames)
 
-        const requestBody = {
-
-            child_task: taskUpdateChild
+    const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
+        console.log(dataUpdate)
+        if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
+            const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
+            setSelectedUsernames(initialSelectedUsernames);
         }
+    
+        taskUpdateChild.members = selectedUsernames;
+        
+        dataUpdate.members = selectedUsernames;
+        console.log(dataUpdate)
+
+
+        const currentTask = useDataUpdate ? dataUpdate : taskUpdateChild;
+        const requestBody = {
+            child_task: currentTask,
+        };
         const errors = {};
-        if (!taskUpdateChild.task_name) {
+        if (!currentTask.child_task_name) {
             errors.task_name = lang["error.taskname"];
         }
-        if (!taskUpdateChild.task_priority) {
+        if (!currentTask.priority) {
             errors.task_priority = lang["error.task_priority"];
         }
-        if (!taskUpdateChild.start) {
+        if (!currentTask.start) {
             errors.start = lang["error.start"];
         }
-        if (!taskUpdateChild.end) {
+        if (!currentTask.end) {
             errors.end = lang["error.end"];
         }
-        if (new Date(taskUpdateChild.start) > new Date(taskUpdateChild.end)) {
+        if (new Date(currentTask.start) > new Date(currentTask.end)) {
             errors.checkday = lang["error.checkday_end"];
         }
 
-        if (new Date(taskUpdateChild.start) > new Date(taskUpdateChild.timeline) || new Date(taskUpdateChild.timeline) > new Date(taskUpdateChild.end)) {
+        if (new Date(currentTask.start) > new Date(currentTask.timeline) || new Date(currentTask.timeline) > new Date(currentTask.end)) {
             errors.checkday_timeline = lang["error.checkday_timeline"];
         }
-        if (!taskUpdateChild.task_description) {
+        if (!currentTask.child_task_description) {
             errors.task_description = lang["error.task_description"];
         }
         // if (!task.members || task.members.length === 0) {
@@ -515,8 +580,9 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
+        console.log(requestBody)
 
-        fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${taskUpdateChild.child_task_id}`, {
+        fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${currentTask.child_task_id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -526,17 +592,71 @@ const Stage = (props) => {
         })
             .then(res => res && res.json())
             .then((resp) => {
+
                 if (resp) {
                     const { success, content, data, status } = resp;
-                    if (success) {
-                        functions.showApiResponseMessage(status);
-                    } else {
-                        functions.showApiResponseMessage(status);
-                    }
+                    // if (success) {
+                    //     functions.showApiResponseMessage(status);
+                    // } else {
+                    //     functions.showApiResponseMessage(status);
+                    // }
                 }
             })
     };
-    const handleDeleteTaskChild = (taskId, periodId) => {
+    const [progressValues, setProgressValues] = useState({});
+    console.log(progressValues)
+    const handleProgressBlur = (e, subsubtask, taskId, periodId, uniqueId) => {
+
+        updateTaskChild({
+            ...subsubtask,
+            progress: progressValues[uniqueId] || subsubtask.progress,
+        }, true);
+    };
+
+    const handleProgressChange = (normalizedValue, subsubtask, taskId, periodId, uniqueId) => {
+        setProgressValues(prevState => ({
+            ...prevState,
+            [uniqueId]: normalizedValue,
+        }));
+        setTaskId(taskId);
+        setPeriodId(periodId);
+    };
+
+    const handleProgressFocus = ( childTask ) => {
+        const  members = childTask.members ? childTask.members : []
+
+        const usernames = members.map( mem => mem.username )
+        setSelectedUsernames( usernames )
+    }
+
+
+    function onlyContainsNumbers(inputString) {
+        const value = parseInt(inputString, 10);
+        return !isNaN(value) && value >= 0 && value <= 100;
+    }
+    function formatPercentage(value) {
+        let num = parseFloat(value);
+        num = Math.max(0, Math.min(num, 100));
+        return num.toFixed(2) + '%';
+    }
+    useEffect(() => {
+        const initialProgressValues = {};
+
+        // Duyệt qua mỗi task và subtask để thiết lập giá trị ban đầu
+        dataTask.forEach((task, taskIndex) => {
+            task.tasks?.forEach((subtask, subtaskIndex) => {
+                subtask.child_tasks?.forEach((subsubtask, subsubtaskIndex) => {
+                    const uniqueId = `${task.period_id}-${subtask.task_id}-${subsubtask.task_id}-${subsubtaskIndex}`;
+                    initialProgressValues[uniqueId] = subsubtask.progress;
+                });
+            });
+        });
+
+        setProgressValues(initialProgressValues);
+    }, [dataTask]);
+
+
+    const handleDeleteTaskChild = (subsubtask, taskId, periodId) => {
 
 
         Swal.fire({
@@ -551,7 +671,7 @@ const Stage = (props) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId.task_id}`, {
+                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${subsubtask.child_task_id}`, {
                     method: 'DELETE',
                     headers: {
                         "content-type": "application/json",
@@ -568,8 +688,17 @@ const Stage = (props) => {
         });
     }
 
-    console.log(selectedUsernames)
-    console.log(formData)
+    // console.log(selectedUsernames)
+    // console.log(formData)
+    // lọc để set điều kiện chọn ngày 
+    const currentPeriod = dataTask.find(period => period.period_id === periodId) || [];
+    const currentTask = dataTask?.flatMap((period) => period.tasks)?.find((task) => task.task_id === taskId) || [];
+
+    // console.log(currentPeriod)
+    // console.log(currentTask)
+
+
+
     return (
         <div style={{ display: 'flex', width: '100%' }} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
             <div
@@ -578,27 +707,30 @@ const Stage = (props) => {
             >
                 <table className="table" style={{ maxWidth: '100%', overflowX: 'auto', whiteSpace: 'nowrap' }}>
 
-                    <thead>
-                        <tr style={{ height: "40px" }}>
 
-                            <th style={{ width: `${columnWidths.col1}px`, position: 'relative' }}>
+                    <thead>
+                        <tr style={{ height: "60px" }}>
+
+                            {/* <th style={{ width: `${columnWidths.col1}px`, position: 'relative' }}> */}
+                            <th style={{ minWidth: `45px`, maxWidth: `45px`, position: 'relative' }}>
                                 <div
                                     style={{ cursor: 'col-resize', width: '5px', height: '100%', position: 'absolute', right: 0, top: 0 }}
                                     onMouseDown={handleColumnResizeMouseDown(1)}
                                 />
                             </th>
-                            <th style={{ width: `${columnWidths.col2}px`, position: 'relative' }} class="font-weight-bold align-center">#
+                            {/* <th style={{ width: `${columnWidths.col2}px`, position: 'relative' }} class="font-weight-bold align-center"># */}
+                            <th style={{ minWidth: `85px`, maxWidth: `85px`, position: 'relative' }} class="font-weight-bold align-center">#
                                 <div
                                     style={{ cursor: 'col-resize', width: '5px', height: '100%', position: 'absolute', right: 0, top: 0 }}
                                     onMouseDown={handleColumnResizeMouseDown(2)}
                                 />
                             </th>
-                            <th class="font-weight-bold align-center">{lang["title.task"]}</th>
+                            <th class="font-weight-bold" style={{ minWidth: `400px`, maxWidth: `400px` }}>{lang["title.task"]}</th>
                             <th class="font-weight-bold align-center"> {lang["task_priority"]}</th>
-                            <th class="font-weight-bold align-center">%{lang["complete"]}</th>
-                            <th class="font-weight-bold align-center">{lang["log.daystart"]}</th>
-                            <th class="font-weight-bold align-center">{lang["log.dayend"]}</th>
-                            <th class="font-weight-bold align-center">Timeline</th>
+                            <th class="font-weight-bold align-center" style={{ width: `80px` }}>%{lang["complete"]}</th>
+                            <th class="font-weight-bold align-center" style={{ width: `120px` }}>{lang["log.daystart"]}</th>
+                            <th class="font-weight-bold align-center" style={{ width: `120px` }}>{lang["log.dayend"]}</th>
+                            <th class="font-weight-bold align-center" style={{ width: `120px` }}>Timeline</th>
                             <th class="font-weight-bold align-center">{lang["log.create_user"]}</th>
                             <th class="font-weight-bold align-center" scope="col">
                                 {lang["log.action"]}
@@ -610,25 +742,26 @@ const Stage = (props) => {
                         {dataTask.map((task, index) => (
                             <React.Fragment key={index}>
                                 <tr class="font-weight-bold">
-                                    <td style={{ width: "20px" }} className="toggle-subtasks" onClick={() => handleToggle(task.period_id)}>
+                                    <td onClick={() => handleToggle(task.period_id)}>
                                         {task.tasks.length > 0 ? (expandedTasks[task.period_id]
-                                            ? <i className="fa fa-minus-circle size-18" aria-hidden="true"></i>
-                                            : <i className="fa fa-plus-circle size-18" aria-hidden="true"></i>
+                                            ? <i className="fa fa-caret-down size-24 toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
+                                            : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
                                         ) : ""
                                         }
                                     </td>
-                                    <td>{task.period_id}</td>
+                                    {/* <td>{task.period_id}</td> */}
+                                    <td>{index + 1}</td>
                                     <td>{task.period_name}</td>
-
                                     <td></td>
-                                    <td>{task.progress}</td>
+                                    {/* <td>{task.progress}</td> */}
+                                    <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat(task.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
                                     <td>{functions.formatDateTask(task.start)}</td>
                                     <td>{functions.formatDateTask(task.end)}</td>
                                     <td></td>
                                     <td>
                                         {task.period_members && task.period_members.length > 0 ?
                                             task.period_members.map(member => member.fullname).join(', ') :
-                                            <p>{lang["projectempty"]}</p>
+                                            <>{lang["projectempty"]}</>
                                         }
                                     </td>
                                     <td>
@@ -642,31 +775,27 @@ const Stage = (props) => {
                                     <>
                                         <tr class="sub-task" key={subtask.task_id}>
 
-                                            <td style={{ width: "20px", paddingLeft: "20px" }} className="toggle-subtasks" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
+                                            <td style={{ width: "50px", paddingLeft: "20px" }} className="toggle-subtasks" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
                                                 {subtask.child_tasks && subtask.child_tasks.length > 0 ? (expandedSubsubtasks[subtask.task_id]
-                                                    ? <i className="fa fa-minus-circle size-18" aria-hidden="true"></i>
-                                                    : <i className="fa fa-plus-circle size-18" aria-hidden="true"></i>
+                                                    ? <i className="fa fa-caret-down size-24 toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
+                                                    : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
                                                 ) : ""}
                                             </td>
-                                            <td>{subtask.task_id}</td>
-                                            <td style={{ paddingLeft: "20px" }}>{subtask.task_name}</td>
-                                            <td class="align-center">{getTaskPriorityLabel(subtask.task_priority)}</td>
-                                            <td>{subtask.progress}</td>
+                                            {/* <td>{subtask.task_id}</td> */}
+                                            <td style={{ paddingLeft: "10px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
+                                            <td style={{ paddingLeft: "10px" }}>{subtask.task_name}</td>
+                                            <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
+                                            <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
                                             <td>{functions.formatDateTask(subtask.start)}</td>
                                             <td>{functions.formatDateTask(subtask.end)}</td>
                                             <td>{functions.formatDateTask(subtask.timeline)}</td>
-                                            <td>
+                                            {/* <td>
                                                 {
                                                     subtask.members && subtask.members.length > 0 ?
                                                         subtask.members.slice(0, 2).map(member => (
-                                                            <img
-
-                                                                class="img-responsive circle-image-cus"
-                                                                src={proxy + member.avatar}
-                                                                alt={member.username}
-                                                            />
+                                                            <img class="img-responsive circle-image-cus" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
                                                         )) :
-                                                        <p>{lang["projectempty"]} </p>
+                                                        <>{lang["projectempty"]} </>
                                                 }
                                                 {
                                                     subtask.members.length > 2 &&
@@ -674,37 +803,79 @@ const Stage = (props) => {
                                                         <span>+{subtask.members.length - 2}</span>
                                                     </div>
                                                 }
+                                            </td> */}
+                                            <td>
+                                                {
+                                                    subtask.members && subtask.members.length > 0 ?
+                                                        subtask.members.map(member => (
+                                                            <img class="img-responsive circle-image-cus" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
+                                                        )) :
+                                                        <>{lang["projectempty"]} </>
+                                                }
                                             </td>
                                             <td>
                                                 <i class="fa fa-plus-square size-24 pointer icon-margin icon-add" onClick={() => getPeriodId(subtask.task_id, task.period_id)} data-toggle="modal" data-target="#addTaskChild" title={lang["add"]}></i>
                                                 <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTask(subtask, task.period_id)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                                                 <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTask(subtask, task.period_id)} title={lang["delete"]}></i>
                                             </td>
-
                                         </tr>
-                                        {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map(subsubtask => (
-                                            <tr class="sub-subtask" key={subsubtask.task_id}>
-                                                <td></td>
-                                                <td >{subsubtask.child_task_id}</td>
-                                                <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
-                                                <td class="align-center">{getTaskPriorityLabel(subsubtask.priority)}</td>
-                                                <td>{subsubtask.progress}</td>
-                                                <td>{functions.formatDateTask(subsubtask.start)}</td>
-                                                <td>{functions.formatDateTask(subsubtask.end)}</td>
-                                                <td>{functions.formatDateTask(subsubtask.timeline)}</td>
-                                                <td>
-                                                    {task.period_members && task.period_members.length > 0 ?
-                                                        task.period_members.map(member => member.fullname).join(', ') :
-                                                        <p>{lang["projectempty"]}</p>
-                                                    }
-                                                </td>
-                                                <td>
-                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTaskChild(subsubtask, subtask.task_id, task.period_id)} data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
-                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStage(task)} title={lang["delete"]}></i>
-                                                </td>
+                                        {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map((subsubtask, index) => {
+                                            const uniqueId = `${task.period_id}-${subtask.task_id}-${subsubtask.task_id}-${index}`;
+                                            return (
+                                                <tr class="sub-subtask" key={uniqueId}>
+                                                    <td></td>
+                                                    {/* <td >{subsubtask.child_task_id}</td> */}
+                                                    <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}.${subtask.child_tasks.indexOf(subsubtask) + 1}`}</td>
+                                                    <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
+                                                    <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
+                                                    {/* <td>{subsubtask.progress}</td> */}
+                                                    <td>
+                                                        <div style={{ display: 'inline-block', position: 'relative' }}>
+                                                            <input
+                                                                type="text"
+                                                                className='form-control'
+                                                                value={progressValues[uniqueId] ?? ''}
+                                                                onBlur={(e) => handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)}
+                                                                onFocus ={ (e) => { handleProgressFocus( subsubtask ) } }
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value;
+                                                                    if (value === '' || onlyContainsNumbers(value)) {
+                                                                        const normalizedValue = value === '' ? 0 : parseInt(value, 10);
+                                                                        handleProgressChange(normalizedValue, subsubtask, subtask.task_id, task.period_id, uniqueId);
+                                                                    }
+                                                                }}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        updateTaskChild({
+                                                                            ...subsubtask,
+                                                                            progress: progressValues[uniqueId] || subsubtask.progress,
+                                                                        });
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>{functions.formatDateTask(subsubtask.start)}</td>
+                                                    <td>{functions.formatDateTask(subsubtask.end)}</td>
+                                                    <td>{functions.formatDateTask(subsubtask.timeline)}</td>
+                                                    <td>
+                                                        {subsubtask.members && subsubtask.members.length > 0 ?
+                                                            subsubtask.members.map(member => member.fullname).join(', ') :
+                                                            <>{lang["projectempty"]}</>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTaskChild(subsubtask, subtask.task_id, task.period_id)} data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
+                                                        <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["delete"]}></i>
+                                                    </td>
 
-                                            </tr>
-                                        ))}
+                                                </tr>
+                                            )
+                                        }
+
+                                        )}
                                     </>
                                 ))}
 
@@ -713,16 +884,15 @@ const Stage = (props) => {
                     </tbody>
                 </table>
             </div>
-            <div
-                style={{ width: '5px', cursor: 'col-resize', background: '#ccc' }}
-                onMouseDown={handleMouseDown}
+            <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc' }} onMouseDown={handleMouseDown}
             ></div>
 
-            <div style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6' }}>
+            <div style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', overflowX: 'auto' }}>
                 {/* Biểu đồ Gantt có thể được thêm vào đây */}
+                {
+                    dataGantt.length > 0 && <GanttTest data={dataGantt} />
+                }
             </div>
-
-
             {/* Add Task */}
             <div class={`modal show`} id="addTask">
                 <div class="modal-dialog modal-dialog-center">
@@ -760,28 +930,25 @@ const Stage = (props) => {
                                             (e) => { setTask({ ...task, task_status: e.target.value }) }
                                         } />
                                     </div>
-
                                     <div className="col-lg-6">
                                         <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.start} onChange={
-                                            (e) => { setTask({ ...task, start: e.target.value }) }
-                                        } />
+                                        <input type="date" min={currentPeriod.start} max={currentPeriod.end} className="form-control" value={task.start}
+                                            onChange={
+                                                (e) => { setTask({ ...task, start: e.target.value }) }
+                                            } />
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.start && <span class="error-message">{errorMessagesadd.start}</span>}
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={task.end} onChange={
+                                        <input type="date" min={currentPeriod.start} max={currentPeriod.end} className="form-control" value={task.end} onChange={
                                             (e) => { setTask({ ...task, end: e.target.value }) }
                                         } />
 
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
                                         </div>
-
-
-
                                     </div>
                                     <div class="form-group col-lg-6"></div>
                                     <div class="form-group col-lg-6">
@@ -792,15 +959,10 @@ const Stage = (props) => {
                                         <input type="date" min={task.start} max={task.end} className="form-control" value={task.timeline} onChange={
                                             (e) => { setTask({ ...task, timeline: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
                                         </div>
-
                                     </div>
-
-
-
                                     <div class="form-group col-lg-12">
                                         <label>{lang["p.description"]} <span className='red_star'>*</span></label>
                                         <textarea rows="4" type="text" class="form-control" value={task.task_description} onChange={
@@ -814,21 +976,23 @@ const Stage = (props) => {
                                         <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
                                         {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                         <div class="user-checkbox-container">
-                                            {membersProject?.map((user, index) => {
-                                                return (
-                                                    <div key={index} class="user-checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                class="mr-1"
-                                                                value={JSON.stringify(user)}
-                                                                onChange={(e) => handleCheckboxChange(user, e.target.checked)}
-                                                            />
-                                                            {user.fullname}
-                                                        </label>
-                                                    </div>
-                                                );
-                                            })}
+                                            {
+                                                dataTask
+                                                    ?.find((period) => period.period_id === periodId)
+                                                    ?.period_members?.map((user, index) => (
+                                                        <div key={index} className="user-checkbox-item">
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="mr-1"
+                                                                    value={JSON.stringify(user)}
+                                                                    onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                />
+                                                                {user.fullname}
+                                                            </label>
+                                                        </div>
+                                                    ))
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -878,11 +1042,9 @@ const Stage = (props) => {
                                             (e) => { setTaskUpadte({ ...taskUpdate, task_status: e.target.value }) }
                                         } />
                                     </div>
-                                   
-
                                     <div className="col-lg-6">
                                         <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskUpdate.start} onChange={
+                                        <input type="date" min={currentPeriod.start} max={currentPeriod.end} className="form-control" value={taskUpdate.start} onChange={
                                             (e) => { setTaskUpadte({ ...taskUpdate, start: e.target.value }) }
                                         } />
                                         <div style={{ minHeight: '20px' }}>
@@ -891,16 +1053,12 @@ const Stage = (props) => {
                                     </div>
                                     <div className="col-lg-6">
                                         <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskUpdate.end} onChange={
+                                        <input type="date" min={currentPeriod.start} max={currentPeriod.end} className="form-control" value={taskUpdate.end} onChange={
                                             (e) => { setTaskUpadte({ ...taskUpdate, end: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
                                         </div>
-
-
-
                                     </div>
                                     <div class="form-group col-lg-6"></div>
                                     <div class="form-group col-lg-6">
@@ -911,15 +1069,10 @@ const Stage = (props) => {
                                         <input type="date" min={taskUpdate.start} max={taskUpdate.end} className="form-control" value={taskUpdate.timeline} onChange={
                                             (e) => { setTaskUpadte({ ...taskUpdate, timeline: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
                                         </div>
-
                                     </div>
-
-
-
                                     <div class="form-group col-lg-12">
                                         <label>{lang["p.description"]} <span className='red_star'>*</span></label>
                                         <textarea rows="4" type="text" class="form-control" value={taskUpdate.task_description} onChange={
@@ -933,30 +1086,34 @@ const Stage = (props) => {
                                         <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
                                         {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                         <div class="user-checkbox-container">
-                                            {membersProject?.map((user, index) => {
-                                                const isMember = selectedUsernames.includes(user.username);
-                                                return (
-                                                    <div key={index} class="user-checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                class="mr-1"
-                                                                value={JSON.stringify(user)}
-                                                                checked={isMember}
-                                                                onChange={(e) => handleCheckboxChange(user, e.target.checked)}
-                                                            />
-                                                            {user.fullname}
-                                                        </label>
-                                                    </div>
-                                                );
-                                            })}
+                                            {
+                                                dataTask
+                                                    ?.find((period) => period.period_id === periodId)
+                                                    ?.period_members?.map((user, index) => {
+                                                        const isMember = selectedUsernames.includes(user.username);
+                                                        return (
+                                                            <div key={index} className="user-checkbox-item">
+                                                                <label>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        className="mr-1"
+                                                                        value={JSON.stringify(user)}
+                                                                        checked={isMember}
+                                                                        onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                    />
+                                                                    {user.fullname}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" onClick={updateTask} class="btn btn-success">{lang["btn.create"]}</button>
+                            <button type="button" onClick={updateTask} class="btn btn-success">{lang["btn.update"]}</button>
                             <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                         </div>
                     </div>
@@ -999,10 +1156,9 @@ const Stage = (props) => {
                                             (e) => { setTaskChild({ ...taskChild, child_task_status: e.target.value }) }
                                         } />
                                     </div>
-
                                     <div className="col-lg-6">
                                         <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskChild.start} onChange={
+                                        <input type="date" min={currentTask.start} max={currentTask.end} className="form-control" value={taskChild.start} onChange={
                                             (e) => { setTaskChild({ ...taskChild, start: e.target.value }) }
                                         } />
                                         <div style={{ minHeight: '20px' }}>
@@ -1011,16 +1167,12 @@ const Stage = (props) => {
                                     </div>
                                     <div className="col-lg-6">
                                         <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskChild.end} onChange={
+                                        <input type="date" min={currentTask.start} max={currentTask.end} className="form-control" value={taskChild.end} onChange={
                                             (e) => { setTaskChild({ ...taskChild, end: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
                                         </div>
-
-
-
                                     </div>
                                     <div class="form-group col-lg-6"></div>
                                     <div class="form-group col-lg-6">
@@ -1031,15 +1183,10 @@ const Stage = (props) => {
                                         <input type="date" min={taskChild.start} max={taskChild.end} className="form-control" value={taskChild.timeline} onChange={
                                             (e) => { setTaskChild({ ...taskChild, timeline: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
                                         </div>
-
                                     </div>
-
-
-
                                     <div class="form-group col-lg-12">
                                         <label>{lang["p.description"]} <span className='red_star'>*</span></label>
                                         <textarea rows="4" type="text" class="form-control" value={taskChild.child_task_description} onChange={
@@ -1053,21 +1200,27 @@ const Stage = (props) => {
                                         <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
                                         {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                         <div class="user-checkbox-container">
-                                            {membersProject?.map((user, index) => {
-                                                return (
-                                                    <div key={index} class="user-checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                class="mr-1"
-                                                                value={JSON.stringify(user)}
-                                                                onChange={(e) => handleCheckboxChange(user, e.target.checked)}
-                                                            />
-                                                            {user.fullname}
-                                                        </label>
-                                                    </div>
-                                                );
-                                            })}
+                                            {
+                                                dataTask
+                                                    ?.find((period) => period.period_id === periodId)
+                                                    ?.tasks.find((task) => task.task_id === taskId)
+                                                    ?.members?.map((user, index) => {
+                                                        return (
+                                                            <div key={index} className="user-checkbox-item">
+                                                                <label>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        className="mr-1"
+                                                                        value={JSON.stringify(user)}
+
+                                                                        onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                    />
+                                                                    {user.fullname}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -1117,11 +1270,9 @@ const Stage = (props) => {
                                             (e) => { setTaskUpadteChild({ ...taskUpdateChild, child_task_status: e.target.value }) }
                                         } />
                                     </div>
-                                  
-
                                     <div className="col-lg-6">
                                         <label>{lang["log.daystart"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskUpdateChild.start} onChange={
+                                        <input type="date" min={currentTask.start} max={currentTask.end} className="form-control" value={taskUpdateChild.start} onChange={
                                             (e) => { setTaskUpadteChild({ ...taskUpdateChild, start: e.target.value }) }
                                         } />
                                         <div style={{ minHeight: '20px' }}>
@@ -1130,16 +1281,12 @@ const Stage = (props) => {
                                     </div>
                                     <div className="col-lg-6">
                                         <label>{lang["log.dayend"]} <span className='red_star'>*</span></label>
-                                        <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={taskUpdateChild.end} onChange={
+                                        <input type="date" min={currentTask.start} max={currentTask.end} className="form-control" value={taskUpdateChild.end} onChange={
                                             (e) => { setTaskUpadteChild({ ...taskUpdateChild, end: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.end && <span class="error-message">{errorMessagesadd.end}</span>}
                                         </div>
-
-
-
                                     </div>
                                     <div class="form-group col-lg-6"></div>
                                     <div class="form-group col-lg-6">
@@ -1150,15 +1297,10 @@ const Stage = (props) => {
                                         <input type="date" min={taskUpdateChild.start} max={taskUpdateChild.end} className="form-control" value={taskUpdateChild.timeline} onChange={
                                             (e) => { setTaskUpadteChild({ ...taskUpdateChild, timeline: e.target.value }) }
                                         } />
-
                                         <div style={{ minHeight: '20px' }}>
                                             {errorMessagesadd.checkday_timeline && <span class="error-message">{errorMessagesadd.checkday_timeline}</span>}
                                         </div>
-
                                     </div>
-
-
-
                                     <div class="form-group col-lg-12">
                                         <label>{lang["p.description"]} <span className='red_star'>*</span></label>
                                         <textarea rows="4" type="text" class="form-control" value={taskUpdateChild.child_task_description} onChange={
@@ -1172,30 +1314,35 @@ const Stage = (props) => {
                                         <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
                                         {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                         <div class="user-checkbox-container">
-                                            {membersProject?.map((user, index) => {
-                                                const isMember = selectedUsernames.includes(user.username);
-                                                return (
-                                                    <div key={index} class="user-checkbox-item">
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                class="mr-1"
-                                                                value={JSON.stringify(user)}
-                                                                checked={isMember}
-                                                                onChange={(e) => handleCheckboxChange(user, e.target.checked)}
-                                                            />
-                                                            {user.fullname}
-                                                        </label>
-                                                    </div>
-                                                );
-                                            })}
+                                            {
+                                                dataTask
+                                                    ?.find((period) => period.period_id === periodId)
+                                                    ?.tasks.find((task) => task.task_id === taskId)
+                                                    ?.members?.map((user, index) => {
+                                                        const isMember = selectedUsernames.includes(user.username);
+                                                        return (
+                                                            <div key={index} className="user-checkbox-item">
+                                                                <label>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        className="mr-1"
+                                                                        value={JSON.stringify(user)}
+                                                                        checked={isMember}
+                                                                        onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                    />
+                                                                    {user.fullname}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" onClick={updateTaskChild} class="btn btn-success">{lang["btn.create"]}</button>
+                            <button type="button" onClick={updateTaskChild} class="btn btn-success">{lang["btn.update"]}</button>
                             <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                         </div>
                     </div>
@@ -1251,7 +1398,6 @@ const Stage = (props) => {
                                         <div class="user-checkbox-container">
                                             {membersProject?.map((user, index) => {
                                                 const isMember = selectedUsernames.includes(user.username);
-
                                                 return (
                                                     <div key={index} class="user-checkbox-item">
                                                         <label>
@@ -1267,11 +1413,7 @@ const Stage = (props) => {
                                                     </div>
                                                 );
                                             })}
-
                                         </div>
-
-
-
                                     </div>
                                 </div>
                             </form>

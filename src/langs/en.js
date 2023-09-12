@@ -406,7 +406,7 @@ export default {
     "error.task_description": "Please enter a description",
     "error.members": "Please select the person to carry out the task",
     "error.task_priority":" Please choose a priority",
-
+    "error.members_stage": "Please select the person to carry out the stage",
     "gantt.year": "Year",
     "gantt.quarters": "Quarters",
     "gantt.months": "Months",
@@ -452,7 +452,9 @@ export default {
     "p.stagename": "Enter a stage name",
     "error.stagename": "Please enter a stage name",
     "delete.stage": "Are you sure you want to delete this Stage ?",
-    "edittaskchild":" Edit subtasks"
+    "edittaskchild":" Edit subtasks",
+    "collapse": "Collapse",
+    "expand": "Expand"
 
 
 }

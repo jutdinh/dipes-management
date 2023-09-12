@@ -13,6 +13,7 @@ import Gantt from "./gantt"
 import { formatDate } from "../../redux/configs/format-date";
 import { da } from "date-fns/locale";
 import Stage from "./stage"
+import GanttTest from "./gantt-test"
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -227,7 +228,7 @@ export default () => {
 
 
         if (!stage.members || stage.members.length === 0) {
-            errors.members = lang["error.members"];
+            errors.members = lang["error.members_stage"];
         }
         if (Object.keys(errors).length > 0) {
             setErrorMessagesadd(errors);
@@ -961,11 +962,6 @@ export default () => {
                                                                     ))}
                                                                 </div>
                                                             </div>
-
-
-
-
-
                                                         </div>
                                                     </form>
                                                 </div>
@@ -1785,6 +1781,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+                    {/* <GanttTest data={stageData} /> */}
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
@@ -1797,7 +1794,7 @@ export default () => {
                             <div class="table_section padding_infor_info_gantt_chart">
                                 <div class="row column1">
                                     {/* Gantt */}
-                                    <div class="table_section padding_infor_info_gantt_chart">
+                                    {/* <div class="table_section padding_infor_info_gantt_chart">
                                         {
                                             filteredTasks && filteredTasks.length > 0 ? (
                                                 <Gantt data={
@@ -1822,7 +1819,7 @@ export default () => {
                                                     })} project={projectdetail} data_raw={filteredTasks} />              //// Sử dụng dữ liệu đã lọc để hiển thị gantt
                                             ) : null
                                         }
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
