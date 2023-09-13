@@ -1,10 +1,52 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FrappeGantt, ViewMode } from 'frappe-gantt-react';
 import ReactGantt from "gantt-for-react";
 import { useDispatch, useSelector } from 'react-redux';
+import $ from "jquery"
 function GanttTest({ data }) {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     console.log(data)
+
+
+    React.useEffect(() => {
+        let isDrag = false;
+
+        const handleMouseDown = () => {
+            isDrag = false;
+        };
+
+        const handleMouseMove = () => {
+            isDrag = true;
+        };
+
+        const handleMouseUp = () => {
+            if (!isDrag) {
+                console.log("Element clicked, not dragged");
+                // Your click handling logic
+            }
+            isDrag = false;
+        };
+
+        const barWrappers = document.querySelectorAll(".gantt .bar-wrapper");
+
+        barWrappers.forEach(wrapper => {
+            wrapper.addEventListener("mousedown", handleMouseDown);
+            wrapper.addEventListener("mousemove", handleMouseMove);
+            wrapper.addEventListener("mouseup", handleMouseUp);
+        });
+
+        return () => {
+            barWrappers.forEach(wrapper => {
+                wrapper.removeEventListener("mousedown", handleMouseDown);
+                wrapper.removeEventListener("mousemove", handleMouseMove);
+                wrapper.removeEventListener("mouseup", handleMouseUp);
+            });
+        };
+    }, []);
+    
+    
+      
+      
     const currentDate = new Date();
     console.log(currentDate)
     const tasks = data.map((period) => [
@@ -45,24 +87,33 @@ function GanttTest({ data }) {
         ]),
     ]).flat(2);
 
-    function getRowClass(task) {
-        return 'grid-row';
-    }
+  
    
 
 
 
     console.log(tasks)
+    // const customPopupHtml = task => {
+    //     return `
+    //           <div class="details-container">
+    //             <p class="font-weight-bold">${task.name}</p>
+    //             <p>${lang["log.daystart"]}: ${functions.formatDateTask(task.start)}</p>
+    //             <p>${lang["log.dayend"]}: ${functions.formatDateTask(task.end)}</p>
+    //             <p>${lang["complete"]}: ${task.progress}%</p>
+    //           </div>
+    //         `;
+    // };
     const customPopupHtml = task => {
         return `
               <div class="details-container">
                 <p class="font-weight-bold">${task.name}</p>
-                <p>${lang["log.daystart"]}: ${functions.formatDateTask(task.start)}</p>
-                <p>${lang["log.dayend"]}: ${functions.formatDateTask(task.end)}</p>
+                <p>${lang["time"]}: ${functions.formatDateTask(task.start)} - ${functions.formatDateTask(task.end)}</p>
+               
                 <p>${lang["complete"]}: ${task.progress}%</p>
               </div>
             `;
     };
+
 
     return (
         <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
@@ -76,20 +127,17 @@ function GanttTest({ data }) {
                 customPopupHtml={customPopupHtml}
             /> */}
             <ReactGantt
-                columnWidth="20px"
-                arrow_curve="5"
+                // columnWidth="20px"
+                // arrow_curve="5"
                 tasks={tasks}
                 viewMode={ViewMode.Day}
                 customPopupHtml={customPopupHtml}
-                customRowClass={getRowClass}
+                // customRowClass={getRowClass}
                 onClick={task => console.log(task)}
                 onDateChange={null}
                 onProgressChange={null}
                 onTasksChange={null}
             />
-
-
-
         </div>
     );
 }

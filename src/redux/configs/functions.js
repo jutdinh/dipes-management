@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import responseMessages from "../../cpn/enum/response-code"
 import Swal from 'sweetalert2';
-
+import { format, parseISO } from 'date-fns';
 
 
 const vietnameseChars = [
@@ -157,7 +157,19 @@ function formatDateTask(input) {
     return `${day}/${month}/${year}`;
 }
 
+function formatDate(isoString) {
+    if (!isoString) return "";
+
+    try {
+        const date = parseISO(isoString); // parse ISO string
+        return format(date, 'dd-MM-yyyy  HH:mm:ss'); // format date
+    } catch (error) {
+        console.error("Error formatting date:", error);
+        return "";  // or maybe return a default date or another string to indicate the error
+    }
+}
+
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage, removeVietnameseTones, formatDateTask 
+    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate
 }

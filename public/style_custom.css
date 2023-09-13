@@ -1,28 +1,17 @@
 
-.bar-milestone .bar-group rect.bar {
-    stroke: #f03f3f; 
-    stroke-width: 2; 
-}
-
-.bar-milestone .bar-group text.bar-label {
-    fill: #ffffff;
-    display: none;
-}
-
-.gantt .bar-label {
-    fill: #fff;
-    dominant-baseline: central;
-    text-anchor: middle;
-    font-size: 12px;
-    font-weight: lighter;
-    display: none;
-}
-.grid-row {
-    height: 50px !important;
+.table td,
+.table th .fix-layout {
+    padding-bottom: 4.7px !important;
+    padding-top: 4.7px !important;
+    /* padding-left: 7px !important; */
+    padding-right: 7px !important;
+    vertical-align: middle;
 }
 
 
-  .cell-with-text {
+
+
+.cell-with-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -31,11 +20,24 @@
 /* GanttTest.css */
 
 .gantt .bar-progress {
-    fill: #336dc4 !important;
+    fill: #5bcfce !important;
 }
 
-.gantt-task {
-  stroke: red !important;
+.gantt .today-highlight {
+    fill: #ffda39 !important;
+    opacity: 0.5;
+}
+.gantt .bar-label {
+    fill: #fff;
+    /* dominant-baseline: central; */
+    text-anchor: middle;
+    font-size: 12px;
+    font-weight: lighter;
+    display: none;
+}
+.bar-wrapper .bar-group .bar, .bar-wrapper .bar-group .bar-progress {
+    height: 23px !important;
+    margin-bottom: 5px
 }
 
 .details-container {
@@ -47,40 +49,105 @@
     width: 300px !important;
     word-wrap: break-word;
 }
+
 .details-container .font-weight-bold {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 260px; 
+    max-width: 260px;
 }
 
-.bar-milestone {
-    border: 2px solid red !important;
+.gantt .grid-row {
+   fill: #f8f4f4 !important;
+}
+.gantt .bar-wrapper.bar-milestone .bar-group rect.bar {
+    stroke: #ee2222 !important;
+    stroke-width: 3 !important;
+    stroke-dasharray: 4 !important;
+    paint-order: stroke fill markers !important;
+}
+
+.gantt .grid-row {
+    fill: none;
+    stroke: none !important;
 }
 
 
+.no-select {
+    user-select: none !important;
+}
 
+.gantt .bar-wrapper {
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+/* .gantt .bar-wrapper {
+    user-select: none !important;
+     cursor: pointer;
+} */
+
+.bar-milestone .bar-group text.bar-label {
+    fill: #ffffff;
+    display: none;
+}
+
+
+.fix-layout-input .form-control {
+    display: block;
+    width: 100%;
+    padding: .18rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.fix-layout-header-table thead th {
+    vertical-align: middle !important;
+    border-bottom: 0.5px solid #dee2e6;
+}
+.circle-image-cus-gantt {
+    border-radius: 100%;
+    width:30.5px;
+    padding: 0px 2px;
+
+}
 
 
 .pie-chart-container {
     width: 60%;
 }
+
 .sub-task {
-    background-color: #f5f1f1; 
+    background-color: #f5f1f1;
 }
+
 .toggle-subtasks {
     cursor: pointer;
     color: blue;
-} 
+}
 
 .toggle-down {
     cursor: pointer;
     color: rgb(26, 26, 27);
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    
+    display: inline-block;
 }
+
+
+
 .toggle-right {
     cursor: pointer;
     color: rgb(164, 164, 170);
 }
+
 .pie-legend-container {
     width: 40%;
     display: flex;
@@ -88,6 +155,7 @@
     align-items: flex-start;
     justify-content: center;
 }
+
 #content {
     width: 100%;
     min-height: 100vh;
@@ -106,30 +174,34 @@
     left: 0;
     width: 100%;
     /* background-color: #fff;  */
-    z-index: 1000; 
-    padding: 10px 0; 
+    z-index: 1000;
+    padding: 10px 0;
 }
+
 .user-name {
     user-select: none;
 }
 
 .column1_project {
-    
-    max-height: 83.5vh; 
-    overflow-y: auto;  
+
+    max-height: 83.5vh;
+    overflow-y: auto;
 }
+
 .graph_head_project {
     padding: 5px 15px 5px 15px;
     float: left;
     width: 100%;
     border-bottom: solid #f3f3f3 2px;
 }
+
 .heading1_project {
     float: left;
     padding: 0;
     width: 100%;
     margin-top: 50px;
 }
+
 .my-confirm-button-class {
     background-color: rgb(209, 72, 81);
 }
@@ -610,48 +682,45 @@
 .extra-images {
     display: inline-block;
     width: 48px;
-    /* Thay đổi kích thước này để phù hợp */
+
     height: 48px;
-    /* Thay đổi kích thước này để phù hợp */
+
     line-height: 48px;
-    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+
     border-radius: 50%;
-    /* Tạo hình tròn */
+
     text-align: center;
-    /* Căn giữa văn bản theo chiều ngang */
+
     background-color: #8884d8;
-    /* Màu nền, thay đổi theo ý thích */
+
     color: rgb(0, 0, 0);
-    /* Màu của văn bản, thay đổi theo ý thích */
+
     font-weight: bold;
-    /* Đậm văn bản */
-    /* margin-left: 10px;  */
+
     margin-left: 1px;
 }
 
 .extra-images-cus {
     display: inline-block;
     width: 35px;
-    /* Thay đổi kích thước này để phù hợp */
+
     height: 35px;
-    /* Thay đổi kích thước này để phù hợp */
+
     line-height: 36px;
-    /* Điều chỉnh này để văn bản hiển thị đúng giữa */
+
     border-radius: 100%;
-    /* Tạo hình tròn */
+
     text-align: center;
-    /* Căn giữa văn bản theo chiều ngang */
+
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
     color: rgb(0, 0, 0);
-    /* Màu của văn bản, thay đổi theo ý thích */
-    font-weight: bold;
-    /* Đậm văn bản */
-    margin-left: 2px;
-    /* Khoảng cách giữa các hình ảnh, thay đổi theo ý thích */
 
+    font-weight: bold;
+
+    margin-left: 2px;
 
     padding: 0px 2px;
 }
@@ -1151,7 +1220,7 @@ img[class="scaled-hover-target"] {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 350px; 
+    max-width: 350px;
     width: 90%;
     padding: 5px;
     background-color: white;
@@ -1171,7 +1240,7 @@ img[class="scaled-hover-target"] {
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 350px; 
+    max-width: 350px;
     width: 90%;
     padding: 5px;
     background-color: white;
@@ -1191,7 +1260,7 @@ img[class="scaled-hover-target"] {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 350px; 
+    max-width: 350px;
     width: 90%;
     padding: 5px;
     background-color: white;
@@ -1262,6 +1331,7 @@ img[class="scaled-hover-target"] {
     border: none;
     cursor: pointer;
 }
+
 .copy-alert {
     display: flex;
     align-items: center;
@@ -1269,15 +1339,16 @@ img[class="scaled-hover-target"] {
     padding: 5px 10px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: absolute;   
-    top: 10%;          
-    left: 50%;           
-    transform: translateX(-50%); 
-    z-index: 10;          
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
 }
+
 .scrollable-tbody {
     display: block;
-    max-height: 195px;  
+    max-height: 195px;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -1285,26 +1356,28 @@ img[class="scaled-hover-target"] {
 }
 
 .table1 th {
-    width:55%; 
+    width: 55%;
 }
 
 .table1 td {
-    width:70%; 
+    width: 70%;
 }
 
 /* Style cho nhãn giả mạo */
 .date-label {
     position: absolute;
     pointer-events: none;
-    left: 10px;  /* giá trị này có thể cần điều chỉnh dựa vào padding của bạn */
+    left: 10px;
+    /* giá trị này có thể cần điều chỉnh dựa vào padding của bạn */
     top: 50%;
     transform: translateY(-50%);
-    color: #999;  /* màu giả mạo của placeholder */
+    color: #999;
+    /* màu giả mạo của placeholder */
 }
 
 /* Ẩn nhãn khi input có giá trị hoặc được focus */
-input[type="date"]:focus + .date-label,
-input[type="date"]:valid + .date-label {
+input[type="date"]:focus+.date-label,
+input[type="date"]:valid+.date-label {
     display: none;
 }
 
@@ -1337,6 +1410,7 @@ input[type="date"]:valid + .date-label {
     color: #4CAF50;
     margin-right: 5px;
 }
+
 .container-custom {
     display: flex;
     justify-content: space-between;
@@ -1374,6 +1448,7 @@ input[type="date"]:valid + .date-label {
     padding-bottom: 5px;
     min-height: 50px;
 }
+
 .profile_contacts_list_user {
     display: flex;
     justify-content: start;
@@ -1381,10 +1456,11 @@ input[type="date"]:valid + .date-label {
     gap: 3px;
     padding-bottom: 1px;
     /* min-height: 50px; */
-    display: inline-block; 
+    display: inline-block;
     vertical-align: middle;
-    
+
 }
+
 .profile_contacts_chart {
     display: flex;
     justify-content: start;
@@ -1416,9 +1492,11 @@ input[type="date"]:valid + .date-label {
     right: 0;
     bottom: -10px;
 }
+
 .mb-10 {
     margin-bottom: 10px;
 }
+
 .breadcrumb {
     font-size: 14px;
     font-family: "UTM Avo", sans-serif !important;
@@ -1496,11 +1574,13 @@ input[type="date"]:valid + .date-label {
     min-height: 500px;
 
 }
+
 .list_project {
     padding: 10px 15px !important;
-   
+
 
 }
+
 .padding_infor_info_list {
     padding: 0px 35px;
     float: left;
@@ -1508,6 +1588,7 @@ input[type="date"]:valid + .date-label {
     min-height: 500px;
 
 }
+
 .padding_infor_info_245 {
     padding: 10px 35px;
     float: left;
@@ -1675,7 +1756,7 @@ input[type="date"]:valid + .date-label {
 
 .icon-detail {
     color: #0d49b8;
-    
+
     background-color: #e9ecef;
     padding: 5px;
     border-radius: 5px;
@@ -1688,9 +1769,11 @@ input[type="date"]:valid + .date-label {
     width: 24px;
     height: 27px;
 }
-.color-tr{
+
+.color-tr {
     background-color: #f0eaea;
 }
+
 /* .column1 {
     max-height: 85vh; 
     overflow-y: auto;  
@@ -1721,31 +1804,33 @@ input[type="date"]:valid + .date-label {
     grid-gap: 5px;
     min-height: 105px;
     margin-top: 10px;
-    position: relative;  
-    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1); 
+    position: relative;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .nav .nav-tabs .h5 {
     color: white;
- }
- 
- .tab_style2 .tabbar nav div.nav-tabs .nav-link.active {
-     background: #d4e0ec;
-     color: #fff;
-     border-color: #ced4da;
-     border-bottom: none;
-     /* padding: 18px 25px 18px 25px; */
- }
- 
- .heading1_cus {
-     float: left;
-     padding: 0;
-     width: 100%;
-     margin-top: 50px;
- }
- 
- .tabbar .nav-tabs {
-     border-bottom: solid #eee 0px !important;
- }
+}
+
+.tab_style2 .tabbar nav div.nav-tabs .nav-link.active {
+    background: #d4e0ec;
+    color: #fff;
+    border-color: #ced4da;
+    border-bottom: none;
+    /* padding: 18px 25px 18px 25px; */
+}
+
+.heading1_cus {
+    float: left;
+    padding: 0;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.tabbar .nav-tabs {
+    border-bottom: solid #eee 0px !important;
+}
+
 .graph_head_cus {
     padding: 0px 25px 0px 0px;
     /* padding: 18px 25px 18px 25px; */
@@ -1753,18 +1838,20 @@ input[type="date"]:valid + .date-label {
     width: 100%;
     border-bottom: solid #f3f3f3 2px;
 }
+
 .option-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ced4da;  
-    padding-bottom: 2px;           
-    margin-bottom: 5px;   
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); 
+    border-bottom: 1px solid #ced4da;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 
 }
+
 .no-data-message {
-    grid-column: span 2; 
+    grid-column: span 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1779,7 +1866,7 @@ input[type="date"]:valid + .date-label {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     padding: 7px;
-    margin:  0;
+    margin: 0;
 
 }
 
@@ -1869,10 +1956,12 @@ input[type="date"]:valid + .date-label {
     border-radius: 100%;
 
 }
-.ml-p-3{
+
+.ml-p-3 {
     margin-left: -10px;
 }
-.ml-p-20{
+
+.ml-p-20 {
     margin-left: 20px;
 }
 
