@@ -1141,7 +1141,7 @@ class ProjectsController extends Controller {
                         newTask.child_tasks = oldTask.child_tasks;
 
                         let newModified = {}
-                        const inforFields = ["task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress", "members"]
+                        const inforFields = ["task_name", "task_description", "task_priority", "start", "timeline", "end", "members"]
                         switch (type) {
                             case "infor":
                                 const members = task.members ? task.members : []
