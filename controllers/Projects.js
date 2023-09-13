@@ -64,7 +64,7 @@ class ProjectsController extends Controller {
     }
 
     getAllProjectBuOnLyGeneralInfo = async () => {
-        const projects = await Database.selectFields("projects", {}, [ "project_id", "project_name", "project_code", "project_status", "project_description", "project_type", "proxy_server", "create_at", "manager", "members", "create_by"])            
+        const projects = await Database.selectFields("projects", {}, ["project_id", "project_name", "project_code", "project_status", "project_description", "project_type", "proxy_server", "create_at", "manager", "members", "create_by"])
         return projects
     }
 
@@ -85,15 +85,15 @@ class ProjectsController extends Controller {
                 const validate = await this.validateProjectAndManager(project_id, decodedToken.username)
                 const { success, project, permission } = validate;
                 context.success = success
-                context.permission = permission                
-                if ( !objectComparator(project, {}) ) {
+                context.permission = permission
+                if (!objectComparator(project, {})) {
                     const Project = new ProjectsRecord(project)
                     context.objects["Project"] = Project
                 } else {
                     context.success = false
                     context.content = "Dự án khum tồn tại"
                     context.status = "0x4501072"
-                }                
+                }
             }
 
             if (privileges.length > 0) {
@@ -107,7 +107,7 @@ class ProjectsController extends Controller {
             } else {
                 await projectAndManagerValiator()
             }
-        }        
+        }
         return context
     }
 
@@ -128,7 +128,7 @@ class ProjectsController extends Controller {
             })
 
             context.status = "0x4501041"
-        }        
+        }
         delete context.objects
         res.status(200).send(context)
     }
@@ -140,7 +140,7 @@ class ProjectsController extends Controller {
         const { success, objects } = context
         if (success) {
             const ProjectsModel = new Projects()
-            const start = new Date()        
+            const start = new Date()
             const projects = await this.getAllProjectBuOnLyGeneralInfo()
             const end = new Date()
             console.log(45, `PROCCESSING TIME: ${end - start}`)
@@ -150,7 +150,7 @@ class ProjectsController extends Controller {
             })
 
             context.status = "0x4501041"
-        }        
+        }
         delete context.objects
         res.status(200).send(context)
     }
@@ -166,10 +166,12 @@ class ProjectsController extends Controller {
             const projects = await this.getAllProjectBuOnLyGeneralInfo()
             const end = new Date()
 
-            context.data = { projects: projects.map(project => {
-                const Project = new ProjectsRecord(project)
-                return Project.getProjectAndManager()
-            }) }
+            context.data = {
+                projects: projects.map(project => {
+                    const Project = new ProjectsRecord(project)
+                    return Project.getProjectAndManager()
+                })
+            }
 
             console.log(45, `PROCCESSING TIME: ${end - start}`)
             context.status = "0x4501041"
@@ -186,25 +188,25 @@ class ProjectsController extends Controller {
             const ProjectsModel = new Projects()
             const { project_id } = req.params;
             const start = new Date()
-            const project = await ProjectsModel.find( { project_id: parseInt(project_id) } )
+            const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
 
-            if( project ){
+            if (project) {
 
-                project.tasks = Object.values( project.tasks ? project.tasks : {} )
+                project.tasks = Object.values(project.tasks ? project.tasks : {})
 
-                project.tasks.map( task => {
-                    const task_modified = Object.values( task.task_modified ? task.task_modified : {})
-                    if( task_modified.length > 0 ){
-                        const lastModified = task_modified[ task_modified.length - 1 ]
+                project.tasks.map(task => {
+                    const task_modified = Object.values(task.task_modified ? task.task_modified : {})
+                    if (task_modified.length > 0) {
+                        const lastModified = task_modified[task_modified.length - 1]
                         task.changed_at = lastModified.modified_at
                     }
 
-                    if( !task.changed_at ){
+                    if (!task.changed_at) {
                         task.changed_at = task.create_at
                     }
 
                     task.task_modified = task_modified
-                    task.members = Object.values( task.members )
+                    task.members = Object.values(task.members)
 
                     task.create_by = task.create_by.fullname
                 })
@@ -215,7 +217,7 @@ class ProjectsController extends Controller {
                 const end = new Date()
                 console.log(45, `PROCCESSING TIME: ${end - start}`)
                 context.status = "0x4501041"
-            }else{
+            } else {
                 context.success = false;
                 context.status = "0x4501072"
             }
@@ -238,7 +240,7 @@ class ProjectsController extends Controller {
 
                 if (project) {
                     const Project = new ProjectsRecord(project)
-                    context.data = Project.getFullProjectData( false )
+                    context.data = Project.getFullProjectData(false)
                     context.success = true
                     context.status = "0x4501041"
                 } else {
@@ -269,7 +271,7 @@ class ProjectsController extends Controller {
                 const { decodedToken } = objects
                 const managerAccount = await AccountsModel.find({ username: manager.username })
 
-                if( managerAccount ){
+                if (managerAccount) {
                     project.manager = managerAccount;
                     project.create_by = decodedToken;
                     const today = new Date()
@@ -279,22 +281,22 @@ class ProjectsController extends Controller {
                     await Project.createPeriod({
                         period_name: "Giai đoạn một",
                         start: today,
-                        end: new Date(`${ today.getFullYear() }-${ today.getMonth() + 1 + 1 }-${ today.getDate() }`)
+                        end: new Date(`${today.getFullYear()}-${today.getMonth() + 1 + 1}-${today.getDate()}`)
                     })
                     await Project.save()
                     context.data = Project.getData()
-    
+
                     const finishedData = Project.getData()
-    
+
                     context.content = "Tạo thành công"
                     context.status = "0x4501054"
-    
-                    this.saveLog( "info", req.ip, "__createproject", `__projectname ${ finishedData.project_name } |__manager ${ managerAccount?.fullname } | __projectType: ${ finishedData.project_type} | __projectProxy: ${ finishedData.proxy_server }`, decodedToken.username )
-                }else{
+
+                    this.saveLog("info", req.ip, "__createproject", `__projectname ${finishedData.project_name} |__manager ${managerAccount?.fullname} | __projectType: ${finishedData.project_type} | __projectProxy: ${finishedData.proxy_server}`, decodedToken.username)
+                } else {
                     context.success = false
                     context.content = "Người quản lý khum tồn tại hoặc bị bỏ trống"
                     context.status = "0x4501245"
-                }                                           
+                }
             } else {
                 context.success = false
                 context.content = "Tham số khum hợp lệ"
@@ -354,20 +356,20 @@ class ProjectsController extends Controller {
 
                     if (project != undefined) {
                         const Project = new ProjectsRecord(project)
-                        Project.remove()        
-                        
-                        await this.saveLog( "warn", req.ip, "__purgeproject", `__projectname ${ project.project_name }`, decodedToken.username )
-                        
+                        Project.remove()
+
+                        await this.saveLog("warn", req.ip, "__purgeproject", `__projectname ${project.project_name}`, decodedToken.username)
+
                         context.status = "0x4501079"
-                    }else{
+                    } else {
                         context.success = true
                         context.status = "0x4501080"
                     }
-                }else{
+                } else {
                     context.success = false
                     context.status = "0x4501082"
                 }
-            }else{
+            } else {
                 context.success = false
                 context.status = "0x4501082"
             }
@@ -385,9 +387,9 @@ class ProjectsController extends Controller {
             statistic: {}
         }
 
-        const verified = await this.verifyToken(req);       
+        const verified = await this.verifyToken(req);
 
-        if (verified) {            
+        if (verified) {
             const projects = await this.getAllProjectBuOnLyGeneralInfo()
             const total = projects.length;
 
@@ -414,7 +416,7 @@ class ProjectsController extends Controller {
         }
         const verified = await this.verifyToken(req);
         if (verified) {
-            
+
             const AccountsModel = new Accounts()
 
             const projects = await this.getAllProjectBuOnLyGeneralInfo()
@@ -463,7 +465,7 @@ class ProjectsController extends Controller {
         }
         const verified = await this.verifyToken(req);
 
-        if (verified) {            
+        if (verified) {
             const projects = await this.getAllProjectBuOnLyGeneralInfo()
 
             let annualStatistic = []
@@ -520,7 +522,7 @@ class ProjectsController extends Controller {
 
             if (this.notNullCheck(req.body, ["project_id", "usernames"]).valid) {
                 const { project_id, usernames } = req.body;
-                const ProjectsModel = new Projects()                
+                const ProjectsModel = new Projects()
                 const queryStart = new Date()
                 const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
                 const queryEnd = new Date()
@@ -530,17 +532,17 @@ class ProjectsController extends Controller {
                     const AccountsModel = new Accounts()
                     const Project = new ProjectsRecord(project)
 
-                    const usernamesArray = usernames.map(({ username }) => username )
+                    const usernamesArray = usernames.map(({ username }) => username)
                     const queryStart = new Date()
-                    const users = await AccountsModel.findAll({ username: { $in: usernamesArray } })                    
+                    const users = await AccountsModel.findAll({ username: { $in: usernamesArray } })
                     const queryEnd = new Date()
                     console.log(`QUERY USER PROCESSING TIME: ${queryEnd - queryStart}`)
 
                     const members = usernames.map(({ username, permission, role }) => Project.createMember(users, username, permission || role)).filter(result => result != undefined)
-                    Project.updateMembers(members)                    
-                    this.saveLog( "info", req.ip,"__addmembertoproject", `__projectname ${ project.project_name }| __username ${ members.filter(mem => mem.permission != undefined).map( mem => `${mem.username}-${ mem.fullname }( ${ mem.permission } )` ).join(", ") }`, decodedToken.username )
-                    
-                    Project.__modifyAndSaveChange__("members", Project.getData().members)                   
+                    Project.updateMembers(members)
+                    this.saveLog("info", req.ip, "__addmembertoproject", `__projectname ${project.project_name}| __username ${members.filter(mem => mem.permission != undefined).map(mem => `${mem.username}-${mem.fullname}( ${mem.permission} )`).join(", ")}`, decodedToken.username)
+
+                    Project.__modifyAndSaveChange__("members", Project.getData().members)
                     context.success = true;
                     context.content = "Thêm thành viên thành công"
                     context.status = "0x4501062"
@@ -572,7 +574,7 @@ class ProjectsController extends Controller {
 
             const { Project, decodedToken } = objects
             const project = Project.getData()
-            const username  = this.dotEncode(req.body.username);
+            const username = this.dotEncode(req.body.username);
             if (
                 permission == Controller.permission.manager ||
                 this.isAdmin(decodedToken) ||
@@ -584,9 +586,9 @@ class ProjectsController extends Controller {
                 await Project.__modifyAndSaveChange__("members", project.members)
 
                 await this.saveLog("info", req.ip,
-                "__removeprojectmember",
-                `__projectname ${ project.project_name } | __username ${ username }`,
-                decodedToken.username)
+                    "__removeprojectmember",
+                    `__projectname ${project.project_name} | __username ${username}`,
+                    decodedToken.username)
 
                 context.status = "0x4501107"
             } else {
@@ -594,7 +596,7 @@ class ProjectsController extends Controller {
                 context.content = "Khum thể xóa người dùng có quyền cao hơn mình khỏi dự án"
                 context.status = "0x4501108"
             }
-            
+
             const end = new Date()
             console.log(`PROCCESSING TIME: ${end - start}`)
             delete context.objects;
@@ -609,7 +611,7 @@ class ProjectsController extends Controller {
         const start = new Date()
 
         if (success) {
-            const username  = this.dotEncode(req.body.username);
+            const username = this.dotEncode(req.body.username);
             const targetPermission = req.body.permission
 
             const { Project, decodedToken } = objects
@@ -629,8 +631,8 @@ class ProjectsController extends Controller {
                     context.status = "0x4501094"
 
                     await this.saveLog("warn", req.ip, "__modifypermission",
-                    `__projectname ${ project.project_name } | __username ${ username } | __permission __${ oldPer } => __${ targetPermission } `,
-                    decodedToken.username)
+                        `__projectname ${project.project_name} | __username ${username} | __permission __${oldPer} => __${targetPermission} `,
+                        decodedToken.username)
                 } else {
                     context.content = "Khum thể thay đổi quyền lớn hơn quyền của người thực hiện"
                     context.status = "0x4501095"
@@ -651,43 +653,43 @@ class ProjectsController extends Controller {
 
     getTaskPeriods = async (req, res) => {
         this.writeReq(req)
-        const { project_id } = req.params         
-        const context = await this.projectGeneralCheck(req, project_id)        
+        const { project_id } = req.params
+        const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects } = context;
-        
-        if( success ){
 
-            const { Project, decodeToken } = objects        
-            const project  = Project.getData()
-    
+        if (success) {
+
+            const { Project, decodeToken } = objects
+            const project = Project.getData()
+
             const { tasks } = project
-            const periods = Object.values( tasks )
-            
-            periods.map( period => {
-                period.tasks = Object.values( period.tasks )
-                period.period_members = Object.values( period.period_members )
+            const periods = Object.values(tasks)
+
+            periods.map(period => {
+                period.tasks = Object.values(period.tasks)
+                period.period_members = Object.values(period.period_members)
                 let period_progress = 0
-                period.tasks.map( task => {
-                    task.members = Object.values( task.members )
-                    task.child_tasks = Object.values( task.child_tasks )
+                period.tasks.map(task => {
+                    task.members = Object.values(task.members)
+                    task.child_tasks = Object.values(task.child_tasks)
                     let task_progress = 0
-                    task.child_tasks.map( c_task => {   
+                    task.child_tasks.map(c_task => {
                         c_task.members = Object.values(c_task.members)
                         task_progress += c_task.progress
                     })
-                    if( task.child_tasks.length > 0 ){
-                        const calculated = task_progress / task.child_tasks.length 
+                    if (task.child_tasks.length > 0) {
+                        const calculated = task_progress / task.child_tasks.length
                         task.progress = calculated.toFixed(2)
                         period_progress += calculated
-                    }else{
+                    } else {
                         task.progress = 0
                     }
                 })
 
-                if( period.tasks.length > 0 ){
-                    const period_calculated = period_progress / period.tasks.length 
+                if (period.tasks.length > 0) {
+                    const period_calculated = period_progress / period.tasks.length
                     period.progress = period_calculated.toFixed(2)
-                }else{
+                } else {
                     period.progress = 0
                 }
             })
@@ -697,258 +699,258 @@ class ProjectsController extends Controller {
             context.content = "Lấy thông tin các giai đoạn thành công"
         }
 
-        delete context.objects        
+        delete context.objects
         res.status(200).send(context)
-    }  
+    }
 
 
     getTaskPeriod = async (req, res) => {
         this.writeReq(req)
-        const { project_id, period_id } = req.params         
-        const context = await this.projectGeneralCheck(req, project_id)        
+        const { project_id, period_id } = req.params
+        const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects } = context;
-        
-        if( success ){
 
-            const { Project, decodeToken } = objects        
-            const project  = Project.getData()
-    
+        if (success) {
+
+            const { Project, decodeToken } = objects
+            const project = Project.getData()
+
             const { tasks } = project
             const period = tasks?.[`${period_id}`]
-            
-            if( period ){
-                period.tasks = Object.values( period.tasks )
-                period.period_members = Object.values( period.period_members )
+
+            if (period) {
+                period.tasks = Object.values(period.tasks)
+                period.period_members = Object.values(period.period_members)
                 let period_progress = 0
-                period.tasks.map( task => {
-                    task.members = Object.values( task.members )
-                    task.child_tasks = Object.values( task.child_tasks )
+                period.tasks.map(task => {
+                    task.members = Object.values(task.members)
+                    task.child_tasks = Object.values(task.child_tasks)
                     let task_progress = 0
-                    task.child_tasks.map( c_task => {   
+                    task.child_tasks.map(c_task => {
                         c_task.members = Object.values(c_task.members)
                         task_progress += c_task.progress
                     })
-                    if( task.child_tasks.length > 0 ){
-                        const calculated = task_progress / task.child_tasks.length 
+                    if (task.child_tasks.length > 0) {
+                        const calculated = task_progress / task.child_tasks.length
                         task.progress = calculated.toFixed(2)
                         period_progress += calculated
-                    }else{
+                    } else {
                         task.progress = 0
                     }
                 })
 
-                if( period.tasks.length > 0 ){
-                    const period_calculated = period_progress / period.tasks.length 
+                if (period.tasks.length > 0) {
+                    const period_calculated = period_progress / period.tasks.length
                     period.progress = period_calculated.toFixed(2)
-                }else{
+                } else {
                     period.progress = 0
                 }
 
                 context.data = period
                 context.status = "0x4501256"
                 context.content = "Lấy thông tin giai đoạn thành công"
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
             }
         }
 
-        delete context.objects        
+        delete context.objects
         res.status(200).send(context)
-    } 
+    }
 
-    createTaskPeriod = async ( req, res ) => {
+    createTaskPeriod = async (req, res) => {
         this.writeReq(req)
-        const { period, project_id } = req.body                 
-        
-        const context = await this.projectGeneralCheck(req, project_id)        
+        const { period, project_id } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects } = context;
 
-        if( success ){
+        if (success) {
 
-            const bodyNullCheck = this.notNullCheck( req.body, ["period"] )
-            if(bodyNullCheck.valid){
-                const { Project, decodedToken } = objects;            
-                const nullCheck = this.notNullCheck( period, ["period_name", "start", "end"] )           
-    
-                if( nullCheck.valid ){
+            const bodyNullCheck = this.notNullCheck(req.body, ["period"])
+            if (bodyNullCheck.valid) {
+                const { Project, decodedToken } = objects;
+                const nullCheck = this.notNullCheck(period, ["period_name", "start", "end"])
+
+                if (nullCheck.valid) {
                     const { start, end, members } = period
-                    const startDate = new Date( start )
-                    const endDate = new Date( end )
+                    const startDate = new Date(start)
+                    const endDate = new Date(end)
 
-                    if( endDate && startDate && endDate - startDate >= 0 ){
+                    if (endDate && startDate && endDate - startDate >= 0) {
                         const memberNames = []
-                        if( members && Array.isArray(members)){
+                        if (members && Array.isArray(members)) {
                             const AccountsModel = new Accounts()
                             const users = await AccountsModel.findAll({ username: { $in: members } })
                             const serializedUsers = {}
                             users.map(user => {
                                 serializedUsers[user.username] = user
                                 memberNames.push(user.fullname)
-                            })    
+                            })
                             period.period_members = serializedUsers
                         }
 
 
-                        await Project.createPeriod( period )
+                        await Project.createPeriod(period)
                         await Project.save()
 
-                        context.content = "Tạo giai đoạn thành công"    
-                        context.success = true 
+                        context.content = "Tạo giai đoạn thành công"
+                        context.success = true
                         context.status = "0x4501253"
                         const project = Project.getData()
-                        this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ period.period_name } | __members: ${ memberNames.join(", ") }`, decodedToken.username)
+                        this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
 
-                    }else{                       
-                        context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"    
-                        context.success = true 
+                    } else {
+                        context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                        context.success = true
                         context.status = "0x4501252"
-                    }      
-    
-                }else{
-                    if( !period.period_name ){
+                    }
+
+                } else {
+                    if (!period.period_name) {
                         context.content = "Tên giai đoạn không hợp lệ hoặc rỗng"
                         context.status = "0x4501248"
                     }
-                    if( !period.start ){
+                    if (!period.start) {
                         context.content = "Ngày bắt đầu không hợp lệ hoặc rỗng"
-                        context.status = "0x4501250"                
+                        context.status = "0x4501250"
                     }
-                    if( !period.end ){
+                    if (!period.end) {
                         context.content = "Ngày kết thúc không hợp lệ hoặc rỗng"
-                        context.status = "0x4501251" 
-                    }               
-                    context.success = false            
+                        context.status = "0x4501251"
+                    }
+                    context.success = false
                 }
-            } else{
+            } else {
                 context.content = "Thông tin giai đoạn không hợp lệ hoặc rỗng"
-                context.status = "0x4501249" 
-                context.success = false     
+                context.status = "0x4501249"
+                context.success = false
             }
         }
 
         delete context.objects
-        res.status(200).send( context )
-    } 
+        res.status(200).send(context)
+    }
 
-    updateTaskPeriod = async ( req, res ) => {
+    updateTaskPeriod = async (req, res) => {
         this.writeReq(req)
 
         const { project_id, period_id } = req.params
-        const { period} = req.body                 
-                
-        const context = await this.projectGeneralCheck(req, project_id)        
+        const { period } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects } = context;
-        
-        if( success ){
+
+        if (success) {
             const { Project, decodedToken } = objects;
-            const project  = Project.getData()
-    
+            const project = Project.getData()
+
             const { tasks } = project
             const oldPeriod = tasks?.[`${period_id}`]
 
-            if( oldPeriod ){
+            if (oldPeriod) {
 
-                const bodyNullCheck = this.notNullCheck( req.body, ["period"] )
-                if(bodyNullCheck.valid){
+                const bodyNullCheck = this.notNullCheck(req.body, ["period"])
+                if (bodyNullCheck.valid) {
 
-                    const nullCheck = this.notNullCheck( period, ["period_name", "start", "end"] )           
-        
-                    if( nullCheck.valid ){
+                    const nullCheck = this.notNullCheck(period, ["period_name", "start", "end"])
+
+                    if (nullCheck.valid) {
                         const { start, end, members } = period
-                        const startDate = new Date( start )
-                        const endDate = new Date( end )
-    
-                        if( endDate && startDate && endDate - startDate >= 0 ){
+                        const startDate = new Date(start)
+                        const endDate = new Date(end)
+
+                        if (endDate && startDate && endDate - startDate >= 0) {
                             const newMemberNames = []
-                            if( members && Array.isArray(members)){
+                            if (members && Array.isArray(members)) {
                                 const AccountsModel = new Accounts()
                                 const users = await AccountsModel.findAll({ username: { $in: members } })
                                 const serializedUsers = {}
                                 users.map(user => {
                                     serializedUsers[user.username] = user
-                                    newMemberNames.push( user.fullname )
-                                })    
+                                    newMemberNames.push(user.fullname)
+                                })
                                 period.period_members = serializedUsers
                             }
 
-                            const newPeriod = {...oldPeriod, ...period}
-                            
+                            const newPeriod = { ...oldPeriod, ...period }
+
                             delete newPeriod.members // this may cause error
 
                             const oldMembers = Object.values(oldPeriod.period_members)
-                            const oldMemberNames = oldMembers.map( mem => mem.fullname )                            
+                            const oldMemberNames = oldMembers.map(mem => mem.fullname)
 
-                            await Project.__modifyAndSaveChange__(`tasks.${ period_id }`, newPeriod)
-                            this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ oldPeriod.period_name } => ${ newPeriod.period_name } | __period_start: ${ oldPeriod.start } => ${ newPeriod.start } | __period_end: ${ oldPeriod.end } => ${ newPeriod.end } | __member: ${ oldMemberNames.join(", ") } => ${ newMemberNames.join(', ') }`, decodedToken.username)
-                            context.content = "Cập nhật giai đoạn thành công"    
-                            context.success = true 
-                            context.status = "0x4501257"                            
-                        }else{                       
-                            context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"    
-                            context.success = true 
+                            await Project.__modifyAndSaveChange__(`tasks.${period_id}`, newPeriod)
+                            this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${oldPeriod.period_name} => ${newPeriod.period_name} | __period_start: ${oldPeriod.start} => ${newPeriod.start} | __period_end: ${oldPeriod.end} => ${newPeriod.end} | __member: ${oldMemberNames.join(", ")} => ${newMemberNames.join(', ')}`, decodedToken.username)
+                            context.content = "Cập nhật giai đoạn thành công"
+                            context.success = true
+                            context.status = "0x4501257"
+                        } else {
+                            context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                            context.success = true
                             context.status = "0x4501252"
-                        }  
-        
-        
-                    }else{
-                        if( !period.period_name ){
+                        }
+
+
+                    } else {
+                        if (!period.period_name) {
                             context.content = "Tên giai đoạn không hợp lệ hoặc rỗng"
                             context.status = "0x4501248"
                         }
-                        if( !period.start ){
+                        if (!period.start) {
                             context.content = "Ngày bắt đầu không hợp lệ hoặc rỗng"
-                            context.status = "0x4501250"                
+                            context.status = "0x4501250"
                         }
-                        if( !period.end ){
+                        if (!period.end) {
                             context.content = "Ngày kết thúc không hợp lệ hoặc rỗng"
-                            context.status = "0x4501251" 
-                        }               
-                        context.success = false            
+                            context.status = "0x4501251"
+                        }
+                        context.success = false
                     }
-                } else{
+                } else {
                     context.content = "Thông tin giai đoạn không hợp lệ hoặc rỗng"
-                    context.status = "0x4501249" 
-                    context.success = false     
+                    context.status = "0x4501249"
+                    context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
             }
         }
 
-        delete context.objects        
+        delete context.objects
         res.status(200).send(context)
     }
 
-    removeTaskPeriod = async ( req, res ) => {
+    removeTaskPeriod = async (req, res) => {
         this.writeReq(req)
 
-        const { project_id, period_id } = req.params                
-                
-        const context = await this.projectGeneralCheck(req, project_id)        
+        const { project_id, period_id } = req.params
+
+        const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects } = context;
 
-        if( success ){
+        if (success) {
             const { Project, decodedToken } = objects;
-            const project  = Project.getData()
-    
-            const { tasks } = project
-            if( tasks ){
-                const oldPeriod = {...tasks[`${ period_id }`]}
-                delete tasks[`${ period_id }`]                
-                await Project.__modifyAndSaveChange__( "tasks", tasks )
+            const project = Project.getData()
 
-                if( oldPeriod ){
-                    this.saveLog("info", req.ip, "__removeTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${ project.project_code } | __periodname: ${ oldPeriod.period_name }`, decodedToken.username)
+            const { tasks } = project
+            if (tasks) {
+                const oldPeriod = { ...tasks[`${period_id}`] }
+                delete tasks[`${period_id}`]
+                await Project.__modifyAndSaveChange__("tasks", tasks)
+
+                if (oldPeriod) {
+                    this.saveLog("info", req.ip, "__removeTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${oldPeriod.period_name}`, decodedToken.username)
                 }
             }
             context.status = "0x4501258"
             context.content = "Xóa giai đoạn thành công"
         }
-        delete context.objects        
+        delete context.objects
         res.status(200).send(context)
     }
 
@@ -962,15 +964,15 @@ class ProjectsController extends Controller {
         if (success) {
             const { Project, decodedToken } = objects;
             const { task, period_id } = req.body;
-            
+
             const project = Project.getData()
             const period = project.tasks?.[`${period_id}`];
-            if( period ){
+            if (period) {
 
                 const { start, end } = task
-                const startDate = new Date( start )
-                const endDate = new Date( end )
-                if( startDate && endDate && endDate >= startDate ){
+                const startDate = new Date(start)
+                const endDate = new Date(end)
+                if (startDate && endDate && endDate >= startDate) {
                     const nullCheck = this.notNullCheck(task, ["task_name", "task_description"])
                     task.create_by = decodedToken
                     task.create_at = new Date()
@@ -986,25 +988,25 @@ class ProjectsController extends Controller {
                         await Project.addTask(period_id, task)
                         await Project.save()
                         const project = Project.getData()
-        
-                        this.saveLog("info", req.ip, "__createtask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name }| __taskname: ${ task.task_name } | __taskdescription: ${ task.task_description } | __taskpriority ${task.task_priority } | __taskmembers: ${ users.map( u => `${u.username}(${ u.fullname })` ).join(", ") }`, decodedToken.username)
-                        
+
+                        this.saveLog("info", req.ip, "__createtask", `__projectname: ${project.project_name}| __period_name: ${period.period_name}| __taskname: ${task.task_name} | __taskdescription: ${task.task_description} | __taskpriority ${task.task_priority} | __taskmembers: ${users.map(u => `${u.username}(${u.fullname})`).join(", ")}`, decodedToken.username)
+
                         context.content = "Thêm thành công"
                         context.status = "0x4501119"
                         context.success = true
                         context.tasks = Object.values(project.tasks)
-        
+
                     } else {
                         context.content = "Body khum hợp lệ"
                         context.status = "0x4501122"
                         context.success = false
                     }
-                }else{
-                    context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"    
-                    context.success = true 
+                } else {
+                    context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                    context.success = true
                     context.status = "0x4501252"
-                }                
-            }else{
+                }
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
@@ -1020,25 +1022,25 @@ class ProjectsController extends Controller {
     createChildTask = async (req, res) => {
         this.writeReq(req)
         const { project_id, period_id, task_id } = req.params
-        
+
         const context = await this.projectGeneralCheck(req, project_id)
         const { success, objects, permission } = context;
         const start = new Date()
-        
-        if( success ){            
+
+        if (success) {
             const { Project, decodedToken } = objects;
             const project = Project.getData()
-            const periods = project.tasks ? project.tasks : {} ;
+            const periods = project.tasks ? project.tasks : {};
 
             const period = periods[`${period_id}`]
-            if( period ){
+            if (period) {
                 const task = period.tasks?.[`${task_id}`]
-                if( task ){                    
+                if (task) {
                     const childTask = req.body.child_task;
                     childTask.create_by = decodedToken;
 
                     const nullCheck = this.notNullCheck(childTask, ["child_task_name", "child_task_description", "child_task_status"])
-                    if( nullCheck.valid ){
+                    if (nullCheck.valid) {
 
 
 
@@ -1053,29 +1055,29 @@ class ProjectsController extends Controller {
                         await Project.addChildTask(period_id, task_id, childTask)
                         await Project.save()
 
-                        this.saveLog("info", req.ip, "__createChildTask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name }| __taskname: ${ task.task_name } | __childtaskname: ${ childTask.child_task_name } |  __childtaskdescription: ${ childTask.child_task_description } | __priority ${childTask.priority } | __taskmembers: ${ users.map( u => `${u.username}(${ u.fullname })` ).join(", ") }`, decodedToken.username)
-                        
+                        this.saveLog("info", req.ip, "__createChildTask", `__projectname: ${project.project_name}| __period_name: ${period.period_name}| __taskname: ${task.task_name} | __childtaskname: ${childTask.child_task_name} |  __childtaskdescription: ${childTask.child_task_description} | __priority ${childTask.priority} | __taskmembers: ${users.map(u => `${u.username}(${u.fullname})`).join(", ")}`, decodedToken.username)
+
                         context.content = "Thêm thành công"
-                        context.status = "0x4501119"                        
-                    }else{
+                        context.status = "0x4501119"
+                    } else {
                         context.content = "Body khum hợp lệ"
                         context.status = "0x4501122"
                         context.success = false
                     }
-                }else{  
+                } else {
                     context.content = "Yêu cầu khum tồn tại"
                     context.status = "0x4501259"
                     context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
             }
         }
-        
+
         delete context.objects;
-        res.status(200).send(context) 
+        res.status(200).send(context)
     }
 
     getTasks = async (req, res) => {
@@ -1121,85 +1123,85 @@ class ProjectsController extends Controller {
         const { success, objects, permission } = context;
         const start = new Date()
         if (success) {
-        
+
             const { Project, decodedToken } = objects;
             const project = Project.getData()
             const tasks = project.tasks ? project.tasks : {}
 
-            const period = tasks[`${ period_id }`]
+            const period = tasks[`${period_id}`]
 
-            if(period){
-                const oldTask = period.tasks[`${ task_id }`]
+            if (period) {
+                const oldTask = period.tasks[`${task_id}`]
 
                 if (oldTask) {
                     const { create_by } = oldTask
-                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
+                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {
                         const newTask = { ...oldTask, ...task }
                         newTask.child_tasks = oldTask.child_tasks;
-                        
-                        let newModified = {}   
-                        const inforFields = [ "task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress", "members" ]                 
+
+                        let newModified = {}
+                        const inforFields = ["task_name", "task_description", "task_priority", "start", "timeline", "end", "task_progress", "members"]
                         switch (type) {
-                            case "infor":                                                            
+                            case "infor":
                                 const members = task.members ? task.members : []
-                                
+
                                 const AccountsModel = new Accounts()
                                 const users = await AccountsModel.findAll({ username: { $in: members } })
                                 const usernames = []
                                 const serializedUsers = {}
                                 users.map(user => {
-                                    serializedUsers[user.username] = user; 
-                                    usernames.push( user.fullname )                                    
+                                    serializedUsers[user.username] = user;
+                                    usernames.push(user.fullname)
                                 })
 
-                                newTask.members = serializedUsers;                                
-                                
-                                const oldUsernames = Object.values(oldTask.members).map( user => user.fullname ).join(", ")
+                                newTask.members = serializedUsers;
 
-                                newModified = await Project.makeModified( 
-                                    type, 
-                                    decodedToken, 
-                                    this.stringifyObject({...oldTask, members: oldUsernames}, inforFields),
-                                    this.stringifyObject({...newTask, members: usernames.join(", ")}, inforFields)
-                                )                                                                
-                                this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | __taskpriority: ${ task.task_priority } => ${ newTask.task_priority } |  __taskname ${ task.task_name } => ${ newTask.task_name } | __taskdescription: ${ task.task_description } => ${ newTask.task_description }`, decodedToken.username )
+                                const oldUsernames = Object.values(oldTask.members).map(user => user.fullname).join(", ")
+
+                                newModified = await Project.makeModified(
+                                    type,
+                                    decodedToken,
+                                    this.stringifyObject({ ...oldTask, members: oldUsernames }, inforFields),
+                                    this.stringifyObject({ ...newTask, members: usernames.join(", ") }, inforFields)
+                                )
+                                this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskpriority: ${task.task_priority} => ${newTask.task_priority} |  __taskname ${task.task_name} => ${newTask.task_name} | __taskdescription: ${task.task_description} => ${newTask.task_description}`, decodedToken.username)
                                 break;
-                                
+
                             case "status":
-                                newModified = await Project.makeModified( 
-                                    type, 
-                                    decodedToken, 
-                                    oldTask.task_status, 
+                                newModified = await Project.makeModified(
+                                    type,
+                                    decodedToken,
+                                    oldTask.task_status,
                                     newTask.task_status
-                                )   
+                                )
                                 const oldStatus = oldTask.task_status;
-                                this.saveLog("info", req.ip, "__modifytaskstatus", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | __taskstatus ${ Projects.getTaskStatusName(oldStatus) } => ${ Projects.getTaskStatusName(newTask.task_status) }`, decodedToken.username )
+                                this.saveLog("info", req.ip, "__modifytaskstatus", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskstatus ${Projects.getTaskStatusName(oldStatus)} => ${Projects.getTaskStatusName(newTask.task_status)}`, decodedToken.username)
                                 break;
-    
+
                             case "approve":
-                                newModified = await Project.makeModified( 
-                                    type, 
-                                    decodedToken, 
-                                    oldTask.task_approve, 
-                                    newTask.task_approve                             
-                                )   
-                                this.saveLog("info", req.ip, "__taskapprove", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } | __taskname ${ task.task_name } | ${ task.task_approve ? "__approved": "__unapproved" } => ${ newTask.task_approve ? "__approved": "__unapproved" }`, decodedToken.username)
-                                break;                        
+                                newModified = await Project.makeModified(
+                                    type,
+                                    decodedToken,
+                                    oldTask.task_approve,
+                                    newTask.task_approve
+                                )
+                                this.saveLog("info", req.ip, "__taskapprove", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | ${task.task_approve ? "__approved" : "__unapproved"} => ${newTask.task_approve ? "__approved" : "__unapproved"}`, decodedToken.username)
+                                break;
                             default:
-                                newModified = await Project.makeModified( 
-                                    type, 
-                                    decodedToken, 
-                                    this.stringifyObject(oldTask), 
-                                    this.stringifyObject(newTask) 
-                                )   
+                                newModified = await Project.makeModified(
+                                    type,
+                                    decodedToken,
+                                    this.stringifyObject(oldTask),
+                                    this.stringifyObject(newTask)
+                                )
                                 break;
                         }
                         newTask.task_modified = { ...oldTask.task_modified, ...newModified }
 
-                        period.tasks[`${ task_id }`] = newTask
-                        project.tasks[`${ period_id }`] = period
-                            
-    
+                        period.tasks[`${task_id}`] = newTask
+                        project.tasks[`${period_id}`] = period
+
+
                         await Project.__modifyAndSaveChange__(`tasks`, project.tasks)
                         context.status = "0x4501155"
                         context.content = "Cập nhật thành công"
@@ -1213,7 +1215,7 @@ class ProjectsController extends Controller {
                     context.status = "0x4501137"
                     context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
@@ -1239,39 +1241,39 @@ class ProjectsController extends Controller {
         if (success) {
             const { Project, decodedToken } = objects;
             const project = Project.getData()
-            
+
             const periods = project.tasks ? project.tasks : {}
-            const period = periods[`${ period_id }`]
+            const period = periods[`${period_id}`]
 
-            if( period ){
+            if (period) {
 
-                const task = period.tasks[`${ task_id }`]
+                const task = period.tasks[`${task_id}`]
 
-                if( task ){
+                if (task) {
                     const { create_by } = task;
 
-                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username ) { // or the owner                       
-                        
-                        delete periods[`${ period_id }`].tasks[`${ task_id }`]  
+                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) { // or the owner                       
+
+                        delete periods[`${period_id}`].tasks[`${task_id}`]
 
                         Project.__modifyAndSaveChange__("tasks", periods)
 
                         context.content = "Xóa yêu cầu thành công"
                         context.status = "0x4501161"
                         context.success = true
-                        
-                        this.saveLog("info", req.ip, "__purgetask", `__projectname: ${ project.project_name }| __period_name: ${ period.period_name } |  __taskname ${ task.task_name }`, decodedToken.username )
+
+                        this.saveLog("info", req.ip, "__purgetask", `__projectname: ${project.project_name}| __period_name: ${period.period_name} |  __taskname ${task.task_name}`, decodedToken.username)
                     } else {
                         context.content = "Khum có quyền thực hiện thao tác này"
                         context.status = "0x4501162"
                         context.success = false
                     }
-                }else{
+                } else {
                     context.content = "Yêu cầu khum tồn tại"
                     context.status = "0x4501137"
                     context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
@@ -1293,37 +1295,51 @@ class ProjectsController extends Controller {
         const { success, objects, permission } = context;
         const start = new Date()
 
-        if(success){
+        if (success) {
             const { Project, decodedToken } = objects;
             const project = Project.getData()
             const tasks = project.tasks ? project.tasks : {}
 
-            const period = tasks[`${ period_id }`]
+            const period = tasks[`${period_id}`]
 
-            if(period){
-                const task = period.tasks[`${ task_id }`]
+            if (period) {
+                const task = period.tasks[`${task_id}`]
                 if (task) {
 
-                    const oldChildTask = task.child_tasks[`${ child_task_id }`]
-                    if(oldChildTask){
+                    const oldChildTask = task.child_tasks[`${child_task_id}`]
+                    if (oldChildTask) {
                         const { create_by } = oldChildTask
-    
-                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
+
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {
                             const newTask = { ...oldChildTask, ...child_task }
 
                             const members = newTask.members ? newTask.members : []
-                                
-                                const AccountsModel = new Accounts()
-                                const users = await AccountsModel.findAll({ username: { $in: members } })                                
-                                const serializedUsers = {}
-                                users.map(user => {
-                                    serializedUsers[user.username] = user
-                                })
 
-                                newTask.members = serializedUsers;  
-                                period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`] = newTask;
+                            const AccountsModel = new Accounts()
+                            const users = await AccountsModel.findAll({ username: { $in: members } })
+                            const serializedUsers = {}
+                            users.map(user => {
+                                serializedUsers[user.username] = user
+                            })
 
-                                await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
+                            newTask.members = serializedUsers;
+                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = newTask;                          
+
+
+                            const oldUsernames = Object.values(oldChildTask.members).map(user => user.fullname).join(", ")
+
+                            const newModified = await Project.makeModified(
+                                "infor",
+                                decodedToken,
+                                this.stringifyObject({ ...oldChildTask, members: oldUsernames }),
+                                this.stringifyObject({ ...newTask, members: Object.values(serializedUsers).map(u => u.fullname).join(", ") })
+                            )
+                            
+                            task.task_modified = { ...task.task_modified, ...newModified }
+                            period.tasks[`${task_id}`] = task                            
+
+                            await this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskpriority: ${task.task_priority} => ${newTask.task_priority} |  __taskname ${task.task_name} => ${newTask.task_name} | __taskdescription: ${task.task_description} => ${newTask.task_description}`, decodedToken.username)
+                            await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
 
                             context.status = "0x4501261"
                             context.content = "Cập nhật thành công"
@@ -1332,28 +1348,28 @@ class ProjectsController extends Controller {
                             context.status = "0x4501137"
                             context.success = false
                         }
-                    }else{
+                    } else {
                         context.content = "Yêu cầu khum tồn tại"
                         context.status = "0x4501137"
                         context.success = false
-                    }                    
+                    }
                 } else {
                     context.content = "Yêu cầu khum tồn tại"
                     context.status = "0x4501137"
                     context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
             }
 
-        }       
+        }
         delete context.objects;
         res.status(200).send(context)
     }
 
-    removeChildTask = async ( req, res ) => {
+    removeChildTask = async (req, res) => {
         this.writeReq(req)
         const { project_id, period_id, task_id, child_task_id } = req.params
         const { child_task } = req.body
@@ -1362,25 +1378,25 @@ class ProjectsController extends Controller {
         const { success, objects, permission } = context;
         const start = new Date()
 
-        if(success){
+        if (success) {
             const { Project, decodedToken } = objects;
             const project = Project.getData()
             const tasks = project.tasks ? project.tasks : {}
 
-            const period = tasks[`${ period_id }`]
+            const period = tasks[`${period_id}`]
 
-            if(period){
-                const task = period.tasks[`${ task_id }`]
+            if (period) {
+                const task = period.tasks[`${task_id}`]
                 if (task) {
 
-                    const oldChildTask = task.child_tasks[`${ child_task_id }`]
-                    if(oldChildTask){
+                    const oldChildTask = task.child_tasks[`${child_task_id}`]
+                    if (oldChildTask) {
                         const { create_by } = oldChildTask
-    
-                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {                    
-                            
-                            delete period.tasks[`${ task_id }`].child_tasks[`${ child_task_id }`]
-                            await Project.__modifyAndSaveChange__( `tasks.${  period_id }`, period )
+
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {
+
+                            delete period.tasks[`${task_id}`].child_tasks[`${child_task_id}`]
+                            await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
 
                             context.status = "0x4501260"
                             context.content = "Xóa yêu cầu con thành công"
@@ -1389,105 +1405,105 @@ class ProjectsController extends Controller {
                             context.status = "0x4501137"
                             context.success = false
                         }
-                    }else{
+                    } else {
                         context.content = "Yêu cầu khum tồn tại"
                         context.status = "0x4501137"
                         context.success = false
-                    }                    
+                    }
                 } else {
                     context.content = "Yêu cầu khum tồn tại"
                     context.status = "0x4501137"
                     context.success = false
                 }
-            }else{
+            } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
                 context.success = false
             }
 
-        }       
+        }
         delete context.objects;
         res.status(200).send(context)
     }
 
-    translateCriteriaToStatusIfAvailable = ( criteria ) => {
+    translateCriteriaToStatusIfAvailable = (criteria) => {
         const loweredCase = translateUnicodeToBlanText(criteria.toLowerCase());
         const translator = {
-            "initialization":   1,
-            "khoi tao":         1,  
-            "implement":        2,
-            "thuc hien":        2, 
-            "deploy":           3,
-            "trien khai":       3,    
-            "complete":         4,
-            "hoan thanh":       4,    
-            "pause":            5,
-            "tam dung":         5,  
+            "initialization": 1,
+            "khoi tao": 1,
+            "implement": 2,
+            "thuc hien": 2,
+            "deploy": 3,
+            "trien khai": 3,
+            "complete": 4,
+            "hoan thanh": 4,
+            "pause": 5,
+            "tam dung": 5,
         }
         return translator[loweredCase]
     }
 
-    isProjectMatched = ( project, criteria ) => {
+    isProjectMatched = (project, criteria) => {
         const { project_id, project_name, project_code, project_status, project_description, project_type, proxy_server, create_at, manager, members, create_by } = project
-        const corespondingStatusID = this.translateCriteriaToStatusIfAvailable( criteria ) 
+        const corespondingStatusID = this.translateCriteriaToStatusIfAvailable(criteria)
 
         let valid = false;
-        if( project_id && project_id.toString() == criteria ){
+        if (project_id && project_id.toString() == criteria) {
             valid = true;
         }
-        if( project_name && project_name.includes(criteria) ){
+        if (project_name && project_name.includes(criteria)) {
             valid = true
         }
-        if( project_code && project_code.includes( criteria ) ){
+        if (project_code && project_code.includes(criteria)) {
             valid = true
         }
-        if( project_status && project_status.toString() == criteria || project_status == corespondingStatusID ){
+        if (project_status && project_status.toString() == criteria || project_status == corespondingStatusID) {
             valid = true;
         }
-        if( project_description && project_description.includes(criteria) ){
+        if (project_description && project_description.includes(criteria)) {
             valid = true;
         }
 
-        if( project_type && project_type == criteria.toLowerCase() ){
+        if (project_type && project_type == criteria.toLowerCase()) {
             valid = true
         }
-        if( proxy_server && proxy_server.includes( criteria ) ){
+        if (proxy_server && proxy_server.includes(criteria)) {
             valid = true;
         }
-        if( create_at != undefined){
-            const dateOfCreateAt = new Date( create_at )
-            const dateOfCriteria = new Date( criteria )
-            if( dateOfCreateAt == dateOfCriteria ){
+        if (create_at != undefined) {
+            const dateOfCreateAt = new Date(create_at)
+            const dateOfCriteria = new Date(criteria)
+            if (dateOfCreateAt == dateOfCriteria) {
                 valid = true
             }
         }
-        if( manager ){
+        if (manager) {
             const { fullname, username } = manager;
-            if( fullname && fullname.includes( criteria ) ){
+            if (fullname && fullname.includes(criteria)) {
                 valid = true
-            } 
-            if( username && username.includes( criteria ) ){
+            }
+            if (username && username.includes(criteria)) {
                 valid = true;
             }
         }
 
-        if( create_by ){
+        if (create_by) {
             const { fullname, username } = create_by;
-            if( fullname && fullname.includes( criteria ) ){
+            if (fullname && fullname.includes(criteria)) {
                 valid = true
-            } 
-            if( username && username.includes( criteria ) ){
+            }
+            if (username && username.includes(criteria)) {
                 valid = true;
             }
         }
-        if( members ){
-            const arraiedMembers = Object.values( members )
-            for( let i = 0 ; i < arraiedMembers.length; i++ ){
+        if (members) {
+            const arraiedMembers = Object.values(members)
+            for (let i = 0; i < arraiedMembers.length; i++) {
                 const { fullname, username } = arraiedMembers[i];
-                if( fullname && fullname.includes( criteria ) ){
+                if (fullname && fullname.includes(criteria)) {
                     valid = true
-                } 
-                if( username && username.includes( criteria ) ){
+                }
+                if (username && username.includes(criteria)) {
                     valid = true;
                 }
             }
@@ -1501,15 +1517,15 @@ class ProjectsController extends Controller {
         const { criteria } = req.body;
         const context = await this.generalCheck(req)
         const { success, objects } = context;
-        if( success ){
-            if( criteria ){
+        if (success) {
+            if (criteria) {
                 const projects = await this.getAllProjectBuOnLyGeneralInfo()
-                const matchedProjects = projects.filter( project => this.isProjectMatched( project, criteria ) )                
-                res.send( { success: true, projects: matchedProjects } )
-            }else{
+                const matchedProjects = projects.filter(project => this.isProjectMatched(project, criteria))
+                res.send({ success: true, projects: matchedProjects })
+            } else {
                 this.get(req, res);
             }
-        }else{
+        } else {
             res.status(200).send(context)
         }
     }
