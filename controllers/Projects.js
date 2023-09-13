@@ -684,6 +684,7 @@ class ProjectsController extends Controller {
                     } else {
                         task.progress = 0
                     }
+                    task.task_modified = Object.values(task.task_modified)
                 })
 
                 if (period.tasks.length > 0) {
