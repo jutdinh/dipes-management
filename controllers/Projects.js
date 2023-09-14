@@ -1287,7 +1287,7 @@ class ProjectsController extends Controller {
         res.status(200).send(context)
     }
 
-    updateChildTask = async (req, res, type = "infor") => {
+    updateChildTask = async (req, res) => {
         this.writeReq(req)
         const { project_id, period_id, task_id, child_task_id } = req.params
         const { child_task } = req.body
@@ -1340,6 +1340,76 @@ class ProjectsController extends Controller {
                             period.tasks[`${task_id}`] = task                            
 
                             await this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskpriority: ${task.task_priority} => ${newTask.task_priority} |  __taskname ${task.task_name} => ${newTask.task_name} | __taskdescription: ${task.task_description} => ${newTask.task_description}`, decodedToken.username)
+                            await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
+
+                            context.status = "0x4501261"
+                            context.content = "Cập nhật thành công"
+                        } else {
+                            context.content = "Khum có quyền thực hiện thao tác này"
+                            context.status = "0x4501137"
+                            context.success = false
+                        }
+                    } else {
+                        context.content = "Yêu cầu khum tồn tại"
+                        context.status = "0x4501137"
+                        context.success = false
+                    }
+                } else {
+                    context.content = "Yêu cầu khum tồn tại"
+                    context.status = "0x4501137"
+                    context.success = false
+                }
+            } else {
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
+                context.success = false
+            }
+
+        }
+        delete context.objects;
+        res.status(200).send(context)
+    }
+
+    updateChildTaskApproval = async (req, res) => {
+        this.writeReq(req)
+        const { project_id, period_id, task_id, child_task_id } = req.params
+        const { child_task } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects, permission } = context;
+        const start = new Date()
+
+        if (success) {
+            const { Project, decodedToken } = objects;
+            const project = Project.getData()
+            const tasks = project.tasks ? project.tasks : {}
+
+            const period = tasks[`${period_id}`]
+
+            if (period) {
+                const task = period.tasks[`${task_id}`]
+                if (task) {
+
+                    const childTask = task.child_tasks[`${child_task_id}`]
+                    if (childTask) {
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) ) {
+                            
+                            const oldApprove = childTask.approve
+                            const approve = child_task?.approve;
+                            childTask.approve = approve
+                            
+                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = childTask;                                                                           
+                            
+                            const newModified = await Project.makeModified(
+                                "approve",
+                                decodedToken,
+                                oldApprove,
+                                approve
+                            )
+
+                            task.task_modified = { ...task.task_modified, ...newModified }
+                            period.tasks[`${task_id}`] = task                            
+                            
                             await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
 
                             context.status = "0x4501261"
