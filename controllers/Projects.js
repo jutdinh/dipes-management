@@ -1329,11 +1329,13 @@ class ProjectsController extends Controller {
 
                             const oldUsernames = Object.values(oldChildTask.members).map(user => user.fullname).join(", ")
 
+                            const infofields = [ "child_task_name", "child_task_description", "child_task_status", "approve", "priority", "start", "timeline", "end", "progress", "members" ]
+
                             const newModified = await Project.makeModified(
                                 "infor",
                                 decodedToken,
-                                this.stringifyObject({ ...oldChildTask, members: oldUsernames }),
-                                this.stringifyObject({ ...newTask, members: Object.values(serializedUsers).map(u => u.fullname).join(", ") })
+                                this.stringifyObject({ ...oldChildTask, members: oldUsernames }, infofields),
+                                this.stringifyObject({ ...newTask, members: Object.values(serializedUsers).map(u => u.fullname).join(", ") }, infofields)
                             )
                             
                             task.task_modified = { ...task.task_modified, ...newModified }
@@ -1403,8 +1405,8 @@ class ProjectsController extends Controller {
                             const newModified = await Project.makeModified(
                                 "approve",
                                 decodedToken,
-                                oldApprove,
-                                approve
+                                `${ childTask.child_task_id } - ${childTask.child_task_name} - ${oldApprove}`,
+                                `${ childTask.child_task_id } - ${childTask.child_task_name} - ${approve}`
                             )
 
                             task.task_modified = { ...task.task_modified, ...newModified }
