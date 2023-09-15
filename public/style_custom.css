@@ -8,7 +8,50 @@
     vertical-align: middle;
 }
 
+.table-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 200px;
+    border: 1px solid black;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .table-header, .table-row {
+    display: flex;
+  }
+  
+  .table-header {
+    background-color: lightgray;
+  }
+  
+  .table-cell {
+    padding: 5px;
+    border-right: 1px solid black;
+    flex: 1;
+    text-align: center;
+  }
 
+  
+  
+  .table-body {
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+  
+  .table-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .table-row .table-cell {
+    border-bottom: 1px solid black;
+  }
+  
+  .table-row .table-cell:last-child {
+    border-right: none;
+  }
+  
 
 
 .cell-with-text {
@@ -16,8 +59,26 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.active {
+    cursor: grab;
+}
+.active:active {
+    cursor: grabbing;
+}
 
 /* GanttTest.css */
+.gantt .grid {
+    cursor: grab;
+    /* biểu tượng bàn tay đang mở */
+}
+.gantt {
+  
+   min-height: 100px !important;
+}
+.gantt .grid.active {
+    cursor: grabbing;
+    /* biểu tượng bàn tay đang nắm chặt */
+}
 
 .gantt .bar-progress {
     fill: #5bcfce !important;
@@ -1165,11 +1226,12 @@ img[class="scaled-hover-target"] {
 }
 
 .icon-check {
-    color: #ec840c
+    color: #a11189
 }
 
 .icon-close {
-    color: #a11189
+    
+    color: #ec840c
 }
 
 .icon-toggle {
@@ -1625,10 +1687,12 @@ input[type="date"]:valid+.date-label {
 }
 
 .padding_infor_info_list_task {
-    padding: 10px 35px;
+    padding: 5px 15px;
     float: left;
     width: 100%;
     min-height: 400px;
+
+    max-height: 700px;
     margin-bottom: 1rem;
 
 }

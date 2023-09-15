@@ -1,52 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FrappeGantt, ViewMode } from 'frappe-gantt-react';
 import ReactGantt from "gantt-for-react";
+
 import { useDispatch, useSelector } from 'react-redux';
 import $ from "jquery"
 function GanttTest({ data }) {
+    const containerRef = useRef(null);
+
     const { lang, proxy, auth, functions } = useSelector(state => state);
     console.log(data)
 
 
-    React.useEffect(() => {
-        let isDrag = false;
 
-        const handleMouseDown = () => {
-            isDrag = false;
-        };
+    // React.useEffect(() => {
+    //     const updateHeight = () => {
+    //         // Sử dụng ref để truy cập phần tử DOM
+    //         const containerElement = containerRef.current;
+    //         if (containerElement) {
+    //             const currentHeight = containerElement.offsetHeight;
+    //             if (currentHeight) {
+    //                 const newHeight = currentHeight - 100; // Tính đến độ cao của thanh cuộn
+    //                 if (newHeight > 0) {
+    //                     containerElement.style.height = newHeight + 'px';
+    //                 }
+    //             }
+    //         }
 
-        const handleMouseMove = () => {
-            isDrag = true;
-        };
+    //     };
 
-        const handleMouseUp = () => {
-            if (!isDrag) {
-                console.log("Element clicked, not dragged");
-                // Your click handling logic
-            }
-            isDrag = false;
-        };
+    //     // Thêm một delay lớn hơn để đảm bảo rằng thư viện đã kết thúc việc render
+    //     setTimeout(updateHeight, 1);
+    // }, [data]);
 
-        const barWrappers = document.querySelectorAll(".gantt .bar-wrapper");
+ 
 
-        barWrappers.forEach(wrapper => {
-            wrapper.addEventListener("mousedown", handleMouseDown);
-            wrapper.addEventListener("mousemove", handleMouseMove);
-            wrapper.addEventListener("mouseup", handleMouseUp);
-        });
 
-        return () => {
-            barWrappers.forEach(wrapper => {
-                wrapper.removeEventListener("mousedown", handleMouseDown);
-                wrapper.removeEventListener("mousemove", handleMouseMove);
-                wrapper.removeEventListener("mouseup", handleMouseUp);
-            });
-        };
-    }, []);
-    
-    
-      
-      
+
+
+
+
     const currentDate = new Date();
     console.log(currentDate)
     const tasks = data.map((period) => [
@@ -57,10 +49,10 @@ function GanttTest({ data }) {
             end: period.end,
             progress: parseFloat(period.progress),
             dependencies: '',
-            custom_class: (new Date(period.end) < currentDate && parseFloat(period.progress) < 100) ? "bar-milestone" : ""
-            
+            custom_class: (new Date(period.end) < currentDate && parseFloat(period.progress) < 100) ? "bar-milestone" : "",
+            styles: { progressColor: '#ffbb54', progressSelectedColor: '#ff9e0d' }
         },
-        
+
         ...(period.tasks ?? []).map((task) => [
             {
                 id: `task-${task.task_id}`,
@@ -81,16 +73,11 @@ function GanttTest({ data }) {
                     dependencies: `task-${task.task_id}`,
                     description: childTask.child_task_description,
                     // isDelayed: new Date(childTask.end) < currentDate,
-                    custom_class: (new Date(childTask.end)< currentDate && parseFloat(childTask.progress) < 100) ? "bar-milestone" : ""
+                    custom_class: (new Date(childTask.end) < currentDate && parseFloat(childTask.progress) < 100) ? "bar-milestone" : ""
                 };
             }),
         ]),
     ]).flat(2);
-
-  
-   
-
-
 
     console.log(tasks)
     // const customPopupHtml = task => {
@@ -116,7 +103,7 @@ function GanttTest({ data }) {
 
 
     return (
-        <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'auto' }}>
             {/* <FrappeGantt
                 tasks={tasks}
                 columnWidth="40px"
@@ -127,8 +114,9 @@ function GanttTest({ data }) {
                 customPopupHtml={customPopupHtml}
             /> */}
             <ReactGantt
-                // columnWidth="20px"
-                // arrow_curve="5"
+               
+                columnWidth="20px"
+                arrow_curve="5"
                 tasks={tasks}
                 viewMode={ViewMode.Day}
                 customPopupHtml={customPopupHtml}

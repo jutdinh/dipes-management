@@ -14,6 +14,7 @@ import { formatDate } from "../../redux/configs/format-date";
 import { da } from "date-fns/locale";
 import Stage from "./stage"
 import GanttTest from "./gantt-test"
+import TableScroll from "./table-test-scroll"
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -91,7 +92,7 @@ export default () => {
     const [stage, setStage] = useState([]);
     console.log(stage)
     const [stageData, setStageData] = useState([]);
-    // console.log(task)
+    console.log(stageData)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -542,7 +543,246 @@ export default () => {
         2: "Trung bình",
         3: "Thấp"
     };
+
+    // const exportToExcel = () => {
+    //     const workbook = XLSX.utils.book_new();
+
+    //     stageData.forEach((period) => {
+    //         const ws_data = [
+    //             ['ID', 'Tên công việc', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu', 'Ngày kết thúc','Timeline', 'Người thực hiện'], 
+    //             [period.period_id, period.period_name, , period.progress, , period.start, period.end, period.timeline,  period.period_members.map(member => member.fullname).join(', ')],
+    //         ];
+
+
+    //         // Thêm dữ liệu về tasks
+
+    //         period.tasks.forEach((task) => {
+    //             ws_data.push([task.task_id, task.task_name, task.start, task.end, task.progress]);
+
+    //             // Thêm dữ liệu về child tasks
+
+    //             task.child_tasks.forEach((childTask) => {
+    //                 ws_data.push([childTask.child_task_id, childTask.child_task_name, childTask.start, childTask.end, childTask.progress]);
+    //             });
+    //         });
+
+    //         const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    //         XLSX.utils.book_append_sheet(workbook, ws, period.period_name);
+    //     });
+
+    //     // Xuất file Excel
+    //     XLSX.writeFile(workbook, 'project-data.xlsx');
+    // };
     const exportToExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const projectTasks = project.tasks;
+
+
+        const dataExport = project
+
+        const projectName = project.project_name
+        const projectMaster = project.manager.fullname;
+        const now = new Date();
+        const date = now.toLocaleDateString("vi-VN", {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
+        });
+
+        const header = ['ID', 'Tên công việc', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu (dd/MM/yyyy)', 'Ngày kết thúc (dd/MM/yyyy)', 'Timeline', 'Người thực hiện'];
+        stageData.forEach((period, periodIndex) => {
+            const ws_data = [
+                // Header Information
+                [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , ,],
+                [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", ""],
+                [`Ngày xuất (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", ""],
+                [`Tên giai đoạn: ${period.period_name}`, "", "", "", "", "", "", "", "", "", ""],
+                [`Thời gian thực hiện: ${functions.formatDateTask(period.start)} - ${functions.formatDateTask(period.end)}`, "", "", "", "", "", "", "", "", "", ""],
+                header,
+                // ... (the rest of your data)
+            ];
+
+
+
+
+            period.tasks.forEach((task, taskIndex) => {
+
+                ws_data.push([
+
+                    // taskIndex + 1,
+                    task.task_id,
+                    task.task_name,
+                    getTaskPriorityLabel(task.task_priority),
+                    `${task.progress}%`,
+                    task.task_approve ? "Đã xác nhận" : "Chưa xác nhận",
+                    functions.formatDateTask(task.start),
+                    functions.formatDateTask(task.end),
+                    functions.formatDateTask(task.timeline),
+                    task.members.map(member => member.fullname).join(', '),
+                ]);
+
+                task.child_tasks.forEach((childTask, childIndex) => {
+                    ws_data.push([
+                        // childIndex + 1,
+                        childTask.child_task_id,
+                        childTask.child_task_name,
+                        getTaskPriorityLabel(childTask.priority),
+                        `${childTask.progress}%`,
+                        childTask.task_approve ? "Đã xác nhận" : "Chưa xác nhận",
+                        functions.formatDateTask(childTask.start),
+                        functions.formatDateTask(childTask.end),
+                        functions.formatDateTask(childTask.timeline),
+                        childTask.members.map(member => member.fullname).join(', '),
+
+                    ]);
+                });
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+            const borderStyle = {
+                top: { style: "thin", color: { rgb: "000000" } },
+                bottom: { style: "thin", color: { rgb: "000000" } },
+                left: { style: "thin", color: { rgb: "000000" } },
+                right: { style: "thin", color: { rgb: "000000" } }
+            };
+
+            const centerStyle = {
+                font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+                alignment: { horizontal: "center", vertical: "center", wrapText: true },
+                border: borderStyle
+            };
+            const rightStyle = {
+                font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+                alignment: { horizontal: "right", vertical: "right", wrapText: true },
+                border: borderStyle
+            };
+
+            const titleStyle = {
+                font: { name: "UTM Avo", sz: 13, bold: true, color: { rgb: "FF000000" } },
+                fill: { fgColor: { rgb: "70ad47" } },
+                alignment: { horizontal: "center", vertical: "center" },
+                border: borderStyle
+            };
+
+            const athurStyle = {
+                font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+                border: borderStyle
+            };
+
+            const headerStyle = {
+                font: { name: "UTM Avo", sz: 11, bold: true, color: { rgb: "FF000000" } },
+                fill: { fgColor: { rgb: "a9d08f" } },
+                alignment: { horizontal: "center", vertical: "center", wrapText: true },
+                border: borderStyle
+            };
+
+            ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 50 }];
+            ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
+            ws["A1"].s = titleStyle;
+            ws["A2"].s = athurStyle;
+            ws["A4"].s = athurStyle;
+            ws["A5"].s = athurStyle;
+            ws["B4"].s = athurStyle;
+
+            ws["B2"].s = athurStyle;
+            ws["C4"].s = athurStyle;
+            ws["D4"].s = athurStyle;
+            ws["E4"].s = athurStyle;
+            ws["F4"].s = athurStyle;
+            ws["G4"].s = athurStyle;
+            ws["H4"].s = athurStyle;
+            ws["I4"].s = athurStyle;
+
+            ws["C5"].s = athurStyle;
+            ws["D5"].s = athurStyle;
+            ws["E5"].s = athurStyle;
+            ws["F5"].s = athurStyle;
+            ws["G5"].s = athurStyle;
+            ws["H5"].s = athurStyle;
+            ws["I5"].s = athurStyle;
+
+            ws["E2"].s = athurStyle;
+            ws["F2"].s = athurStyle;
+            ws["A3"].s = athurStyle;
+            ws["B3"].s = athurStyle;
+            ws["C2"].s = athurStyle;
+            ws["C3"].s = athurStyle;
+            ws["D2"].s = athurStyle;
+            ws["D3"].s = athurStyle;
+            ws["E2"].s = athurStyle;
+            ws["E3"].s = athurStyle;
+            ws["F2"].s = athurStyle;
+            ws["F3"].s = athurStyle;
+            ws["G2"].s = athurStyle;
+            ws["G3"].s = athurStyle;
+            ws["H2"].s = athurStyle;
+            ws["H3"].s = athurStyle;
+            ws["I2"].s = athurStyle;
+            ws["I3"].s = athurStyle;
+
+            
+
+            ws["A6"].s = headerStyle;
+            ws["B6"].s = headerStyle;
+            ws["C6"].s = headerStyle;
+            ws["D6"].s = headerStyle;
+            ws["E6"].s = headerStyle;
+            ws["F6"].s = headerStyle;
+            ws["G6"].s = headerStyle;
+            ws["H6"].s = headerStyle;
+            ws["I6"].s = headerStyle;
+
+            
+            const bodyStyle = {
+                font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
+                alignment: { horizontal: "left", vertical: "center", wrapText: true },
+                border: borderStyle
+            };
+
+            for (let i = 0; i < stageData.length; i++) {
+                for (let j = 0; j < stageData[i].length; j++) {
+                    const cellAddress = `${String.fromCharCode(65 + j)}${5 + i}`;
+
+                    if (!ws[cellAddress]) {
+                        ws[cellAddress] = { t: 's', v: stageData[i][j] ?? "" };
+                    }
+
+                    if (j === 0) {
+                        ws[cellAddress].s = centerStyle;
+                    } else {
+                        ws[cellAddress].s = bodyStyle;
+                    }
+                }
+            }
+          
+
+            ws["!merges"] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },
+                { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } },
+                { s: { r: 3, c: 0 }, e: { r: 3, c: 1 } },
+                { s: { r: 4, c: 0 }, e: { r: 4, c: 1 } },
+                { s: { r: 1, c: 6 }, e: { r: 1, c: 8 } },
+
+
+            ];
+
+
+            XLSX.utils.book_append_sheet(workbook, ws, period.period_name.substring(0, 31));
+
+        });
+
+        // Xuất file Excel
+        const projectCode = project.project_code;
+        XLSX.writeFile(workbook, `Project-${projectCode}-${projectName}-${(new Date()).getTime()}.xlsx`);
+
+    };
+
+
+
+
+    const exportToExcelBK = () => {
         // console.log(project)
 
         // console.log(dataExport)
@@ -823,28 +1063,7 @@ export default () => {
         return item ? lang[item.label] || '' : '';
     }
 
-
-
-
-
-
-
-
-
-
-
-
     // console.log(tasks)
-
-
-
-
-
-
-
-
-
-
 
     return (
         <div class="midde_cont">
@@ -863,7 +1082,7 @@ export default () => {
                 {/* List table */}
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>
@@ -878,16 +1097,17 @@ export default () => {
                                         <option>Giai đoạn 2</option>
                                     </select>
                                 </div> */}
-                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
+                                {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
                                     <i class="fa fa-plus" title={lang["btn.create"]}></i>
-                                </button>
+                                </button> */}
                                 {
-                                    tasks && tasks.length > 0 ? (
+                                    stageData && stageData.length > 0 ? (
                                         <div class="ml-2" title={lang["export task"]} onClick={exportToExcel}>
                                             <i class="fa fa-download pointer icon-ui"></i>
                                         </div>
                                     ) : null
                                 }
+                               
 
                             </div>
                             <div class="table_section padding_infor_info_list_task">
@@ -942,7 +1162,7 @@ export default () => {
                                                                 <div class="user-checkbox-container">
                                                                     {projectdetail.members?.map((user, index) => (
                                                                         <div key={index} class="user-checkbox-item">
-                                                                            <label>
+                                                                            <label class="pointer">
                                                                                 <input
                                                                                     type="checkbox" class="mr-1"
                                                                                     value={JSON.stringify(user)}
@@ -975,7 +1195,7 @@ export default () => {
                                     {/* Stage */}
 
 
-
+                                    {/* <TableScroll /> */}
 
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
@@ -997,7 +1217,7 @@ export default () => {
                                         <div class="d-flex align-items-center mt-2">
                                             {
                                                 (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTask">
+                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
                                                     <i class="fa fa-plus" title={lang["btn.create"]}></i>
                                                 </button>
                                             }
