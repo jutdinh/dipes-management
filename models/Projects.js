@@ -191,7 +191,7 @@ class Projects extends Model {
 
         this.__addProperty__("tasks", Model.types.model)
         this.tasks.__addProperty__("period_id", Model.types.int, { auto: true })
-        this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới" })
+        this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới",  maxLength: Number.MAX_SAFE_INTEGER  })
         this.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
         this.tasks.__addProperty__("progress", Model.types.number, { default: 0 })
@@ -203,7 +203,7 @@ class Projects extends Model {
 
         this.tasks.__addProperty__("tasks", Model.types.model)
         this.tasks.tasks.__addProperty__("task_id", Model.types.int, { auto: true })
-        this.tasks.tasks.__addProperty__("task_name", Model.types.string)
+        this.tasks.tasks.__addProperty__("task_name", Model.types.string,{ maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.__addProperty__("task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.__addProperty__("task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.tasks.__addProperty__("task_priority", Model.types.int, { default: 1 })
@@ -215,7 +215,7 @@ class Projects extends Model {
 
         this.tasks.tasks.__addProperty__("child_tasks", Model.types.model)
         this.tasks.tasks.child_tasks.__addProperty__("child_task_id", Model.types.int, { auto: true })
-        this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string)
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })      
         this.tasks.tasks.child_tasks.__addProperty__("approve", Model.types.bool, { default: false })
