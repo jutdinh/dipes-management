@@ -1897,7 +1897,7 @@ export default () => {
                             <div class="table_section padding_infor_info_website">
                                 <div class="row column1">
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section mb-1 mt-1 box-table">
+                                        <div class="full counter_section_website mb-1 mt-1 box-table">
                                             <div class="couter_icon">
                                                 <div class="d-flex">
                                                     <i class="fa fa-table yellow_color"></i>
@@ -1919,7 +1919,7 @@ export default () => {
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section mb-1 mt-1 box-api">
+                                        <div class="full counter_section_website mb-1 mt-1 box-api">
                                             <div class="couter_icon">
                                                 <div>
                                                     <i class="fa fa-cloud blue1_color"></i>
@@ -1941,7 +1941,7 @@ export default () => {
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="full counter_section mb-1 mt-1  box-ui " >
+                                        <div class="full counter_section_website mb-1 mt-1  box-ui " >
                                             <div class="couter_icon">
                                                 <div>
                                                     <i class="fa fa-newspaper-o green_color"></i>

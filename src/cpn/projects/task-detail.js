@@ -604,9 +604,9 @@ export default () => {
 
 
 
-
+            const taskGroupings = [];
             period.tasks.forEach((task, taskIndex) => {
-
+                const startRow = ws_data.length;
                 ws_data.push([
 
                     // taskIndex + 1,
@@ -636,6 +636,11 @@ export default () => {
 
                     ]);
                 });
+
+                const endRow = ws_data.length - 1;
+                if (startRow < endRow) {
+                    taskGroupings.push({ s: { r: startRow, c: 0 }, e: { r: endRow, c: 0 } });
+                }
             });
 
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
@@ -721,7 +726,7 @@ export default () => {
             ws["I2"].s = athurStyle;
             ws["I3"].s = athurStyle;
 
-            
+
 
             ws["A6"].s = headerStyle;
             ws["B6"].s = headerStyle;
@@ -733,7 +738,7 @@ export default () => {
             ws["H6"].s = headerStyle;
             ws["I6"].s = headerStyle;
 
-            
+
             const bodyStyle = {
                 font: { name: "UTM Avo", sz: 11, color: { rgb: "FF000000" } },
                 alignment: { horizontal: "left", vertical: "center", wrapText: true },
@@ -755,7 +760,7 @@ export default () => {
                     }
                 }
             }
-          
+
 
             ws["!merges"] = [
                 { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
@@ -770,6 +775,16 @@ export default () => {
 
 
             XLSX.utils.book_append_sheet(workbook, ws, period.period_name.substring(0, 31));
+           // Thêm nhóm vào trang tính
+        if (!ws['!rows']) ws['!rows'] = [];
+        taskGroupings.forEach(group => {
+            for (let r = group.s.r; r <= group.e.r; ++r) {
+                if (!ws['!rows'][r]) ws['!rows'][r] = {};
+                ws['!rows'][r].level = 1;
+            }
+        });
+        
+        ws['!outline'] = { summaryBelow: true };
 
         });
 
@@ -1102,12 +1117,12 @@ export default () => {
                                 </button> */}
                                 {
                                     stageData && stageData.length > 0 ? (
-                                        <div class="ml-2" title={lang["export task"]} onClick={exportToExcel}>
+                                        <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
                                             <i class="fa fa-download pointer icon-ui"></i>
                                         </div>
                                     ) : null
                                 }
-                               
+
 
                             </div>
                             <div class="table_section padding_infor_info_list_task">

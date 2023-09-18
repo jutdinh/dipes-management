@@ -44,7 +44,7 @@ const Stage = (props) => {
     console.log(dataTask)
     //drop
     // console.log(props.data.period_members)
-    const [containerWidth, setContainerWidth] = useState('90%');
+    const [containerWidth, setContainerWidth] = useState('50%');
     const [isResizing, setIsResizing] = useState(false);
 
 
@@ -885,7 +885,7 @@ const Stage = (props) => {
                     // ref={containerRef}
                     ref={scrollRef1}
                     onScroll={handleScroll(scrollRef1, scrollRef2)}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "80%", overflowX: 'auto' }}>
+                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "90%", overflowX: 'auto' }}>
 
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
@@ -1203,11 +1203,8 @@ const Stage = (props) => {
                     className="active"
                     ref={scrollRef2}
                     onScroll={handleScroll(scrollRef2, scrollRef1)}
-                    // onMouseDown={handleMouseDownGantt}
-                    // onMouseLeave={handleMouseLeave}
-                    // onMouseUp={handleMouseUpGantt}
-                    // onMouseMove={handleMouseMoveGantt}
-                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', height: "80%", overflowY: 'hidden', overflowX: 'auto' }}
+                   
+                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', height: "90%", overflowY: 'hidden', overflowX: 'auto' }}
                 >
                     {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
                 </div>
