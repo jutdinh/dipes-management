@@ -182,36 +182,51 @@ class ProjectsController extends Controller {
 
     getProjectForReport = async (req, res, privileges = []) => {
         this.writeReq(req)
-        const context = await this.generalCheck(req)
-        const { success, objects } = context
+        const { project_id } = req.params;
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects } = context;
         if (success) {
             const ProjectsModel = new Projects()
-            const { project_id } = req.params;
             const start = new Date()
-            const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
+            const { Project } = objects;
+            const project = Project.getData()
 
             if (project) {
 
-                project.tasks = Object.values(project.tasks ? project.tasks : {})
+                const { tasks } = project
+                const periods = Object.values(tasks)
 
-                project.tasks.map(task => {
-                    const task_modified = Object.values(task.task_modified ? task.task_modified : {})
-                    if (task_modified.length > 0) {
-                        const lastModified = task_modified[task_modified.length - 1]
-                        task.changed_at = lastModified.modified_at
+                periods.map(period => {
+                    period.tasks = Object.values(period.tasks)
+                    period.period_members = Object.values(period.period_members)
+                    let period_progress = 0
+                    period.tasks.map(task => {
+                        task.members = Object.values(task.members)
+                        task.child_tasks = Object.values(task.child_tasks)
+                        let task_progress = 0
+                        task.child_tasks.map(c_task => {
+                            c_task.members = Object.values(c_task.members)
+                            task_progress += c_task.progress
+                        })
+                        if (task.child_tasks.length > 0) {
+                            const calculated = task_progress / task.child_tasks.length
+                            task.progress = calculated.toFixed(2)
+                            period_progress += calculated
+                        } else {
+                            task.progress = 0
+                        }
+                        task.task_modified = Object.values(task.task_modified)
+                    })
+
+                    if (period.tasks.length > 0) {
+                        const period_calculated = period_progress / period.tasks.length
+                        period.progress = period_calculated.toFixed(2)
+                    } else {
+                        period.progress = 0
                     }
-
-                    if (!task.changed_at) {
-                        task.changed_at = task.create_at
-                    }
-
-                    task.task_modified = task_modified
-                    task.members = Object.values(task.members)
-
-                    task.create_by = task.create_by.fullname
                 })
 
-                project.manager = project.manager.fullname
+                project.tasks = periods
 
                 context.data = { project }
                 const end = new Date()
