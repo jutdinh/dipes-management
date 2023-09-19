@@ -791,37 +791,50 @@ class ProjectsController extends Controller {
                 const nullCheck = this.notNullCheck(period, ["period_name", "start", "end"])
 
                 if (nullCheck.valid) {
-                    const { start, end, members } = period
-                    const startDate = new Date(start)
-                    const endDate = new Date(end)
 
-                    if (endDate && startDate && endDate - startDate >= 0) {
-                        const memberNames = []
-                        if (members && Array.isArray(members)) {
-                            const AccountsModel = new Accounts()
-                            const users = await AccountsModel.findAll({ username: { $in: members } })
-                            const serializedUsers = {}
-                            users.map(user => {
-                                serializedUsers[user.username] = user
-                                memberNames.push(user.fullname)
-                            })
-                            period.period_members = serializedUsers
+                    const project = Project.getData()
+
+                    const periods = Object.values(project.tasks)
+                    const doesThisNameExist  = periods.find( p => period.period_name.toLowerCase() == p.period_name.toLowerCase() )
+
+                    if(!doesThisNameExist ){
+
+                        const { start, end, members } = period
+                        const startDate = new Date(start)
+                        const endDate = new Date(end)
+    
+                        if (endDate && startDate && endDate - startDate >= 0) {
+                            const memberNames = []
+                            if (members && Array.isArray(members)) {
+                                const AccountsModel = new Accounts()
+                                const users = await AccountsModel.findAll({ username: { $in: members } })
+                                const serializedUsers = {}
+                                users.map(user => {
+                                    serializedUsers[user.username] = user
+                                    memberNames.push(user.fullname)
+                                })
+                                period.period_members = serializedUsers
+                            }
+    
+    
+                            await Project.createPeriod(period)
+                            await Project.save()
+    
+                            context.content = "Tạo giai đoạn thành công"
+                            context.success = true
+                            context.status = "0x4501253"
+                            
+                            this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
+    
+                        } else {
+                            context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                            context.success = true
+                            context.status = "0x4501252"
                         }
-
-
-                        await Project.createPeriod(period)
-                        await Project.save()
-
-                        context.content = "Tạo giai đoạn thành công"
+                    }else{
+                        context.content = "Tên giai đoạn đã tồn tại"
                         context.success = true
-                        context.status = "0x4501253"
-                        const project = Project.getData()
-                        this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
-
-                    } else {
-                        context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
-                        context.success = true
-                        context.status = "0x4501252"
+                        context.status = "0x4501262"
                     }
 
                 } else {
