@@ -224,7 +224,8 @@ export default {
     "detaillog": "Log details",
     "log.create_user": "Executor",
     "log.create_at": "Creation date",
-
+    "date execution": "Date of execution",
+    "edit fields body": "Edit data fields",
     //home
     "project-status-chart": "Project status chart",
     "project-lead-chart": "Project manager chart",

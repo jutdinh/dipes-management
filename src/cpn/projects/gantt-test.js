@@ -10,7 +10,7 @@ function GanttTest({ data }) {
     const { lang, proxy, auth, functions } = useSelector(state => state);
 
     const currentDate = new Date();
-    console.log(currentDate)
+    // console.log(currentDate)
     const tasks = data.map((period) => [
         {
             id: `period-${period.period_id}`,
@@ -82,7 +82,7 @@ function GanttTest({ data }) {
             window.removeEventListener('resize', updateSvgRectWidth); // Hủy đăng ký event listener khi component bị hủy
         };
     }, []);
-    console.log(svgRectWidth)
+    // console.log(svgRectWidth)
 
     return (
         // <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'visible' }}>
@@ -115,22 +115,22 @@ function GanttTest({ data }) {
         // </div>
 
 
-        <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'visible' }}>
+        <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto' }}>
             {/* <div ref={containerRef} className="scrollable-container">
                 <div className="content" style={{ width: svgRectWidth }}> */}
-                <ReactGantt
-                        columnWidth="20px"
-                        arrow_curve="5"
-                        tasks={tasks}
-                        viewMode={ViewMode.Day}
-                        customPopupHtml={customPopupHtml}
-                        // customRowClass={getRowClass}
-                        onClick={task => console.log(task)}
-                        onDateChange={null}
-                        onProgressChange={null}
-                        onTasksChange={null}
-                    />
-                {/* </div>
+            <ReactGantt
+                columnWidth="20px"
+                arrow_curve="5"
+                tasks={tasks}
+                viewMode={ViewMode.Day}
+                customPopupHtml={customPopupHtml}
+                // customRowClass={getRowClass}
+                // onClick={task => console.log(task)}
+                onDateChange={null}
+                onProgressChange={null}
+                onTasksChange={null}
+            />
+            {/* </div>
             </div> */}
         </div>
     );

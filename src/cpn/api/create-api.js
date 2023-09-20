@@ -150,7 +150,7 @@ export default () => {
             // console.log("adddsa")
             addApi();
         }
-    }, [tempFieldParam]); 
+    }, [tempFieldParam]);
 
     const addApi = () => {
         const requestBody = {
@@ -375,49 +375,54 @@ export default () => {
 
     const [tableFields, setTableFields] = useState([]);
     // console.log(tableFields)
-        useEffect(() => {
-            const fetchFields = async (tableId) => {
+    useEffect(() => {
+        const fetchFields = async (tableId) => {
+            console.log(tableId)
+            const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
+                headers: {
+                    Authorization: _token
+                }
+            });
+            const resp = await res.json();
+
+            if (resp.success) {
+                return resp.data; // Trả về toàn bộ đối tượng data
+            } else {
+                console.error('Error fetching fields:', resp.content);
+                return null; // Trả về null nếu có lỗi
+            }
+        }
+
+        const fetchAllFields = async () => {
+            const promises = modalTemp.tables.map(async tableId => {
+                const fields = await fetchFields(tableId);
+                return { tableId, fields };
+            });
+
+            const results = await Promise.all(promises);
+            // console.log(1111111111,results)
+
+            const fieldsByTable = {};
+            for (const { tableId, fields } of results) {
                 console.log(tableId)
-                const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
-                    headers: {
-                        Authorization: _token
-                    }
-                });
-                const resp = await res.json();
-
-                if (resp.success) {
-                    return resp.data; // Trả về toàn bộ đối tượng data
-                } else {
-                    console.error('Error fetching fields:', resp.content);
-                    return null; // Trả về null nếu có lỗi
-                }
+                fieldsByTable[tableId] = fields;
             }
 
-            const fetchAllFields = async () => {
-                const promises = modalTemp.tables.map(async tableId => {
-                    const fields = await fetchFields(tableId);
-                    return { tableId, fields };
-                });
-            
-                const results = await Promise.all(promises);
-                // console.log(1111111111,results)
-                
-                const fieldsByTable = {};
-                for (const { tableId, fields } of results) {
-                    console.log(tableId)
-                    fieldsByTable[tableId] = fields;
-                }
-                               
-                // const fieldsByTable = results.map(({ tableId, fields }) => ({ [tableId]: fields }));
-            
-                // console.log(1232132132131231233123213,fieldsByTable);
-                setTableFields(fieldsByTable);
-            }
-            
+            // const fieldsByTable = results.map(({ tableId, fields }) => ({ [tableId]: fields }));
 
-            fetchAllFields();
+            // console.log(1232132132131231233123213,fieldsByTable);
+            setTableFields(fieldsByTable);
+        }
 
-        }, [modalTemp.tables]);
+
+        fetchAllFields();
+
+    }, [modalTemp.tables]);
+
+
+    function isPrimaryKey(tableId, fieldId) {
+        return tableFields[tableId]?.primary_key.includes(fieldId);
+    }
 
     // luu truong body 
     const [selectedFieldsBody, setSelectedFieldsBody] = useState({});
@@ -430,12 +435,30 @@ export default () => {
             updatedSelections[tableId] = [];
         }
 
+        // if (isChecked) {
+        //     // Nếu checkbox được chọn, thêm fieldId vào mảng
+        //     updatedSelections[tableId].push(fieldId);
+        // } else {
+        //     // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
+        //     updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+        // }
         if (isChecked) {
-            // Nếu checkbox được chọn, thêm fieldId vào mảng
             updatedSelections[tableId].push(fieldId);
+
+            // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
+            if (isPrimaryKey(tableId, fieldId)) {
+                for (let tid in tableFields) {
+                    for (const fk of tableFields[tid]?.foreign_keys || []) {
+                        if (fk.ref_field_id === fieldId && updatedSelections[tid]) {
+                            updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
+                        }
+                    }
+                }
+            }
         } else {
-            // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
-            updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            if (updatedSelections[tableId]) {
+                updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            }
         }
 
         setSelectedFieldsBody(updatedSelections);
@@ -456,14 +479,14 @@ export default () => {
 
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         const updatedSelections = { ...selectedFields };
-    
+
         if (!updatedSelections[tableId]) {
             updatedSelections[tableId] = [];
         }
-    
+
         if (isChecked) {
             updatedSelections[tableId].push(fieldId);
-    
+
             // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
             if (isPrimaryKey(tableId, fieldId)) {
                 for (let tid in tableFields) {
@@ -479,10 +502,10 @@ export default () => {
                 updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
             }
         }
-    
+
         setSelectedFields(updatedSelections);
     };
-    
+
     // console.log("trường hiển thị:", selectedFieldsModal2)
     const getFieldDetails = (tableId, fieldId) => {
         const tableInfo = tableFields[tableId];
@@ -1844,8 +1867,9 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
+
                                         {modalTemp.tables?.map((tableId, index) => (
-                                            <div key={index} className={`form-group table-wrapper`}>
+                                            <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
                                                     {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
@@ -1860,6 +1884,10 @@ export default () => {
                                                             });
                                                         }
 
+                                                        function isPrimaryKey(tableId, fieldId) {
+                                                            return tableFields[tableId]?.primary_key.includes(fieldId);
+                                                        }
+
                                                         return (
                                                             <div key={fieldIndex}>
                                                                 <label>
@@ -1868,13 +1896,15 @@ export default () => {
                                                                         type="checkbox"
                                                                         checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
                                                                         onChange={e => {
-                                                                            // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
-                                                                            if (modalTemp.tables?.length > 1 && isForeignKey && correspondingPrimaryKeyExists && e.target.checked) {
+                                                                            if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsBody[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
-                                                                                    title: "Lỗi!",
-                                                                                    text: "Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
                                                                                     icon: "error",
                                                                                     showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {

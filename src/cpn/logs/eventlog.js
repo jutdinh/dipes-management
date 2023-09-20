@@ -11,7 +11,7 @@ export default () => {
     const _token = localStorage.getItem("_token");
     const langItem = localStorage.getItem("lang") ? localStorage.getItem("lang") : "Vi";
 
-    const MAX_RECORDS_PER_SHEET = 12;
+    const MAX_RECORDS_PER_SHEET = 13;
     const MOVE_STEP = 3
 
 
@@ -324,7 +324,7 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="table-responsive" style={{ minHeight: "50vh" }}>
-                                    {/* Qua tr met */}
+                                    {/* table */}
                                     <table class="table table">
                                         <thead>
                                             <tr class="color-tr">
@@ -528,7 +528,7 @@ export default () => {
                                             <span className="d-block">{logDetail.create_user} </span>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label><b>{lang["log.create_at"]}</b> </label>
+                                            <label><b>{lang["date execution"]}</b> </label>
                                             <span className="d-block">{formatDate(logDetail?.create_at) || ""} </span>
 
                                         </div>

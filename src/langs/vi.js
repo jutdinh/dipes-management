@@ -218,6 +218,7 @@ export default {
     "detaillog": "Chi tiết lịch sử",
     "log.create_user": "Người thực hiện",
     "log.create_at": "Ngày tạo",
+    "date execution": "Ngày thực hiện",
     //home
     "project-status-chart": "Biểu đồ trạng thái dự án",
     "project-lead-chart": "Biểu đồ người quản lý dự án",

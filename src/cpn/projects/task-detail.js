@@ -37,7 +37,7 @@ export default () => {
     const [project, setProject] = useState({}); //// Update project
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
-    console.log(projectdetail)
+    // console.log(projectdetail)
 
 
 
@@ -90,9 +90,9 @@ export default () => {
     const [taskDetail, setTaskDetail] = useState([]);
 
     const [stage, setStage] = useState([]);
-    console.log(stage)
+    // console.log(stage)
     const [stageData, setStageData] = useState([]);
-    console.log(stageData)
+    // console.log(stageData)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -207,7 +207,7 @@ export default () => {
         if (corespondingData != task.task_progress) {
         }
     }
-    console.log(stage)
+
     const submitAddStage = (e) => {
         e.preventDefault();
         stage.members = selectedMemberTask.map(user => user.username);
@@ -246,7 +246,7 @@ export default () => {
             }
 
         }
-        console.log(requestBody)
+        // console.log(requestBody)
 
         fetch(`${proxy}/projects/periods`, {
             method: "POST",
@@ -573,6 +573,7 @@ export default () => {
     //     // Xuất file Excel
     //     XLSX.writeFile(workbook, 'project-data.xlsx');
     // };
+    // console.log(stageData)
     const exportToExcel = () => {
         const workbook = XLSX.utils.book_new();
         const projectTasks = project.tasks;
@@ -744,6 +745,7 @@ export default () => {
                 alignment: { horizontal: "left", vertical: "center", wrapText: true },
                 border: borderStyle
             };
+            
 
             for (let i = 0; i < stageData.length; i++) {
                 for (let j = 0; j < stageData[i].length; j++) {
@@ -775,16 +777,16 @@ export default () => {
 
 
             XLSX.utils.book_append_sheet(workbook, ws, period.period_name.substring(0, 31));
-           // Thêm nhóm vào trang tính
-        if (!ws['!rows']) ws['!rows'] = [];
-        taskGroupings.forEach(group => {
-            for (let r = group.s.r; r <= group.e.r; ++r) {
-                if (!ws['!rows'][r]) ws['!rows'][r] = {};
-                ws['!rows'][r].level = 1;
-            }
-        });
-        
-        ws['!outline'] = { summaryBelow: true };
+            // Thêm nhóm vào trang tính
+            if (!ws['!rows']) ws['!rows'] = [];
+            taskGroupings.forEach(group => {
+                for (let r = group.s.r; r <= group.e.r; ++r) {
+                    if (!ws['!rows'][r]) ws['!rows'][r] = {};
+                    ws['!rows'][r].level = 1;
+                }
+            });
+
+            ws['!outline'] = { summaryBelow: true };
 
         });
 
@@ -793,9 +795,6 @@ export default () => {
         XLSX.writeFile(workbook, `Project-${projectCode}-${projectName}-${(new Date()).getTime()}.xlsx`);
 
     };
-
-
-
 
     const exportToExcelBK = () => {
         // console.log(project)
@@ -1115,14 +1114,22 @@ export default () => {
                                 {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
                                     <i class="fa fa-plus" title={lang["btn.create"]}></i>
                                 </button> */}
+                                
+                                <div class= "ml-auto">
+                                    <span className="status-label d-block " style={{
+                                        backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
+                                        whiteSpace: "nowrap"
+                                    }}>
+                                        {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
+                                    </span>
+                                </div>
                                 {
                                     stageData && stageData.length > 0 ? (
-                                        <div class="ml-auto" title={lang["export task"]} onClick={exportToExcel}>
+                                        <div class="ml-2 mt-1" title={lang["export task"]} onClick={exportToExcel}>
                                             <i class="fa fa-download pointer icon-ui"></i>
                                         </div>
                                     ) : null
                                 }
-
 
                             </div>
                             <div class="table_section padding_infor_info_list_task">
@@ -1208,36 +1215,18 @@ export default () => {
                                         </div>
                                     </div>
                                     {/* Stage */}
-
-
                                     {/* <TableScroll /> */}
-
                                     {/* Progresss */}
                                     <div class="table_section padding_infor_info_list_task ">
                                         <div className="d-flex">
-                                            <div>
-                                                <span className="status-label d-block" style={{
-                                                    backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
-                                                    whiteSpace: "nowrap"
-                                                }}>
-                                                    {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                                </span>
-                                            </div>
-                                            <span class="skill d-block" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
+
+                                            <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                         </div>
                                         <div class="progress skill-bar ">
                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center mt-2">
-                                            {
-                                                (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
-                                                    <i class="fa fa-plus" title={lang["btn.create"]}></i>
-                                                </button>
-                                            }
-                                        </div>
-
+                                       
                                         < Stage data={stageData} members={projectdetail} />
                                     </div>
                                     {/* Add Progress */}

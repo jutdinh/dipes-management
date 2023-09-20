@@ -328,7 +328,7 @@ export default (props) => {
 
 
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 13;
+    const rowsPerPage = 15;
 
     const indexOfLastUser = currentPage * rowsPerPage;
     const indexOfFirstUser = indexOfLastUser - rowsPerPage;
@@ -351,7 +351,7 @@ export default (props) => {
                 </div>
                 <div class="row column1">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             {/* <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <div className="row justify-content-end">
@@ -601,7 +601,7 @@ export default (props) => {
                                                 )
                                             }
                                         </div>
-                                        <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
                                             <p>
                                                 {lang["show"]} {indexOfFirstUser + 1}-{Math.min(indexOfLastUser, profiles.length)} {lang["of"]} {profiles.length} {lang["results"]}
                                             </p>

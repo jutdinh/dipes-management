@@ -537,11 +537,22 @@ export default () => {
             updatedSelections[tableId] = [];
         }
         if (isChecked) {
-            // Nếu checkbox được chọn, thêm fieldId vào mảng
             updatedSelections[tableId].push(fieldId);
+
+            // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
+            if (isPrimaryKey(tableId, fieldId)) {
+                for (let tid in tableFields) {
+                    for (const fk of tableFields[tid]?.foreign_keys || []) {
+                        if (fk.ref_field_id === fieldId && updatedSelections[tid]) {
+                            updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
+                        }
+                    }
+                }
+            }
         } else {
-            // Nếu checkbox không được chọn, loại bỏ fieldId khỏi mảng
-            updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            if (updatedSelections[tableId]) {
+                updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            }
         }
         setSelectedFieldsBody(updatedSelections);
 
@@ -1764,25 +1775,63 @@ export default () => {
                                         ))}
                                     </div> */}
                                     <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
-                                            <div key={index} className={`form-group table-wrapper`}>
+                                        {/*  */}
+                                         {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
-                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
-                                                        <div key={fieldIndex}>
-                                                            <label>
-                                                                <input className="mr-1 "
-                                                                    type="checkbox"
-                                                                    checked={(selectedFieldsBody[tableId] || []).includes(field.id)}
-                                                                    onChange={e => handleCheckboxChangeBody(tableId, field.id, e.target.checked)}
-                                                                />
-                                                                {field.field_name}
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
+                                                        // Check if the field is a foreign key
+                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        } 
+                                                        
+                                                        function isPrimaryKey(tableId, fieldId) {
+                                                            return tableFields[tableId]?.primary_key.includes(fieldId);
+                                                        }
+
+                                                      
+
+                                                        return (
+                                                            <div key={fieldIndex}>
+                                                                <label>
+                                                                    <input
+                                                                        className="mr-1"
+                                                                        type="checkbox"
+                                                                        checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
+                                                                        onChange={e => {
+                                                                         
+                                                                             if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsBody[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            } else {
+                                                                            handleCheckboxChangeBody(tableId, field.id, e.target.checked);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {field.field_name}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         ))}
+                                        
                                     </div>
 
                                     <div class="form-group col-md-12">

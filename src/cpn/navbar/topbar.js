@@ -166,8 +166,8 @@ export default () => {
                         <div className="icon_info">
                             <ul>
                                 {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li>
-                <li><a href="#"><i className="fa fa-bell-o"></i><span className="badge">2</span></a></li> */}
-                                {/* <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
+                <li><a href="#"><i className="fa fa-bell-o"></i><span className="badge">2</span></a></li> 
+                                 <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
                                 <li>
                                     <a href="#" onClick={changeTheme}>
                                         <i className={pageState ? "fa fa-moon-o" : "fa fa-sun-o"}></i>

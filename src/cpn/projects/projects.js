@@ -9,7 +9,7 @@ import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const storedProjects = useSelector(state => state.projects)
-    // console.log(storedProjects)
+
     const dispatch = useDispatch()
 
     const [errors, setErrors] = useState({});
@@ -485,18 +485,16 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title d-flex align-items-center ">
                             <h4>{lang["projects.title"]}</h4>
-
                             {
                                 ["ad", "uad"].indexOf(auth.role) != -1 ?
                                     <button type="button" id="create-btn" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addProject">
                                         <i class="fa fa-plus"></i>
                                     </button> :
-                                    <button type="button" class="btn btn-danger custom-buttonwarn ml-auto" data-toggle="modal" onClick={showNoPrivilegeAlarm}>
-                                        <i class="fa fa-info font-weight-bold" ></i>
-                                    </button>
-
+                                    null
+                                // <button type="button" class="btn btn-danger custom-buttonwarn ml-auto" data-toggle="modal" onClick={showNoPrivilegeAlarm}>
+                                //     <i class="fa fa-info font-weight-bold" ></i>
+                                // </button>
                             }
-
                         </div>
                     </div>
                 </div>
@@ -755,11 +753,8 @@ export default () => {
                                                     <i class="fa fa-refresh pointer ml-3 size-24" onClick={clearSearch} aria-hidden="true" title={lang["reload"]}></i>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                             <div class="full price_table padding_infor_info list_project">
@@ -773,93 +768,97 @@ export default () => {
                                                         {
                                                             currentProjects && currentProjects.length > 0 ? (
                                                                 currentProjects.map((item) => (
-                                                                    (item.members.find(member => member.username === _users.username)
-                                                                        || item.manager.username === _users.username
-                                                                        || ["ad", "uad"].indexOf(auth.role) !== -1)
-                                                                    && (
-                                                                        <div class="col-lg-3 col-md-6 col-sm-6 mb-1">
-                                                                            <div class="card">
-                                                                                <div class="card-body">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-10" >
 
-                                                                                            <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 25)}{item.project_name.length > 50 ? "..." : ""}</h5>
-                                                                                        </div>
+                                                                    <div class="col-lg-3 col-md-6 col-sm-6 mb-1">
+                                                                        <div class="card">
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-10" >
 
-                                                                                        <div class="col-sm-2 cross-hide pointer scaled-hover">
-                                                                                            <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
-
-                                                                                        </div>
+                                                                                        <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 25)}{item.project_name.length > 50 ? "..." : ""}</h5>
                                                                                     </div>
-                                                                                    <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 22)}{item.project_code?.length > 22 ? "..." : ""}</p>
-                                                                                    {/* <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p> */}
+                                                                                    {item.manager.username === _users.username ||
+                                                                                            ["ad", "uad"].indexOf(auth.role) !== -1 ? (
+                                                                                                <div class="col-sm-2 cross-hide pointer scaled-hover">
+                                                                                                <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            null
+                                                                                        )}
+                                                                                </div>
+                                                                                <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 22)}{item.project_code?.length > 22 ? "..." : ""}</p>
+                                                                                {/* <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p> */}
 
-                                                                                    {/* <p>{lang["time"]}: {
+                                                                                {/* <p>{lang["time"]}: {
                                                                                         lang["time"] === "Time" ?
                                                                                             formatDate(item.create_at.replace("lúc", "at")) :
                                                                                             formatDate(item.create_at)
                                                                                     }</p> */}
-                                                                                    {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
-                                                                                    <p class="font-weight-bold">{lang["projectmanager"]}</p>
-                                                                                    <div class="profile_contacts">
+                                                                                {/* <p class="card-text">{lang["description"]}: {item.project_description}</p> */}
+                                                                                <p class="font-weight-bold">{lang["projectmanager"]}</p>
+                                                                                <div class="profile_contacts">
 
-                                                                                        <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
-                                                                                        {item.manager?.fullname}
-                                                                                    </div>
-                                                                                    <p class="font-weight-bold">{lang["projectmember"]}</p>
+                                                                                    <img class="img-responsive circle-image" src={proxy + item.manager.avatar} alt="#" />
+                                                                                    {item.manager?.fullname}
+                                                                                </div>
+                                                                                <p class="font-weight-bold">{lang["projectmember"]}</p>
+                                                                                <div class="profile_contacts">
+                                                                                    {
+                                                                                        item.members && item.members.length > 0 ?
+                                                                                            item.members.slice(0, 2).map(member => (
+                                                                                                <img
+                                                                                                    class="img-responsive circle-image"
+                                                                                                    src={proxy + member.avatar}
+                                                                                                    alt={member.username}
+                                                                                                />
 
-                                                                                    <div class="profile_contacts">
-                                                                                        {
-                                                                                            item.members && item.members.length > 0 ?
-                                                                                                item.members.slice(0, 2).map(member => (
-                                                                                                    <img
-                                                                                                        class="img-responsive circle-image"
-                                                                                                        src={proxy + member.avatar}
-                                                                                                        alt={member.username}
-                                                                                                    />
-
-                                                                                                )) : <div class="profile_contacts">
-                                                                                                    <p>{lang["projectempty"]} </p>
-                                                                                                </div>
-                                                                                        }
-                                                                                        {
-                                                                                            item.members.length > 2 &&
-                                                                                            <div class="border-custom">
-                                                                                                <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
-                                                                                                    <span> +{item.members.length - 2}</span>
-                                                                                                </div>
+                                                                                            )) : <div class="profile_contacts">
+                                                                                                <p>{lang["projectempty"]} </p>
                                                                                             </div>
-                                                                                        }
-
-                                                                                    </div>
-                                                                                    <div className="d-flex position-relative">
-                                                                                        <div>
-                                                                                            <span className="d-block status-label" style={{
-                                                                                                backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
-                                                                                            }}>
-                                                                                                {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
-                                                                                            </span>
-
+                                                                                    }
+                                                                                    {
+                                                                                        item.members.length > 2 &&
+                                                                                        <div class="border-custom">
+                                                                                            <div className="img-responsive circle-image-project" style={{ backgroundImage: `url(${proxy + item.members[2].avatar})` }}>
+                                                                                                <span> +{item.members.length - 2}</span>
+                                                                                            </div>
                                                                                         </div>
-                                                                                        <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
+                                                                                    }
+                                                                                </div>
+                                                                                <div className="d-flex position-relative">
+                                                                                    <div>
+                                                                                        <span className="d-block status-label" style={{
+                                                                                            backgroundColor: (status.find((s) => s.value === item.project_status) || {}).color
+                                                                                        }}>
+                                                                                            {(status.find((s) => s.value === item.project_status) || {}).label || 'Trạng thái không xác định'}
+                                                                                        </span>
                                                                                     </div>
-                                                                                    <div class="progress skill-bar mt-3">
-                                                                                        <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
-                                                                                        </div>
+                                                                                    <span class="skill position-absolute" style={{ right: "0", top: "0" }}>{item.progress}%</span>
+                                                                                </div>
+                                                                                <div class="progress skill-bar mt-3">
+                                                                                    <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={item.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${item.progress}%` }}>
                                                                                     </div>
-
-                                                                                    {/* <span class="skill" style={{ width: `${item.progress}%` }}><span class="info_valume">{item.progress}%</span></span> */}
-                                                                                    <div class="bottom_list">
-                                                                                        <div class="right_button">
+                                                                                </div>
+                                                                                <div class="bottom_list">
+                                                                                    <div class="right_button">
+                                                                                        {item.members.find(member => member.username === _users.username) ||
+                                                                                            item.manager.username === _users.username ||
+                                                                                            ["ad", "uad"].indexOf(auth.role) !== -1 ? (
                                                                                             <button type="button" class="btn btn-primary" onClick={() => detailProject(item)}>
                                                                                                 <i class="fa fa-edit"></i> {lang["buttondetail"]}
                                                                                             </button>
-                                                                                        </div>
+                                                                                        ) : (
+                                                                                            <div>
+                                                                                                <button type="button" class="btn btn-primary" disabled>
+                                                                                                    <i class="fa fa-edit"></i> {lang["buttondetail"]}
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        )}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    )
+                                                                    </div>
                                                                 ))
                                                             ) :
                                                                 <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
@@ -874,7 +873,6 @@ export default () => {
                                                     </div>
                                                 )
                                             }
-
                                         </div>
                                         <div className="d-flex justify-content-between align-items-center mt-1">
                                             <p>
@@ -924,7 +922,6 @@ export default () => {
                                                 </ul>
                                             </nav>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>

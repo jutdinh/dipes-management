@@ -62,7 +62,7 @@ export default () => {
         }, 2000);
     };
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage =11;
+    const rowsPerPage = 10;
 
     const indexOfLastKey = currentPage * rowsPerPage;
     const indexOfFirstKey = indexOfLastKey - rowsPerPage;
@@ -91,7 +91,7 @@ export default () => {
 
                 <div class="row column1">
                     <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
+                        <div class="white_shd full">
                             {/* <div class="full graph_head">
                                 <div class="heading1 margin_0">
                                     <h4>{lang["project list"]}</h4>
@@ -113,12 +113,12 @@ export default () => {
                                                                                 <>
                                                                                     <table class="table table ">
                                                                                         <thead>
-                                                                                            <tr class="color-tr" style={{height:"40px"}}> 
-                                                                                                <th class="font-weight-bold" style={{ width: "20px" }} scope="col">{lang["log.no"]}</th>
-                                                                                                <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["projectname"]}</th>
-                                                                                                <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["projectcode"]}</th>
-                                                                                                <th class="font-weight-bold" style={{ width: "180px" }} scope="col">UUID</th>
-                                                                                                <th class="font-weight-bold align-center" style={{ width: "300px" }} scope="col">{lang["key"]}</th>
+                                                                                            <tr class="color-tr" style={{ height: "40px" }}>
+                                                                                                <th class="font-weight-bold" style={{ width: "20px"}} scope="col">{lang["log.no"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "300px" }} scope="col">{lang["projectname"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "150px" }} scope="col">{lang["projectcode"]}</th>
+                                                                                                <th class="font-weight-bold" style={{ width: "250px" }} scope="col">UUID</th>
+                                                                                                <th class="font-weight-bold align-center" style={{ width: "350px" }} scope="col">{lang["key"]}</th>
 
                                                                                             </tr>
                                                                                         </thead>

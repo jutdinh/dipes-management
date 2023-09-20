@@ -24,7 +24,12 @@ const Stage = (props) => {
 
     const [dataStageUpdate, setDataStageUpdate] = useState([])
     const [periodId, setPeriodId] = useState(null)
+
     const [taskId, setTaskId] = useState(null)
+    const [childTask, setChildTask] = useState(null)
+    const [typeAction, setTypeAction] = useState(0)
+    const [actionShow, setActionShow] = useState(0)
+    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
     const [task, setTask] = useState({ task_status: 1 });
     const [taskUpdate, setTaskUpadte] = useState({});
@@ -34,17 +39,18 @@ const Stage = (props) => {
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedUsernames, setSelectedUsernames] = useState([]);
+    const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
     const handleCloseModal = () => {
         setErrorMessagesadd({})
     };
-    console.log(props)
+
     const dataTask = props.data
     const membersProject = props.members.members
     const manageProject = props.manager
-    console.log(dataTask)
+
     //drop
-    // console.log(props.data.period_members)
-    const [containerWidth, setContainerWidth] = useState('50%');
+
+    const [containerWidth, setContainerWidth] = useState('80%');
     const [isResizing, setIsResizing] = useState(false);
 
 
@@ -196,7 +202,10 @@ const Stage = (props) => {
 
         setExpandedTasks(newExpandedTasks);
     };
+    const handleRowClick = (index) => {
+        setSelectedRowIndex(index);
 
+    };
     const handleSubsubtaskToggle = (childTaskId) => {
         const newExpandedSubsubtasks = { ...expandedSubsubtasks };
         newExpandedSubsubtasks[childTaskId] = !newExpandedSubsubtasks[childTaskId];
@@ -244,7 +253,7 @@ const Stage = (props) => {
     }, [dataTask, expandedTasks, expandedSubsubtasks, expandedTasks]);
 
 
-    console.log(173, selectedUsernames)
+
 
 
     const statusPriority = [
@@ -257,9 +266,7 @@ const Stage = (props) => {
         const item = statusPriority.find(item => item.value === parseInt(taskPriority));
         return item ? lang[item.label] || '' : '';
     }
-    const getIdStage = (stage) => {
-        setDataStageUpdate(stage);
-    }
+
 
     const getPeriodId = (taskId, periodId) => {
 
@@ -270,7 +277,6 @@ const Stage = (props) => {
 
 
     const getPeriodId_addTask = (taskId) => {
-
         setPeriodId(taskId.period_id);
     };
     //viewdetal
@@ -279,7 +285,7 @@ const Stage = (props) => {
 
 
     };
-    console.log(dataViewDetail)
+
     //info update task
     const getInfoTask = (taskId, periodId) => {
         setTaskId(taskId.task_id)
@@ -316,23 +322,40 @@ const Stage = (props) => {
             setSelectedUsernames(prevState => prevState.filter(username => username !== user.username));
         }
     };
+    const handleCheckboxChangeChild = (user, isChecked) => {
+        if (isChecked) {
+            setSelectedUsernamesChild(prevState => [...prevState, user.username]);
+        } else {
+            setSelectedUsernamesChild(prevState => prevState.filter(username => username !== user.username));
+        }
+    };
 
 
     useEffect(() => {
         // Dùng để load danh sách username của các thành viên trong task hiện tại
         if (taskUpdate && taskUpdate.members) {
-            const initialSelectedUsernames = taskUpdate.members.map(member => member.username);
+            const initialSelectedUsernames = taskUpdate?.members.map(member => member.username);
             setSelectedUsernames(initialSelectedUsernames);
         }
     }, [taskUpdate]);
+
+
     useEffect(() => {
         // Dùng để load danh sách username của các thành viên trong task child hiện tại
         if (taskUpdateChild && taskUpdateChild.members) {
-            const initialSelectedUsernames = taskUpdateChild.members.map(member => member.username);
-            setSelectedUsernames(initialSelectedUsernames);
+            const initialSelectedUsernames = taskUpdateChild?.members.map(member => member.username);
+            setSelectedUsernamesChild(initialSelectedUsernames);
+
         }
     }, [taskUpdateChild]);
 
+
+    const getIdStage = (stage) => {
+        setTypeAction(1)
+        setDataStageUpdate(stage);
+        setPeriodId(stage.period_id);
+
+    }
     const updateStage = (e) => {
         e.preventDefault();
 
@@ -368,8 +391,8 @@ const Stage = (props) => {
                 members: selectedUsernames
             }
         }
-        // console.log(requestBody)
-        fetch(`${proxy}/projects/project/${project_id}/period/${dataStageUpdate.period_id}`, {
+
+        fetch(`${proxy}/projects/project/${project_id}/period/${periodId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -380,7 +403,6 @@ const Stage = (props) => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                console.log(resp)
                 if (success) {
                     functions.showApiResponseMessage(status);
                 } else {
@@ -389,7 +411,8 @@ const Stage = (props) => {
             })
 
     };
-    const handleDeleteStage = (stageId) => {
+
+    const handleDeleteStage = () => {
 
 
         Swal.fire({
@@ -404,7 +427,7 @@ const Stage = (props) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${proxy}/projects/project/${project_id}/period/${stageId.period_id}`, {
+                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}`, {
                     method: 'DELETE',
                     headers: {
                         "content-type": "application/json",
@@ -461,7 +484,7 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(requestBody)
+
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -521,7 +544,7 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(requestBody)
+
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskUpdate.task_id}`, {
             method: "PUT",
             headers: {
@@ -542,7 +565,7 @@ const Stage = (props) => {
                 }
             })
     };
-    const handleDeleteTask = (taskId, periodId) => {
+    const handleDeleteTask = () => {
 
 
         Swal.fire({
@@ -557,7 +580,7 @@ const Stage = (props) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId.task_id}`, {
+                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}`, {
                     method: 'DELETE',
                     headers: {
                         "content-type": "application/json",
@@ -574,14 +597,14 @@ const Stage = (props) => {
         });
     }
     const handleConfirmTask = (task, periodId) => {
-        console.log(task)
+
         const newTaskApproveStatus = !task.task_approve;
         const requestBody = {
             task: {
                 task_approve: newTaskApproveStatus
             }
         };
-        // console.log(requestBody)
+
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${task.task_id}/approve`, {
             method: 'PUT',
             headers: {
@@ -593,7 +616,7 @@ const Stage = (props) => {
             .then(res => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // console.log(resp)
+
                 if (success) {
                     functions.showApiResponseMessage(status);
                 } else {
@@ -606,11 +629,11 @@ const Stage = (props) => {
 
     const submitAddTaskChild = (e) => {
         e.preventDefault();
-        taskChild.members = selectedUsernames;
+        taskChild.members = selectedUsernamesChild;
         const requestBody = {
             child_task: taskChild
         }
-        console.log(requestBody)
+
         const errors = {};
         if (!taskChild.child_task_name) {
             errors.child_task_name = lang["error.taskname"];
@@ -641,7 +664,6 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(requestBody)
 
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}`, {
             method: "POST",
@@ -655,7 +677,6 @@ const Stage = (props) => {
             .then((resp) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
-                    console.log(resp)
                     if (success) {
                         functions.showApiResponseMessage(status);
                     } else {
@@ -664,20 +685,16 @@ const Stage = (props) => {
                 }
             })
     };
-    // console.log(selectedUsernames)
+
 
     const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
-        console.log(dataUpdate)
         if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
             const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
-            setSelectedUsernames(initialSelectedUsernames);
+            setSelectedUsernamesChild(initialSelectedUsernames);
         }
 
-        taskUpdateChild.members = selectedUsernames;
-
-        dataUpdate.members = selectedUsernames;
-        console.log(dataUpdate)
-
+        taskUpdateChild.members = selectedUsernamesChild;
+        dataUpdate.members = selectedUsernamesChild;
 
         const currentTask = useDataUpdate ? dataUpdate : taskUpdateChild;
         const requestBody = {
@@ -713,7 +730,6 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(requestBody)
 
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${currentTask.child_task_id}`, {
             method: "PUT",
@@ -739,13 +755,11 @@ const Stage = (props) => {
     const handleConfirmTaskChild = (subtask, taskId, periodId,) => {
 
         const newTaskApproveStatus = !subtask.approve;
-
         const requestBody = {
             child_task: {
                 approve: newTaskApproveStatus
             },
         };
-        console.log(requestBody)
 
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${subtask.child_task_id}/approve`, {
             method: "PUT",
@@ -769,7 +783,7 @@ const Stage = (props) => {
             })
     }
     const [progressValues, setProgressValues] = useState({});
-    console.log(progressValues)
+
     const handleProgressBlur = (e, subsubtask, taskId, periodId, uniqueId) => {
 
         updateTaskChild({
@@ -821,7 +835,7 @@ const Stage = (props) => {
     }, [dataTask]);
 
 
-    const handleDeleteTaskChild = (subsubtask, taskId, periodId) => {
+    const handleDeleteTaskChild = () => {
 
 
         Swal.fire({
@@ -836,7 +850,7 @@ const Stage = (props) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${subsubtask.child_task_id}`, {
+                fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}/child/${childTask.child_task_id}`, {
                     method: 'DELETE',
                     headers: {
                         "content-type": "application/json",
@@ -853,14 +867,12 @@ const Stage = (props) => {
         });
     }
 
-    // console.log(selectedUsernames)
-    // console.log(formData)
+
+
     // lọc để set điều kiện chọn ngày 
     const currentPeriod = dataTask.find(period => period.period_id === periodId) || [];
     const currentTask = dataTask?.flatMap((period) => period.tasks)?.find((task) => task.task_id === taskId) || [];
 
-    // console.log(currentPeriod)
-    // console.log(currentTask)
     //filter
     const [tableFilter, setTableFilter] = useState({ task_name: false });
     const handleTaskNameFilterChange = (e) => {
@@ -876,16 +888,70 @@ const Stage = (props) => {
 
     const [startDateFilter, setStartDateFilter] = useState(null);
     const [endDateFilter, setEndDateFilter] = useState(null);
-
+    console.log(dataTask)
     return (
         <>
+            <div class="d-flex align-items-center mt-2">
+                {actionShow === 1 ? (
+                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                    <>
+                        <i className={`fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+
+                        <i className={`fa fa-edit size-24 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                        <i class={`fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                    </>
+                ) : actionShow === 2 ? (
+
+                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                    <>
+
+
+                        <i class="fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
+
+                        <i class="fa fa-edit size-24 pointer icon-margin icon-edit" data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                        <i class="fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTask()} title={lang["delete"]}></i>
+                    </>
+
+                ) : actionShow === 3 ?
+                    (
+                        (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                        <>
+
+                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit ml-auto" data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
+
+                            <i class="fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
+                        </>
+                    ) :
+                    (
+                        (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                        <>
+                            <i className={`fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+
+                            <i className={`fa fa-edit size-24 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                            <i class={`fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                        </>
+                    )
+
+
+
+
+                }
+                {
+                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                    <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
+                        <i class="fa fa-plus" title={lang["addstage"]}></i>
+                    </button>
+
+                }
+            </div>
+
             <div style={{ display: 'flex', width: '100%', height: "89%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
                     ref={scrollRef1}
                     onScroll={handleScroll(scrollRef1, scrollRef2)}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "90%", overflowX: 'auto' }}>
+                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "85%", overflowX: 'auto' }}>
 
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
@@ -968,7 +1034,13 @@ const Stage = (props) => {
                                 </th>
                                 <th class="font-weight-bold" style={{ minWidth: `115px`, maxWidth: `115px` }}>Timeline</th>
                                 <th class="font-weight-bold ">{lang["log.create_user"]}</th>
-                                <th class="font-weight-bold align-center" style={{ position: 'sticky', right: 0, backgroundColor: '#fff', borderLeft: '1px solid #ccc' }} scope="col">
+                                <th class="font-weight-bold align-center"
+                                    style={{
+                                        // position: 'sticky', 
+                                        right: 0,
+                                        backgroundColor: '#fff',
+                                        borderLeft: '1px solid #ccc'
+                                    }} scope="col">
                                     {lang["log.action"]}
                                 </th>
                             </tr>
@@ -984,17 +1056,27 @@ const Stage = (props) => {
                                     (!endDateFilter || taskEnd <= new Date(endDateFilter));
                             }).map((task, index) => (
                                 <React.Fragment key={index}>
-                                    <tr class="font-weight-bold fix-layout">
+                                    <tr
+                                        key={index}
+                                        className={`font-weight-bold fix-layout ${selectedRowIndex === index ? 'selected-row' : ''}`}
+                                        onClick={() => {
+                                            setSelectedUsernames([])
+                                            handleRowClick(index);
+                                            setActionShow(1);
+                                            getIdStage(task);
+                                            setPeriodId(task.period_id)
+                                        }}
+                                    >
                                         <td class="fix-layout" onClick={() => handleToggle(task.period_id)}>
                                             {task.tasks.length > 0 ? (expandedTasks[task.period_id]
                                                 ? <i className="fa fa-caret-down size-24 toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
                                                 : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
-                                            ) : <div style={{ minHeight: "27px" }}></div>
+                                            ) : <div style={{ minHeight: "25px" }}></div>
                                             }
                                         </td>
                                         {/* <td>{task.period_id}</td> */}
                                         <td>{index + 1}</td>
-                                        <td>{task.period_name}</td>
+                                        <td >{task.period_name}</td>
                                         <td></td>
                                         {/* <td>{task.progress}</td> */}
                                         <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat((task.progress))).toFixed(1) + '%' : 'Invalid value'}</td>
@@ -1008,8 +1090,8 @@ const Stage = (props) => {
                                                 <>{lang["projectempty"]}</>
                                             }
                                         </td>
-                                        <td style={{
-                                            position: 'sticky',
+                                        {/* <td style={{
+                                            // position: 'sticky',
                                             right: 0,
                                             backgroundColor: '#fff',
                                             borderLeft: '1px solid #ccc !important',
@@ -1024,187 +1106,207 @@ const Stage = (props) => {
                                                     <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
                                                 </>
                                             }
+                                        </td> */}
+                                        <td>
+                                            <div style={{ minHeight: "27px" }}></div>
                                         </td>
                                     </tr>
-                                    {expandedTasks[task.period_id] && task.tasks.map((subtask, subtaskIndex) => (
-                                        <>
-                                            {/* <tr class="sub-task fix-layout" key={subtask.task_id}> */}
-                                            <tr class="font-weight-bold fix-layout" key={subtask.task_id}>
-                                        
-                                                <td style={{ width: "50px", paddingLeft: "20px" }} className="toggle-subtasks fix-layout" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
-                                                    {subtask.child_tasks && subtask.child_tasks.length > 0 ? (expandedSubsubtasks[subtask.task_id]
-                                                        ? <i className="fa fa-caret-down  toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
-                                                        : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
-                                                    ) : <div style={{ height: "25px" }}></div>
-                                                    }
-                                                </td>
-                                                {/* <td>{subtask.task_id}</td> */}
-                                                <td style={{ paddingLeft: "30px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
-                                                <td style={{ paddingLeft: "10px" }}>{subtask.task_name}</td>
-                                                <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
-                                                <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
-                                                <td class="font-weight-bold" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
-                                                    {getStatusLabel(subtask.task_approve ? 1 : 0)}
-                                                </td>
-                                                <td>{functions.formatDateTask(subtask.start)}</td>
-                                                <td>{functions.formatDateTask(subtask.end)}</td>
-                                                <td>{functions.formatDateTask(subtask.timeline)}</td>
-                                                {/* <td>
-                                                {
-                                                    subtask.members && subtask.members.length > 0 ?
-                                                        subtask.members.slice(0, 2).map(member => (
-                                                            <img class="img-responsive circle-image-cus" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
-                                                        )) :
-                                                        <>{lang["projectempty"]} </>
+                                    {expandedTasks[task.period_id] && task.tasks.map((subtask, subtaskIndex) => {
+                                        const uniqueId = `${task.period_id}-${subtask.task_id}-${subtaskIndex}`;
+                                        return (
+                                            <>
+                                                {/* <tr class="sub-task fix-layout" key={subtask.task_id}> */}
+
+                                                <tr
+                                                    key={uniqueId}
+                                                    className={`font-weight-bold fix-layout ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
+                                                    onClick={() => {
+                                                        handleRowClick(uniqueId)
+                                                        setActionShow(2)
+                                                        setTaskUpadte(subtask)
+                                                        getIdStage(subtask, task.period_id);
+                                                        setPeriodId(task.period_id)
+                                                        setTaskId(subtask.task_id)
+                                                    }}
+                                                >
+                                                    <td style={{ width: "50px", paddingLeft: "20px" }} className="fix-layout" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
+                                                        {subtask.child_tasks && subtask.child_tasks.length > 0 ? (expandedSubsubtasks[subtask.task_id]
+                                                            ? <i className="fa fa-caret-down poniter toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
+                                                            : <i className="fa fa-caret-right  size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
+                                                        ) : <div style={{ height: "25px" }}></div>
+                                                        }
+                                                    </td>
+                                                    {/* <td>{subtask.task_id}</td> */}
+                                                    <td style={{ paddingLeft: "30px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
+                                                    <td style={{ paddingLeft: "10px" }}>{subtask.task_name}</td>
+                                                    <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
+                                                    <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
+                                                    <td class="font-weight-bold" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                        {getStatusLabel(subtask.task_approve ? 1 : 0)}
+                                                    </td>
+                                                    <td>{functions.formatDateTask(subtask.start)}</td>
+                                                    <td>{functions.formatDateTask(subtask.end)}</td>
+                                                    <td>{functions.formatDateTask(subtask.timeline)}</td>
+
+                                                    <td>
+                                                        {
+                                                            subtask.members && subtask.members.length > 0 ?
+                                                                subtask.members.map(member => (
+                                                                    <img class="img-responsive circle-image-cus-gantt pointer" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
+                                                                )) :
+                                                                <>{lang["projectempty"]} </>
+                                                        }
+                                                    </td>
+                                                    <td class="align-center" style={{
+                                                        // position: 'sticky',
+
+                                                        // backgroundColor: '#fff',
+                                                        // borderLeft: '1px solid #ccc !important',
+
+                                                    }}>
+                                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" onClick={() => getDataViewDetail(subtask, task.period_id)} data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                        {
+                                                            (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                            <>
+                                                                {subtask.task_approve
+                                                                    ? (subtask.task_approve === true
+                                                                        ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                        : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                    : (subtask.child_tasks.every(child => child.approve)
+                                                                        ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                        : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                }
+
+                                                                {/* <i class="fa fa-plus-square size-24 pointer icon-margin icon-add" onClick={() => getPeriodId(subtask.task_id, task.period_id)} data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
+
+                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTask(subtask, task.period_id)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTask(subtask, task.period_id)} title={lang["delete"]}></i> */}
+                                                            </>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map((subsubtask, Subtaskindex) => {
+                                                    const uniqueId = `${task.period_id}-${subtask.task_id}-${subsubtask.task_id}-${Subtaskindex}`;
+                                                    return (
+                                                        <tr
+                                                            key={uniqueId}
+                                                            className={`sub-subtask fix-layout ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
+                                                            onClick={() => {
+                                                                setSelectedUsernames([])
+                                                                handleRowClick(uniqueId)
+                                                                setActionShow(3)
+                                                                getIdStage(subsubtask, subtask.task_id, task.period_id);
+                                                                setPeriodId(task.period_id)
+                                                                setTaskId(subtask.task_id)
+                                                                setTaskUpadteChild(subsubtask)
+                                                                setChildTask(subsubtask)
+
+                                                            }}
+                                                        >
+                                                            <td class="fix-layout" style={{ height: "38.3px" }}></td>
+                                                            {/* <td >{subsubtask.child_task_id}</td> */}
+                                                            <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
+                                                            <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
+                                                            <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
+                                                            {/* <td>{subsubtask.progress}</td> */}
+                                                            <td>
+                                                                {
+                                                                    (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subsubtask.approve ?
+                                                                        <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
+                                                                            <input
+                                                                                type="text"
+                                                                                className='form-control'
+                                                                                value={progressValues[uniqueId] ?? ''}
+                                                                                onBlur={(e) => handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)}
+                                                                                onFocus={(e) => { handleProgressFocus(subsubtask) }}
+                                                                                onChange={(e) => {
+                                                                                    const value = e.target.value;
+                                                                                    if (value === '' || onlyContainsNumbers(value)) {
+                                                                                        const normalizedValue = value === '' ? 0 : parseInt(value, 10);
+                                                                                        handleProgressChange(normalizedValue, subsubtask, subtask.task_id, task.period_id, uniqueId);
+                                                                                    }
+                                                                                }}
+                                                                                onKeyDown={(e) => {
+                                                                                    if (e.key === 'enter') {
+                                                                                        e.preventDefault();
+                                                                                        updateTaskChild({
+                                                                                            ...subsubtask,
+                                                                                            progress: progressValues[uniqueId] || subsubtask.progress,
+                                                                                        });
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                            <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
+                                                                        </div>
+                                                                        :
+                                                                        <div style={{ display: 'inline-block', position: 'relative' }}>
+                                                                            {!isNaN(parseFloat(progressValues[uniqueId])) ? (parseFloat(progressValues[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
+                                                                        </div>
+                                                                }
+
+                                                            </td>
+                                                            <td class="font-weight-bold" style={{ color: getStatusColor(subsubtask.approve ? 1 : 0), textAlign: "center" }}>
+                                                                {getStatusLabel(subsubtask.approve ? 1 : 0)}
+                                                            </td>
+                                                            <td>{functions.formatDateTask(subsubtask.start)}</td>
+                                                            <td>{functions.formatDateTask(subsubtask.end)}</td>
+                                                            <td>{functions.formatDateTask(subsubtask.timeline)}</td>
+                                                            <td>
+                                                                {subsubtask.members && subsubtask.members.length > 0 ?
+                                                                    subsubtask.members.map(member => member.fullname).join(', ') :
+                                                                    <>{lang["projectempty"]}</>
+                                                                }
+                                                            </td>
+                                                            <td class="align-center" style={{
+                                                                // position: 'sticky',
+                                                                right: 0,
+                                                                // backgroundColor: '#fff',
+                                                                // borderLeft: '1px solid #ccc !important',
+                                                                boxSizing: 'border-box',
+                                                            }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                                {
+                                                                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                                    <>
+                                                                        {subsubtask.approve
+                                                                            ? (subsubtask.approve === true
+                                                                                ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            : (subsubtask.progress === 100
+                                                                                ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                        }
+                                                                        {/* <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTaskChild(subsubtask, subtask.task_id, task.period_id)} data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
+
+                                                                        <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["delete"]}></i> */}
+                                                                    </>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )
                                                 }
-                                                {
-                                                    subtask.members.length > 2 &&
-                                                    <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + subtask.members[2].avatar})` }}>
-                                                        <span>+{subtask.members.length - 2}</span>
-                                                    </div>
-                                                }
-                                            </td> */}
-                                                <td>
-                                                    {
-                                                        subtask.members && subtask.members.length > 0 ?
-                                                            subtask.members.map(member => (
-                                                                <img class="img-responsive circle-image-cus-gantt pointer" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
-                                                            )) :
-                                                            <>{lang["projectempty"]} </>
-                                                    }
-                                                </td>
-                                                <td class="align-center" style={{
-                                                    position: 'sticky',
-                                                    right: 0,
-                                                    backgroundColor: '#fff',
-                                                    borderLeft: '1px solid #ccc !important',
-                                                    boxSizing: 'border-box',
-                                                }}>
-                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" onClick={() => getDataViewDetail(subtask, task.period_id)} data-target="#viewTask" title={lang["viewdetail"]}></i>
-                                                    {
-                                                        (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                        <>
-                                                            {subtask.task_approve
-                                                                ? (subtask.task_approve === true
-                                                                    ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                    : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                : (subtask.progress === "100.00"
-                                                                    ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                    : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                            }
+                                                )}
+                                            </>
+                                        )
+                                    }
 
-                                                            <i class="fa fa-plus-square size-24 pointer icon-margin icon-add" onClick={() => getPeriodId(subtask.task_id, task.period_id)} data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
 
-                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTask(subtask, task.period_id)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
-                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTask(subtask, task.period_id)} title={lang["delete"]}></i>
-                                                        </>
-                                                    }
-                                                </td>
-                                            </tr>
-                                            {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map((subsubtask, Subtaskindex) => {
-                                                const uniqueId = `${task.period_id}-${subtask.task_id}-${subsubtask.task_id}-${Subtaskindex}`;
-                                                return (
-                                                    <tr class="sub-subtask fix-layout" key={uniqueId}>
-                                                        <td class="fix-layout" style={{ height: "38.3px" }}></td>
-                                                        {/* <td >{subsubtask.child_task_id}</td> */}
-                                                        <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
-                                                        <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
-                                                        <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
-                                                        {/* <td>{subsubtask.progress}</td> */}
-                                                        <td>
-                                                            {
-                                                                (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subsubtask.approve ?
-                                                                    <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
-                                                                        <input
-                                                                            type="text"
-                                                                            className='form-control'
-                                                                            value={progressValues[uniqueId] ?? ''}
-                                                                            onBlur={(e) => handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)}
-                                                                            onFocus={(e) => { handleProgressFocus(subsubtask) }}
-                                                                            onChange={(e) => {
-                                                                                const value = e.target.value;
-                                                                                if (value === '' || onlyContainsNumbers(value)) {
-                                                                                    const normalizedValue = value === '' ? 0 : parseInt(value, 10);
-                                                                                    handleProgressChange(normalizedValue, subsubtask, subtask.task_id, task.period_id, uniqueId);
-                                                                                }
-                                                                            }}
-                                                                            onKeyDown={(e) => {
-                                                                                if (e.key === 'enter') {
-                                                                                    e.preventDefault();
-                                                                                    updateTaskChild({
-                                                                                        ...subsubtask,
-                                                                                        progress: progressValues[uniqueId] || subsubtask.progress,
-                                                                                    });
-                                                                                }
-                                                                            }}
-                                                                        />
-                                                                        <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
-                                                                    </div>
-                                                                    :
-                                                                    <div style={{ display: 'inline-block', position: 'relative' }}>
-                                                                        {!isNaN(parseFloat(progressValues[uniqueId])) ? (parseFloat(progressValues[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
-                                                                    </div>
-                                                            }
+                                    )}
 
-                                                        </td>
-                                                        <td class="font-weight-bold" style={{ color: getStatusColor(subsubtask.approve ? 1 : 0), textAlign: "center" }}>
-                                                            {getStatusLabel(subsubtask.approve ? 1 : 0)}
-                                                        </td>
-                                                        <td>{functions.formatDateTask(subsubtask.start)}</td>
-                                                        <td>{functions.formatDateTask(subsubtask.end)}</td>
-                                                        <td>{functions.formatDateTask(subsubtask.timeline)}</td>
-                                                        <td>
-                                                            {subsubtask.members && subsubtask.members.length > 0 ?
-                                                                subsubtask.members.map(member => member.fullname).join(', ') :
-                                                                <>{lang["projectempty"]}</>
-                                                            }
-                                                        </td>
-                                                        <td class="align-center" style={{
-                                                            position: 'sticky',
-                                                            right: 0,
-                                                            backgroundColor: '#fff',
-                                                            borderLeft: '1px solid #ccc !important',
-                                                            boxSizing: 'border-box',
-                                                        }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
-                                                            {
-                                                                (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                                                                <>
-                                                                    {subsubtask.approve
-                                                                        ? (subsubtask.approve === true
-                                                                            ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                            : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                        : (subsubtask.progress === 100
-                                                                            ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                            : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                    }
-                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTaskChild(subsubtask, subtask.task_id, task.period_id)} data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
-
-                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["delete"]}></i>
-                                                                </>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            }
-                                            )}
-                                        </>
-                                    ))}
-
-                                </React.Fragment>
+                                </React.Fragment >
                             ))}
                         </tbody>
                     </table>
                 </div>
 
 
-                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "80%" }} onMouseDown={handleMouseDown}
+                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "85%" }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
                     className="active"
                     ref={scrollRef2}
                     onScroll={handleScroll(scrollRef2, scrollRef1)}
-                   
-                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', height: "90%", overflowY: 'hidden', overflowX: 'auto' }}
+
+                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', marginBottom: "10px", maxWidth: '100%', height: "85%", overflowY: 'hidden', overflowX: 'auto' }}
                 >
                     {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
                 </div>
@@ -1716,7 +1818,7 @@ const Stage = (props) => {
                                                                             className="mr-1"
                                                                             value={JSON.stringify(user)}
 
-                                                                            onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                            onChange={(e) => handleCheckboxChangeChild(user, e.target.checked)}
                                                                         />
                                                                         {user.fullname}
                                                                     </label>
@@ -1822,7 +1924,7 @@ const Stage = (props) => {
                                                         ?.find((period) => period.period_id === periodId)
                                                         ?.tasks.find((task) => task.task_id === taskId)
                                                         ?.members?.map((user, index) => {
-                                                            const isMember = selectedUsernames.includes(user.username);
+                                                            const isMember = selectedUsernamesChild.includes(user.username);
                                                             return (
                                                                 <div key={index} className="user-checkbox-item">
                                                                     <label class="pointer">
@@ -1831,7 +1933,7 @@ const Stage = (props) => {
                                                                             className="mr-1"
                                                                             value={JSON.stringify(user)}
                                                                             checked={isMember}
-                                                                            onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                            onChange={(e) => handleCheckboxChangeChild(user, e.target.checked)}
                                                                         />
                                                                         {user.fullname}
                                                                     </label>

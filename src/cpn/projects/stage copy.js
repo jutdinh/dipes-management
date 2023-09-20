@@ -44,19 +44,24 @@ const Stage = (props) => {
     console.log(dataTask)
     //drop
     // console.log(props.data.period_members)
-    const [containerWidth, setContainerWidth] = useState('70%');
+    const [containerWidth, setContainerWidth] = useState('50%');
     const [isResizing, setIsResizing] = useState(false);
 
+
+
     const containerRef = useRef(null);
-const container1Ref = useRef(null);
-  const container2Ref = useRef(null);
-
-  const handleScroll = (ref1, ref2) => () => {
-    if (ref1.current && ref2.current) {
-      ref2.current.scrollTop = ref1.current.scrollTop;
-    }
-  };
-
+    const scrollRef1 = useRef(null);
+    const scrollRef2 = useRef(null);
+    useEffect(() => {
+        containerRef.current = scrollRef1.current;
+    }, []);
+    const handleScroll = (ref1, ref2) => {
+        return () => {
+            if (ref1.current && ref2.current) {
+                ref2.current.scrollTop = ref1.current.scrollTop;
+            }
+        };
+    };
     const handleMouseDown = useCallback(() => {
         setIsResizing(true);
     }, []);
@@ -79,6 +84,67 @@ const container1Ref = useRef(null);
         col2: 100,
         // ... (thêm cho các cột khác)
     });
+
+
+
+    useEffect(() => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        const containerElement = scrollRef2.current;
+        let svgElement;
+
+        if (containerElement) {
+            svgElement = containerElement.querySelector('svg');
+        }
+
+        const onMouseDown = (e) => {
+            isDown = true;
+            svgElement.classList.add('active');
+            startX = e.pageX - svgElement.getBoundingClientRect().left;
+            scrollLeft = svgElement.scrollLeft;
+        };
+
+        const onMouseMove = (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - svgElement.getBoundingClientRect().left;
+            const walk = (x - startX);
+            svgElement.scrollLeft = scrollLeft - walk;
+        };
+
+        const onMouseUp = () => {
+            isDown = false;
+            svgElement.classList.remove('active');
+        };
+
+        const onMouseLeave = () => {
+            isDown = false;
+            svgElement.classList.remove('active');
+        };
+
+        if (svgElement) {
+            svgElement.addEventListener('mousedown', onMouseDown);
+            svgElement.addEventListener('mousemove', onMouseMove);
+            svgElement.addEventListener('mouseup', onMouseUp);
+            svgElement.addEventListener('mouseleave', onMouseLeave);
+        }
+
+        return () => {
+            if (svgElement) {
+                svgElement.removeEventListener('mousedown', onMouseDown);
+                svgElement.removeEventListener('mousemove', onMouseMove);
+                svgElement.removeEventListener('mouseup', onMouseUp);
+                svgElement.removeEventListener('mouseleave', onMouseLeave);
+            }
+        };
+    }, []);
+
+
+
+
+
     const handleColumnResizeMouseDown = (colIndex) => (e) => {
         e.preventDefault();
 
@@ -192,6 +258,7 @@ const container1Ref = useRef(null);
         return item ? lang[item.label] || '' : '';
     }
     const getIdStage = (stage) => {
+        console.log(stage)
         setDataStageUpdate(stage);
     }
 
@@ -813,12 +880,15 @@ const container1Ref = useRef(null);
 
     return (
         <>
-            <div style={{ display: 'flex', width: '100%', height: "100%" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', height: "89%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+
                 <div
-                    ref={containerRef}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "75%" ,overflowY: 'auto', overflowX: 'auto' }}
-                >
-                    <table className="table fix-layout-header-table" style={{ maxWidth: '100%', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                    // ref={containerRef}
+                    ref={scrollRef1}
+                    onScroll={handleScroll(scrollRef1, scrollRef2)}
+                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "85%", overflowX: 'auto' }}>
+
+                    <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
                             <tr style={{ height: "60px" }}>
 
@@ -925,7 +995,7 @@ const container1Ref = useRef(null);
                                         </td>
                                         {/* <td>{task.period_id}</td> */}
                                         <td>{index + 1}</td>
-                                        <td>{task.period_name}</td>
+                                        <td onClick={() => getIdStage(task)}>{task.period_name}</td>
                                         <td></td>
                                         {/* <td>{task.progress}</td> */}
                                         <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat((task.progress))).toFixed(1) + '%' : 'Invalid value'}</td>
@@ -959,12 +1029,14 @@ const container1Ref = useRef(null);
                                     </tr>
                                     {expandedTasks[task.period_id] && task.tasks.map((subtask, subtaskIndex) => (
                                         <>
-                                            <tr class="sub-task fix-layout" key={subtask.task_id}>
+                                            {/* <tr class="sub-task fix-layout" key={subtask.task_id}> */}
+                                            <tr class="font-weight-bold fix-layout" key={subtask.task_id}>
+                                        
                                                 <td style={{ width: "50px", paddingLeft: "20px" }} className="toggle-subtasks fix-layout" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
                                                     {subtask.child_tasks && subtask.child_tasks.length > 0 ? (expandedSubsubtasks[subtask.task_id]
                                                         ? <i className="fa fa-caret-down  toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
                                                         : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
-                                                    ) :<div style={{ height: "25px" }}></div>
+                                                    ) : <div style={{ height: "25px" }}></div>
                                                     }
                                                 </td>
                                                 {/* <td>{subtask.task_id}</td> */}
@@ -978,21 +1050,7 @@ const container1Ref = useRef(null);
                                                 <td>{functions.formatDateTask(subtask.start)}</td>
                                                 <td>{functions.formatDateTask(subtask.end)}</td>
                                                 <td>{functions.formatDateTask(subtask.timeline)}</td>
-                                                {/* <td>
-                                                {
-                                                    subtask.members && subtask.members.length > 0 ?
-                                                        subtask.members.slice(0, 2).map(member => (
-                                                            <img class="img-responsive circle-image-cus" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
-                                                        )) :
-                                                        <>{lang["projectempty"]} </>
-                                                }
-                                                {
-                                                    subtask.members.length > 2 &&
-                                                    <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + subtask.members[2].avatar})` }}>
-                                                        <span>+{subtask.members.length - 2}</span>
-                                                    </div>
-                                                }
-                                            </td> */}
+                                                
                                                 <td>
                                                     {
                                                         subtask.members && subtask.members.length > 0 ?
@@ -1036,7 +1094,7 @@ const container1Ref = useRef(null);
                                                     <tr class="sub-subtask fix-layout" key={uniqueId}>
                                                         <td class="fix-layout" style={{ height: "38.3px" }}></td>
                                                         {/* <td >{subsubtask.child_task_id}</td> */}
-                                                        <td style={{ paddingLeft: "40px"}}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
+                                                        <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
                                                         <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
                                                         <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
                                                         {/* <td>{subsubtask.progress}</td> */}
@@ -1124,12 +1182,18 @@ const container1Ref = useRef(null);
                         </tbody>
                     </table>
                 </div>
-                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc' }} onMouseDown={handleMouseDown}
+
+
+                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "80%" }} onMouseDown={handleMouseDown}
                 ></div>
-                <div style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', height: "75%" ,overflowY: 'auto', overflowX: 'auto' }}>
-                    {
-                        dataGantt.length > 0 && <GanttTest data={dataGantt} />
-                    }
+                <div
+                    className="active"
+                    ref={scrollRef2}
+                    onScroll={handleScroll(scrollRef2, scrollRef1)}
+                   
+                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', maxWidth: '100%', height: "85%", overflowY: 'hidden', overflowX: 'auto' }}
+                >
+                    {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
                 </div>
                 {/* Add Task */}
                 <div class={`modal show`} id="addTask">
