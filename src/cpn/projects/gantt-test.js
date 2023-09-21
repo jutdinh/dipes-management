@@ -61,61 +61,52 @@ function GanttTest({ data }) {
     };
 
 
-    const [svgRectWidth, setSvgRectWidth] = useState(0); // Sử dụng state để lưu độ rộng của SVG
 
+    const [dragging, setDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
 
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        setDragging(true);
+        setStartX(e.clientX);
+    };
+    
+    const handleMouseUp = (e) => {
+        e.preventDefault();
+        setDragging(false);
+    };
+    
+    const handleMouseMove = (e) => {
+        if (dragging) {
+            const newX = e.clientX;
+            const diff = newX - startX;
+    
+            containerRef.current.scrollLeft -= diff;
+            setStartX(newX);
+        }
+    };
+    
     useEffect(() => {
-        const svgRectElement = document.querySelector('#content > div.midde_cont > div > div:nth-child(2) > div > div > div.table_section.padding_infor_info_list_task > div > div.table_section.padding_infor_info_list_task > div.no-select > div.active > div > div > div > div > svg > g.grid > rect.grid-background');
-
-        const updateSvgRectWidth = () => {
-            if (svgRectElement) {
-                const svgRect = svgRectElement.getBoundingClientRect();
-                setSvgRectWidth(svgRect.width);
-            }
-        };
-
-        updateSvgRectWidth(); // Cập nhật lần đầu tiên khi component được render
-
-        window.addEventListener('resize', updateSvgRectWidth); // Cập nhật khi cửa sổ thay đổi kích thước
-
-        return () => {
-            window.removeEventListener('resize', updateSvgRectWidth); // Hủy đăng ký event listener khi component bị hủy
-        };
-    }, []);
-    // console.log(svgRectWidth)
+        const containerElement = containerRef.current;
+    
+        if (containerElement) {
+            containerElement.addEventListener('mousedown', handleMouseDown);
+            containerElement.addEventListener('mouseup', handleMouseUp);
+            containerElement.addEventListener('mousemove', handleMouseMove);
+    
+            return () => {
+                containerElement.removeEventListener('mousedown', handleMouseDown);
+                containerElement.removeEventListener('mouseup', handleMouseUp);
+                containerElement.removeEventListener('mousemove', handleMouseMove);
+            };
+        }
+    }, [dragging, startX]);
 
     return (
-        // <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'visible' }}>
-        //     {/* <FrappeGantt
-        //         tasks={tasks}
-        //         columnWidth="40px"
-        //         // viewMode="Month"
-        //         viewMode={ViewMode.Y}
-        //         onClick={period => console.log(period)}
-        //         customRowClass={getRowClass}
-        //         customPopupHtml={customPopupHtml}
-        //     /> */}
-        //     <div ref={containerRef} class="scrollable-container"  style={{ width: "1000px" }}>
-        //         <div class="content">
-        //             <ReactGantt
-        //                 columnWidth="20px"
-        //                 arrow_curve="5"
-        //                 tasks={tasks}
-        //                 viewMode={ViewMode.Day}
-        //                 customPopupHtml={customPopupHtml}
-        //                 // customRowClass={getRowClass}
-        //                 onClick={task => console.log(task)}
-        //                 onDateChange={null}
-        //                 onProgressChange={null}
-        //                 onTasksChange={null}
-        //             />
-        //         </div>
-        //     </div>
-
-        // </div>
+       
 
 
-        <div ref={containerRef} style={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <div ref={containerRef} className="gantt-container" style={{ maxWidth: '100%', overflowX: 'auto' }}>
             {/* <div ref={containerRef} className="scrollable-container">
                 <div className="content" style={{ width: svgRectWidth }}> */}
             <ReactGantt

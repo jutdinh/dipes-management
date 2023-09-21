@@ -50,7 +50,7 @@ const Stage = (props) => {
 
     //drop
 
-    const [containerWidth, setContainerWidth] = useState('80%');
+    const [containerWidth, setContainerWidth] = useState('30%');
     const [isResizing, setIsResizing] = useState(false);
 
 
