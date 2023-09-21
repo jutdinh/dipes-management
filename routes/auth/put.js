@@ -9,8 +9,8 @@ const { Auth } = require('../../controllers')
 const AuthController = new Auth()
 
 router.put('/user', async (req, res) => { 
-    try{ 
-        throw Error("LOIOX")        
+    try{
+         
          await AuthController.updateUser( req, res, [ permission.uad, permission.ad ])         
     }catch{
         res.send({ success: false, status: "0x4501246" })
