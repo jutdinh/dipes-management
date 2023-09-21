@@ -1116,8 +1116,8 @@ export default () => {
                     <div class="col-md-6">
                         <div class="full" style={{ height: "100%", paddingBottom: 15 }}>
                             <div className="white_shd full" style={{ height: "100%" }}>
-                                <div class="full graph_head  d-flex justify-content-between align-items-center">
-                                    <div class="heading1 margin_0">
+                                <div class="full graph_head_project_detail  d-flex justify-content-between align-items-center">
+                                    <div class="heading1_project_detail  margin_0">
                                         <h5>{lang["project.info"]}</h5>
                                     </div>
                                     <div class="" onClick={editProject}>
@@ -1652,8 +1652,8 @@ export default () => {
                     <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
 
-                            <div class="full graph_head d-flex justify-content-between align-items-center">
-                                <div class="heading1 margin_0">
+                            <div class="full graph_head_project_detail  d-flex justify-content-between align-items-center">
+                                <div class="heading1_project_detail  margin_0">
                                     <h5>{lang["projectprocess"]}</h5>
                                 </div>
                                 <div>
@@ -1661,7 +1661,7 @@ export default () => {
                                         <i class="fa fa-list-ul size pointer" title={lang["view.task"]}></i>
                                         
                                     </button> */}
-                                    <i class="fa fa-list-ul icon-detail-project pointer" onClick={openDetailTask} title={lang["view.task"]}></i>
+                                    <i class="fa fa-list-ul icon-detail-project pointer mr-1" onClick={openDetailTask} title={lang["view.task"]}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info">
@@ -1883,15 +1883,15 @@ export default () => {
                 <div class="row">
                     <div style={{ paddingLeft: "10px" }} class="col-md-12">
                         <div class="white_shd full">
-                            <div class="full graph_head d-flex">
-                                <div class="heading1 margin_0 ">
+                            <div class="full graph_head_project_detail  d-flex">
+                                <div class="heading1_project_detail  margin_0 ">
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
                                 <div class="ml-auto pointer" type="button" data-toggle="modal" data-target="#generateActivationKey" >
-                                    <i className="fa fa-key" style={{ fontSize: "24px", color: "green", marginRight: "16px" }} title={lang["activate.key"]}></i>
+                                    <i className="fa fa-key size-24 icon-detail-project" style={{  color: "green", marginRight: "16px" }} title={lang["activate.key"]}></i>
                                 </div>
                                 <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
-                                    <i className="fa fa-download" style={{ fontSize: "24px", color: "#ff6655" }} title={lang["export"]}></i>
+                                    <i className="fa fa-download  icon-detail-project size-24 mr-2" style={{  color: "#ff6655" }} title={lang["export"]}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info_website">

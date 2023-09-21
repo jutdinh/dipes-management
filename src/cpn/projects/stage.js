@@ -39,7 +39,7 @@ const Stage = (props) => {
 
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
-    console.log(dataViewDetail)
+    // (dataViewDetail)
     const [formData, setFormData] = useState({});
     const [selectedUsernames, setSelectedUsernames] = useState([]);
     const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
@@ -284,7 +284,7 @@ const Stage = (props) => {
     };
     //viewdetal
     const getDataViewDetail = (taskId, periodId) => {
-        console.log(taskId)
+        // (taskId)
         setDataViewDetail(taskId)
 
 
@@ -349,7 +349,7 @@ const Stage = (props) => {
         if (taskUpdateChild && taskUpdateChild.members) {
             const initialSelectedUsernames = taskUpdateChild?.members.map(member => member.username);
             setSelectedUsernamesChild(initialSelectedUsernames);
-            console.log(selectedUsernamesChild)
+            // (selectedUsernamesChild)
 
         }
     }, [taskUpdateChild]);
@@ -893,17 +893,17 @@ const Stage = (props) => {
 
     const [startDateFilter, setStartDateFilter] = useState(null);
     const [endDateFilter, setEndDateFilter] = useState(null);
-    console.log(dataTask)
+    // (dataTask)
     return (
         <>
             <div class="d-flex align-items-center mt-2">
                 {actionShow === 1 ? (
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
-                        <i className={`fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                        <i className={`fa fa-plus-square size-32 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
 
-                        <i className={`fa fa-edit size-24 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
-                        <i class={`fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                        <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                        <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
                     </>
                 ) : actionShow === 2 ? (
 
@@ -911,10 +911,10 @@ const Stage = (props) => {
                     <>
 
 
-                        <i class="fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
+                        <i class="fa fa-plus-square size-32 pointer icon-margin icon-add ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
 
-                        <i class="fa fa-edit size-24 pointer icon-margin icon-edit" data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
-                        <i class="fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTask()} title={lang["delete"]}></i>
+                        <i class="fa fa-edit size-32 pointer icon-margin icon-edit" data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
+                        <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTask()} title={lang["delete"]}></i>
                     </>
 
                 ) : actionShow === 3 ?
@@ -922,18 +922,18 @@ const Stage = (props) => {
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
 
-                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit ml-auto" data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
+                            <i class="fa fa-edit size-32 pointer icon-margin icon-edit ml-auto" data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
 
-                            <i class="fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
+                            <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
                         </>
                     ) :
                     (
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
-                            <i className={`fa fa-plus-square size-24 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
 
-                            <i className={`fa fa-edit size-24 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
-                            <i class={`fa fa-trash-o size-24 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                            <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                            <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
                         </>
                     )
 
@@ -943,9 +943,13 @@ const Stage = (props) => {
                 }
                 {
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                    <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
+                    <>
+                   {/* <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
                         <i class="fa fa-plus" title={lang["addstage"]}></i>
-                    </button>
+                    </button> */}
+                    <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" alt="#" data-toggle="modal" data-target="#addStage"/>
+                    </>
+                    
 
                 }
             </div>

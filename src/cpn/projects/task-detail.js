@@ -1126,7 +1126,7 @@ export default () => {
                                 {
                                     stageData && stageData.length > 0 ? (
                                         <div class="ml-2 mt-1" title={lang["export task"]} onClick={exportToExcel}>
-                                            <i class="fa fa-download pointer icon-ui"></i>
+                                            <i class="fa fa-download size-32 pointer icon-ui"></i>
                                         </div>
                                     ) : null
                                 }

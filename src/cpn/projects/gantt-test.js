@@ -31,7 +31,7 @@ function GanttTest({ data }) {
                 end: task.end,
                 progress: parseFloat(task.progress),
                 dependencies: `period-${period.period_id}`,
-                custom_class: (new Date(task.end) < currentDate && parseFloat(task.progress) < 100) ? "bar-milestone" : ""
+                custom_class: (new Date(task.end) < currentDate && parseFloat(task.progress) < 100) ? "bar-milestone " : ""
             },
             ...(task.child_tasks ?? []).map((childTask) => {
                 return {

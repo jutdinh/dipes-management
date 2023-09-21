@@ -10,18 +10,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 .table td,
 .table th .fix-layout-non {
     /* padding-bottom: 4.7px !important;
@@ -42,7 +30,18 @@
     white-space: nowrap; 
     overflow-y: hidden;
 }
-
+.graph_head_project_detail {
+    padding: 18px 25px 15px;
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
+.heading1_project_detail  {
+    float: left;
+    padding: 0 0 10px 0;
+    width: 100%;
+    margin-top: 50px;
+}
 .selected-row{
     position: relative;
 }
@@ -143,7 +142,9 @@
 .gantt .bar-progress {
     fill: #5bcfce !important;
 }
-
+.gantt .bar-wrapper.bar-milestone  .bar-progress {
+    fill: rgb(255, 0, 0) !important;
+} 
 .gantt .today-highlight {
     fill: #ffda39 !important;
     opacity: 0.5;
@@ -184,8 +185,9 @@
 .gantt .bar-wrapper.bar-milestone .bar-group rect.bar {
     stroke: #ee2222 !important;
     stroke-width: 3 !important;
-    stroke-dasharray: 4 !important;
+    stroke-dasharray: 3 !important;
     paint-order: stroke fill markers !important;
+    
 }
 
 .gantt .grid-row {
@@ -1307,7 +1309,7 @@ img[class="scaled-hover-target"] {
 
 .status-label {
     display: inline-block;
-    padding: 5.25px 10.5px;
+    padding: 6.25px 10.5px;
     color: rgb(255, 255, 255);
     border-radius: 0.25rem;
 
@@ -1734,7 +1736,7 @@ input[type="date"]:valid+.date-label {
 }
 
 .padding_infor_info_website {
-    padding: 8px 35px;
+    padding: 0px 35px 3px 35px;
     float: left;
     width: 100%;
 
@@ -1901,13 +1903,16 @@ input[type="date"]:valid+.date-label {
     cursor: pointer;
 }
 
-.icon-add {
+/* .icon-add {
     color: #007bff;
     font-size: 24px;
     width: 24px;
     height: 27px;
+} */
+.icon-add {
+    color: #007bff;
+  
 }
-
 .color-tr {
     background-color: #f0eaea;
 }
