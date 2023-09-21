@@ -1090,7 +1090,7 @@ const Stage = (props) => {
                                         <td >{task.period_name}</td>
                                         <td></td>
                                         {/* <td>{task.progress}</td> */}
-                                        <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat((task.progress))).toFixed(1) + '%' : 'Invalid value'}</td>
+                                        <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat((task.progress))).toFixed(0) + '%' : 'Invalid value'}</td>
                                         <td></td>
                                         <td>{functions.formatDateTask(task.start)}</td>
                                         <td>{functions.formatDateTask(task.end)}</td>
