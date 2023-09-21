@@ -18,7 +18,8 @@ const styles = {
     container: {
         width: 300, 
         padding: "0.5em",
-        boxShadow: "1px 1px 10px 1px #ccc"
+        boxShadow: "1px 1px 10px 1px #ccc",
+        
     },
     title: {
         padding: "0.5em",

@@ -62,16 +62,15 @@ function GanttTest({ data }) {
 
 
 
-    const [dragging, setDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
+    
 
     const handleMouseDown = (e) => {
-        // e.preventDefault();
         const $target = $(e.target).closest('.gantt-container')
-        // setDragging(true);
-        // setStartX(e.clientX);
         const latestScrollLeft =  $target.scrollLeft()        
         const latestX = e.clientX
+        $('.gantt .grid').css({
+            cursor: "grabbing"
+        })
         $('*').on( "mousemove", (e) => {
             const currentX = e.clientX
             const distance = currentX - latestX;            
@@ -79,23 +78,11 @@ function GanttTest({ data }) {
         })
         $('*').on( "mouseup", (e) => {
             $('*').off( "mousemove")
+            $('*').off("mouseup")
+            $('.gantt .grid').removeAttr("style")
         })
     };
     
-    const handleMouseUp = (e) => {
-        e.preventDefault();
-        setDragging(false);
-    };
-    
-    const handleMouseMove = (e) => {
-        if (dragging) {
-            const newX = e.clientX;
-            const diff = newX - startX;
-    
-            containerRef.current.scrollLeft -= diff;
-            setStartX(newX);
-        }
-    };
     
     useEffect(() => {
         $('.gantt-container').on("mousedown", (e) => {
@@ -109,9 +96,8 @@ function GanttTest({ data }) {
        
 
 
-        <div className="gantt-container" style={{ maxWidth: '100%', overflowX: 'auto' }}>
-            {/* <div ref={containerRef} className="scrollable-container">
-                <div className="content" style={{ width: svgRectWidth }}> */}
+        <div className="gantt-container grab" style={{ maxWidth: '100%', overflowX: 'auto' }}>
+            
             <ReactGantt
                 columnWidth="20px"
                 arrow_curve="5"
@@ -124,8 +110,6 @@ function GanttTest({ data }) {
                 onProgressChange={null}
                 onTasksChange={null}
             />
-            {/* </div>
-            </div> */}
         </div>
     );
 

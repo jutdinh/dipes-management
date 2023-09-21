@@ -8,6 +8,20 @@
     vertical-align: middle;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .table td,
 .table th .fix-layout-non {
     /* padding-bottom: 4.7px !important;
@@ -108,26 +122,23 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.active {
-    cursor: grab;
-}
-.active:active {
-    cursor: grabbing;
-}
+
 
 /* GanttTest.css */
-.gantt .grid {
+
+.grab {
     cursor: grab;
-    /* biểu tượng bàn tay đang mở */
-}
+  }
+  
+  .grabbing {
+    cursor: grabbing;
+  }
+  
 
 .gantt {
    min-height: 100px !important;
 }
-.gantt .grid.active {
-    cursor: grabbing;
-    /* biểu tượng bàn tay đang nắm chặt */
-}
+
 
 .gantt .bar-progress {
     fill: #5bcfce !important;
@@ -1660,7 +1671,7 @@ input[type="date"]:valid+.date-label {
 }
 
 .padding_infor_info_statis {
-    padding: 10px 35px;
+    padding: 7px 35px;
     float: left;
     width: 100%;
 

@@ -458,7 +458,8 @@ export default {
     "delete.stage": "Are you sure you want to delete this Stage ?",
     "edittaskchild":" Edit subtasks",
     "collapse": "Collapse",
-    "expand": "Expand"
+    "expand": "Expand",
+    "no history yet": "No history yet"
 
 
 }

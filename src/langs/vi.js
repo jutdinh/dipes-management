@@ -463,7 +463,8 @@ export default {
     "delete.stage": "Bạn có chắc chắn muốn xóa giai đoạn này?",
     "edittaskchild":" Chỉnh sửa công việc con",
     "collapse": "Thu gọn",
-    "expand": "Mở rộng"
+    "expand": "Mở rộng",
+    "no history yet": "Chưa có lịch sử"
 
 
 

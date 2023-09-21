@@ -9,6 +9,8 @@ import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
 import FilterableDate from '../common/searchDate';
 
+import TableScroll from "./table-test-scroll"
+
 const Stage = (props) => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const { project_id, version_id } = useParams();
@@ -37,6 +39,7 @@ const Stage = (props) => {
 
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
+    console.log(dataViewDetail)
     const [formData, setFormData] = useState({});
     const [selectedUsernames, setSelectedUsernames] = useState([]);
     const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
@@ -50,7 +53,7 @@ const Stage = (props) => {
 
     //drop
 
-    const [containerWidth, setContainerWidth] = useState('30%');
+    const [containerWidth, setContainerWidth] = useState('80%');
     const [isResizing, setIsResizing] = useState(false);
 
 
@@ -281,6 +284,7 @@ const Stage = (props) => {
     };
     //viewdetal
     const getDataViewDetail = (taskId, periodId) => {
+        console.log(taskId)
         setDataViewDetail(taskId)
 
 
@@ -345,6 +349,7 @@ const Stage = (props) => {
         if (taskUpdateChild && taskUpdateChild.members) {
             const initialSelectedUsernames = taskUpdateChild?.members.map(member => member.username);
             setSelectedUsernamesChild(initialSelectedUsernames);
+            console.log(selectedUsernamesChild)
 
         }
     }, [taskUpdateChild]);
@@ -945,13 +950,13 @@ const Stage = (props) => {
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', height: "89%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', height: "95%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
                     ref={scrollRef1}
                     onScroll={handleScroll(scrollRef1, scrollRef2)}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "85%", overflowX: 'auto' }}>
+                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "95%", overflowX: 'auto' }}>
 
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
@@ -976,7 +981,7 @@ const Stage = (props) => {
                                     <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
                                     {tableFilter.task_name &&
                                         <div className="position-relative">
-                                            <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px" }}>
+                                            <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px", zIndex: 10 }}>
                                                 <FloatingTextBox
                                                     title={lang["title.task"]}
                                                     initialData={taskNameFilter.name}
@@ -1010,7 +1015,10 @@ const Stage = (props) => {
                                 </th>
                                 <th class="font-weight-bold" style={{ minWidth: `130px`, maxWidth: `130px` }}>
                                     {lang["log.daystart"]}
-                                    <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowStartDateInput(!showStartDateInput)} />
+                                    <i className="fa fa-filter icon-view block ml-2" onClick={() => {
+                                        setShowEndDateInput(false);
+                                        setShowStartDateInput(!showStartDateInput);
+                                    }} />
                                     <FilterableDate
                                         label={lang["log.daystart"]}
                                         dateValue={startDateFilter}
@@ -1022,7 +1030,10 @@ const Stage = (props) => {
                                 </th>
                                 <th class="font-weight-bold" style={{ minWidth: `130px`, maxWidth: `130px` }}>
                                     {lang["log.dayend"]}
-                                    <i className="fa fa-filter icon-view block ml-2" onClick={() => setShowEndDateInput(!showEndDateInput)} />
+                                    <i className="fa fa-filter icon-view block ml-2" onClick={() => {
+                                        setShowStartDateInput(false);
+                                        setShowEndDateInput(!showEndDateInput);
+                                    }} />
                                     <FilterableDate
                                         label={lang["log.dayend"]}
                                         dateValue={endDateFilter}
@@ -1243,7 +1254,6 @@ const Stage = (props) => {
                                                                             {!isNaN(parseFloat(progressValues[uniqueId])) ? (parseFloat(progressValues[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
                                                                         </div>
                                                                 }
-
                                                             </td>
                                                             <td class="font-weight-bold" style={{ color: getStatusColor(subsubtask.approve ? 1 : 0), textAlign: "center" }}>
                                                                 {getStatusLabel(subsubtask.approve ? 1 : 0)}
@@ -1263,7 +1273,7 @@ const Stage = (props) => {
                                                                 // backgroundColor: '#fff',
                                                                 // borderLeft: '1px solid #ccc !important',
                                                                 boxSizing: 'border-box',
-                                                            }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" data-target="#viewTask" title={lang["viewdetail"]}></i>
+                                                            }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(subsubtask)} data-toggle="modal" data-target="#viewTaskChild" title={lang["viewdetail"]}></i>
                                                                 {
                                                                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                     <>
@@ -1288,8 +1298,6 @@ const Stage = (props) => {
                                             </>
                                         )
                                     }
-
-
                                     )}
 
                                 </React.Fragment >
@@ -1297,16 +1305,14 @@ const Stage = (props) => {
                         </tbody>
                     </table>
                 </div>
-
-
-                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "85%" }} onMouseDown={handleMouseDown}
+                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "95%" }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
                     className="active"
                     ref={scrollRef2}
                     onScroll={handleScroll(scrollRef2, scrollRef1)}
 
-                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', marginBottom: "10px", maxWidth: '100%', height: "85%", overflowY: 'hidden', overflowX: 'auto' }}
+                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', marginBottom: "10px", maxWidth: '100%', height: "95%", overflowY: 'hidden', overflowX: 'auto' }}
                 >
                     {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
                 </div>
@@ -1568,18 +1574,6 @@ const Stage = (props) => {
                                             <label><b>Timeline</b></label>
                                             <span className="d-block"> {functions.formatDateTask(dataViewDetail.timeline)} </span>
                                         </div>
-
-                                        {/* <div class="form-group col-lg-4">
-                                        <label><b>{lang["taskstatus"]}</b></label>
-                                        <div>
-                                            <span className="status-label" style={{
-                                                backgroundColor: (statusTaskView.find((s) => s.value === dataViewDetail.task_status) || {}).color,
-                                                whiteSpace: "nowrap"
-                                            }}>
-                                                {lang[`${(statusTaskView.find((s) => s.value === dataViewDetail.task_status) || {}).label || 'Trạng thái không xác định'}`]}
-                                            </span>
-                                        </div>
-                                    </div> */}
                                         <div class="form-group col-lg-4">
                                             <label><b>{lang["create-at"]}</b></label>
                                             <span className="d-block"> {functions.formatDate(dataViewDetail.create_at)} </span>
@@ -1593,67 +1587,9 @@ const Stage = (props) => {
                                             <span className="d-block"> {lang[`${(statusPriority.find((s) => s.value === Number(dataViewDetail.task_priority)) || {}).label || dataViewDetail.task_priority}`]} </span>
 
                                         </div>
-                                        {/* <div class="form-group col-lg-4">
-                                        <label><b>{lang["confirm"]}</b></label>
-                                        <td class="font-weight-bold" style={{ color: getStatusColor(dataViewDetail.task_approve ? 1 : 0), textAlign: "center" }}>
-                                            {getStatusLabel(dataViewDetail.task_approve ? 1 : 0)}
-                                        </td>
-                                    </div> */}
 
-                                        {/* <div class="form-group col-lg-12">
-                                        <div class="table-responsive">
-                                            {
-                                                dataViewDetail.members && dataViewDetail.members.length > 0 ? (
-                                                    <>
-                                                        <table class="table table-striped ">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["members"]}</th>
-                                                                    <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {dataViewDetail.members.map((member, index) => (
-                                                                    <tr key={member.username}>
-                                                                         <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td> 
-                                                                        <td style={{ minWidth: "100px" }}><img src={proxy + member.avatar} class="img-responsive circle-image-cus" alt="#" /></td>
-                                                                        <td>{member.fullname}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["empty.member"]}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </div>   */}
-                                        {/* <div class="form-group col-lg-12">
-                                        <label><b>{lang["members"]}</b></label>
-                                        <span className="d-block"> {
-                                            taskDetail.members && taskDetail.members.length > 0 ?
-                                                taskDetail.members.slice(0, 4).map(member => (
-                                                    <img
-                                                        class="img-responsive circle-image-cus"
-                                                        src={proxy + member.avatar}
-                                                        alt={member.username}
-                                                    />
-                                                )) :
-                                                <p>{lang["projectempty"]} </p>
-                                        }
-                                            {
-                                                taskDetail.members?.length > 5 &&
-                                                <div className="img-responsive circle-image-projectdetail ml-1" style={{ backgroundImage: `url(${proxy + taskDetail.members[4].avatar})` }}>
-                                                    <span>+{taskDetail.members.length - 4}</span>
-                                                </div>
-                                            }</span>
-                                    </div> */}
                                         <div class="form-group col-lg-12">
-                                            <label><b>Lịch sử</b></label>
+                                            <label><b>{lang["log.title"]}</b></label>
                                             {
                                                 dataViewDetail.task_modified && dataViewDetail.task_modified.length > 0 ? (
                                                     <>
@@ -1710,11 +1646,81 @@ const Stage = (props) => {
                                                     </>
                                                 ) : (
                                                     <div class="list_cont ">
-                                                        <p>Chưa có lịch sử</p>
+                                                        <p>{lang["no history yet"]}</p>
                                                     </div>
                                                 )
                                             }
                                         </div>
+                                        {/* <div class="form-group col-lg-12">
+                                            <label><b>{lang["log.title"]}</b></label>
+                                            {
+                                                dataViewDetail.task_modified && dataViewDetail.task_modified.length > 0 ? (
+                                                    <>
+
+                                                        <table class="table">
+                                                            <thead style={{
+                                                                position: 'sticky',
+                                                                top: 0,  // Adjusted from 'right: 0' to 'top: 0'
+                                                                backgroundColor: '#fff',
+                                                                borderLeft: '1px solid #ccc',
+                                                                boxSizing: 'border-box',
+                                                            }}>
+                                                                <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
+                                                                <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
+                                                                <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
+                                                                <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
+                                                                <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
+                                                                <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
+                                                                <th class="scrollbar-measure"></th>
+                                                            </thead>
+
+                                                            <tbody style={{
+                                                                maxHeight: '300px',  // Adjusted from 'height: 300px' to 'maxHeight: 300px'
+                                                                overflowY: 'auto',   // Adjusted from 'overflow: auto' to 'overflowY: auto'
+                                                            }}>
+                                                                {dataViewDetail.task_modified.reverse().map((task, index) => (
+                                                                    <tr key={task.id}>
+                                                                        <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
+                                                                        <td scope="row">
+                                                                            {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                task.modified_what === "infor" ? lang["log.information"] :
+                                                                                    task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                        task.modified_what}
+                                                                        </td>
+                                                                        <td scope="row">
+                                                                            {
+                                                                                task.old_value === true ? lang["approved"] :
+                                                                                    task.old_value === false ? lang["await"] :
+                                                                                        `${task.old_value}`
+                                                                            }
+                                                                        </td>
+                                                                        <td scope="row">
+                                                                            {
+                                                                                task.new_value === true ? lang["approved"] :
+                                                                                    task.new_value === false ? lang["await"] :
+                                                                                        `${task.new_value}`
+                                                                                // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                            }
+                                                                        </td>
+                                                                        <td scope="row">{functions.formatDate(task.modified_at)}</td>
+                                                                        <td scope="row">
+                                                                            <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                            {task.modified_by?.fullname}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+
+
+                                                    </>
+                                                ) : (
+                                                    <div class="list_cont ">
+                                                        <p>{lang["no history yet"]}</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </div> */}
                                     </div>
                                 </form>
                             </div>
@@ -1953,6 +1959,64 @@ const Stage = (props) => {
                         </div>
                     </div>
                 </div>
+                {/* View Task Child*/}
+                <div class={`modal 'show' : ''}`} id="viewTaskChild">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["detailtask"]}</h4>
+                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-lg-12">
+                                            <label><b>{lang["taskname"]}</b></label>
+                                            <span className="d-block"> {dataViewDetail.child_task_name} </span>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label><b>{lang["description"]}</b></label>
+                                            <span className="d-block"> {dataViewDetail.child_task_description} </span>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["log.daystart"]}</b></label>
+                                            <span className="d-block"> {functions.formatDateTask(dataViewDetail.start)} </span>
+                                        </div>
+
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["log.dayend"]}</b></label>
+                                            <span className="d-block"> {functions.formatDateTask(dataViewDetail.end)} </span>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label><b>Timeline</b></label>
+                                            <span className="d-block"> {functions.formatDateTask(dataViewDetail.timeline)} </span>
+                                        </div>
+
+
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["create-at"]}</b></label>
+                                            <span className="d-block"> {functions.formatDate(dataViewDetail.create_at)} </span>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["creator"]}</b></label>
+                                            <span className="d-block"> {dataViewDetail.create_by?.fullname} </span>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["task_priority"]}</b></label>
+                                            <span className="d-block"> {lang[`${(statusPriority.find((s) => s.value === Number(dataViewDetail.priority)) || {}).label || dataViewDetail.priority}`]} </span>
+
+                                        </div>
+
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {/* Update Stage */}
                 <div class={`modal 'show'`} id="editStage">
                     <div class="modal-dialog modal-dialog-center">
@@ -2032,6 +2096,7 @@ const Stage = (props) => {
                 </div>
             </div>
             {/* <GanttTest data={dataGantt} /> */}
+
         </>
 
     );

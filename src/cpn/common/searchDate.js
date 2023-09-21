@@ -9,7 +9,7 @@ function FilterableDate({ label, dateValue, setDateValue, showDateInput, closePo
     return (
         <div className="position-relative">
             {showDateInput && (
-                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px" }}>
+                <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "200px",zIndex: 10 }}>
                     <div className="bg-white" style={{ padding: "0.5em", boxShadow: "1px 1px 10px 1px #ccc" }}>
                         <div style={{ position: "relative" }}>
                             <h6 style={{ padding: "0.5em", fontSize: "16px", fontWeight: "bold" }}>{label}</h6>
