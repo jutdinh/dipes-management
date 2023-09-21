@@ -8,7 +8,7 @@ function GanttTest({ data }) {
 
     const containerRef = useRef(null);
     const { lang, proxy, auth, functions } = useSelector(state => state);
-
+    const [ scrollLeft, setScrollLeft ] = useState(0)
     const currentDate = new Date();
     // console.log(currentDate)
     const tasks = data.map((period) => [
@@ -66,9 +66,20 @@ function GanttTest({ data }) {
     const [startX, setStartX] = useState(0);
 
     const handleMouseDown = (e) => {
-        e.preventDefault();
-        setDragging(true);
-        setStartX(e.clientX);
+        // e.preventDefault();
+        const $target = $(e.target).closest('.gantt-container')
+        // setDragging(true);
+        // setStartX(e.clientX);
+        const latestScrollLeft =  $target.scrollLeft()        
+        const latestX = e.clientX
+        $('*').on( "mousemove", (e) => {
+            const currentX = e.clientX
+            const distance = currentX - latestX;            
+            $target.scrollLeft(latestScrollLeft - distance )
+        })
+        $('*').on( "mouseup", (e) => {
+            $('*').off( "mousemove")
+        })
     };
     
     const handleMouseUp = (e) => {
@@ -87,26 +98,18 @@ function GanttTest({ data }) {
     };
     
     useEffect(() => {
-        const containerElement = containerRef.current;
+        $('.gantt-container').on("mousedown", (e) => {
+            handleMouseDown(e)
+        })
+    }, [])
     
-        if (containerElement) {
-            containerElement.addEventListener('mousedown', handleMouseDown);
-            containerElement.addEventListener('mouseup', handleMouseUp);
-            containerElement.addEventListener('mousemove', handleMouseMove);
-    
-            return () => {
-                containerElement.removeEventListener('mousedown', handleMouseDown);
-                containerElement.removeEventListener('mouseup', handleMouseUp);
-                containerElement.removeEventListener('mousemove', handleMouseMove);
-            };
-        }
-    }, [dragging, startX]);
+      
 
     return (
        
 
 
-        <div ref={containerRef} className="gantt-container" style={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <div className="gantt-container" style={{ maxWidth: '100%', overflowX: 'auto' }}>
             {/* <div ref={containerRef} className="scrollable-container">
                 <div className="content" style={{ width: svgRectWidth }}> */}
             <ReactGantt
