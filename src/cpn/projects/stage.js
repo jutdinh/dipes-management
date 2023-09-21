@@ -950,7 +950,7 @@ const Stage = (props) => {
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', height: "95%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
