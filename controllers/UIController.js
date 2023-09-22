@@ -96,7 +96,7 @@ class UIController extends Controller {
         this.writeReq(req)
         const { version_id } = req.body
         const context = await this.generalCheck(req, version_id)
-
+        console.log(req.body.widget)
         const { success, objects } = context;
         
         if( success ){
@@ -274,6 +274,27 @@ class UIController extends Controller {
                     }
                 }
             }
+        }
+
+        delete context.objects;
+        res.status(200).send(context)
+    }
+
+    createAPIandUI = async ( req, res ) => {
+        this.writeReq(req)
+        const { version_id } = req.body
+        const context = await this.generalCheck(req, version_id)
+
+        const { success, objects } = context;
+        
+        if( success ){
+            const { Project, version, user } = objects;
+            const project = Project.getData()
+            const bodyNullCheck = this.notNullCheck(req.body, ["ui", "widget"]);   
+
+
+
+            console.log( req.body )            
         }
 
         delete context.objects;
