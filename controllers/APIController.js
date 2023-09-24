@@ -88,7 +88,7 @@ class APIController extends Controller {
             })            
 
             context.data = { apis: apis.filter( api => api.api_scope == "public" ) }
-            context.data = { apis: apis }
+            // context.data = { apis: apis }
         }
         
         delete context.objects;

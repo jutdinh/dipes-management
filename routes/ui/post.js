@@ -14,11 +14,11 @@ router.post('/ui', async (req, res) => {
 })
 
 router.post('/api/and/ui', async (req, res) => { 
-    try{
+    // try{
         await UIController.createAPIandUI(req, res)         
-    }catch{
-        res.send({ success: false, status: "0x4501246" })
-    }
+    // }catch{
+    //     res.send({ success: false, status: "0x4501246" })
+    // }
 })
 
 router.post('/apiview', async (req, res) => { 

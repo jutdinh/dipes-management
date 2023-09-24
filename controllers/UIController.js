@@ -284,15 +284,40 @@ class UIController extends Controller {
         this.writeReq(req)
         const { version_id } = req.body
         const context = await this.generalCheck(req, version_id)
-
+        
         const { success, objects } = context;
         
         if( success ){
             const { Project, version, user } = objects;
-            const project = Project.getData()
-            const bodyNullCheck = this.notNullCheck(req.body, ["ui", "widget"]);   
+            const project = Project.getData()           
 
+            const nullCheck = this.notNullCheck( req.body, ["tables", "fields", "ui"] )
+            if( nullCheck.valid ){
 
+                const { ui } = req.body
+
+                const rawURL = translateUnicodeToBlanText( ui.title.toLowerCase() );
+                const URL = `/` + rawURL.replaceAll(" ", '-');                    
+                const existedURL = this.findUI(version, URL)
+
+                console.log(URL)
+
+                if( !existedURL ){
+
+                    const uiTables = req.body.tables;
+                    const uiFields = req.body.fields;
+    
+                    const mainTable = uiTables[0]
+                    const {  tables } = version;
+                    
+                    const mainTableInfor = tables[`${ mainTable }`]
+                }else{
+                    // ui already existed
+                }                
+
+            }else{
+                // request body khum hop le
+            }
 
             console.log( req.body )            
         }
