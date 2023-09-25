@@ -291,26 +291,195 @@ class UIController extends Controller {
             const { Project, version, user } = objects;
             const project = Project.getData()           
 
-            const nullCheck = this.notNullCheck( req.body, ["tables", "fields", "ui"] )
+            const nullCheck = this.notNullCheck( req.body, ["widget", "ui"] )
             if( nullCheck.valid ){
 
-                const { ui } = req.body
+                const { ui, widget } = req.body
 
                 const rawURL = translateUnicodeToBlanText( ui.title.toLowerCase() );
                 const URL = `/` + rawURL.replaceAll(" ", '-');                    
                 const existedURL = this.findUI(version, URL)
 
-                console.log(URL)
-
                 if( !existedURL ){
 
-                    const uiTables = req.body.tables;
-                    const uiFields = req.body.fields;
+                    const uiTables = widget.tables;
+                    const uiFields = widget.fields;
     
                     const mainTable = uiTables[0]
                     const {  tables } = version;
+
+                    const table = tables[`${ mainTable }`]
+
+                    if( table ){
+                        
+                        const atLeastOneSideTableDoesNotExist = uiTables.find( tb => tables[`${tb}`] == undefined )
+                        if( !atLeastOneSideTableDoesNotExist ){
+
+                            const { keyFields, normalFields } = this.fieldsAndKeysSeperator( table )
+
+                            if( keyFields.length > 0 ){
+
+                                if( normalFields.length != 0 ){
+                                    const allFields = []
+                                    widget.tables.map( _table_id => {
+                                        const _table = tables[`${ _table_id }`];
+                                        allFields.push( ...Object.values(_table.fields) )
+                                    })
+
+                                    const displayFields = uiFields.map( _field_id => {
+                                        return allFields.find( field => field.id == _field_id )
+                                    }).filter( f => f != undefined )
+
+                                    const mainTableFields = Object.values( table.fields )
+                                    const apiPrefix = "HIDDEN GET API FOR UI "
+                                    const apiDescription = "This api was automatically created for UI purpose, DO NOT manipulating this for any reason!"
+                                    const GET   = {
+                                        api_name:  "Hidden GET API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        fields: displayFields.map(field => {
+                                            return { id: field.id, fomular_alias: field.fomular_alias , display_name: field.field_name }   
+                                        }),
+                                        body: [],
+                                        params: [],
+                                        tables: [ ...widget.tables ],
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        api_method: "get",
+                                        api_scope: "private"
+                                    }
+                                    const POST  = {
+                                        api_name:  "Hidden POST API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        body: mainTableFields.map(field => field.id),
+                                        fields: [],
+                                        params: [],
+                                        tables: [ table.id ],   
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        api_method: "post",
+                                        api_scope: "private"                       
+                                    }
+                                    const PUT   = {
+                                        api_name:  "Hidden PUT API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        fields: mainTableFields.map(field => {
+                                            return { id: field.id, fomular_alias: field.fomular_alias , display_name: field.field_name }   
+                                        }),
+                                        body: normalFields.map( field => field.id ),
+                                        params: table.primary_key,
+                                        tables: [ table.id ],                                        
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        api_method: "put",
+                                        api_scope: "private"                       
+                                    }
+                                    const DELETE = {
+                                        api_name:  "Hidden DELETE API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,   
+                                        params: table.primary_key,                     
+                                        tables: [table.id],
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        api_method: 'delete',
+                                        api_scope: "private"
+                                    }
+
+                                    const SEARCH  = {
+                                        api_name:  "Hidden SEARCH API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        body: mainTableFields.map(field => field.id),
+                                        fields: [],
+                                        params: [],
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        tables: [ table.id ],                            
+                                        api_method: "post",
+                                        api_scope: "private"                       
+                                    }
+
+                                    const EXPORT = {
+                                        api_name:  "Hidden EXPORT API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        body: mainTableFields.map(field => field.id),
+                                        fields: mainTableFields.map(field => {
+                                            return { id: field.id, fomular_alias: field.fomular_alias , display_name: field.field_name }   
+                                        }),
+                                        params: [], 
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,
+                                        tables: [ table.id ],                           
+                                        api_method: "post",
+                                        api_scope: "private"                       
+                                    }
+
+                                    const IMPORT = {
+                                        api_name:  "Hidden IMPORT API for UI " + ui.title,
+                                        status: true,
+                                        description: apiDescription,                        
+                                        body: mainTableFields.map(field => field.id),
+                                        fields: [],
+                                        params: [],
+                                        tables: [ table.id ], 
+                                        calculates: widget.calculates,
+                                        statistic: widget.statistic,                           
+                                        api_method: "post",
+                                        api_scope: "private"   
+                                    }
+
+                                    const rawApis = [ 
+                                        { type: "api", api: GET }, 
+                                        { type: "ui", api: POST}, 
+                                        { type: "ui", api: PUT}, 
+                                        { type: "ui", api: DELETE}, 
+                                        { type: "search", api: SEARCH}, 
+                                        { type: "export", api: EXPORT},
+                                        { type: "import", api: IMPORT},                                        
+                                    ]                        
+                                    /* ADD 6 APIS TO UI  */
+                                    const APIS = []
+            
+                                    for( let i = 0 ; i < rawApis.length; i++ ){                                        
+                                        APIS[i] = await Project.createUIAPI( rawApis[i] )
+                                    }
+            
+                                    widget.apis = APIS
+            
+                                    APIS.map( api => {
+                                        version.apis[`${ api.id }`] = api
+                                    })
+            
+                                    const newUi = await Project.createUI( ui, widget, URL, user )
+                                    version.uis[`${ newUi.ui_id }`] = newUi
+                                    
+                                    Project.__modifyAndSaveChange__( `versions.${ version.version_id }`, version )
+            
+                                    context.content = "Tạo UI thành công"
+                                    context.status = "0x4501231"
+
+                                    this.saveLog("info", req.ip, "__createUI", `__projectname: ${ project.project_name } | __versionname ${version.version_name} | __uititle: ${ newUi.title } __uiurl:  ${ newUi.url }`, user.username)
+                                }else{
+                                    context.content = "Bảng không có trường nào khác ngoài khóa chính"
+                                    context.status = "0x4501227"
+                                }
+                            }else{
+                                context.content = "Bảng không có khóa chính"
+                                context.status = "0x4501226"
+                            }   
+
+                        }else{
+                            console.log("At least one table does not exist")
+                        }
+                    }else{
+                        // main tables does not exist
+                        console.log("Main tables does not exist")
+                    }                    
                     
-                    const mainTableInfor = tables[`${ mainTable }`]
                 }else{
                     // ui already existed
                 }                
