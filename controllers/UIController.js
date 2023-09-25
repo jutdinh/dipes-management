@@ -47,7 +47,39 @@ class UIController extends Controller {
 
         if( success ){
             const { Project, version } = objects;
+            const apis = Object.values(version.apis) 
+
+            const serializedApis = {}
+            apis.map( api => {
+                serializedApis[api.api_id] = api
+            })
+
             const uis = Object.values(version.uis)
+            const tables = Object.values(version.tables)
+            let serializedFields = {}
+
+            tables.map( table => {
+                serializedFields = { ...serializedFields, ...table.fields }
+            })
+
+            uis.map( ui => {
+                const components = Object.values(ui.components);
+                
+                components.map( cpn => {
+                    const { api_get } = cpn;
+                    if( api_get ){
+                        const api_id = api_get.split('/')[2]
+                        const api = serializedApis[ api_id ]
+                        
+                        if( api ){
+                            const { fields, calculates } = api;
+                            
+                            cpn.fields = Object.values({...fields, ...calculates})
+                        }
+                    }
+                })
+                ui.components = components
+            })
 
             context.data = { uis }
             context.content = ""
@@ -397,7 +429,7 @@ class UIController extends Controller {
                                         params: [],
                                         calculates: widget.calculates,
                                         statistic: widget.statistic,
-                                        tables: [ table.id ],                            
+                                        tables: [ ...widget.tables ],                            
                                         api_method: "post",
                                         api_scope: "private"                       
                                     }
