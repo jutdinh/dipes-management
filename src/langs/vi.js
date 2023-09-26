@@ -464,7 +464,9 @@ export default {
     "edittaskchild":" Chỉnh sửa công việc con",
     "collapse": "Thu gọn",
     "expand": "Mở rộng",
-    "no history yet": "Chưa có lịch sử"
+    "no history yet": "Chưa có lịch sử",
+    "list group by": "Danh sách các trường được chọn (GroupBy)",
+    "no selected group by": "Không có trường nào được chọn"
 
 
 

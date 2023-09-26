@@ -209,14 +209,14 @@ console.log(props)
 
                         </div>
                         <div class="tab_style2">
-                            <div class="tabbar padding_infor_info">
+                            <div class="tabbar padding_infor_info_layout1">
                                 <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-home_s2" role="tabpanel" aria-labelledby="nav-home-tab">
                                         <div class="table_section">
                                             <div class="col-md-12 col-lg-12">
                                                 <div class="table-responsive">
                                                     {
-                                                        data && data.length > 0 ? (
+                                                        fields && fields.length > 0 ? (
                                                             <table class="table table-hover">
                                                                 <thead>
                                                                     <tr class="color-tr">

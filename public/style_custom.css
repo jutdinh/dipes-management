@@ -1915,7 +1915,11 @@ input[type="date"]:valid+.date-label {
     border-radius: 5px;
     cursor: pointer;
 }
-
+.padding_infor_info_layout1{
+    padding: 10px 35px;
+    float: left;
+    width: 100%;
+}
 .icon-add {
     color: #007bff;
     font-size: 24px;

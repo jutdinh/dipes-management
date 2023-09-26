@@ -241,7 +241,7 @@ export default () => {
     const [selectedTables, setSelectedTables] = useState([]);
 
 
-console.log(selectedTables)
+    console.log(selectedTables)
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
@@ -294,7 +294,7 @@ console.log(selectedTables)
             });
 
     }, [modalTemp.tables]);
-console.log(modalTemp)
+    console.log(modalTemp)
 
     const [tableFields, setTableFields] = useState([]);
     // console.log(tableFields)
@@ -406,7 +406,7 @@ console.log(modalTemp)
         if (corespondingGroupByField) {
             newGroupBy = groupBy.filter(f => f.id != id);
         } else {
-            const field = fields.find(f => f.id == id);
+            const field = modalTemp.fields?.find(f => f.id == id);
             if (field) {
                 newGroupBy = [...groupBy, field];
             }
@@ -605,7 +605,9 @@ console.log(modalTemp)
         }
 
     };
-
+    const clearGroupBy = () => {
+            setGroupBy([])
+    };
     const handleDeleteStatistical = (sta) => {
         // console.log(sta)
 
@@ -743,21 +745,21 @@ console.log(modalTemp)
         return tableFields[tableId]?.primary_key.includes(fieldId);
     }
 
- // luu truong show 
- const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
- const handleSubmitShow = () => {
-    // Tạo một mảng mới bao gồm tất cả fieldId đã chọn từ tất cả bảng
-    const allSelectedFields2 = Object.values(selectedFieldsModal2).flat();
+    // luu truong show 
+    const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
+    const handleSubmitShow = () => {
+        // Tạo một mảng mới bao gồm tất cả fieldId đã chọn từ tất cả bảng
+        const allSelectedFields2 = Object.values(selectedFieldsModal2).flat();
 
-    // Cập nhật modalTemp
-    setModalTemp(prevModalTemp => ({
-        ...prevModalTemp,
-        fields: allSelectedFields2,
-    }));
-    console.log(allSelectedFields2)
+        // Cập nhật modalTemp
+        setModalTemp(prevModalTemp => ({
+            ...prevModalTemp,
+            fields: allSelectedFields2,
+        }));
+        console.log(allSelectedFields2)
 
-    console.log(selectedFieldsModal2)
-};
+        console.log(selectedFieldsModal2)
+    };
 
 
     return (
@@ -807,7 +809,7 @@ console.log(modalTemp)
                                             {modalTemp.layout_id == 0 ?
                                                 <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
                                                 : <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
-                                                    
+
                                             }
                                         </div>
                                         <select
@@ -817,7 +819,7 @@ console.log(modalTemp)
                                         >
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
-                                   
+
                                         </select>
                                     </div>
                                     {Number(modalTemp.layout_id) === 2 && (
@@ -834,9 +836,9 @@ console.log(modalTemp)
                                         </div>
                                     )}
 
-                                    {/* Chọn các bảng */}
+                                    {/*Ds các bảng */}
                                     {Number(modalTemp.layout_id) !== 2 ? (
-                                        <div class="col-md-12 col-lg-12 bordered mb-3">
+                                        <div class="col-md-12 col-lg-12 bordered">
                                             <div class="d-flex align-items-center mb-1">
                                                 <p class="font-weight-bold">{lang["selected table"]} <span className='red_star'> *</span> </p>
                                                 {errorUi.tables && <p className="text-danger">{(errorUi.tables)}</p>}
@@ -870,8 +872,8 @@ console.log(modalTemp)
                                                         </>
                                                     ) : (
                                                         <div class="list_cont ">
-                                                        <p>{lang["not found"]}</p>
-                                                    </div>
+                                                            <p>{lang["not found"]}</p>
+                                                        </div>
                                                     )
                                                 }
                                             </div>
@@ -880,11 +882,11 @@ console.log(modalTemp)
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
-                                                {/* Fields */}
+                                                {/* Ds các trường hiển thị*/}
                                                 <div class="col-md-12 col-lg-12 bordered">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">{lang["fields display"]} <span className='red_star'>*</span></p>
-                                                       <p className="text-danger ml-2">{errorUi.fields}</p>
+                                                        <p className="text-danger ml-2">{errorUi.fields}</p>
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
@@ -931,99 +933,104 @@ console.log(modalTemp)
                                                         }
                                                     </div>
                                                 </div>
-                                                {/* Chọn trường tính toán */}
-                                                {Number(modalTemp.layout_id) !== 2 ? (
-                                                    <div class="col-md-12 col-lg-12 bordered mb-3">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["calculated fields"]}</p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                            <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
-                                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
+                                                {modalTemp.fields && modalTemp.fields.length > 0 ? (
+                                                    <>
+                                                        {/* Ds các trường tính toán */}
+                                                        {Number(modalTemp.layout_id) !== 2 ? (
+                                                            <div class="col-md-12 col-lg-12 bordered">
+                                                                <div class="d-flex align-items-center mb-1">
+                                                                    <p class="font-weight-bold">{lang["calculated fields"]}</p>
+                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
+                                                                        <i class="fa fa-plus"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="table-responsive">
+                                                                    {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                                                    <th class="font-weight-bold align-center">{lang["log.action"]}</th>
 
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {modalTemp.calculates.map((calculate, index) => (
-                                                                            <tr key={index}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{calculate.display_name}</td>
-                                                                                <td>{calculate.fomular_alias}</td>
-                                                                                <td>{calculate.fomular}</td>
-                                                                                <td class="align-center " style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {modalTemp.calculates.map((calculate, index) => (
+                                                                                    <tr key={index}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{calculate.display_name}</td>
+                                                                                        <td>{calculate.fomular_alias}</td>
+                                                                                        <td>{calculate.fomular}</td>
+                                                                                        <td class="align-center " style={{ minWidth: "130px" }}>
+                                                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
+                                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    ) : (
+                                                                        <div class="list_cont ">
+                                                                            <p>{lang["not found"]}</p>
+                                                                        </div>
+                                                                    )
+                                                                    }
                                                                 </div>
-                                                            )
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                ) : null}
-                                                {/* Chọn trường thống kê */}
-                                                {Number(modalTemp.layout_id) !== 2 ? (
-                                                    <div class="col-md-12 col-lg-12 bordered mb-3">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["statistical fields"]}</p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            {modalTemp.statistic_fields && modalTemp.statistic_fields.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name statis"]}</th>
-                                                                            <th class="font-weight-bold">{lang["group by"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fomular"]}</th>
-                                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {modalTemp.statistic_fields.map((statistic, index) => (
-                                                                            <tr key={index}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{statistic.display_name}</td>
-                                                                                <td>{statistic.field}</td>
-                                                                                <td>{statistic.group_by?.map(field => field.field_name).join(", ")}</td>
-                                                                                <td>{statistic.fomular}</td>
-                                                                                <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
+                                                            </div>
+                                                        ) : null}
+                                                        {/* Ds các trường thống kê */}
+                                                        {Number(modalTemp.layout_id) !== 2 ? (
+                                                            <div class="col-md-12 col-lg-12 bordered">
+                                                                <div class="d-flex align-items-center mb-1">
+                                                                    <p class="font-weight-bold">{lang["statistical fields"]}</p>
+                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto"  onClick={() => clearGroupBy()} data-toggle="modal" data-target="#addFieldStatistical">
+                                                                        <i class="fa fa-plus"></i>
+                                                                    </button>
                                                                 </div>
-                                                            )
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                ) : null}
+                                                                <div class="table-responsive">
+                                                                    {modalTemp.statistic_fields && modalTemp.statistic_fields.length > 0 ? (
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["fields name statis"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["group by"]}</th>
+                                                                                    <th class="font-weight-bold">{lang["fomular"]}</th>
+                                                                                    <th class="font-weight-bold align-center">{lang["log.action"]}</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {modalTemp.statistic_fields.map((statistic, index) => (
+                                                                                    <tr key={index}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{statistic.display_name}</td>
+                                                                                        <td>{statistic.field}</td>
+                                                                                        <td>{statistic.group_by.length > 0 ? statistic.group_by?.map(field => field.display_name).join(", "): lang["no selected group by"]}</td>
+                                                                                        <td>{statistic.fomular}</td>
+                                                                                        <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                                            <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
+                                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    ) : (
+                                                                        <div class="list_cont ">
+                                                                            <p>{lang["not found"]}</p>
+                                                                        </div>
+                                                                    )
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        ) : null}
+                                                    </>
+                                                ) : null
+                                                }
                                             </>
                                         ) : (
                                             null
@@ -1033,21 +1040,18 @@ console.log(modalTemp)
                                         <div className="mt-2 d-flex justify-content-end ml-auto">
                                             {modalTemp.layout_id === 0 ?
                                                 <button type="button" onClick={() => handleClickLayout(0)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                :  <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                    
-                                            }
+                                                : <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
 
+                                            }
                                             <button type="button" onClick={addUI} className="btn btn-success mr-2">{lang["btn.create"]}</button>
                                             <button type="button" onClick={() => back()} data-dismiss="modal" className="btn btn-danger">{lang["btn.close"]}</button>
                                         </div>
                                     ) : null}
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 {/*add table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addTables">
                     <div class="modal-dialog modal-dialog-center">
@@ -1235,7 +1239,7 @@ console.log(modalTemp)
                                         {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
+                                        <label><p class="font-weight-bold">{lang["fields display"]}</p></label>
                                         <div class="table-responsive">
                                             <table class="table table-striped">
                                                 <thead>
@@ -1243,22 +1247,22 @@ console.log(modalTemp)
                                                         <th class="font-weight-bold">{lang["log.no"]}</th>
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["alias"]}</th>
-                                                        <th class="font-weight-bold">{lang["datatype"]}</th>
+                                                        {/* <th class="font-weight-bold">{lang["datatype"]}</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {getAllField.fields?.map((field, index) =>
+                                                    {modalTemp.fields?.map((field, index) =>
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{field.field_name}</td>
+                                                            <td>{field.display_name}</td>
                                                             <td>{field.fomular_alias}</td>
-                                                            <td>{field.props.DATATYPE}</td>
+                                                            {/* <td>{field.props.DATATYPE}</td> */}
                                                         </tr>
                                                     )}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <label>< p class="font-weight-bold">{lang["calculated fields"]}</p></label>
+                                        <label><p class="font-weight-bold">{lang["calculated fields"]}</p></label>
                                         <div class="table-responsive">
                                             {calculates && calculates.length > 0 ? (
                                                 <table class="table table-striped">
@@ -1297,7 +1301,7 @@ console.log(modalTemp)
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {fields.map((field, index) => (
+                                                {modalTemp.fields?.map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
@@ -1308,16 +1312,17 @@ console.log(modalTemp)
                                                                 onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                             />
 
-                                                            {field.field_name}
+                                                            {field.display_name}
                                                         </label>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+
                                     </div>
                                     <div class="form-group col-lg-12">
+                                        <label><p class="font-weight-bold">{lang["list group by"]}</p></label>
                                         <div class="table-responsive">
                                             {
                                                 groupBy.length > 0 ? (
@@ -1335,7 +1340,7 @@ console.log(modalTemp)
                                                                 {groupBy.map((field, index) =>
                                                                     <tr key={`${index}`}>
                                                                         <td>{index + 1}</td>
-                                                                        <td>{field.field_name}</td>
+                                                                        <td>{field.display_name}</td>
                                                                         <td>{field.fomular_alias}</td>
                                                                     </tr>
                                                                 )}
@@ -1355,14 +1360,14 @@ console.log(modalTemp)
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
                                             <option value="">{lang["select fields"]}</option>
-                                            {getAllField.fields?.map((field, index) => (
+                                            {modalTemp.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.field_name} - {field.fomular_alias}
+                                                    {field.display_name} ({field.fomular_alias})
                                                 </option>
                                             ))}
                                             {calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                    {calculate.display_name}  {calculate.fomular_alias}
+                                                    {calculate.display_name} ({calculate.fomular_alias})
                                                 </option>
                                             ))}
                                         </select>
@@ -1424,7 +1429,7 @@ console.log(modalTemp)
                                     </div>
 
                                     <div class="form-group col-md-12">
-                                        <label> < p class="font-weight-bold">{getAllField.table_name}</p> </label>
+                                        <label><p class="font-weight-bold">{lang["fields display"]}</p></label>
                                         <div class="table-responsive">
                                             <table class="table table-striped">
                                                 <thead>
@@ -1432,24 +1437,55 @@ console.log(modalTemp)
                                                         <th class="font-weight-bold">{lang["log.no"]}</th>
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
-                                                        <th class="font-weight-bold">{lang["datatype"]}</th>
+                                                        {/* <th class="font-weight-bold">{lang["datatype"]}</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {getAllField.fields?.map((field, index) =>
+                                                    {modalTemp.fields?.map((field, index) =>
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{field.field_name}</td>
+                                                            <td>{field.display_name}</td>
                                                             <td>{field.fomular_alias}</td>
-                                                            <td>{field.props.DATATYPE}</td>
+                                                            {/* <td>{field.props.DATATYPE}</td> */}
 
                                                         </tr>
                                                     )}
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
 
+                                        <label><p class="font-weight-bold">{lang["calculated fields"]}</p></label>
+                                        <div class="table-responsive">
+                                            {calculates && calculates.length > 0 ? (
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                            <th class="font-weight-bold">{lang["alias"]}</th>
+                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {modalTemp.calculates.map((calculate, index) => (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{calculate.display_name}</td>
+                                                                <td>{calculate.fomular_alias}</td>
+                                                                <td>{calculate.fomular}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            ) : (
+                                                <div class="list_cont ">
+                                                    <p>{lang["not found"]}</p>
+                                                </div>
+                                            )
+                                            }
+                                        </div>
+
+                                    </div>
 
                                     <div className={`form-group col-lg-12`}>
                                         <p className="font-weight-bold">
@@ -1458,7 +1494,7 @@ console.log(modalTemp)
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {fields.map((field, index) => (
+                                                {modalTemp.fields?.map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
@@ -1468,18 +1504,19 @@ console.log(modalTemp)
                                                                 checked={isFieldChecked(field.id)}
                                                                 onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                             />
-                                                            {field.field_name}
+                                                            {field.display_name}
                                                         </label>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
+
                                     </div>
 
 
                                     <div class="form-group col-lg-12">
+                                        <label><p class="font-weight-bold">{lang["list group by"]}</p></label>
                                         <div class="table-responsive">
                                             {
                                                 groupBy.length > 0 ? (
@@ -1497,7 +1534,7 @@ console.log(modalTemp)
                                                                 {groupBy.map((field, index) =>
                                                                     <tr key={`${index}`}>
                                                                         <td>{index + 1}</td>
-                                                                        <td>{field.field_name}</td>
+                                                                        <td>{field.display_name}</td>
                                                                         <td>{field.fomular_alias}</td>
                                                                     </tr>
                                                                 )}
@@ -1518,9 +1555,9 @@ console.log(modalTemp)
                                         <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>
                                             <option value="">{lang["select fields"]}</option>
 
-                                            {getAllField.fields?.map((field, index) => (
+                                            {modalTemp.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.field_name}
+                                                    {field.display_name} ({field.fomular_alias})
                                                 </option>
                                             ))}
                                         </select>
@@ -1589,16 +1626,16 @@ console.log(modalTemp)
                                                         <th class="font-weight-bold">{lang["log.no"]}</th>
                                                         <th class="font-weight-bold">{lang["fields name"]}</th>
                                                         <th class="font-weight-bold">{lang["fomular"]}</th>
-                                                        <th class="font-weight-bold">{lang["datatype"]}</th>
+                                                        {/* <th class="font-weight-bold">{lang["datatype"]}</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {getAllField.fields?.map((field, index) =>
+                                                    {modalTemp.fields?.map((field, index) =>
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{field.field_name}</td>
+                                                            <td>{field.display_name}</td>
                                                             <td>{field.fomular_alias}</td>
-                                                            <td>{field.props.DATATYPE}</td>
+                                                            {/* <td>{field.props.DATATYPE}</td> */}
                                                         </tr>
                                                     )}
                                                 </tbody>
@@ -1652,7 +1689,7 @@ console.log(modalTemp)
                                             {errorCaculates.display_name && <p className="text-danger">{errorCaculates.display_name}</p>}
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label>{lang["fields tables"]} < p class="font-weight-bold">{getAllField.table_name}</p> </label>
+                                            <label><p class="font-weight-bold">{lang["fields display"]}</p></label>
                                             <div class="table-responsive">
                                                 <table class="table table-striped">
                                                     <thead>
@@ -1660,16 +1697,16 @@ console.log(modalTemp)
                                                             <th class="font-weight-bold">{lang["log.no"]}</th>
                                                             <th class="font-weight-bold">{lang["fields name"]}</th>
                                                             <th class="font-weight-bold">{lang["alias"]}</th>
-                                                            <th class="font-weight-bold">{lang["datatype"]}</th>
+                                                            {/* <th class="font-weight-bold">{lang["datatype"]}</th> */}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {getAllField.fields?.map((field, index) =>
+                                                        {modalTemp.fields?.map((field, index) =>
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{field.field_name}</td>
+                                                                <td>{field.display_name}</td>
                                                                 <td>{field.fomular_alias}</td>
-                                                                <td>{field.props.DATATYPE}</td>
+                                                                {/* <td>{field.props.DATATYPE}</td> */}
 
                                                             </tr>
                                                         )}
@@ -1689,6 +1726,14 @@ console.log(modalTemp)
                                                 required
                                             />
                                             {errorCaculates.fomular && <p className="text-danger">{errorCaculates.fomular}</p>}
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>{lang["creator"]} </label>
+                                            <input class="form-control" type="text" value={users.fullname} readOnly></input>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>{lang["time"]} </label>
+                                            <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
                                         </div>
                                     </div>
                                 </form>
@@ -1713,7 +1758,7 @@ console.log(modalTemp)
                                     <div class="midde_cont">
                                         <>
                                             {layout === 0 && <Layout1 title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 1 && <Layout2 title={modalTemp.title} data={tables}  fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 1 && <Layout2 title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                             {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>

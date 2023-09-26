@@ -459,7 +459,9 @@ export default {
     "edittaskchild":" Edit subtasks",
     "collapse": "Collapse",
     "expand": "Expand",
-    "no history yet": "No history yet"
+    "no history yet": "No history yet",
+    "list group by": "List of selected field (GroupBy)",
+    "no selected group by": "No field selected"
 
 
 }
