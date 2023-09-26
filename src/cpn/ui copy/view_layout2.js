@@ -12,7 +12,7 @@ import { PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, Cart
 import { Tables } from ".";
 export default (props) => {
     const { lang, proxy, auth } = useSelector(state => state);
-    const { title, data, calculate, statistic, fields} = props;
+    const { title, data, calculate, statistic } = props;
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
@@ -20,16 +20,16 @@ export default (props) => {
     let uis_temp;
 
 
-    if (fields) {
-        let fields_temp = fields?.slice(0, 4); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
+    if (data[0]?.fields) {
+        let fields_temp = data[0].fields.slice(0, 4); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
 
         uis_temp = fields_temp.map((field, index) => {
             const tempObject = {
                 id: index + 1,
             };
 
-            for (let f of fields) {
-                tempObject[f.display_name] = `  ${f.display_name} ${index + 1}`;
+            for (let f of data[0].fields) {
+                tempObject[f.field_name] = `  ${f.field_name} ${index + 1}`;
             }
 
             return tempObject;
@@ -204,8 +204,8 @@ export default (props) => {
                                                                     <thead>
                                                                         <tr>
                                                                             <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.no"]}</th>
-                                                                            {fields?.map((ui, index) => (
-                                                                                <th class="font-weight-bold">{ui.display_name}</th>
+                                                                            {data[0]?.fields.map((ui, index) => (
+                                                                                <th class="font-weight-bold">{ui.field_name}</th>
                                                                             ))}
                                                                             {calculate.map((cal, index) => (
                                                                                 <th class="font-weight-bold">{cal.display_name}</th>
@@ -217,8 +217,8 @@ export default (props) => {
                                                                         {currentUi.map((ui, index) => (
                                                                             <tr key={index}>
                                                                                 <td>{index + 1}</td>
-                                                                                {fields?.map((field, fieldIndex) => (
-                                                                                    <td key={fieldIndex}>{ui[field.display_name]}</td>
+                                                                                {data[0]?.fields.map((field, fieldIndex) => (
+                                                                                    <td key={fieldIndex}>{ui[field.field_name]}</td>
                                                                                 ))}
                                                                                 {uis_temp_cal.map((calc, calcIndex) => (
                                                                                     <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>
@@ -330,8 +330,8 @@ export default (props) => {
                                                     <thead>
                                                         <tr>
                                                             <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.no"]}</th>
-                                                            {fields?.slice(0, 1).map((ui, index) => (
-                                                                <th class="font-weight-bold">{ui.display_name}</th>
+                                                            {data[0]?.fields.slice(0, 1).map((ui, index) => (
+                                                                <th class="font-weight-bold">{ui.field_name}</th>
                                                             ))}
                                                             {/* {calculate.map((cal, index) => (
                                                                 <th class="font-weight-bold">{cal.display_name}</th>
@@ -343,7 +343,7 @@ export default (props) => {
                                                         {currentUi.map((ui, index) => (
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
-                                                                {fields?.slice(0, 1).map((field, fieldIndex) => (
+                                                                {data[0]?.fields.slice(0, 1).map((field, fieldIndex) => (
                                                                     <td key={fieldIndex}>
                                                                         <div style={{
                                                                             display: 'inline-block',
@@ -353,7 +353,7 @@ export default (props) => {
                                                                             backgroundColor: COLORS[index],
                                                                             marginRight: '10px'
                                                                         }}></div>
-                                                                        {ui[field.display_name]}</td>
+                                                                        {ui[field.field_name]}</td>
                                                                 ))}
                                                                 {/* {uis_temp_cal.map((calc, calcIndex) => (
                                                                     <td key={calcIndex}>{calc[calculate[calcIndex].display_name]}</td>

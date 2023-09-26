@@ -6,6 +6,11 @@
     /* padding-left: 7px !important; */
     padding-right: 7px !important;
     vertical-align: middle;
+    min-height: 37px;
+}
+.fix-layout {
+   
+    height: 38px;
 }
 
 
@@ -229,6 +234,14 @@
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
+
+
+
+
+
+
+
+
 .fix-layout-header-table thead th {
     vertical-align: middle !important;
     border-bottom: 0.5px solid #dee2e6;
@@ -1766,7 +1779,7 @@ input[type="date"]:valid+.date-label {
     padding: 5px 15px;
     float: left;
     width: 100%;
-    min-height: 400px;
+    min-height: 350px;
 
     max-height: 680px;
     margin-bottom: 1rem;
@@ -1903,13 +1916,13 @@ input[type="date"]:valid+.date-label {
     cursor: pointer;
 }
 
-/* .icon-add {
+.icon-add {
     color: #007bff;
     font-size: 24px;
     width: 24px;
     height: 27px;
-} */
-.icon-add {
+}
+.icon-add-task {
     color: #007bff;
   
 }

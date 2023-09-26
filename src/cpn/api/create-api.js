@@ -859,7 +859,7 @@ export default () => {
         setFomular("");
         setErrorCaculates({})
     };
-    // console.log(selectedFieldsModal2)
+    console.log(modalTemp)
 
     return (
         <div class="midde_cont">

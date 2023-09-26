@@ -14,7 +14,6 @@ import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
 import $ from 'jquery'
 import { formatDate } from "../../redux/configs/format-date";
-import { fi } from "date-fns/locale";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -80,7 +79,7 @@ export default () => {
         if (modalTemp.layout_id != 2) {
             temp.tables = tables && tables.length > 0 ? "" : lang["error.input"];
         }
-        temp.fields = modalTemp.fields ? "" : lang["error.input"];
+
         setErrorUi({
             ...temp
         });
@@ -114,31 +113,48 @@ export default () => {
             modalTemp.statistic_fields.map(field => {
                 field.group_by = field.group_by.map(group => group.fomular_alias)
             })
+            let requestBody= {}
+            const dataBody = modalTemp.api_id === "2" ?
+                requestBody = {
+                    version_id: parseInt(version_id),
+                    ui: {
+                        title: modalTemp.title,
+                        status: modalTemp.status,
+                    },
+                    widget: {
 
-            const requestBody = {
-                version_id: parseInt(version_id),
-                ui: {
-                    title: modalTemp.title,
-                    status: modalTemp.status,
-                },
-                widget: {
-                    fields: modalTemp.fields.map(field => field.id),
-                    tables: modalTemp.tables,
-                    layout_id: modalTemp.layout_id,
-                    statistic: modalTemp.statistic_fields,
-                    calculates: modalTemp.calculates
-                },
-            }
+                        layout_id: modalTemp.layout_id,
+                        api_id: modalTemp.api_id,
 
-            console.log(requestBody)
-            const apiUrl = `${proxy}/uis/api/and/ui`;
+                    },
+                }
+                :
+                requestBody = {
+                    version_id: parseInt(version_id),
+                    ui: {
+                        title: modalTemp.title,
+                        status: modalTemp.status,
+                    },
+                    widget: {
+                        table_id: modalTemp.tables,
+                        layout_id: modalTemp.layout_id,
+                        api_id: modalTemp.api_id,
+                        statistic: modalTemp.statistic_fields,
+                        calculates: modalTemp.calculates
+                    },
+                }
+
+
+
+            // console.log(dataBody)
+            const apiUrl = modalTemp.layout_id === 2 ? `${proxy}/uis/apiview` : `${proxy}/uis/ui`;
             fetch(apiUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${_token}`,
                 },
-                body: JSON.stringify(requestBody),
+                body: JSON.stringify(dataBody),
             })
                 .then((res) => res.json())
                 .then((resp) => {
@@ -187,7 +203,7 @@ export default () => {
         if (validateTable()) {
             setModalTemp(prevModalTemp => ({
                 ...prevModalTemp,
-                tables: selectedTables.map(table => table.id),
+                tables: selectedTables,
             }));
 
             if (selectedTables) {
@@ -217,7 +233,7 @@ export default () => {
     // console.log(getAllField)
 
     const [allTable, setAllTable] = useState([]);
-    const [possibleTables, setPossibleTables] = useState([]);
+
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
@@ -230,7 +246,6 @@ export default () => {
                 if (success) {
                     if (data) {
                         setAllTable(data.tables);
-                        setPossibleTables(data.tables);
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -238,43 +253,7 @@ export default () => {
             })
     }, [])
 
-    const [selectedTables, setSelectedTables] = useState([]);
-
-
-console.log(selectedTables)
-    const handleChange = (e) => {
-        const selectedTableName = e.target.value;
-        const selectedTableData = allTable.find(
-            (table) => table.table_name === selectedTableName
-        );
-
-        setSelectedTables((prevSelectedTables) => [
-            ...prevSelectedTables,
-            selectedTableData,
-        ]);
-
-        const updatedSelectedTables = [...selectedTables, selectedTableData];
-        const linkedTables = allTable.filter(
-            (table) =>
-                !updatedSelectedTables.some((selectedTable) => selectedTable.id === table.id) &&
-                updatedSelectedTables.some(
-                    (selectedTable) =>
-                        selectedTable.foreign_keys.some((fk) => fk.table_id === table.id || fk.ref_table_id === table.id)
-                )
-        );
-        setPossibleTables(linkedTables);
-    };
-
-
-    //xóa bảng đã chọn 
-    const handleDeleteAll = () => {
-        setSelectedTables([]);
-        setPossibleTables(allTable)
-        setModalTemp(prevState => ({
-            ...prevState,
-            params: []
-        }));
-    }
+    const [selectedTables, setSelectedTables] = useState(null);
     //  hiển thị các tường của bảng được chọn
     const [tables, setTables] = useState([]);
     // console.log("table", tables)
@@ -285,22 +264,21 @@ console.log(selectedTables)
                     Authorization: _token
                 }
             }).then(res => res.json());
+        };
+
+        if (modalTemp.tables) {
+            fetchTable(modalTemp.tables)
+                .then(response => {
+                    const tableName = response.success ? response.data : 'unknown';
+                    setTables([tableName]);
+                });
         }
 
-        Promise.all(modalTemp.tables.map(fetchTable))
-            .then(responses => {
-                const tableNames = responses.map(resp => resp.success ? resp.data : 'unknown');
-                setTables(tableNames);
-            });
-
     }, [modalTemp.tables]);
-console.log(modalTemp)
 
     const [tableFields, setTableFields] = useState([]);
-    // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
-            console.log(tableId)
             const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
                 headers: {
                     Authorization: _token
@@ -315,31 +293,6 @@ console.log(modalTemp)
                 return null; // Trả về null nếu có lỗi
             }
         }
-
-        const fetchAllFields = async () => {
-            const promises = modalTemp.tables.map(async tableId => {
-                const fields = await fetchFields(tableId);
-                return { tableId, fields };
-            });
-
-            const results = await Promise.all(promises);
-            // console.log(1111111111,results)
-
-            const fieldsByTable = {};
-            for (const { tableId, fields } of results) {
-                console.log(tableId)
-                fieldsByTable[tableId] = fields;
-            }
-
-            // const fieldsByTable = results.map(({ tableId, fields }) => ({ [tableId]: fields }));
-
-            // console.log(1232132132131231233123213,fieldsByTable);
-            setTableFields(fieldsByTable);
-        }
-
-
-        fetchAllFields();
-
     }, [modalTemp.tables]);
 
     //console.log(selectedFields)
@@ -739,25 +692,7 @@ console.log(modalTemp)
     useEffect(() => {
         console.log(modalTemp)
     }, [modalTemp])
-    function isPrimaryKey(tableId, fieldId) {
-        return tableFields[tableId]?.primary_key.includes(fieldId);
-    }
 
- // luu truong show 
- const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
- const handleSubmitShow = () => {
-    // Tạo một mảng mới bao gồm tất cả fieldId đã chọn từ tất cả bảng
-    const allSelectedFields2 = Object.values(selectedFieldsModal2).flat();
-
-    // Cập nhật modalTemp
-    setModalTemp(prevModalTemp => ({
-        ...prevModalTemp,
-        fields: allSelectedFields2,
-    }));
-    console.log(allSelectedFields2)
-
-    console.log(selectedFieldsModal2)
-};
 
 
     return (
@@ -806,8 +741,10 @@ console.log(modalTemp)
                                             <label class="font-weight-bold">Layout</label>
                                             {modalTemp.layout_id == 0 ?
                                                 <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
-                                                : <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
-                                                    
+                                                : modalTemp.layout_id == 1 ?
+                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                    :
+                                                    <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(2)} data-toggle="modal" data-target="#preview"></i>
                                             }
                                         </div>
                                         <select
@@ -817,7 +754,7 @@ console.log(modalTemp)
                                         >
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
-                                   
+                                            <option value={2}>Layout API</option>
                                         </select>
                                     </div>
                                     {Number(modalTemp.layout_id) === 2 && (
@@ -834,8 +771,12 @@ console.log(modalTemp)
                                         </div>
                                     )}
 
+
+
                                     {/* Chọn các bảng */}
                                     {Number(modalTemp.layout_id) !== 2 ? (
+
+
                                         <div class="col-md-12 col-lg-12 bordered mb-3">
                                             <div class="d-flex align-items-center mb-1">
                                                 <p class="font-weight-bold">{lang["selected table"]} <span className='red_star'> *</span> </p>
@@ -870,8 +811,8 @@ console.log(modalTemp)
                                                         </>
                                                     ) : (
                                                         <div class="list_cont ">
-                                                        <p>{lang["not found"]}</p>
-                                                    </div>
+                                                            <p>Chưa có dữ liệu bảng</p>
+                                                        </div>
                                                     )
                                                 }
                                             </div>
@@ -880,149 +821,98 @@ console.log(modalTemp)
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
-                                                {/* Fields */}
-                                                <div class="col-md-12 col-lg-12 bordered">
+                                                {/* Chọn trường tính toán */}
+                                               { Number(modalTemp.layout_id) !== 2 ? (
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
                                                     <div class="d-flex align-items-center mb-1">
-                                                        <p class="font-weight-bold">{lang["fields display"]} <span className='red_star'>*</span></p>
-                                                       <p className="text-danger ml-2">{errorUi.fields}</p>
-                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
+                                                        <p class="font-weight-bold">{lang["calculated fields"]}</p>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </div>
                                                     <div class="table-responsive">
-                                                        {
-                                                            modalTemp.fields && modalTemp.fields.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                            <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                            <td class="font-weight-bold">{lang["table name"]}</td>
+                                                        {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                        <th class="font-weight-bold">{lang["alias"]}</th>
+                                                                        <th class="font-weight-bold">{lang["calculations"]}</th>
+                                                                        <th class="font-weight-bold align-center">{lang["log.action"]}</th>
 
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {modalTemp.calculates.map((calculate, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{calculate.display_name}</td>
+                                                                            <td>{calculate.fomular_alias}</td>
+                                                                            <td>{calculate.fomular}</td>
+                                                                            <td class="align-center " style={{ minWidth: "130px" }}>
+                                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
+                                                                            </td>
                                                                         </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {modalTemp.fields.map((field, index) => {
-                                                                            const { tableId, fieldInfo } = findTableAndFieldInfo(field.id);
-                                                                            if (!tableId || !fieldInfo) {
-                                                                                return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
-                                                                            }
-                                                                            const tableInfo = tableFields[tableId];
-                                                                            if (!tableInfo) {
-                                                                                return null; // Xử lý trường hợp không tìm thấy thông tin bảng
-                                                                            }
-                                                                            return (
-                                                                                <tr key={`${tableId}-${field.id}`}>
-                                                                                    <td>{index + 1}</td>
-                                                                                    <td>{fieldInfo.field_name}</td>
-                                                                                    <td>{fieldInfo.fomular_alias}</td>
-                                                                                    <td>{tableInfo.table_name}</td>
-                                                                                </tr>
-                                                                            );
-                                                                        })}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
-                                                                </div>
-                                                            )
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>{lang["not found"]}</p>
+                                                            </div>
+                                                        )
                                                         }
                                                     </div>
                                                 </div>
-                                                {/* Chọn trường tính toán */}
-                                                {Number(modalTemp.layout_id) !== 2 ? (
-                                                    <div class="col-md-12 col-lg-12 bordered mb-3">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["calculated fields"]}</p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldCalculates">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            {modalTemp.calculates && modalTemp.calculates.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                            <th class="font-weight-bold">{lang["alias"]}</th>
-                                                                            <th class="font-weight-bold">{lang["calculations"]}</th>
-                                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {modalTemp.calculates.map((calculate, index) => (
-                                                                            <tr key={index}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{calculate.display_name}</td>
-                                                                                <td>{calculate.fomular_alias}</td>
-                                                                                <td>{calculate.fomular}</td>
-                                                                                <td class="align-center " style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldCalculates(calculate)} data-toggle="modal" data-target="#editCalculates" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteCalculates(calculate)} title={lang["delete"]}></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
-                                                                </div>
-                                                            )
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                ) : null}
+                                               ) : null}
                                                 {/* Chọn trường thống kê */}
-                                                {Number(modalTemp.layout_id) !== 2 ? (
-                                                    <div class="col-md-12 col-lg-12 bordered mb-3">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["statistical fields"]}</p>
-                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            {modalTemp.statistic_fields && modalTemp.statistic_fields.length > 0 ? (
-                                                                <table class="table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="font-weight-bold">{lang["log.no"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fields name statis"]}</th>
-                                                                            <th class="font-weight-bold">{lang["group by"]}</th>
-                                                                            <th class="font-weight-bold">{lang["fomular"]}</th>
-                                                                            <th class="font-weight-bold align-center">{lang["log.action"]}</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {modalTemp.statistic_fields.map((statistic, index) => (
-                                                                            <tr key={index}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{statistic.display_name}</td>
-                                                                                <td>{statistic.field}</td>
-                                                                                <td>{statistic.group_by?.map(field => field.field_name).join(", ")}</td>
-                                                                                <td>{statistic.fomular}</td>
-                                                                                <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
-                                                                                    <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            ) : (
-                                                                <div class="list_cont ">
-                                                                    <p>{lang["not found"]}</p>
-                                                                </div>
-                                                            )
-                                                            }
-                                                        </div>
+                                                { Number(modalTemp.layout_id) !== 2 ? (
+                                                <div class="col-md-12 col-lg-12 bordered mb-3">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <p class="font-weight-bold">{lang["statistical fields"]}</p>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldStatistical">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
                                                     </div>
+                                                    <div class="table-responsive">
+                                                        {modalTemp.statistic_fields && modalTemp.statistic_fields.length > 0 ? (
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="font-weight-bold">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold">{lang["fields name"]}</th>
+                                                                        <th class="font-weight-bold">{lang["fields name statis"]}</th>
+                                                                        <th class="font-weight-bold">{lang["group by"]}</th>
+                                                                        <th class="font-weight-bold">{lang["fomular"]}</th>
+                                                                        <th class="font-weight-bold align-center">{lang["log.action"]}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {modalTemp.statistic_fields.map((statistic, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>{index + 1}</td>
+                                                                            <td>{statistic.display_name}</td>
+                                                                            <td>{statistic.field}</td>
+                                                                            <td>{statistic.group_by?.map(field => field.field_name).join(", ")}</td>
+                                                                            <td>{statistic.fomular}</td>
+                                                                            <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        ) : (
+                                                            <div class="list_cont ">
+                                                                <p>{lang["not found"]}</p>
+                                                            </div>
+                                                        )
+                                                        }
+                                                    </div>
+                                                </div>
                                                 ) : null}
                                             </>
                                         ) : (
@@ -1033,8 +923,10 @@ console.log(modalTemp)
                                         <div className="mt-2 d-flex justify-content-end ml-auto">
                                             {modalTemp.layout_id === 0 ?
                                                 <button type="button" onClick={() => handleClickLayout(0)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                :  <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                    
+                                                : modalTemp.layout_id === 1 ?
+                                                    <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                    :
+                                                    <button type="button" onClick={() => handleClickLayout(2)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
                                             }
 
                                             <button type="button" onClick={addUI} className="btn btn-success mr-2">{lang["btn.create"]}</button>
@@ -1047,7 +939,6 @@ console.log(modalTemp)
                         </div>
                     </div>
                 </div>
-
                 {/*add table */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addTables">
                     <div class="modal-dialog modal-dialog-center">
@@ -1056,35 +947,21 @@ console.log(modalTemp)
                                 <h4 class="modal-title">{lang["select table"]}</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
-
                             <div class="modal-body">
                                 <form>
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["table name"]} <span className='red_star'>*</span></label>
-                                        <select className="form-control" onChange={handleChange}>
+                                        <select className="form-control"
+                                            value={selectedTables}
+                                            onChange={(e) => setSelectedTables(parseInt(e.target.value, 10))}>
                                             <option value="">{lang["choose"]}</option>
-                                            {possibleTables.map(table => (
-                                                <option key={table.id} value={table.table_name}>
+                                            {allTable.map(table => (
+                                                <option key={table.id} value={table.id}>
                                                     {table.table_name}
                                                 </option>
                                             ))}
                                         </select>
-
-                                        {selectedTables.length > 0 && (
-                                            <div className={`form-group col-lg-12 mt-2`}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <label >{lang["selected table"]}: <span className='red_star'>*</span></label>
-                                                    <button class="btn btn-danger mb-2" onClick={handleDeleteAll}>{lang["deleteall"]}</button>
-                                                </div>
-                                                <div className="outerBox">
-                                                    {selectedTables.map(table => (
-                                                        <div key={table.id} className="innerBox">
-                                                            {table.table_name}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+                                        {errorTable.selectedTables && <p className="text-danger">{errorTable.selectedTables}</p>}
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>{lang["creator"]}</label>
@@ -1098,116 +975,6 @@ console.log(modalTemp)
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-success" data-dismiss="modal" onClick={handleSubmitTables}> {lang["btn.create"]}</button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/*add fields */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldShow">
-                    <div class="modal-dialog modal-dialog-center">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">{lang["add fields show"]}</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div className="container-field">
-                                        {modalTemp.tables?.map((tableId, index) => (
-                                            <div key={index} className={`form-group table-wrapper`}>
-                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
-                                                <div className="field-wrapper">
-                                                    {tableFields[tableId] && tableFields[tableId].fields.map((field, fieldIndex) => {
-                                                        // Check if the field is a foreign key
-                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
-                                                        let correspondingPrimaryKeyExists = false;
-
-                                                        // Check if the corresponding primary key exists in any of the tables
-                                                        if (isForeignKey) {
-                                                            modalTemp.tables?.forEach(tid => {
-                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
-                                                            });
-                                                        }
-
-                                                        return (
-                                                            <div key={fieldIndex}>
-                                                                <label>
-                                                                    <input
-                                                                        className="mr-1"
-                                                                        type="checkbox"
-                                                                        value={field.id}
-                                                                        checked={selectedFieldsModal2[tableId]?.some(obj => obj.id === field.id) ?? false}
-                                                                        onChange={(e) => {
-                                                                            const checked = e.target.checked;
-
-                                                                            // Kiểm tra nếu trường hiện tại là khóa ngoại và đã được chọn,
-                                                                            // và khóa chính tương ứng của nó cũng đã được chọn trước đó.
-                                                                            if (isForeignKey && checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsModal2[isForeignKey.table_id]?.some(f => f.id === isForeignKey.ref_field_id)) {
-                                                                                Swal.fire({
-                                                                                    title: lang["log.error"],
-                                                                                    text: lang["error.fk"],
-                                                                                    icon: "error",
-                                                                                    showConfirmButton: true,
-                                                                                    customClass: {
-                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
-                                                                                    }
-                                                                                });
-                                                                                e.preventDefault();
-                                                                            } else {
-                                                                                setSelectedFieldsModal2(prevState => {
-                                                                                    let newFields = { ...prevState };
-
-                                                                                    if (checked) {
-                                                                                        if (!newFields[tableId]) newFields[tableId] = [];
-                                                                                        newFields[tableId].push({
-                                                                                            id: field.id,
-                                                                                            display_name: field.field_name,
-                                                                                            fomular_alias: field.fomular_alias
-                                                                                        });
-
-                                                                                        // Bỏ chọn khóa ngoại nếu khóa chính tương ứng được chọn
-                                                                                        if (isPrimaryKey(tableId, field.id)) {
-                                                                                            for (let tid in tableFields) {
-                                                                                                for (const fk of tableFields[tid]?.foreign_keys || []) {
-                                                                                                    if (fk.ref_field_id === field.id && newFields[tid]) {
-                                                                                                        newFields[tid] = newFields[tid].filter(f => f.id !== fk.field_id);
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    } else {
-                                                                                        newFields[tableId] = newFields[tableId].filter(f => f.id !== field.id);
-                                                                                    }
-
-                                                                                    return newFields;
-                                                                                });
-                                                                            }
-
-                                                                        }}
-                                                                    />
-                                                                    {field.field_name}
-                                                                </label>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        ))}
-
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>{lang["creator"]} </label>
-                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>{lang["time"]} </label>
-                                        <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" onClick={handleSubmitShow} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
                                 <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
@@ -1712,9 +1479,9 @@ console.log(modalTemp)
                                 <form>
                                     <div class="midde_cont">
                                         <>
-                                            {layout === 0 && <Layout1 title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 1 && <Layout2 title={modalTemp.title} data={tables}  fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 0 && <Layout1 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 1 && <Layout2 title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>
                                 </form>

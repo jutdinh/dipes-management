@@ -900,7 +900,7 @@ const Stage = (props) => {
                 {actionShow === 1 ? (
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
-                        <i className={`fa fa-plus-square size-32 pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                        <i className={`fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
 
                         <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
                         <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
@@ -911,7 +911,7 @@ const Stage = (props) => {
                     <>
 
 
-                        <i class="fa fa-plus-square size-32 pointer icon-margin icon-add ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
+                        <i class="fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
 
                         <i class="fa fa-edit size-32 pointer icon-margin icon-edit" data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                         <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTask()} title={lang["delete"]}></i>
@@ -930,7 +930,7 @@ const Stage = (props) => {
                     (
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
-                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add-task ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
 
                             <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
                             <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
@@ -944,27 +944,27 @@ const Stage = (props) => {
                 {
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
-                   {/* <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
+                        {/* <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
                         <i class="fa fa-plus" title={lang["addstage"]}></i>
                     </button> */}
-                    <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" alt="#" data-toggle="modal" data-target="#addStage"/>
+                        <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" alt="#" data-toggle="modal" data-target="#addStage" />
                     </>
-                    
+
 
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto' }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto' , marginTop: "5px"}} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
                     ref={scrollRef1}
                     onScroll={handleScroll(scrollRef1, scrollRef2)}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: "95%", overflowX: 'auto' }}>
+                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: dataGantt.length === 1 ? "65%" : "85%", overflowX: 'auto' }}>
 
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
-                            <tr style={{ height: "60px" }}>
+                            <tr style={{ height: "59px" }}>
 
                                 {/* <th style={{ width: `${columnWidths.col1}px`, position: 'relative' }}> */}
                                 <th style={{ minWidth: `45px`, maxWidth: `45px`, minHeight: "37px", maxHeight: "37px", position: 'relative' }}>
@@ -1073,6 +1073,7 @@ const Stage = (props) => {
                                 <React.Fragment key={index}>
                                     <tr
                                         key={index}
+                                        
                                         className={`font-weight-bold fix-layout ${selectedRowIndex === index ? 'selected-row' : ''}`}
                                         onClick={() => {
                                             setSelectedUsernames([])
@@ -1162,7 +1163,11 @@ const Stage = (props) => {
                                                     <td>{functions.formatDateTask(subtask.start)}</td>
                                                     <td>{functions.formatDateTask(subtask.end)}</td>
                                                     <td>{functions.formatDateTask(subtask.timeline)}</td>
-
+                                                    <td>{subtask.members && subtask.members.length > 0 ?
+                                                        subtask.members.map(member => member.fullname).join(', ') :
+                                                        <>{lang["projectempty"]}</>
+                                                    }</td>
+                                                    {/* 
                                                     <td>
                                                         {
                                                             subtask.members && subtask.members.length > 0 ?
@@ -1171,7 +1176,7 @@ const Stage = (props) => {
                                                                 )) :
                                                                 <>{lang["projectempty"]} </>
                                                         }
-                                                    </td>
+                                                    </td> */}
                                                     <td class="align-center" style={{
                                                         // position: 'sticky',
 
@@ -1218,13 +1223,13 @@ const Stage = (props) => {
 
                                                             }}
                                                         >
-                                                            <td class="fix-layout" style={{ height: "38.3px" }}></td>
+                                                            <td class="fix-layout" ></td>
                                                             {/* <td >{subsubtask.child_task_id}</td> */}
                                                             <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
                                                             <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
                                                             <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
                                                             {/* <td>{subsubtask.progress}</td> */}
-                                                            <td>
+                                                            <td style={{height: "38px", overflowY: "hidden"}}>
                                                                 {
                                                                     (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subsubtask.approve ?
                                                                         <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
@@ -1241,6 +1246,7 @@ const Stage = (props) => {
                                                                                         handleProgressChange(normalizedValue, subsubtask, subtask.task_id, task.period_id, uniqueId);
                                                                                     }
                                                                                 }}
+                                                                                style={{padding: "2px 4px"}}
                                                                                 onKeyDown={(e) => {
                                                                                     if (e.key === 'enter') {
                                                                                         e.preventDefault();
@@ -1309,17 +1315,26 @@ const Stage = (props) => {
                         </tbody>
                     </table>
                 </div>
-                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: "95%" }} onMouseDown={handleMouseDown}
+                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: dataGantt.length === 1 ? "65%" : "85%" }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
                     className="active"
                     ref={scrollRef2}
                     onScroll={handleScroll(scrollRef2, scrollRef1)}
-
-                    style={{ flex: '1', border: '1px solid gray', background: '#f6f6f6', marginBottom: "10px", maxWidth: '100%', height: "95%", overflowY: 'hidden', overflowX: 'auto' }}
+                    style={{
+                        flex: '1',
+                        border: '1px solid gray',
+                        background: '#f6f6f6',
+                        marginBottom: "10px",
+                        maxWidth: '100%',
+                        height: dataGantt.length === 1 ? "65%" : "85%",
+                        overflowY: 'hidden',
+                        overflowX: 'auto'
+                    }}
                 >
                     {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
                 </div>
+
                 {/* Add Task */}
                 <div class={`modal show`} id="addTask">
                     <div class="modal-dialog modal-dialog-center">

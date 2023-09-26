@@ -6,11 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import Layout2 from './view_layout2'
-import Layout1 from './view_layout1'
 import responseMessages from "../enum/response-code";
 import { formatDate } from "../../redux/configs/format-date";
-import { fi } from "date-fns/locale";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -47,7 +44,7 @@ export default () => {
     // };
 
     const [uis, setUis] = useState([]);
-    console.log(uis)
+
     useEffect(() => {
         fetch(`${proxy}/uis/v/${version_id}`, {
             headers: {
@@ -94,7 +91,7 @@ export default () => {
                 functions.showApiResponseMessage(status);
             });
     }
-    const handleDeleteUi = (uiid) => {
+    const handleDeleteApi = (uiid) => {
         // console.log(uiid)
         const requestBody = {
             version_id: version_id,
@@ -126,26 +123,19 @@ export default () => {
                     .then((resp) => {
                         const { success, content, data, status } = resp;
 
-                        functions.showApiResponseMessage(status);
+                        // functions.showApiResponseMessage(status);
                     });
             }
         });
     }
     const [detailUi, setDetailUi] = useState({});
-    const [layout, setLayout] = useState({});
-    const [fields, setFields] = useState({});
     const handlDetailUi = async (ui) => {
         setDetailUi(ui)
-        const firstComponentLayoutId = ui.components[Object.keys(ui.components)[0]].layout_id;
-        const fields = ui.components[Object.keys(ui.components)[0]].fields;
-        setLayout(firstComponentLayoutId)
-        setFields(fields)
-
     };
-console.log(fields)
+
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
-    const rowsPerPageUi = 12;
+    const rowsPerPageUi = 11;
 
     const indexOfLastUi = currentPageUi * rowsPerPageUi;
     const indexOfFirstUi = indexOfLastUi - rowsPerPageUi;
@@ -163,8 +153,6 @@ console.log(fields)
         window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };
-
-
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -178,7 +166,7 @@ console.log(fields)
                 {/* List table */}
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="white_shd full">
+                        <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
 
@@ -218,7 +206,7 @@ console.log(fields)
                                                                     <th class="font-weight-bold">{lang["creator"]}</th>
                                                                     <th class="font-weight-bold">{lang["time"]}</th>
                                                                     <th class="font-weight-bold">{lang["projectstatus"]}</th>
-                                                                    {/* <th class="font-weight-bold">{lang["note"]}</th> */}
+                                                                    <th class="font-weight-bold">{lang["note"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
                                                                 </tr>
                                                             </thead>
@@ -238,11 +226,11 @@ console.log(fields)
                                                                                 <option value={false} selected={!ui.status} style={{ color: 'red' }}>Off</option>
                                                                             </select>
                                                                         </td>
-                                                                        {/* <td>{ui.type === `ui` ? lang["api auto"] : lang["api custom"]}</td> */}
+                                                                        <td>{ui.type === `ui` ? lang["api auto"] : lang["api custom"]}</td>
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                             <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
                                                                             {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
-                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteUi(ui)} title={lang["delete"]}></i>
+                                                                            <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteApi(ui)} title={lang["delete"]}></i>
                                                                         </td>
                                                                     </tr>
                                                                 ))}
@@ -347,14 +335,6 @@ console.log(fields)
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["time"]}</b></label>
                                             <span className="d-block"> {formatDate(detailUi?.create_at)} </span>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            {layout === 0 && <Layout1 />}
-                                            {layout === 1 && <Layout2 />}
-
-                                            {/* {layout === 0 && <Layout1 fields={fields}/>}
-                                            {layout === 1 && <Layout2 fields={fields} />} */}
-
                                         </div>
 
                                     </div>
