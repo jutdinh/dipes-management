@@ -34,7 +34,7 @@ export default () => {
     const [layout, setLayout] = useState(0); // Default is Layout 1
 
     const handleClickLayout = (layoutNumber) => {
-        console.log(layoutNumber)
+        // console.log(layoutNumber)
         setLayout(layoutNumber);
     }
     // console.log(layout)
@@ -130,7 +130,7 @@ export default () => {
                 },
             }
 
-            console.log(requestBody)
+            // console.log(requestBody)
             const apiUrl = `${proxy}/uis/api/and/ui`;
             fetch(apiUrl, {
                 method: "POST",
@@ -241,7 +241,7 @@ export default () => {
     const [selectedTables, setSelectedTables] = useState([]);
 
 
-    console.log(selectedTables)
+
     const handleChange = (e) => {
         const selectedTableName = e.target.value;
         const selectedTableData = allTable.find(
@@ -294,13 +294,13 @@ export default () => {
             });
 
     }, [modalTemp.tables]);
-    console.log(modalTemp)
+    // console.log(modalTemp)
 
     const [tableFields, setTableFields] = useState([]);
     // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
-            console.log(tableId)
+            // console.log(tableId)
             const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
                 headers: {
                     Authorization: _token
@@ -327,7 +327,7 @@ export default () => {
 
             const fieldsByTable = {};
             for (const { tableId, fields } of results) {
-                console.log(tableId)
+                // console.log(tableId)
                 fieldsByTable[tableId] = fields;
             }
 
@@ -738,9 +738,7 @@ export default () => {
     // console.log(modalTemp.layout_id)
     // console.log(apis)
 
-    useEffect(() => {
-        console.log(modalTemp)
-    }, [modalTemp])
+
     function isPrimaryKey(tableId, fieldId) {
         return tableFields[tableId]?.primary_key.includes(fieldId);
     }
@@ -756,9 +754,7 @@ export default () => {
             ...prevModalTemp,
             fields: allSelectedFields2,
         }));
-        console.log(allSelectedFields2)
-
-        console.log(selectedFieldsModal2)
+       
     };
 
 

@@ -199,7 +199,7 @@ export default (props) => {
                                                 <div class="col-md-12 col-lg-12">
                                                     <div class="table-responsive">
                                                         {
-                                                            data && data.length > 0 ? (
+                                                            fields && fields.length > 0 ? (
                                                                 <table class="table table-hover">
                                                                     <thead>
                                                                         <tr>
@@ -325,7 +325,7 @@ export default (props) => {
                                 <div class="col-md-6 col-lg-6">
                                     <div class="table-responsive">
                                         {
-                                            data && data.length > 0 ? (
+                                              fields && fields.length > 0 ? (
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>

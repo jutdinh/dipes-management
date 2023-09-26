@@ -17,13 +17,13 @@ export default (props) => {
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-console.log(props)
+// console.log(props)
     let uis_temp;
 
 
     if (fields) {
         let fields_temp = fields?.slice(0, 5); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
-
+        // let fields_temp = fields.length > 5 ? fields?.slice(0, 5) ;
         uis_temp = fields_temp.map((field, index) => {
             const tempObject = {
                 id: index + 1,
@@ -249,15 +249,6 @@ console.log(props)
                                                                             </td>
                                                                         </tr>
                                                                     ))}
-
-                                                                    {/* {statistic && statistic.map((stat, index) => (
-                                                            <tr key={index}>
-                                                                <td class="font-weight-bold" colspan={`${data[0]?.fields.length + calculate.length + 2}`} style={{ textAlign: 'right' }}>
-                                                                    {stat.display_name}: Dữ liệu
-                                                                </td>
-                                                            </tr>
-                                                        ))} */}
-
                                                                 </tbody>
                                                             </table>
                                                         ) : (
@@ -322,7 +313,7 @@ console.log(props)
                                                 <div class="col-md-6 col-lg-6">
                                                     <div class="table-responsive">
                                                         {
-                                                            data && data.length > 0 ? (
+                                                              fields && fields.length > 0 ? (
                                                                 <table class="table table-hover">
                                                                     <thead>
                                                                         <tr class="color-tr">

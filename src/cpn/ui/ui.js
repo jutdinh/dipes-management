@@ -47,7 +47,7 @@ export default () => {
     // };
 
     const [uis, setUis] = useState([]);
-    console.log(uis)
+    // console.log(uis)
     useEffect(() => {
         fetch(`${proxy}/uis/v/${version_id}`, {
             headers: {
@@ -133,16 +133,31 @@ export default () => {
     }
     const [detailUi, setDetailUi] = useState({});
     const [layout, setLayout] = useState({});
-    const [fields, setFields] = useState({});
+    const [fieldShow, setFieldShow] = useState({});
+    const [fieldCalculates, setFieldCalculates] = useState({});
     const handlDetailUi = async (ui) => {
         setDetailUi(ui)
         const firstComponentLayoutId = ui.components[Object.keys(ui.components)[0]].layout_id;
         const fields = ui.components[Object.keys(ui.components)[0]].fields;
+        const fieldCalculates = [];
+        const fieldShow = [];
+
+        fields.forEach(item => {
+            if (item.hasOwnProperty('fomular')) {
+                fieldCalculates.push(item);
+            } else {
+                fieldShow.push(item);
+            }
+        });
+
+       
+
         setLayout(firstComponentLayoutId)
-        setFields(fields)
+        setFieldShow(fieldShow)
+        setFieldCalculates(fieldCalculates)
 
     };
-console.log(fields)
+   
 
     const [currentPageUi, setCurrentPageUi] = useState(1);
     const rowsPerPageUi = 12;
@@ -158,12 +173,7 @@ console.log(fields)
         window.location.href = `/projects/${version_id}/uis/create`;
         // window.location.href = `tables`;
     };
-    const updateApi = (apiData) => {
-        // console.log(apiData)
-        window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
-        // window.location.href = `tables`;
-    };
-
+ 
 
     return (
         <div class="midde_cont">
@@ -336,10 +346,10 @@ console.log(fields)
                                             <label><b>{lang["projectstatus"]}</b></label>
                                             <span className="d-block"> {detailUi?.status ? "On" : "Off"} </span>
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        {/* <div class="form-group col-lg-6">
                                             <label><b>{lang["log.type"]}</b></label>
                                             <span className="d-block"> {detailUi.type === "ui" ? lang["api auto"] : lang["api custom"]} </span>
-                                        </div>
+                                        </div> */}
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["creator"]}</b></label>
                                             <span className="d-block"> {detailUi?.create_by?.fullname} </span>
@@ -349,8 +359,9 @@ console.log(fields)
                                             <span className="d-block"> {formatDate(detailUi?.create_at)} </span>
                                         </div>
                                         <div class="form-group col-md-12">
-                                            {layout === 0 && <Layout1 />}
-                                            {layout === 1 && <Layout2 />}
+                                        <label><b>{lang["preview"]}</b></label>
+                                            {layout === 0 && <Layout1 fields={fieldShow} calculate= {fieldCalculates}/>}
+                                            {layout === 1 && <Layout2 fields={fieldShow}  calculate= {fieldCalculates}/>}
 
                                             {/* {layout === 0 && <Layout1 fields={fields}/>}
                                             {layout === 1 && <Layout2 fields={fields} />} */}
