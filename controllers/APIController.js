@@ -65,7 +65,15 @@ class APIController extends Controller {
             const apis  = Object.values(version.apis);
             const tables = Object.values(version.tables)
 
+            const viewMode = req.header("view-mode")
+            let allFields = {}
+
+            tables.map( tb => {
+                allFields = { ...allFields, ...tb.fields }
+            })
+
             apis.map( api => {
+                
                 api.fields = Object.values( api.fields )
                 api.fields.map( field => { 
                     const field_id  = field.id
@@ -80,6 +88,11 @@ class APIController extends Controller {
                     }
 
                 })
+
+                api.body_detail = api.body?.map( field_id => {
+                    return allFields[`${ field_id }`]    
+                })
+
                 api.statistic = Object.values( api.statistic )
                 api.calculates = Object.values( api.calculates )
                 api.proxy_server =  project.proxy_server;
@@ -87,8 +100,11 @@ class APIController extends Controller {
                 api.cai_gi_cung_dc_het_tron_a = api.proxy_server + api.url + '/' + this.stringifyParams( tables, api.params )
             })            
 
-            context.data = { apis: apis.filter( api => api.api_scope == "public" ) }
-            // context.data = { apis: apis }
+            if( viewMode == "public-only" ){                
+                context.data = { apis: apis.filter( api => api.api_scope == "public" ) }
+            }else{
+                context.data = { apis: apis }
+            }
         }
         
         delete context.objects;

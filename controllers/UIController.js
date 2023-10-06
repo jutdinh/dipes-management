@@ -467,11 +467,14 @@ class UIController extends Controller {
                                     }
 
                                     // console.log(GET.statistic)
+                                    const DETAIL = { ...PUT }
+                                    DETAIL.fields = allFields
 
                                     const rawApis = [ 
                                         { type: "api", api: GET }, 
                                         { type: "ui", api: POST}, 
                                         { type: "ui", api: PUT}, 
+                                        { type: "ui", api: DETAIL}, 
                                         { type: "ui", api: DELETE}, 
                                         { type: "search", api: SEARCH}, 
                                         { type: "export", api: EXPORT},
