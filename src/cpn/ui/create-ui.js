@@ -130,7 +130,7 @@ export default () => {
                 },
             }
 
-            // console.log(requestBody)
+            console.log(requestBody)
             const apiUrl = `${proxy}/uis/api/and/ui`;
             fetch(apiUrl, {
                 method: "POST",
@@ -143,7 +143,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    functions.showApiResponseMessage(status);
+                    // functions.showApiResponseMessage(status);
                 })
 
 
@@ -190,26 +190,26 @@ export default () => {
                 tables: selectedTables.map(table => table.id),
             }));
 
-            if (selectedTables) {
-                fetch(`${proxy}/db/tables/v/${version_id}/table/${selectedTables}`, {
-                    headers: {
-                        Authorization: _token
-                    }
-                })
-                    .then(res => res.json())
-                    .then(resp => {
-                        const { success, data, status, content } = resp;
+            // if (selectedTables) {
+            //     fetch(`${proxy}/db/tables/v/${version_id}/table/${selectedTables}`, {
+            //         headers: {
+            //             Authorization: _token
+            //         }
+            //     })
+            //         .then(res => res.json())
+            //         .then(resp => {
+            //             const { success, data, status, content } = resp;
 
-                        if (success) {
-                            if (data) {
-                                setAllField(data)
-                                setFields(data.fields)
-                            }
-                        } else {
-                            // window.location = "/404-not-found"
-                        }
-                    })
-            }
+            //             if (success) {
+            //                 if (data) {
+            //                     setAllField(data)
+            //                     setFields(data.fields)
+            //                 }
+            //             } else {
+            //                 // window.location = "/404-not-found"
+            //             }
+            //         })
+            // }
         }
 
     };
@@ -1317,7 +1317,7 @@ export default () => {
 
 
                                     </div>
-                                    <div class="form-group col-lg-12">
+                                    {/* <div class="form-group col-lg-12">
                                         <label><p class="font-weight-bold">{lang["list group by"]}</p></label>
                                         <div class="table-responsive">
                                             {
@@ -1350,7 +1350,7 @@ export default () => {
                                                 )
                                             }
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
