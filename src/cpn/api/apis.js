@@ -217,12 +217,17 @@ export default () => {
     const rowsPerPageApi = 12;
     const [nameFilter, setNameFilter] = useState("");
     const [methodFilter, setMethodFilter] = useState("");
+    const [modeFilter, setModeFilter] = useState("Private");
 
     // Áp dụng bộ lọc trên toàn bộ danh sách `apis`
     const filteredApi = apis.filter(api =>
         api.api_name.toLowerCase().includes(nameFilter.toLowerCase()) &&
-        api.api_method.toLowerCase().includes(methodFilter.toLowerCase())
+        api.api_method.toLowerCase().includes(methodFilter.toLowerCase()) &&
+        api.api_scope.toLowerCase().includes(modeFilter.toLowerCase())
+
     );
+
+
 
     // Tính chỉ mục dựa trên danh sách đã lọc
     const indexOfLastApi = currentPageApi * rowsPerPageApi;
@@ -233,7 +238,8 @@ export default () => {
     const totalPagesApi = Math.ceil(filteredApi.length / rowsPerPageApi);
 
     const methods = ['GET', 'POST', 'PUT', 'DELETE'];
-// console.log(currentApiPage)
+    const mode = ["Private", "Public"]
+    // console.log(currentApiPage)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -267,8 +273,9 @@ export default () => {
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <div class="row">
-                                                <div class="col-md-12">
-                                                    <select class="form-control"
+                                                <div class="col-md-6">
+
+                                                    <select class="form-control ml-1"
                                                         value={methodFilter}
                                                         onChange={e => setMethodFilter(e.target.value)}
                                                     >
@@ -277,20 +284,25 @@ export default () => {
                                                             <option key={index} value={method}>{method}</option>
                                                         ))}
                                                     </select>
-                                                </div>
-                                                <div class="col-md-1">
 
+                                                </div>
+                                                <div class="col-md-6">
+
+                                                    <select class="form-control"
+                                                        value={modeFilter}
+                                                        onChange={e => setModeFilter(e.target.value)}
+                                                    >
+                                                        {mode.map((mode, index) => (
+                                                            <option key={index} value={mode}>{mode}</option>
+                                                        ))}
+                                                    </select>
                                                 </div>
                                             </div>
-
-                                            {/* <p class="font-weight-bold">Danh sách bảng </p> */}
-                                            {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addTable">
-                                                <i class="fa fa-plus"></i>
-                                            </button> */}
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => apisManager()}>
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
+
                                         {/* <input
                                             type="text"
                                             value={nameFilter}

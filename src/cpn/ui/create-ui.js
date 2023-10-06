@@ -145,7 +145,7 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    // functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 })
 
 
