@@ -44,7 +44,7 @@ export default () => {
         status: true,
         layout_id: 0,
         api_id: "",
-        parmas: [],
+        params: [],
         tables: [],
         statistic_fields: [],
         calculates: []
@@ -87,6 +87,7 @@ export default () => {
 
         return Object.values(temp).every(x => x === "");
     }
+    console.log(modalTemp)
     // console.log(errorUi)
     // const handleSubmitModal = () => {
     //     if (validateApiname()) {
@@ -120,6 +121,7 @@ export default () => {
                 ui: {
                     title: modalTemp.title,
                     status: modalTemp.status,
+                    params: modalTemp.params,
                 },
                 widget: {
                     fields: modalTemp.fields.map(field => field.id),
@@ -757,6 +759,49 @@ export default () => {
        
     };
 
+    const [selectedFields, setSelectedFields] = useState({});
+    function isPrimaryKey(tableId, fieldId) {
+        return tableFields[tableId]?.primary_key.includes(fieldId);
+    }
+
+    const handleCheckboxChange = (tableId, fieldId, isChecked) => {
+        const updatedSelections = { ...selectedFields };
+
+        if (!updatedSelections[tableId]) {
+            updatedSelections[tableId] = [];
+        }
+
+        if (isChecked) {
+            updatedSelections[tableId].push(fieldId);
+
+            // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
+            if (isPrimaryKey(tableId, fieldId)) {
+                for (let tid in tableFields) {
+                    for (const fk of tableFields[tid]?.foreign_keys || []) {
+                        if (fk.ref_field_id === fieldId && updatedSelections[tid]) {
+                            updatedSelections[tid] = updatedSelections[tid].filter(id => id !== fk.field_id);
+                        }
+                    }
+                }
+            }
+        } else {
+            if (updatedSelections[tableId]) {
+                updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
+            }
+        }
+
+        setSelectedFields(updatedSelections);
+    };
+    const handleSubmitParam = () => {
+        // Tạo một mảng mới bao gồm tất cả fieldId đã chọn từ tất cả bảng
+        const allSelectedFields = Object.values(selectedFields).flat();
+
+        // Cập nhật modalTemp
+        setModalTemp(prevModalTemp => ({
+            ...prevModalTemp,
+            params: allSelectedFields,
+        }));
+    };
 
     return (
         <div class="midde_cont">
@@ -878,6 +923,69 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
+                                            {/* Ds các trường param*/}
+                                            <div class="col-md-12 col-lg-12 bordered">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <p class="font-weight-bold">  {lang["param fields"]} </p>
+                                                        <p className="text-danger ml-2">{errorUi.fields}</p>
+                                                        <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                            {
+                                                                modalTemp && modalTemp.params.length > 0 ? (
+                                                                    <>
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {modalTemp.params.map((fieldId, index) => {
+                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
+
+                                                                                    if (!tableId || !fieldInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                    }
+
+                                                                                    const tableInfo = tableFields[tableId];
+
+                                                                                    if (!tableInfo) {
+                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                    }
+
+                                                                                    return (
+                                                                                        <tr key={`${tableId}-${fieldId}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{fieldInfo.field_name}</td>
+                                                                                            <td>{tableInfo.table_name}</td>
+                                                                                        </tr>
+                                                                                    );
+                                                                                })}
+
+                                                                                {/* {modalTemp.params.map((params, index) => (
+                                                                                    <tr key={index}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{statistic}</td>
+
+                                                                                    </tr>
+                                                                                ))} */}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>{lang["not found"]}</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                </div>
                                                 {/* Ds các trường hiển thị*/}
                                                 <div class="col-md-12 col-lg-12 bordered">
                                                     <div class="d-flex align-items-center mb-1">
@@ -1103,6 +1211,123 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/*add fieldParam */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldParam">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["add param"]}</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="container-field">
+                                        {/* {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className={`form-group table-wrapper`}>
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => (
+                                                    <div key={fieldIndex}>
+                                                        <label>
+                                                            <input className="mr-1 "
+                                                                type="checkbox"
+                                                                checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                onChange={e => handleCheckboxChange(tableId, field.id, e.target.checked)}
+                                                            />
+                                                            {field.field_name}
+                                                            {field.props.DATATYPE}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                                
+                                            </div>
+                                        ))} */}
+
+                                        {modalTemp.tables?.map((tableId, index) => (
+                                            <div key={index} className="form-group table-wrapper">
+                                                <label className="table-label">{tableFields[tableId]?.table_name}</label>
+                                                <div className="field-wrapper">
+                                                    {tableFields[tableId]?.fields && tableFields[tableId].fields.map((field, fieldIndex) => {
+                                                        // Check if the field is a foreign key
+                                                        let isForeignKey = tableFields[tableId]?.foreign_keys?.find(fk => fk.field_id === field.id);
+                                                        let correspondingPrimaryKeyExists = false;
+
+                                                        // Check if the corresponding primary key exists in any of the tables
+                                                        if (isForeignKey) {
+                                                            modalTemp.tables?.forEach(tid => {
+                                                                correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
+                                                            });
+                                                        }
+
+                                                        function isPrimaryKey(tableId, fieldId) {
+                                                            return tableFields[tableId]?.primary_key.includes(fieldId);
+                                                        }
+                                                        // Check if the field is of type 'date'
+                                                        let isDateField = field.props.DATATYPE === 'DATE' || field.props.DATATYPE === 'DATETIME' || field.props.DATATYPE === 'DECIMAL' || field.props.DATATYPE === 'DECIMAL UNSIGNED';
+
+                                                        return (
+                                                            <div key={fieldIndex}>
+                                                                <label>
+                                                                    <input
+                                                                        className="mr-1"
+                                                                        type="checkbox"
+                                                                        checked={selectedFields[tableId]?.includes(field.id) ?? false}
+                                                                        onChange={e => {
+                                                                            // If it's a date field, show error and prevent checking
+                                                                            if (isDateField && e.target.checked) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.date"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            }
+                                                                            else if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFields[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
+                                                                                Swal.fire({
+                                                                                    title: lang["log.error"],
+                                                                                    text: lang["error.fk"],
+                                                                                    icon: "error",
+                                                                                    showConfirmButton: true,
+                                                                                    customClass: {
+                                                                                        confirmButton: 'swal2-confirm my-confirm-button-class'
+                                                                                    }
+                                                                                });
+                                                                                e.preventDefault();
+                                                                            } else {
+                                                                                handleCheckboxChange(tableId, field.id, e.target.checked);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {field.field_name}
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["creator"]} </label>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["time"]} </label>
+                                        <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleSubmitParam} data-dismiss="modal" class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {/*add fields */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldShow">
                     <div class="modal-dialog modal-dialog-center">
@@ -1213,6 +1438,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
+
                 {/*add Field statistical */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldStatistical">
                     <div class="modal-dialog modal-dialog-center">
