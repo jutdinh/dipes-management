@@ -380,6 +380,8 @@ class UIController extends Controller {
                                         api_method: "get",
                                         api_scope: "private"
                                     }
+
+
                                     const POST  = {
                                         api_name:  "Hidden POST API for UI " + ui.title,
                                         status: true,
@@ -464,6 +466,8 @@ class UIController extends Controller {
                                         api_scope: "private"   
                                     }
 
+                                    // console.log(GET.statistic)
+
                                     const rawApis = [ 
                                         { type: "api", api: GET }, 
                                         { type: "ui", api: POST}, 
@@ -493,6 +497,8 @@ class UIController extends Controller {
             
                                     context.content = "Tạo UI thành công"
                                     context.status = "0x4501231"
+
+                                    context.data = { ui }
 
                                     this.saveLog("info", req.ip, "__createUI", `__projectname: ${ project.project_name } | __versionname ${version.version_name} | __uititle: ${ newUi.title } __uiurl:  ${ newUi.url }`, user.username)
                                 }else{

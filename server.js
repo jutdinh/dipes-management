@@ -8,6 +8,8 @@ const server = http.createServer(app);
 const cors = require("cors");
 const bodyparser = require('body-parser');
 
+
+
 require('dotenv').config();
 
 app.use(bodyparser.urlencoded({
@@ -19,21 +21,15 @@ app.use(bodyparser.json({ limit: "50mb" }));
 app.use( express.static('public') );
 app.use( cors() )
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//   },
-// });
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  },
+});
 
 
 
-// io.on("connection", (socket) => {  
-//     socket.on("new-connected", (payload) => {
-//         console.log(payload)
-//     })
-//     console.log("Connected")
-// })
+
 
 const { 
   Auth, 
@@ -46,10 +42,16 @@ const {
   Fields, 
   Api,
   UI,
-  Activation
+  Activation,
+  socketController
    } = require('./routes');
 
 // const ConsumeApi = require('./controllers/ConsumeApi');
+
+io.on("connection", (socket) => {  
+    socketController(socket)
+})
+
 
 app.use('/auth', Auth )
 app.use('/projects', Projects )

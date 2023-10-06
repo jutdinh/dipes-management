@@ -656,7 +656,7 @@ class ProjectsRecord extends Projects {
             url,
             type: "ui",
             status: true,
-            params: [],
+            params: ui.params ? ui.params : [],
             create_at: new Date(),
             create_by,
             components
