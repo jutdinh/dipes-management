@@ -647,7 +647,8 @@ class ProjectsRecord extends Projects {
             
             api_search: apis[4]?.url,
             api_export: apis[5]?.url,
-            api_import: apis[6]?.url
+            api_import: apis[6]?.url,
+            api_detail: apis[7]?.url,
         }
 
         return {
