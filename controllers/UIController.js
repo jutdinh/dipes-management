@@ -468,9 +468,10 @@ class UIController extends Controller {
 
                                     // console.log(GET.statistic)
                                     const DETAIL = { ...PUT }
-                                    DETAIL.fields = allFields
+                                    DETAIL.fields = GET.fields
                                     DETAIL.api_name = "Hidden GET DETAIL API for UI " + ui.title
                                     DETAIL.api_method = "get"
+                                    DETAIL.params = ui.params
 
                                     const rawApis = [ 
                                         { type: "api", api: GET }, 
