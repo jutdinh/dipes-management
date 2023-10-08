@@ -470,6 +470,7 @@ class UIController extends Controller {
                                     const DETAIL = { ...PUT }
                                     DETAIL.fields = allFields
                                     DETAIL.api_name = "Hidden GET DETAIL API for UI " + ui.title
+                                    DETAIL.api_method = "get"
 
                                     const rawApis = [ 
                                         { type: "api", api: GET }, 

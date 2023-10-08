@@ -186,6 +186,7 @@ class Projects extends Model {
         this.versions.uis.components.__addProperty__( "api_search", Model.types.string )
         this.versions.uis.components.__addProperty__( "api_export", Model.types.string )
         this.versions.uis.components.__addProperty__( "api_import", Model.types.string )
+        this.versions.uis.components.__addProperty__( "api_detail", Model.types.string )
 
         /* TASK & TASK MODIFIES */
 
