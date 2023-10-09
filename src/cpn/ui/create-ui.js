@@ -863,6 +863,7 @@ export default () => {
 
                                         </select>
                                     </div>
+
                                     {Number(modalTemp.layout_id) === 2 && (
                                         <div className="form-group col-lg-6">
                                             <label class="font-weight-bold" htmlFor="sel1">API <span className='red_star'>*</span></label>
@@ -876,7 +877,6 @@ export default () => {
                                             </select>
                                         </div>
                                     )}
-
                                     {/*Ds các bảng */}
                                     {Number(modalTemp.layout_id) !== 2 ? (
                                         <div class="col-md-12 col-lg-12 bordered">
@@ -927,7 +927,7 @@ export default () => {
                                             <div class="col-md-12 col-lg-12 bordered">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">  {lang["param fields"]} </p>
-                                                        <p className="text-danger ml-2">{errorUi.fields}</p>
+                                               
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
