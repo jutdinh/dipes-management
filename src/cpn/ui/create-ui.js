@@ -402,21 +402,28 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
 
-    const addOrRemoveGroupByField = (id) => {
-        const corespondingGroupByField = groupBy.find(f => f.id == id);
+    const combinedFields = [...(modalTemp.fields || []), ...(modalTemp.calculates || [])];
+
+    const addOrRemoveGroupByField = (fomular_alias) => {
+        const corespondingGroupByField = groupBy.find(f => f.fomular_alias == fomular_alias);
         let newGroupBy;
+
         if (corespondingGroupByField) {
-            newGroupBy = groupBy.filter(f => f.id != id);
+            newGroupBy = groupBy.filter(f => f.fomular_alias != fomular_alias);
         } else {
-            const field = modalTemp.fields?.find(f => f.id == id);
+            const field = combinedFields.find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
             }
         }
+
         setGroupBy(newGroupBy);
     }
-    const isFieldChecked = (id) => {
-        return groupBy.some(f => f.id == id);
+
+
+
+    const isFieldChecked = (fomular_alias) => {
+        return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
 
@@ -608,7 +615,7 @@ export default () => {
 
     };
     const clearGroupBy = () => {
-            setGroupBy([])
+        setGroupBy([])
     };
     const handleDeleteStatistical = (sta) => {
         // console.log(sta)
@@ -756,7 +763,7 @@ export default () => {
             ...prevModalTemp,
             fields: allSelectedFields2,
         }));
-       
+
     };
 
     const [selectedFields, setSelectedFields] = useState({});
@@ -802,6 +809,8 @@ export default () => {
             params: allSelectedFields,
         }));
     };
+    console.log(modalTemp.fields)
+    console.log(modalTemp.calculates)
 
     return (
         <div class="midde_cont">
@@ -923,68 +932,68 @@ export default () => {
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
-                                            {/* Ds các trường param*/}
-                                            <div class="col-md-12 col-lg-12 bordered">
+                                                {/* Ds các trường param*/}
+                                                <div class="col-md-12 col-lg-12 bordered">
                                                     <div class="d-flex align-items-center mb-1">
                                                         <p class="font-weight-bold">  {lang["param fields"]} </p>
-                                               
+
                                                         <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </div>
                                                     <div class="table-responsive">
-                                                            {
-                                                                modalTemp && modalTemp.params.length > 0 ? (
-                                                                    <>
-                                                                        <table class="table table-striped">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
-                                                                                    <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
+                                                        {
+                                                            modalTemp && modalTemp.params.length > 0 ? (
+                                                                <>
+                                                                    <table class="table table-striped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                                <th class="font-weight-bold" scope="col">{lang["table name"]}</th>
 
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                {modalTemp.params.map((fieldId, index) => {
-                                                                                    const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {modalTemp.params.map((fieldId, index) => {
+                                                                                const { tableId, fieldInfo } = findTableAndFieldInfo(fieldId);
 
-                                                                                    if (!tableId || !fieldInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
-                                                                                    }
+                                                                                if (!tableId || !fieldInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng hoặc trường
+                                                                                }
 
-                                                                                    const tableInfo = tableFields[tableId];
+                                                                                const tableInfo = tableFields[tableId];
 
-                                                                                    if (!tableInfo) {
-                                                                                        return null; // Xử lý trường hợp không tìm thấy thông tin bảng
-                                                                                    }
+                                                                                if (!tableInfo) {
+                                                                                    return null; // Xử lý trường hợp không tìm thấy thông tin bảng
+                                                                                }
 
-                                                                                    return (
-                                                                                        <tr key={`${tableId}-${fieldId}`}>
-                                                                                            <td>{index + 1}</td>
-                                                                                            <td>{fieldInfo.field_name}</td>
-                                                                                            <td>{tableInfo.table_name}</td>
-                                                                                        </tr>
-                                                                                    );
-                                                                                })}
+                                                                                return (
+                                                                                    <tr key={`${tableId}-${fieldId}`}>
+                                                                                        <td>{index + 1}</td>
+                                                                                        <td>{fieldInfo.field_name}</td>
+                                                                                        <td>{tableInfo.table_name}</td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
 
-                                                                                {/* {modalTemp.params.map((params, index) => (
+                                                                            {/* {modalTemp.params.map((params, index) => (
                                                                                     <tr key={index}>
                                                                                         <td>{index + 1}</td>
                                                                                         <td>{statistic}</td>
 
                                                                                     </tr>
                                                                                 ))} */}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </>
-                                                                ) : (
-                                                                    <div class="list_cont ">
-                                                                        <p>{lang["not found"]}</p>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                        </div>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </>
+                                                            ) : (
+                                                                <div class="list_cont ">
+                                                                    <p>{lang["not found"]}</p>
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </div>
                                                 </div>
                                                 {/* Ds các trường hiển thị*/}
                                                 <div class="col-md-12 col-lg-12 bordered">
@@ -1090,7 +1099,7 @@ export default () => {
                                                             <div class="col-md-12 col-lg-12 bordered">
                                                                 <div class="d-flex align-items-center mb-1">
                                                                     <p class="font-weight-bold">{lang["statistical fields"]}</p>
-                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto"  onClick={() => clearGroupBy()} data-toggle="modal" data-target="#addFieldStatistical">
+                                                                    <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={() => clearGroupBy()} data-toggle="modal" data-target="#addFieldStatistical">
                                                                         <i class="fa fa-plus"></i>
                                                                     </button>
                                                                 </div>
@@ -1113,7 +1122,7 @@ export default () => {
                                                                                         <td>{index + 1}</td>
                                                                                         <td>{statistic.display_name}</td>
                                                                                         <td>{statistic.field}</td>
-                                                                                        <td>{statistic.group_by.length > 0 ? statistic.group_by?.map(field => field.display_name).join(", "): lang["no selected group by"]}</td>
+                                                                                        <td>{statistic.group_by.length > 0 ? statistic.group_by?.map(field => field.display_name).join(", ") : lang["no selected group by"]}</td>
                                                                                         <td>{statistic.fomular}</td>
                                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
                                                                                             <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editFieldStatistical" title={lang["edit"]}></i>
@@ -1523,21 +1532,24 @@ export default () => {
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {modalTemp.fields?.map((field, index) => (
-                                                    <div key={index} className="form-check">
-                                                        <label className="form-check-label">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                value={field.id}
-                                                                checked={isFieldChecked(field.id)}
-                                                                onChange={(e) => addOrRemoveGroupByField(e.target.value)}
-                                                            />
 
-                                                            {field.display_name}
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                                {
+                                                    [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
+                                                        <div key={index} className="form-check">
+                                                            <label className="form-check-label">
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    value={field.fomular_alias}
+                                                                    checked={isFieldChecked(field.fomular_alias)}
+                                                                    onChange={(e) => addOrRemoveGroupByField(e.target.value)}
+                                                                />
+                                                                {field.display_name}
+                                                            </label>
+                                                        </div>
+                                                    ))
+                                                }
+
                                             </div>
                                         </div>
 
@@ -1716,14 +1728,14 @@ export default () => {
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {modalTemp.fields?.map((field, index) => (
+                                                {[...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
                                                                 className="form-check-input"
                                                                 type="checkbox"
-                                                                value={field.id}
-                                                                checked={isFieldChecked(field.id)}
+                                                                value={field.fomular_alias}
+                                                                checked={isFieldChecked(field.fomular_alias)}
                                                                 onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                             />
                                                             {field.display_name}
@@ -1736,7 +1748,7 @@ export default () => {
 
                                     </div>
 
-
+{/* 
                                     <div class="form-group col-lg-12">
                                         <label><p class="font-weight-bold">{lang["list group by"]}</p></label>
                                         <div class="table-responsive">
@@ -1770,7 +1782,7 @@ export default () => {
                                                 )
                                             }
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>

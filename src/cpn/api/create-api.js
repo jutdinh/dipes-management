@@ -725,15 +725,15 @@ export default () => {
 
     const [groupBy, setGroupBy] = useState([])
     // console.log(groupBy)
-    const addOrRemoveGroupByField = (id) => {
-        console.log(id)
-        const corespondingGroupByField = groupBy.find(f => f.id == id);
+    const addOrRemoveGroupByField = (fomular_alias) => {
+        // console.log(id)
+        const corespondingGroupByField = groupBy.find(f => f.fomular_alias == fomular_alias);
         let newGroupBy = [...groupBy];
         if (corespondingGroupByField) {
-            newGroupBy = groupBy.filter(f => f.id != id);
+            newGroupBy = groupBy.filter(f => f.fomular_alias != fomular_alias);
         } else {
 
-            const field = Object.values(selectedFieldsModal2).flat().find(f => f.id == id);
+            const field = Object.values(selectedFieldsModal2).flat().find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
                 console.log(newGroupBy)
@@ -743,8 +743,8 @@ export default () => {
     }
 
 
-    const isFieldChecked = (id) => {
-        return groupBy.some(f => f.id == id);
+    const isFieldChecked = (fomular_alias) => {
+        return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
     const handleDeleteStatistical = (sta) => {
@@ -2266,8 +2266,8 @@ export default () => {
                                                             <input
                                                                 className="form-check-input"
                                                                 type="checkbox"
-                                                                value={field.id}
-                                                                checked={isFieldChecked(field.id)}
+                                                                value={field.fomular_alias}
+                                                                checked={isFieldChecked(field.fomular_alias)}
                                                                 onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                             />
 
