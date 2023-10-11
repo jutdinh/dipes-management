@@ -387,7 +387,9 @@ class UIController extends Controller {
                                         status: true,
                                         description: apiDescription,                        
                                         body: mainTableFields.map(field => field.id),
-                                        fields: [],
+                                        fields: displayFields.map(field => {
+                                            return { id: field.id, fomular_alias: field.fomular_alias , display_name: field.field_name }   
+                                        }),
                                         params: [],
                                         tables: [ table.id ],   
                                         calculates: widget.calculates,

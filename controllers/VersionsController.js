@@ -139,7 +139,7 @@ class VersionsController extends Controller {
 
             const output = fs.createWriteStream(outputFilePath);
             const archive = archiver('zip-encryptable', {
-                zlib: { level: 9 }, // set compression level
+                zlib: { level: 9 }, 
                 password: this.#__archivePassword
             });
 
@@ -150,19 +150,6 @@ class VersionsController extends Controller {
             output.on('close', () => {
                 res.download(outputFilePath)
             });
-
-            // output.on('finish', () => {                        
-            //     const data = fs.readFileSync(outputFilePath);
-
-            //     const encryptedZip = zip.create();
-            //     encryptedZip.file(`Encrypted-${outputFilePath}`, data, { password: this.#__archivePassword });
-            //     const encryptedData = encryptedZip.generate({ base64: false, compression: 'DEFLATE' });
-            //     fs.writeFileSync('archive-password.zip', encryptedData, 'binary');
-            //     res.download(`Encrypted-${outputFilePath}`)
-            // })
-
-
-
         } else {
             res.status(200).send(context)
         }
