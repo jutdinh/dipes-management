@@ -1275,10 +1275,7 @@ export default () => {
                                                                 {lang["param fields"]}
                                                                 {(modalTemp.api_method === "put" || modalTemp.api_method === "delete") && <span className='red_star'> *</span>}
                                                             </p>
-
                                                             {(modalTemp.api_method === "put" || modalTemp.api_method === "delete" && errorApi.params) && <p className="text-danger ml-2">{errorApi.params}</p>}
-
-
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldParam">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -1400,10 +1397,10 @@ export default () => {
                                                     </div>
                                                 )}
                                                 {/* Chọn trường hiển thị */}
-                                                {modalTemp.api_method === "get" && (
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") &&(
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["fields display"]} <span className='red_star'>*</span></p>
+                                                            <p class="font-weight-bold">{lang["fields display"]} {modalTemp.api_method === "get" ? (<span className='red_star'>*</span>) : null }</p>
                                                             {(modalTemp.api_method === "get") && <p className="text-danger ml-2">{errorApi.fields}</p>}
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
