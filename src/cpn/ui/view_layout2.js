@@ -12,14 +12,14 @@ import { PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, Cart
 import { Tables } from ".";
 export default (props) => {
     const { lang, proxy, auth } = useSelector(state => state);
-    const { title, data, calculate, statistic, fields} = props;
+    const { title, data, calculate, statistic, fields } = props;
     const _token = localStorage.getItem("_token");
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
-console.log(props)
+    console.log(props)
     let uis_temp;
 
-    
+
 
 
     // if (fields) {
@@ -46,10 +46,10 @@ console.log(props)
             for (let f of fields) {
                 tempObject[f.display_name] = `${f.display_name} ${index + 1}`;
             }
-    
+
             return tempObject;
         });
-    }else {
+    } else {
         uis_temp = [
             {
                 "id": 1,
@@ -86,7 +86,7 @@ console.log(props)
                 "id": 4,
                 "data": lang["data"] + " 4"
             },
-            
+
         ];
 
         let pieData = [];
@@ -281,30 +281,31 @@ console.log(props)
                                                                 </table>
                                                             )
                                                         }
-                                                        <div className="d-flex justify-content-between align-items-center">
-                                                            <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul className="pagination mb-0">
-                                                                    <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+
+                                                    </div>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul className="pagination mb-0">
+                                                                <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
+                                                                    <span className="page-link" >
+                                                                        &laquo;
+                                                                    </span>
+                                                                </li>
+                                                                {Array(totalPagesUi).fill().map((_, index) => (
+                                                                    <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
                                                                         <span className="page-link" >
-                                                                            &laquo;
+                                                                            {index + 1}
                                                                         </span>
                                                                     </li>
-                                                                    {Array(totalPagesUi).fill().map((_, index) => (
-                                                                        <li key={index} className={`page-item ${currentPageUi === index + 1 ? 'active' : ''}`}>
-                                                                            <span className="page-link" >
-                                                                                {index + 1}
-                                                                            </span>
-                                                                        </li>
-                                                                    ))}
-                                                                    <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
-                                                                        <span className="page-link" >
-                                                                            &raquo;
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
+                                                                ))}
+                                                                <li className={`page-item ${currentPageUi === totalPagesUi ? 'disabled' : ''}`}>
+                                                                    <span className="page-link" >
+                                                                        &raquo;
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
                                                     </div>
                                                 </div>
                                             </div>
@@ -340,7 +341,7 @@ console.log(props)
                                 <div class="col-md-6 col-lg-6">
                                     <div class="table-responsive">
                                         {
-                                              fields && fields.length > 0 ? (
+                                            fields && fields.length > 0 ? (
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>

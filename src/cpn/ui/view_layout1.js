@@ -291,7 +291,9 @@ export default (props) => {
                                                             </table>
                                                         )
                                                     }
-                                                    <div className="d-flex justify-content-between align-items-center">
+                                                  
+                                                </div>
+                                                <div className="d-flex justify-content-between align-items-center">
                                                         <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
                                                         <nav aria-label="Page navigation example">
                                                             <ul className="pagination mb-0">
@@ -315,7 +317,6 @@ export default (props) => {
                                                             </ul>
                                                         </nav>
                                                     </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

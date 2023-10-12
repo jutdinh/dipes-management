@@ -72,15 +72,13 @@ export default () => {
                     //      window.location = "/projects";
                     // });
                     window.location = "/";
-
                 } else {
                     setAuthError(content);
-
                 }
             })
         }
-
     }
+
     return (
         <div classNameName="inner_page login">
             <div className="full_container">
@@ -102,7 +100,6 @@ export default () => {
                                                     <div style={{ minHeight: '20px' }}>
                                                         {authError && <span class="error-message error-login">{authError}</span>}
                                                     </div>
-
                                                 </div>
                                             </div>
                                             <div class="row">
