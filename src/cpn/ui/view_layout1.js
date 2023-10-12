@@ -21,21 +21,34 @@ export default (props) => {
     let uis_temp;
 
 
-    if (fields) {
-        let fields_temp = fields?.slice(0, 5); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
-        // let fields_temp = fields.length > 5 ? fields?.slice(0, 5) ;
-        uis_temp = fields_temp.map((field, index) => {
+    // if (fields) {
+    //     let fields_temp = fields?.slice(0, 5); // Chỉ lấy 5 phần tử đầu tiên của mảng fields
+    //     // let fields_temp = fields.length > 5 ? fields?.slice(0, 5) ;
+    //     uis_temp = fields_temp.map((field, index) => {
+    //         const tempObject = {
+    //             id: index + 1,
+    //         };
+
+    //         for (let f of fields) {
+    //             tempObject[f.display_name] = `  ${f.display_name} ${index + 1}`;
+    //         }
+
+    //         return tempObject;
+    //     });
+    // }
+      if (fields) {
+        // Tạo một mảng mới với 4 phần tử, mỗi phần tử là một object.
+        uis_temp = Array.from({ length: 4 }, (_, index) => {
             const tempObject = {
                 id: index + 1,
             };
-
             for (let f of fields) {
-                tempObject[f.display_name] = `  ${f.display_name} ${index + 1}`;
+                tempObject[f.display_name] = `${f.display_name} ${index + 1}`;
             }
-
+    
             return tempObject;
         });
-    } else {
+    }else {
         uis_temp = [
             {
                 "id": 1,
@@ -74,7 +87,7 @@ export default (props) => {
         });
     }
     const [currentPageUi, setCurrentPageUi] = useState(1);
-    const rowsPerPageUi = 5;
+    const rowsPerPageUi = 4;
 
     const indexOfLastUi = currentPageUi * rowsPerPageUi;
     const indexOfFirstUi = indexOfLastUi - rowsPerPageUi;

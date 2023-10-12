@@ -971,7 +971,7 @@ export default () => {
 
 
     const [currentPageFields, setCurrentPageFields] = useState(1);
-    const rowsPerPageFields = 7;
+    const rowsPerPageFields = 12;
 
     const indexOfLastFields = currentPageFields * rowsPerPageFields;
     const indexOfFirstFields = indexOfLastFields - rowsPerPageFields;

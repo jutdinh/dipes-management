@@ -466,7 +466,8 @@ export default {
     "expand": "Mở rộng",
     "no history yet": "Chưa có lịch sử",
     "list group by": "Danh sách các trường được chọn (GroupBy)",
-    "no selected group by": "Không có trường nào được chọn"
+    "no selected group by": "Không có trường nào được chọn",
+    "detail ui" : "Chi tiết dự án"
 
 
 

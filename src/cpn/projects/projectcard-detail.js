@@ -1127,20 +1127,20 @@ export default () => {
                                 <div class="table_section padding_infor_info">
                                     <p class="font-weight-bold">{lang["projectname"]}:</p>
                                     <p class="mb-2">{projectdetail.project_name}</p>
-                                  
+
                                     <div class="row">
                                         <div class="col-md-4">
-                                        <p class="font-weight-bold">{lang["projectcode"]}:</p>
+                                            <p class="font-weight-bold">{lang["projectcode"]}:</p>
                                             <p class="mb-2">{projectdetail.project_code}</p>
                                         </div>
                                         <div class="col-md-4">
-                                        <p class="font-weight-bold">{lang["versionname"]}:</p>
+                                            <p class="font-weight-bold">{lang["versionname"]}:</p>
                                             {versions.map(version => (
                                                 <p class="mb-2">{version.version_name}</p>
                                             ))}
                                         </div>
                                         <div class="col-md-4">
-                                        <p class="font-weight-bold">{lang["projecttype"]}:</p>
+                                            <p class="font-weight-bold">{lang["projecttype"]}:</p>
                                             <p class="mb-2">{toTitleCase(projectdetail.project_type)}</p>
                                         </div>
                                     </div>
@@ -1314,6 +1314,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
                     {/* Update member */}
                     <div class={`modal show`} id="editMember">
                         <div class="modal-dialog modal-dialog-center">
@@ -1476,6 +1477,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
                     {/* Update Project */}
                     <div class={`modal show`} id="editProject">
                         <div class="modal-dialog modal-dialog-center">
@@ -1648,6 +1650,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
                     {/* Progress */}
                     <div class="col-md-6">
                         <div class="white_shd full margin_bottom_30">
@@ -1762,6 +1765,7 @@ export default () => {
                             </div>
                         </div>
                     </div>
+
                     {/* View Description Project */}
                     <div class={`modal ${showModal ? 'show' : ''}`} id="viewDescription">
                         <div class="modal-dialog modal-dialog-center">
@@ -1877,8 +1881,8 @@ export default () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
+
                 {/* Website info */}
                 <div class="row">
                     <div style={{ paddingLeft: "10px" }} class="col-md-12">
@@ -1888,10 +1892,10 @@ export default () => {
                                     <h5>{lang["project.deploy"]}</h5>
                                 </div>
                                 <div class="ml-auto pointer" type="button" data-toggle="modal" data-target="#generateActivationKey" >
-                                    <i className="fa fa-key size-24 icon-detail-project" style={{  color: "green", marginRight: "16px" }} title={lang["activate.key"]}></i>
+                                    <i className="fa fa-key size-24 icon-detail-project" style={{ color: "green", marginRight: "16px" }} title={lang["activate.key"]}></i>
                                 </div>
                                 <div class="pointer" type="button" id="exportClickTrigger" data-toggle="modal" data-target="#exportOptions" >
-                                    <i className="fa fa-download  icon-detail-project size-24 mr-2" style={{  color: "#ff6655" }} title={lang["export"]}></i>
+                                    <i className="fa fa-download  icon-detail-project size-24 mr-2" style={{ color: "#ff6655" }} title={lang["export"]}></i>
                                 </div>
                             </div>
                             <div class="table_section padding_infor_info_website">

@@ -627,7 +627,7 @@ export default () => {
         });
     }
     const [currentPageTable, setCurrentPageTable] = useState(1);
-    const rowsPerPageTable = 7;
+    const rowsPerPageTable = 12;
 
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;

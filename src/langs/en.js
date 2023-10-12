@@ -461,7 +461,8 @@ export default {
     "expand": "Expand",
     "no history yet": "No history yet",
     "list group by": "List of selected field (GroupBy)",
-    "no selected group by": "No field selected"
+    "no selected group by": "No field selected",
+    "detail ui" : "Project detail"
 
 
 }

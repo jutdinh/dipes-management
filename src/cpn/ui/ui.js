@@ -135,6 +135,7 @@ export default () => {
     const [layout, setLayout] = useState({});
     const [fieldShow, setFieldShow] = useState({});
     const [fieldCalculates, setFieldCalculates] = useState({});
+
     const handlDetailUi = async (ui) => {
         setDetailUi(ui)
         const firstComponentLayoutId = ui.components[Object.keys(ui.components)[0]].layout_id;
@@ -173,6 +174,13 @@ export default () => {
         window.location.href = `/projects/${version_id}/uis/create`;
         // window.location.href = `tables`;
     };
+
+    const apisDetail = (ui) => {
+        // console.log(ui)
+        window.location.href = `/projects/${version_id}/uis/detail/${ui.ui_id}`;
+        // window.location.href = `tables`;
+    };
+    
  
 
     return (
@@ -250,7 +258,7 @@ export default () => {
                                                                         </td>
                                                                         {/* <td>{ui.type === `ui` ? lang["api auto"] : lang["api custom"]}</td> */}
                                                                         <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => handlDetailUi(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
+                                                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => apisDetail(ui)} data-toggle="modal" data-target="#viewUi" title={lang["viewdetail"]}></i>
                                                                             {/* <i class="fa fa-edit size pointer icon-margin icon-edit" onClick={() => updateApi(ui)} title={lang["edit"]}></i> */}
                                                                             <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteUi(ui)} title={lang["delete"]}></i>
                                                                         </td>
@@ -324,7 +332,8 @@ export default () => {
                 </div>
 
                 {/* View UI */}
-                <div class={`modal`} id="viewUi">
+                {/* 
+                 <div class={`modal`} id="viewUi">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -349,7 +358,7 @@ export default () => {
                                         {/* <div class="form-group col-lg-6">
                                             <label><b>{lang["log.type"]}</b></label>
                                             <span className="d-block"> {detailUi.type === "ui" ? lang["api auto"] : lang["api custom"]} </span>
-                                        </div> */}
+                                        </div> 
                                         <div class="form-group col-lg-6">
                                             <label><b>{lang["creator"]}</b></label>
                                             <span className="d-block"> {detailUi?.create_by?.fullname} </span>
@@ -364,7 +373,7 @@ export default () => {
                                             {layout === 1 && <Layout2 fields={fieldShow}  calculate= {fieldCalculates}/>}
 
                                             {/* {layout === 0 && <Layout1 fields={fields}/>}
-                                            {layout === 1 && <Layout2 fields={fields} />} */}
+                                            {layout === 1 && <Layout2 fields={fields} />} 
 
                                         </div>
 
@@ -378,6 +387,9 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                */}
+               
+                
             </div >
         </div >
     )
