@@ -394,7 +394,6 @@ class ProjectsController extends Controller {
         res.status(200).send(context)
     }
 
-
     statisProjectsBasedOnStatusOfAllTime = async (req, res) => {
         this.writeReq(req)
         const context = {
@@ -525,7 +524,6 @@ class ProjectsController extends Controller {
 
         res.status(200).send(context)
     }
-
 
     addMembers = async (req, res, privileges = []) => {
         this.writeReq(req)
@@ -718,7 +716,6 @@ class ProjectsController extends Controller {
         delete context.objects
         res.status(200).send(context)
     }
-
 
     getTaskPeriod = async (req, res) => {
         this.writeReq(req)
@@ -1259,6 +1256,70 @@ class ProjectsController extends Controller {
 
     }
 
+    updateTaskProgress = async (req, res) => {
+
+        /* Privilege fix required but not now */
+        this.writeReq(req)
+        const { project_id, period_id, task_id } = req.params
+        const { task } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects, permission } = context;
+        const start = new Date()
+        if (success) {
+
+            const { Project, decodedToken } = objects;
+            const project = Project.getData()
+            const tasks = project.tasks ? project.tasks : {}
+
+            const period = tasks[`${period_id}`]
+
+            if (period) {
+                const oldTask = period.tasks[`${task_id}`]
+
+                if (oldTask) {
+                    const { create_by } = oldTask
+                    if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || decodedToken.username == create_by.username) {
+                        const newTask = { ...oldTask, ...task }
+                        newTask.child_tasks = oldTask.child_tasks;
+
+                        let newModified = {}
+                        const inforFields = ["task_name", "task_description", "task_priority", "start", "timeline", "end", "members"]
+                        
+                        newTask.task_modified = { ...oldTask.task_modified, ...newModified }
+
+                        period.tasks[`${task_id}`] = newTask
+                        project.tasks[`${period_id}`] = period
+
+
+                        await Project.__modifyAndSaveChange__(`tasks`, project.tasks)
+                        context.status = "0x4501155"
+                        context.content = "Cập nhật thành công"
+                    } else {
+                        context.content = "Khum có quyền thực hiện thao tác này"
+                        context.status = "0x4501137"
+                        context.success = false
+                    }
+                } else {
+                    context.content = "Yêu cầu khum tồn tại"
+                    context.status = "0x4501137"
+                    context.success = false
+                }
+            } else {
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
+                context.success = false
+            }
+
+        }
+
+        const end = new Date()
+        console.log(`PROCCESSING TIME: ${end - start}`)
+        delete context.objects;
+        res.status(200).send(context)
+
+    }
+
     removeTask = async (req, res) => {
         this.writeReq(req)
 
@@ -1611,7 +1672,6 @@ class ProjectsController extends Controller {
         }
         return valid;
     }
-
 
     searchProjects = async (req, res) => {
         const ProjectsModel = new Projects()

@@ -51,6 +51,15 @@ router.put("/project/:project_id/period/:period_id/task/:task_id/approve",  asyn
     }
 })
 
+router.put("/project/:project_id/period/:period_id/task/:task_id/progress",  async (req, res) => {  
+    try{
+        await ProjectsController.updateTaskProgress(req, res)         
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
+
 router.put("/project/:project_id/period/:period_id/task/:task_id/child/:child_task_id",  async (req, res) => {  
     try{
         await ProjectsController.updateChildTask(req, res)         
@@ -66,6 +75,8 @@ router.put("/project/:project_id/period/:period_id/task/:task_id/child/:child_ta
         res.send({ success: false, status: "0x4501246" })
     }
 })
+
+
 
 
 router.put("/project/member/privilege", async (req, res) => { 
