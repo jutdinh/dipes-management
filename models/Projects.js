@@ -130,6 +130,7 @@ class Projects extends Model {
         this.versions.apis.__addProperty__("status", Model.types.bool, { default: true })
         this.versions.apis.__addProperty__("description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.versions.apis.__addProperty__("url", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
+        this.versions.apis.__addProperty__("remote_url", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.versions.apis.__addProperty__("api_method", Model.types.enum, { values: [ "get", "post", "put", "delete" ] })
         this.versions.apis.__addProperty__("api_scope", Model.types.enum, { values: [ "private", "public" ] })
         this.versions.apis.__addProperty__("create_at", Model.types.datetime, { default: new Date() } )
@@ -601,6 +602,7 @@ class ProjectsRecord extends Projects {
         const serializedApi = {
             ...api,
             url: `/api/${ api_id }`,
+            remote_url: `/api/${ api_id }`,
             create_by: creator,
             id,
             api_id
@@ -621,6 +623,7 @@ class ProjectsRecord extends Projects {
         const serializedApi = {
             ...api,
             url: `/${type}/${ api_id }`,
+            remote_url: `/${type}/${ api_id }`,
             create_by: creator,
             id,
             api_id

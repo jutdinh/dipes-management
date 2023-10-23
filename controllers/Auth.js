@@ -443,7 +443,8 @@ class Auth extends Controller {
                 if( oldAccount ){
                     if( this.checkPrivilege( decodedToken.role, account.role ) ){
                         const Account = new AccountsRecord(oldAccount)                    
-                        Account.setInfo( account )                        
+                        Account.setInfo( account )    
+                        console.log( Account.getData() )                    
                         await Account.save()
                         
                         this.updateAllProject( account )

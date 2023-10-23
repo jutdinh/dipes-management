@@ -83,6 +83,7 @@ class Model {
     save = async () => {        
         if( this.__modelName != undefined ){       
             const fulfilledData = this.__recursiveTreeToFulfillData__( this, this.#__data )
+            this.#__data = fulfilledData
             const { id } = fulfilledData
             if( !this.#__database ){                
                 this.__initDatabase__()  
