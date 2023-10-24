@@ -307,7 +307,8 @@ export default {
     "calculations": "Calculations",
     "edit calculated fiels": "Edit calculated field",
     "add fields body": "Add body fields",
-
+    "add fields external body": "Add an extended data field",
+    "fields external body": " List of extended data field",
     "rdit fields body": "Edit body fields ",
     "add field calculations": "Add calculated field",
     "edit field calculations": "Edit calculated field",
@@ -315,6 +316,7 @@ export default {
     "statistical fields": "Statistical fields ",
     "fields name statistic": "Statistics field name",
     "edit statistical fields": "Edit statistics field",
+    "edit external fields": "Edit extended data field",
     "select fields": "Select fields",
     "group by": "Group by",
     "ui information": "User interface information",
@@ -464,7 +466,8 @@ export default {
     "no selected group by": "No field selected",
     "detail ui" : "Project detail",
     "next": "Next",
-    "add stage": "Add Stage"
+    "add stage": "Add Stage",
+    "duplicate fomular": "A fields with this fomular alias has already exited"
 
 
 }

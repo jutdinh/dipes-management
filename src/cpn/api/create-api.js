@@ -10,7 +10,26 @@ import { error, ready } from "jquery";
 import responseMessages from "../enum/response-code";
 import $ from "jquery"
 import { formatDate } from "../../redux/configs/format-date";
+const types = [
+    ValidTypeEnum.INT,
+    ValidTypeEnum.INT_UNSIGNED,
+    ValidTypeEnum.BIGINT,
+    ValidTypeEnum.BIGINT_UNSIGNED,
+    ValidTypeEnum.BOOL,
+    ValidTypeEnum.CHAR,
+    ValidTypeEnum.DATE,
+    ValidTypeEnum.DATETIME,
+    ValidTypeEnum.DECIMAL,
+    ValidTypeEnum.DECIMAL_UNSIGNED,
+    ValidTypeEnum.EMAIL,
+    ValidTypeEnum.PHONE,
+    ValidTypeEnum.TEXT
+]
+const typenull = [
+    { value: false, label: "Not null" },
+    { value: true, label: "Null" }
 
+]
 
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
@@ -37,14 +56,35 @@ export default () => {
         params: [],
         fields: [],
         body: [],
+        external_body: [],
         calculates: [],
         statistic: [],
         api_scope: "public",
         status: true
     };
+    const defaultValuesExternalbody = {
+        field_name: "",
+        fomular_alias: "",
+        props: {
+            DATATYPE: "",
+            NULL: false,
+            LENGTH: 65535,
+            AUTO_INCREMENT: true,
+            MIN: "-2147483648",
+            MAX: "2147483647",
+            FORMAT: "",
+            PATTERN: "",
+            DECIMAL_PLACE: "",
+            DEFAULT: "",
+            DEFAULT_TRUE: "",
+            DEFAULT_FALSE: ""
+        }
+    }
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
-
+    const [externalBody, setExternalBody] = useState(defaultValuesExternalbody);
+    const [externalBodyUpdate, setExternalBodyUpdate] = useState({});
+    // console.log(externalBody)
     // console.log(modalTemp)
     // const showApiResponseMessage = (status) => {
     //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
@@ -131,7 +171,7 @@ export default () => {
             }
         }
 
-        // console.log("VALID: ", valid)
+
 
         if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
@@ -144,6 +184,7 @@ export default () => {
             })
         }
     }
+
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
@@ -219,6 +260,76 @@ export default () => {
             body: allSelectedFieldBody,
         }));
     };
+
+    const validateExternalBody = () => {
+        let temp = {};
+        temp.field_name = externalBody.field_name ? "" : lang["error.input"];
+        temp.fomular_alias = externalBody.fomular_alias ? "" : lang["error.input"];
+        temp.DATATYPE = externalBody.props.DATATYPE ? "" : lang["error.input"];
+        setErrorApi({
+            ...temp
+        });
+
+        return Object.values(temp).every(x => x === "");
+    }
+    const handleSubmitExternalBody = () => {
+
+        if (validateExternalBody()) {
+
+            setModalTemp(prevModalTemp => ({
+                ...prevModalTemp,
+                external_body: [...prevModalTemp.external_body, externalBody],
+            }));
+
+            setExternalBody(defaultValuesExternalbody)
+
+            $('#closeModalExternalBody').click();
+        }
+
+    };
+    console.log(errorApi)
+    //update
+    const updateFieldExternalBody = (ex) => {
+   
+        setExternalBodyUpdate(ex)
+    }
+    const handleDeleteExternal = (ex) => {
+    
+        // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
+        // setModalTemp(prev => ({
+        //     ...prev,
+        //     calculates: newCalculates
+        // }));
+        Swal.fire({
+            title: lang["confirm"],
+            text: lang["delete.field"],
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: lang["btn.delete"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newExternal = modalTemp.external_body.filter(item => item.fomular_alias !== ex.fomular_alias);
+              
+                setModalTemp(prev => ({
+                    ...prev,
+                    external_body: newExternal,
+                }));
+
+                Swal.fire({
+                    title: lang["success.title"],
+                    text: lang["delete.success.field"],
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                })
+            }
+        });
+    }
+
 
 
     // console.log(getAllField)
@@ -377,7 +488,7 @@ export default () => {
     // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
-            console.log(tableId)
+        
             const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
                 headers: {
                     Authorization: _token
@@ -404,7 +515,7 @@ export default () => {
 
             const fieldsByTable = {};
             for (const { tableId, fields } of results) {
-                console.log(tableId)
+              
                 fieldsByTable[tableId] = fields;
             }
 
@@ -465,13 +576,17 @@ export default () => {
 
     };
 
+
+
+
+
     // luu truong show 
     const [selectedFieldsModal2, setSelectedFieldsModal2] = useState({});
     // console.log(selectedFieldsModal2[0]?.id)
     // console.log("FieldShow", selectedFieldsModal2)
     /////luu truong param
     const [selectedFields, setSelectedFields] = useState({});
-    console.log("Fieldshow", selectedFieldsModal2)
+
 
     function isPrimaryKey(tableId, fieldId) {
         return tableFields[tableId]?.primary_key.includes(fieldId);
@@ -680,7 +795,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-        console.log(sta)
+   
         setStatisticalUpdate(sta)
         setGroupBy(sta.raw_group_by)
     }
@@ -736,7 +851,7 @@ export default () => {
             const field = Object.values(selectedFieldsModal2).flat().find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
-                console.log(newGroupBy)
+              
             }
         }
         setGroupBy(newGroupBy);
@@ -859,7 +974,72 @@ export default () => {
         setFomular("");
         setErrorCaculates({})
     };
-    console.log(modalTemp)
+
+    const vietnameseChars = [
+        {
+            base: {
+                base: "a",
+                unicode: ["ă", "â"],
+                unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
+            }
+        },
+        {
+            base: {
+                base: "d",
+                unicode: ["đ"],
+                unicodeWithSound: []
+            }
+        },
+        {
+            base: {
+                base: "e",
+                unicode: ["ê"],
+                unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
+            }
+        },
+        {
+            base: {
+                base: "i",
+                unicode: [],
+                unicodeWithSound: ["í", "ì", "ỉ", "ĩ", "ị"]
+            }
+        },
+        {
+            base: {
+                base: "o",
+                unicode: ["ô", "ơ"],
+                unicodeWithSound: ["ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ"]
+            }
+        },
+        {
+            base: {
+                base: "u",
+                unicode: ["ư"],
+                unicodeWithSound: ["ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự"]
+            }
+        },
+        {
+            base: {
+                base: "y",
+                unicode: [],
+                unicodeWithSound: ["ý", "ỳ", "ỷ", "ỹ", "ỵ"]
+            }
+        }
+    ];
+    function transformVietnameseCharacter(char) {
+        for (let group of vietnameseChars) {
+            const { base, unicode, unicodeWithSound } = group.base;
+            if ([...unicode, ...unicodeWithSound].includes(char.toLowerCase())) {
+                return base;
+            }
+        }
+        return char;
+    }
+
+    // Hàm này sẽ chuyển đổi một chuỗi tiếng Việt có dấu sang không dấu
+    function removeVietnameseTones(str) {
+        return str.split('').map(transformVietnameseCharacter).join('');
+    }
 
     return (
         <div class="midde_cont">
@@ -1396,11 +1576,62 @@ export default () => {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {/* Chọn trường hiển thị */}
-                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") &&(
+                                                {/* Chọn External body */}
+                                                {(modalTemp.api_method === "post" || modalTemp.api_method === "put" || modalTemp.api_method === "delete") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["fields display"]} {modalTemp.api_method === "get" ? (<span className='red_star'>*</span>) : null }</p>
+                                                            <p class="font-weight-bold">
+                                                                {lang["fields external body"]}
+                                                            </p>
+                                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldExternalBody">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="table-responsive">
+                                                            {
+                                                                modalTemp && modalTemp.external_body.length > 0 ? (
+                                                                    <>
+                                                                        <table class="table table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["fields name"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["alias"]}</th>
+                                                                                    <th class="font-weight-bold" scope="col">{lang["log.action"]}</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {modalTemp.external_body.map((ex, index) => {
+                                                                                    return (
+                                                                                        <tr key={`${index}`}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{ex.field_name}</td>
+                                                                                            <td>{ex.fomular_alias}</td>
+                                                                                            <td class="align-center" style={{ minWidth: "130px" }}>
+                                                                                                {/* <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldExternalBody(ex)} data-toggle="modal" data-target="#editExternalBody" title={lang["edit"]}></i> */}
+                                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteExternal(ex)} title={lang["delete"]}></i>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    );
+                                                                                })}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </>
+                                                                ) : (
+                                                                    <div class="list_cont ">
+                                                                        <p>{lang["not found"]}</p>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Chọn trường hiển thị */}
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") && (
+                                                    <div class="col-md-12 col-lg-12 bordered">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <p class="font-weight-bold">{lang["fields display"]} {modalTemp.api_method === "get" ? (<span className='red_star'>*</span>) : null}</p>
                                                             {(modalTemp.api_method === "get") && <p className="text-danger ml-2">{errorApi.fields}</p>}
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
@@ -1533,7 +1764,7 @@ export default () => {
                                                                                 <td>{statistic.raw_group_by?.map(field => field.display_name).join(", ")}</td>
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editStatistical" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editExternalBody" title={lang["edit"]}></i>
                                                                                     <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
                                                                                 </td>
                                                                             </tr>
@@ -1966,6 +2197,256 @@ export default () => {
                         </div>
                     </div>
                 </div>
+                {/*add Field External Body */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldExternalBody">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["add fields external body"]}</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group col-lg-12">
+                                        <label>{lang["fields name"]} <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={externalBody.field_name}
+                                            onChange={(e) => setExternalBody({ ...externalBody, field_name: e.target.value })}
+                                            placeholder=""
+                                        />
+                                        {errorApi.field_name && <p className="text-danger">{errorApi.field_name}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label>{lang["alias"]}<span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={externalBody.fomular_alias}
+                                            onInput={(e) => {
+                                                let inputValue = e.target.value;
+
+                                                // Chuyển đổi ký tự nhập vào thành không dấu và chữ hoa
+                                                const formattedValue = removeVietnameseTones(inputValue).toUpperCase();
+
+                                                // Regex để kiểm tra xem chuỗi có chỉ chứa các ký tự từ A-Z và số từ 0-9 không.
+                                                const alphanumericRegex = /^[A-Z0-9]*$/;
+                                                const check = modalTemp.external_body?.find(ex => ex.fomular_alias === formattedValue);
+                                              
+                                                    let temp = {};
+                                                    temp.fomular_alias = check ? lang["duplicate fomular"] : "";
+                                                    setErrorApi({
+                                                        ...temp
+                                                    });
+                                                  
+                                                
+                                                    // Kiểm tra xem chuỗi có bắt đầu bằng một số, chỉ chứa các ký tự từ A-Z và 0-9, và không rỗng
+                                                    if (formattedValue && isNaN(formattedValue[0]) && alphanumericRegex.test(formattedValue)) {
+                                                        setExternalBody({ ...externalBody, fomular_alias: formattedValue });
+                                                    } else if (!formattedValue) { // Cho phép chuỗi rỗng để có thể xóa
+                                                        setExternalBody({ ...externalBody, fomular_alias: '' });
+                                                    }
+                                            }}
+                                            placeholder=""
+                                        />
+                                        {errorApi.fomular_alias && <p className="text-danger">{errorApi.fomular_alias}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label>{lang["null"]} </label>
+                                        <select className="form-control" onChange={(e) =>
+                                            setExternalBody(prevState => ({
+                                                ...prevState,
+                                                props: {
+                                                    ...prevState.props,
+                                                    NULL: e.target.value === "true" ? true : false
+                                                }
+                                            }))
+                                        }>
+                                            {typenull.map((item, index) => {
+                                                return (
+                                                    <option key={index} value={item.value} >
+                                                        {item.label}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </div>
+                                    <div class={`form-group col-lg-12`}>
+                                        <label> {lang["datatype"]}  <span className='red_star'>*</span> </label>
+                                        <select
+                                            className="form-control"
+                                            value={externalBody.props.DATATYPE}
+                                            onChange={(e) => {
+                                                const selectedDataType = e.target.value;
+                                                const selectedType = types.find((type) => type.name === selectedDataType);
+                                                if (selectedType) {
+                                                    setExternalBody(prevModalTemp => {
+                                                        const updateValues = {
+                                                            ...prevModalTemp.props, // giữ nguyên các giá trị props hiện tại  
+                                                            PATTERN: defaultValuesExternalbody.props.PATTERN,
+                                                            FORMAT: defaultValuesExternalbody.props.FORMAT,
+                                                            DATATYPE: selectedDataType
+                                                        };
+                                                        // Nếu có giới hạn, gán giá trị min, max tương ứng
+                                                        if (selectedType.limit) {
+                                                            const { min, max } = selectedType.limit;
+                                                            updateValues.MIN = min !== undefined ? String(min) : prevModalTemp.props.MIN;
+                                                            updateValues.MAX = max !== undefined ? String(max) : prevModalTemp.props.MAX;
+                                                        }
+                                                        // Nếu là kiểu date, gán định dạng ngày
+                                                        if (selectedType.type === 'date' || selectedType.type === 'datetime') {
+                                                            updateValues.FORMAT = selectedType.format;
+                                                        }
+                                                        return {
+                                                            ...prevModalTemp, // giữ nguyên các giá trị hiện tại của externalBody
+                                                            props: updateValues // cập nhật object props
+                                                        };
+                                                    });
+
+                                                } else {
+                                                    setExternalBody(prevModalTemp => ({
+                                                        ...prevModalTemp,
+                                                        props: {
+                                                            ...prevModalTemp.props,
+                                                            DATATYPE: selectedDataType,
+                                                        }
+                                                    }));
+
+                                                }
+                                            }}
+                                        >
+                                            <option value="">{lang["choose"]} </option>
+                                            {types.map((type, index) => (
+                                                <option key={index} value={type.name}>
+                                                    {type.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errorApi.DATATYPE && <p className="text-danger">{errorApi.DATATYPE}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12 ml-2">
+                                        {types.map((type) => {
+                                            if (type.name !== externalBody.props.DATATYPE) return null;
+
+                                            return (
+                                                <div key={type.id}>
+                                                    {type.props.map((prop, index) => {
+                                                        let inputType = prop.type;
+                                                        let isBoolType = prop.type === "bool";
+                                                        let value = externalBody[prop.name];
+
+                                                        if (inputType === "int") {
+                                                            if (prop.name === 'MIN') value = type.limit.min;
+                                                            if (prop.name === 'MAX') value = type.limit.max;
+                                                        }
+                                                        return (
+                                                            <div key={index} className="form-group col-lg-12">
+                                                                <label>{prop.label} </label>
+                                                                {isBoolType ? (
+                                                                    <select
+                                                                        className="form-control"
+                                                                        value={value}
+                                                                        onChange={(e) => {
+                                                                            setExternalBody((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                props: {
+                                                                                    ...prevModalTemp.props,
+                                                                                    [prop.name]: e.target.value === "true",
+                                                                                }
+
+                                                                            }));
+                                                                        }}
+                                                                    >
+                                                                        <option value="true">True</option>
+                                                                        <option value="false">False</option>
+                                                                    </select>
+                                                                ) : (
+                                                                    <input
+                                                                        className="form-control"
+                                                                        type={inputType === "int" ? "number" : inputType}
+                                                                        defaultValue={value}
+                                                                        onChange={(e) => {
+                                                                            setExternalBody((prevModalTemp) => ({
+                                                                                ...prevModalTemp,
+                                                                                props: {
+                                                                                    ...prevModalTemp.props,
+                                                                                    [prop.name]: e.target.value,
+                                                                                }
+
+                                                                            }));
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["creator"]} </label>
+                                        <input class="form-control" type="text" value={users.fullname} readOnly></input>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>{lang["time"]}</label>
+                                        <input class="form-control" type="text" value={new Date().toISOString().substring(0, 10)} readOnly></input>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={handleSubmitExternalBody} class="btn btn-success ">{lang["btn.create"]}</button>
+                                <button type="button" data-dismiss="modal" id="closeModalExternalBody" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Edit Field External Body */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="editExternalBody">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["edit external fields"]}</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div className="row">
+                                        <div className="form-group col-lg-12">
+                                            <label>{lang["fields name"]} <span className='red_star'>*</span></label>
+                                            <input type="text" className="form-control" value={externalBodyUpdate.field_name} onChange={
+                                                (e) => { setExternalBodyUpdate({ ...externalBodyUpdate, field_name: e.target.value }) }
+                                            } placeholder="" />
+                                            {/* {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>} */}
+                                        </div>
+
+                                    </div>
+                                    <div className="row">
+                                        <div className="form-group col-lg-12">
+                                            <label>{lang["alias"]} <span className='red_star'>*</span></label>
+                                            <input type="text" className="form-control" value={externalBodyUpdate.fomular_alias} onChange={
+                                                (e) => { setExternalBodyUpdate({ ...externalBodyUpdate, fomular_alias: e.target.value }) }
+                                            } placeholder="" />
+                                            {/* {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>} */}
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 {/*add Field calculates */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldCalculates">
                     <div class="modal-dialog modal-dialog-center">

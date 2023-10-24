@@ -306,6 +306,8 @@ export default {
 
     "calculations": "Phép tính",
     "add fields body": "Thêm trường dữ liệu",
+    "add fields external body": "Thêm trường dữ liệu mở rộng",
+    "fields external body": "Danh sách trường dữ liệu mở rộng",
     "edit fields body": "Chỉnh sửa trường dữ liệu",
     "add field calculations": "Thêm trường tính toán",
     "edit field calculations": "Chỉnh sửa trường tính toán",
@@ -313,7 +315,7 @@ export default {
     "fields name statistic": "Tên trường thống kê",
     "statistical fields": "Danh sách trường thống kê",
     "edit statistical fields": "Chỉnh sửa trường thống kê",
-
+    "edit external fields": "Chỉnh sửa trường mở rộng",
     "select fields": "Chọn trường",
     "group by": "Nhóm giá trị bởi trường",
     "edit api": "Chỉnh sửa api",
@@ -469,8 +471,8 @@ export default {
     "no selected group by": "Không có trường nào được chọn",
     "detail ui" : "Chi tiết dự án",
     "next": "Tiếp tục",
-    "add stage": "Thêm giai đoạn"
-
+    "add stage": "Thêm giai đoạn",
+    "duplicate fomular": "Trường với bí danh này đã tồn tại"
 
 
 

@@ -277,7 +277,11 @@ export default () => {
 
                                                     <select class="form-control ml-1"
                                                         value={methodFilter}
-                                                        onChange={e => setMethodFilter(e.target.value)}
+                                                        onChange={e => {
+                                                            setMethodFilter(e.target.value); 
+                                                            setCurrentPageApi(1);
+                                                        }}
+                                                        
                                                     >
                                                         <option value="">ALL</option>
                                                         {methods.map((method, index) => (
@@ -290,7 +294,11 @@ export default () => {
 
                                                     <select class="form-control"
                                                         value={modeFilter}
-                                                        onChange={e => setModeFilter(e.target.value)}
+                                                  
+                                                        onChange={e => {
+                                                            setModeFilter(e.target.value)
+                                                            setCurrentPageApi(1);
+                                                        }}
                                                     >
                                                         {mode.map((mode, index) => (
                                                             <option key={index} value={mode}>{mode}</option>

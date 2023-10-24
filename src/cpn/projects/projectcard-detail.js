@@ -564,6 +564,7 @@ export default () => {
     let projectImpli = projectdetail.members ? projectdetail.members.filter(member => member.permission === 'deployer') : [];
 
     let sortedMembers = [...projectManagerMembers, ...projectImpli];
+
     const [isLoading, setIsLoading] = useState(false);
 
     const detailTask = async (taskid) => {
@@ -1100,6 +1101,10 @@ export default () => {
         );
     };
 
+
+    // Tìm member trong sortedMembers có username trùng với _users.username
+    const memberCheck = sortedMembers?.find(member => member.username === _users.username);
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1120,14 +1125,18 @@ export default () => {
                                     <div class="heading1_project_detail  margin_0">
                                         <h5>{lang["project.info"]}</h5>
                                     </div>
-                                    <div class="" onClick={editProject}>
-                                        <i class="fa fa-list-ul icon-detail-project" title={lang["edit.project"]}></i>
-                                    </div>
+                                    
+                                    {
+                                        (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck?.permission === "supervisor" || projectmanager.username === _users.username) &&
+                                        <div class="" onClick={editProject}>
+                                            <i class="fa fa-list-ul icon-detail-project" title={lang["edit.project"]}></i>
+                                        </div>
+                                    }
+
                                 </div>
                                 <div class="table_section padding_infor_info">
                                     <p class="font-weight-bold">{lang["projectname"]}:</p>
                                     <p class="mb-2">{projectdetail.project_name}</p>
-
                                     <div class="row">
                                         <div class="col-md-4">
                                             <p class="font-weight-bold">{lang["projectcode"]}:</p>
@@ -1201,7 +1210,7 @@ export default () => {
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
-                                                                    ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                   ( ["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username )&&
                                                                     <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.action"]}</th>
                                                                 }
                                                             </tr>
@@ -1241,7 +1250,7 @@ export default () => {
                                                                         )
                                                                     }
                                                                     {
-                                                                        ["pm", "ad", "uad"].indexOf(auth.role) != -1 &&
+                                                                        (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username) &&
                                                                         <td class="align-center">
                                                                             <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
                                                                         </td>

@@ -47,7 +47,7 @@ const Stage = (props) => {
     const handleCloseModal = () => {
         setErrorMessagesadd({})
     };
-
+    const [enterPressed, setEnterPressed] = useState(false);
     const dataTask = props.data
     const membersProject = props.members.members
     const manageProject = props.manager
@@ -830,14 +830,14 @@ const Stage = (props) => {
 
         updateTaskChild({
             ...subsubtask,
-            progress: progressValues[uniqueId] || subsubtask.progress,
+            progress: progressValues[uniqueId],
         }, true);
     };
     const handleProgressBlurTask = (e, subtask, taskId, periodId, uniqueId) => {
         console.log(uniqueId)
         updateTask({
             ...subtask,
-            progress: progressValuesTask[uniqueId] || subtask.progress,
+            progress: progressValuesTask[uniqueId] ,
         }, true);
     };
 
@@ -1249,13 +1249,20 @@ const Stage = (props) => {
                                                     ) : (
                                                         <td style={{ height: "38px", overflowY: "hidden" }}>
                                                             {
-                                                                (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subtask.approve ?
-                                                                    <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
+                                                                (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subtask.task_approve ?
+                                                                    <div class="fix-layout-input " style={{ display: 'inline-block', position: 'relative' }}>
                                                                         <input
                                                                             type="text"
-                                                                            className='form-control'
+                                                                            className='form-control '
                                                                             value={progressValuesTask[uniqueId] ?? ''}
-                                                                            onBlur={(e) => handleProgressBlurTask(e, subtask, subtask.task_id, task.period_id, uniqueId)}
+                                                                            onBlur={(e) => {
+                                                                             
+                                                                                if (!enterPressed) {
+                                                                                    handleProgressBlurTask(e, subtask, subtask.task_id, task.period_id, uniqueId);
+                                                                                }
+                                                                                
+                                                                                setEnterPressed(false)
+                                                                            }}
 
                                                                             onFocus={(e) => { handleProgressFocusTask(subtask) }}
                                                                             onChange={(e) => {
@@ -1267,12 +1274,14 @@ const Stage = (props) => {
                                                                             }}
                                                                             style={{ padding: "2px 4px" }}
                                                                             onKeyDown={(e) => {
-                                                                                if (e.key === 'enter') {
+                                                                                if (e.key === 'Enter') {
                                                                                     e.preventDefault();
+                                                                                  
+                                                                                   setEnterPressed(true)
                                                                                     updateTask({
                                                                                         ...subtask,
-                                                                                        progress: progressValuesTask[uniqueId] || subtask.progress,
-                                                                                    });
+                                                                                        progress: progressValuesTask[uniqueId],
+                                                                                    }, true);
                                                                                 }
                                                                             }}
                                                                         />
@@ -1280,7 +1289,7 @@ const Stage = (props) => {
                                                                     </div>
                                                                     :
                                                                     <div style={{ display: 'inline-block', position: 'relative' }}>
-                                                                        {!isNaN(parseFloat(progressValues[uniqueId])) ? (parseFloat(progressValues[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
+                                                                        {!isNaN(parseFloat(progressValuesTask[uniqueId])) ? (parseFloat(progressValuesTask[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
                                                                     </div>
                                                             }
                                                         </td>
@@ -1312,7 +1321,7 @@ const Stage = (props) => {
                                                                             ? (subtask.task_approve === true
                                                                                 ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                            : (subtask.progress === "100.00"
+                                                                            : (subtask.progress === 100 
                                                                                 ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
@@ -1325,9 +1334,13 @@ const Stage = (props) => {
                                                                 {
                                                                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                     <>
-                                                                        {subtask.task_approve ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                            : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-
+                                                                         {subtask.task_approve
+                                                                            ? (subtask.task_approve
+                                                                                ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            : (subtask.progress === "100.00" || subtask.progress === 100
+                                                                                ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
 
 
@@ -1370,7 +1383,14 @@ const Stage = (props) => {
                                                                                 type="text"
                                                                                 className='form-control'
                                                                                 value={progressValues[uniqueId] ?? ''}
-                                                                                onBlur={(e) => handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)}
+                                                                                onBlur={(e) => {
+                                                                                    
+                                                                                    if (!enterPressed) {
+                                                                                        handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)
+                                                                                    }
+                                                                                  
+                                                                                    setEnterPressed(false)
+                                                                                }}
                                                                                 onFocus={(e) => { handleProgressFocus(subsubtask) }}
                                                                                 onChange={(e) => {
                                                                                     const value = e.target.value;
@@ -1380,13 +1400,16 @@ const Stage = (props) => {
                                                                                     }
                                                                                 }}
                                                                                 style={{ padding: "2px 4px" }}
+                                                                             
                                                                                 onKeyDown={(e) => {
-                                                                                    if (e.key === 'enter') {
+                                                                                    if (e.key === 'Enter') {
                                                                                         e.preventDefault();
-                                                                                        updateTaskChild({
-                                                                                            ...subsubtask,
-                                                                                            progress: progressValues[uniqueId] || subsubtask.progress,
-                                                                                        });
+                                                                                       
+                                                                                       setEnterPressed(true)
+                                                                                       updateTaskChild({
+                                                                                        ...subsubtask,
+                                                                                        progress: progressValues[uniqueId] ,
+                                                                                    }, true);
                                                                                     }
                                                                                 }}
                                                                             />
