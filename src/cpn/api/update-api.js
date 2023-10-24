@@ -12,6 +12,7 @@ import clipboardCopy from 'clipboard-copy';
 import $ from 'jquery';
 import { formatDate } from "../../redux/configs/format-date";
 import bootstrap from "bootstrap";
+import { da } from "date-fns/locale";
 
 var hideModal = hideModalInfo => {
     $("#addFieldCalculates").modal("hide");
@@ -47,6 +48,7 @@ export default () => {
     };
 
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
+
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
         const message = responseMessages[status];
@@ -115,7 +117,6 @@ export default () => {
         return Object.values(temp).every(x => x === "");
     }
 
-
     const handleSubmitModal = () => {
         const validator = {
             "get": [validateApiname, validateApiFieldShow],
@@ -138,7 +139,6 @@ export default () => {
         if (valid) {
             setModalTemp(prevModalTemp => ({ ...prevModalTemp, api_method: apiMethod }));
 
-
             dispatch({
                 branch: "api",
                 type: "addFieldParam",
@@ -148,15 +148,16 @@ export default () => {
                 }
             })
         }
-
-
     }
+
+
     useEffect(() => {
         // Kiểm tra điều kiện dữ liệu sẵn sàng
         if (tempFieldParam && Object.keys(tempFieldParam).length > 0) {
             updateApi();
         }
     }, [tempFieldParam]); // Theo dõi sự thay đổi của tempFieldParam
+
 
     const [allApi, setAllApi] = useState([]);
 
@@ -169,7 +170,6 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-
                 if (success) {
                     if (data) {
 
@@ -180,6 +180,25 @@ export default () => {
                 } else {
                     // window.location = "/404-not-found"
                 }
+            })
+    }, [api_id])
+
+    const [typeProject, setTypeProject] = useState([]);
+
+    useEffect(() => {
+        fetch(`${proxy}/projects/project/27`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                console.log(resp)
+                if (success) {
+                    setTypeProject(data.typeProject)
+                }
+
             })
     }, [api_id])
     // console.log(modalTemp.tables)
@@ -604,17 +623,17 @@ export default () => {
     function isPrimaryKey(tableId, fieldId) {
         return tableFields[tableId]?.primary_key.includes(fieldId);
     }
-    
+
     const handleCheckboxChange = (tableId, fieldId, isChecked) => {
         const updatedSelections = { ...selectedFields };
-    
+
         if (!updatedSelections[tableId]) {
             updatedSelections[tableId] = [];
         }
-    
+
         if (isChecked) {
             updatedSelections[tableId].push(fieldId);
-    
+
             // Nếu là khóa chính và được chọn, bỏ chọn khóa ngoại tương ứng (nếu có)
             if (isPrimaryKey(tableId, fieldId)) {
                 for (let tid in tableFields) {
@@ -630,10 +649,10 @@ export default () => {
                 updatedSelections[tableId] = updatedSelections[tableId].filter(id => id !== fieldId);
             }
         }
-    
+
         setSelectedFields(updatedSelections);
     };
-    
+
 
     //delete selected table 
 
@@ -812,6 +831,7 @@ export default () => {
         // console.log(raw_group_by)
     }
     const validateStatisticalUpdate = () => {
+        
         let temp = {};
 
         temp.display_name = statisticalUpdate.display_name ? "" : lang["error.input"];
@@ -827,6 +847,7 @@ export default () => {
 
 
     const submitupdateFieldStatistical = () => {
+
         if (validateStatisticalUpdate()) {
             const updatedStatistical = modalTemp.statistic.map(item =>
                 item.fomular_alias === statisticalUpdate.fomular_alias ? { ...statisticalUpdate, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy } : item
@@ -836,7 +857,9 @@ export default () => {
                 ...prev,
                 statistic: updatedStatistical
             }));
+
             setGroupBy([])
+
             Swal.fire({
                 title: lang["success.title"],
                 text: lang["success.update"],
@@ -847,9 +870,7 @@ export default () => {
 
             $('#closeEditStatis').click()
         }
-
     };
-
 
     const handleDeleteStatistical = (sta) => {
         Swal.fire({
@@ -926,17 +947,20 @@ export default () => {
             const fomular_alias = await generateUniqueFormularAlias(display_name);
             // console.log(fomular_alias)
             const newStatistical = { fomular_alias, display_name, field, fomular, group_by: groupBy.map(g => g.fomular_alias), raw_group_by: groupBy };
+
             // Cập nhật modalTemp
             setModalTemp(prev => ({
                 ...prev,
                 statistic: [...prev.statistic, newStatistical]
             }));
+
             setStatistical([...statistical, newStatistical])
             setDisplayname("");
             setField("");
             setFomular("");
             setGroupBy([])
             setShowModal(false);
+
             Swal.fire({
                 title: lang["success.title"],
                 text: lang["success.add"],
@@ -971,6 +995,7 @@ export default () => {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
+
                             <div class="full graph_head d-flex justify-content-between align-items-center">
                                 <div class="heading1 margin_0 ">
                                     <h5><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["edit api"]}
@@ -987,9 +1012,10 @@ export default () => {
                                     </button>
                                 </div>
                             </div>
+
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
-                                    <div class="form-group col-lg-5">
+                                    <div class="form-group col-lg-6">
                                         <label class="font-weight-bold">{lang["api name"]} <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
@@ -1000,10 +1026,25 @@ export default () => {
                                         />
                                         {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
                                     </div>
-                                    <div class="form-group col-lg-7"></div>
 
+                                    {typeProject === "api" ? (
+                                        <div class="form-group col-lg-6">
+                                            <label class="font-weight-bold">Remote URL </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={modalTemp.remote_url}
+                                                onChange={(e) => setModalTemp({ ...modalTemp, api_name: e.target.value })}
+                                                placeholder=""
+                                            />
+                                            {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
+                                        </div>
+                                    ) : (
+                                        <div class="form-group col-lg-6"></div>
+                                    )
+                                    }
 
-                                    <div class="form-group col-lg-5">
+                                    <div class="form-group col-lg-6">
                                         <label class="font-weight-bold">{lang["api.description"]} <span className='red_star'>*</span></label>
                                         <textarea
                                             className="form-control"
@@ -1012,7 +1053,7 @@ export default () => {
                                             placeholder=""
                                         />
                                     </div>
-                                    <div class="form-group col-lg-7"></div>
+                                    <div class="form-group col-lg-6"></div>
 
 
                                     {/* <div class="form-group col-lg-4">
@@ -1289,10 +1330,10 @@ export default () => {
                                                 )}
 
                                                 {/* Chọn trường hiển thị */}
-                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post")  &&(
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
-                                                            <p class="font-weight-bold">{lang["fields display"]} {modalTemp.api_method === "get" ? (<span className='red_star'>*</span>): null}</p>
+                                                            <p class="font-weight-bold">{lang["fields display"]} {modalTemp.api_method === "get" ? (<span className='red_star'>*</span>) : null}</p>
                                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" onClick={initializeCheckboxStateShow} data-toggle="modal" data-target="#addFieldShow">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
@@ -1562,8 +1603,8 @@ export default () => {
                                                             modalTemp.tables?.forEach(tid => {
                                                                 correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
                                                             });
-                                                        } 
-                                                        
+                                                        }
+
                                                         function isPrimaryKey(tableId, fieldId) {
                                                             return tableFields[tableId]?.primary_key.includes(fieldId);
                                                         }
@@ -1593,7 +1634,7 @@ export default () => {
                                                                                 e.preventDefault();
                                                                             }
                                                                             // If more than one table is selected and it's a foreign key and corresponding primary key exists, show error and prevent checking
-                                                                             else if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFields[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
+                                                                            else if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFields[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
                                                                                     title: lang["log.error"],
                                                                                     text: lang["error.fk"],
@@ -1647,7 +1688,7 @@ export default () => {
                             <div class="modal-body">
                                 <form>
                                     <div className="container-field">
-                                    {modalTemp.tables?.map((tableId, index) => (
+                                        {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className={`form-group table-wrapper`}>
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
@@ -1776,7 +1817,7 @@ export default () => {
                                     </div> */}
                                     <div className="container-field">
                                         {/*  */}
-                                         {modalTemp.tables?.map((tableId, index) => (
+                                        {modalTemp.tables?.map((tableId, index) => (
                                             <div key={index} className="form-group table-wrapper">
                                                 <label className="table-label">{tableFields[tableId]?.table_name}</label>
                                                 <div className="field-wrapper">
@@ -1790,13 +1831,13 @@ export default () => {
                                                             modalTemp.tables?.forEach(tid => {
                                                                 correspondingPrimaryKeyExists = tableFields[tid]?.fields.some(obj => obj.id === isForeignKey.ref_field_id) || correspondingPrimaryKeyExists;
                                                             });
-                                                        } 
-                                                        
+                                                        }
+
                                                         function isPrimaryKey(tableId, fieldId) {
                                                             return tableFields[tableId]?.primary_key.includes(fieldId);
                                                         }
 
-                                                      
+
 
                                                         return (
                                                             <div key={fieldIndex}>
@@ -1806,8 +1847,8 @@ export default () => {
                                                                         type="checkbox"
                                                                         checked={selectedFieldsBody[tableId]?.includes(field.id) ?? false}
                                                                         onChange={e => {
-                                                                         
-                                                                             if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsBody[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
+
+                                                                            if (isForeignKey && e.target.checked && isPrimaryKey(isForeignKey.table_id, isForeignKey.ref_field_id) && selectedFieldsBody[isForeignKey.table_id]?.includes(isForeignKey.ref_field_id)) {
                                                                                 Swal.fire({
                                                                                     title: lang["log.error"],
                                                                                     text: lang["error.fk"],
@@ -1819,7 +1860,7 @@ export default () => {
                                                                                 });
                                                                                 e.preventDefault();
                                                                             } else {
-                                                                            handleCheckboxChangeBody(tableId, field.id, e.target.checked);
+                                                                                handleCheckboxChangeBody(tableId, field.id, e.target.checked);
                                                                             }
                                                                         }}
                                                                     />
@@ -1831,7 +1872,7 @@ export default () => {
                                                 </div>
                                             </div>
                                         ))}
-                                        
+
                                     </div>
 
                                     <div class="form-group col-md-12">

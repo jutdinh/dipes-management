@@ -12,6 +12,225 @@
    
     height: 38px;
 }
+/* Layout Active */
+.step-list {
+    padding: 0;
+    list-style-type: none;
+    border: 1px solid #ccc;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.step-list:before,
+.step-list:after {
+    content: "";
+    display: table;
+}
+
+.step-list:after {
+    clear: both;
+}
+
+.step-item {
+    display: inline-block;
+    width: 33.333333%;
+    /* float: left; */
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+
+.step-active {
+    background: #1F8A70;
+    color: #fff;
+}
+
+.step-active .step-link {
+    font-size: 14px;
+}
+
+.step-link {
+    padding: 0 12px;
+    height: 40px;
+    line-height: 40px;
+    position: relative;
+    display: block;
+
+}
+
+.step-arrow-right.step-active .step-link:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 20px;
+    border-color: transparent transparent transparent #1F8A70;
+    right: -40px;
+
+}
+
+
+
+.step-arrow-both.step-active .step-link:before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 20px;
+    border-color: #1F8A70#1F8A70 #1F8A70 transparent;
+    /* Mũi tên dạng khuyết ở bên trái */
+    left: -40px;
+    /* border: 1px solid #5f3939; */
+}
+
+.step-arrow-both.step-active .step-link:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 20px;
+    border-color: transparent transparent transparent #1F8A70;
+    right: -40px;
+}
+
+.step-arrow-left-flat-right.step-active .step-link:before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 20px;
+    border-color: #1F8A70 #1F8A70 #1F8A70 transparent;
+    /* Mũi tên dạng khuyết ở bên trái */
+    left: -40px;
+}
+
+.step-arrow-left-flat-right.step-active .step-link:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 20px;
+    border-color: transparent transparent #1F8A70 transparent;
+    /* Mũi tên dạng bằng ở bên phải */
+    right: 0;
+    /* chỉnh sửa vị trí */
+    top: 0;
+}
+
+
+
+.upload-container {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    position: relative;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 0px;
+    padding-right: 20px;
+}
+
+.upload-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 20px; 
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
+}
+
+.icon {
+    font-size: 50px;
+    margin-right: 20px;
+    color: #ccc;
+    margin-bottom: 10px;
+    align-self: center; 
+}
+
+.instructions {
+    color: #888;
+    margin-top: 10px;
+    text-align: center;
+    align-self: center; 
+}
+
+.input-file {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+
+.text-center {
+    display: flex;
+    justify-content: center;
+}
+
+.my-box {
+    height: 205px;
+    background-color: #d9dfe4;
+    color: #fff;
+    border: 2px solid #e7f1f8;
+    border-radius: 5px;
+    padding: 20px;
+    display: flex; /* Sử dụng Flexbox */
+    justify-content: center; /* Căn giữa chữ theo chiều ngang */
+padding: 0;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.my-box:hover {
+    background-color: #abd0e9;
+}
+
+.my-box span {
+    margin-top: 50px;
+    font-size: 48px; 
+    color: #ffc107; 
+    font-weight: bold; 
+}
+
+
+.my-box-half {
+    height: 150px;
+    background-color: #d9dfe4;
+    color: #fff;
+    border: 2px solid #e7f1f8;
+    border-radius: 5px;
+    padding: 0px;
+    display: flex; /* Sử dụng Flexbox */
+    justify-content: center; /* Căn giữa chữ theo chiều ngang */
+    align-items: center; /* Căn giữa chữ theo chiều dọc */
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.my-box-half:hover {
+    background-color: #abd0e9;
+}
+
+.my-box-half span {
+    font-size: 48px; 
+    color: #ffc107; 
+    font-weight: bold; 
+}
+
+
 
 
 
@@ -1685,10 +1904,25 @@ input[type="date"]:valid+.date-label {
     font-weight: 500;
 }
 
+.padding_infor_info_layout_chart {
+    padding: 5px 20px 5px 20px;
+    float: left;
+    width: 100%;
+    min-height: 220px;
+
+}
 .padding_infor_info_statis {
     padding: 7px 35px;
     float: left;
     width: 100%;
+
+}
+
+.padding_infor_info_layout_chart_half {
+    padding: 5px 10px 5px 10px;
+    float: left;
+    width: 100%;
+    min-height: 200px;
 
 }
 

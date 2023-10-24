@@ -2625,10 +2625,19 @@ const responseMessages = {
             "type": "Thành công"
         },
         "en": {
-            "description": "Update task successfully",
+            "description": "Update request successfully",
             "type": "Success"
         }
-       
+    },
+    "0x4501262": {
+        "vi": {
+            "description": "Tên giai đoạn đã tồn tại",
+            "type": "Lỗi"
+        },
+        "en": {
+            "description": "The stage name already exists",
+            "type": "Error"
+        }
     }
 }
   export default responseMessages;

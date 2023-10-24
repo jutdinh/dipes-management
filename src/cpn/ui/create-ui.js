@@ -6,9 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ValidTypeEnum } from '../enum/type';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import Layout2 from './view_layout2'
-import Layout1 from './view_layout1'
-import LayoutViewApi from "./view_api_layout"
+import Layout2 from './layout/view_layout2'
+import Layout1 from './layout/view_layout1'
+import LayoutViewApi from "./layout/view_api_layout"
+import LayoutActive from './layout/active'
+import LayoutKeys from './layout/keys'
+import LayoutHome from './layout/home'
 import responseMessages from "../enum/response-code";
 import { Navbar, Topbar } from '../navbar';
 import ui from "./ui";
@@ -37,7 +40,7 @@ export default () => {
         // console.log(layoutNumber)
         setLayout(layoutNumber);
     }
-    // console.log(layout)
+    console.log(layout)
 
     const defaultValues = {
         title: "",
@@ -858,8 +861,11 @@ export default () => {
                                             <label class="font-weight-bold">Layout</label>
                                             {modalTemp.layout_id == 0 ?
                                                 <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(0)} data-toggle="modal" data-target="#preview"></i>
-                                                : <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
-
+                                                : modalTemp.layout_id == 1 ? <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(1)} data-toggle="modal" data-target="#preview"></i>
+                                                : modalTemp.layout_id == 2 ? <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(2)} data-toggle="modal" data-target="#preview"></i>
+                                                : modalTemp.layout_id == 3 ? <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(3)} data-toggle="modal" data-target="#preview"></i>
+                                                : modalTemp.layout_id == 4 ? <i class="fa fa-eye size-24 pointer icon-margin icon-view ml-2 ml-auto" onClick={() => handleClickLayout(4)} data-toggle="modal" data-target="#preview"></i>
+                                                : ''
                                             }
                                         </div>
                                         <select
@@ -869,11 +875,14 @@ export default () => {
                                         >
                                             <option value={0}>Layout 1</option>
                                             <option value={1}>Layout 2</option>
+                                            <option value={2}>Layout Import</option>
+                                            <option value={3}>Layout List</option>
+                                            <option value={4}>Layout Chart</option>
 
                                         </select>
                                     </div>
 
-                                    {Number(modalTemp.layout_id) === 2 && (
+                                    {/* {Number(modalTemp.layout_id) === 2 && (
                                         <div className="form-group col-lg-6">
                                             <label class="font-weight-bold" htmlFor="sel1">API <span className='red_star'>*</span></label>
                                             <select className="form-control" name="role" value={modalTemp.api_id} onChange={(e) => setModalTemp({ ...modalTemp, api_id: e.target.value })}>
@@ -885,9 +894,9 @@ export default () => {
 
                                             </select>
                                         </div>
-                                    )}
+                                    )} */}
                                     {/*Ds các bảng */}
-                                    {Number(modalTemp.layout_id) !== 2 ? (
+                                  
                                         <div class="col-md-12 col-lg-12 bordered">
                                             <div class="d-flex align-items-center mb-1">
                                                 <p class="font-weight-bold">{lang["selected table"]} <span className='red_star'> *</span> </p>
@@ -927,8 +936,8 @@ export default () => {
                                                     )
                                                 }
                                             </div>
-                                        </div>) : null
-                                    }
+                                        </div>
+                                    
                                     {
                                         tables && tables.length > 0 ? (
                                             <>
@@ -1153,8 +1162,11 @@ export default () => {
                                         <div className="mt-2 d-flex justify-content-end ml-auto">
                                             {modalTemp.layout_id === 0 ?
                                                 <button type="button" onClick={() => handleClickLayout(0)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-                                                : <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
-
+                                                : modalTemp.layout_id == 1 ? <button type="button" onClick={() => handleClickLayout(1)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                : modalTemp.layout_id == 2 ? <button type="button" onClick={() => handleClickLayout(2)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                : modalTemp.layout_id == 3 ? <button type="button" onClick={() => handleClickLayout(3)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                : modalTemp.layout_id == 4 ? <button type="button" onClick={() => handleClickLayout(4)} className="btn btn-primary mr-2" data-toggle="modal" data-target="#preview">{lang["preview layout"]}</button>
+                                                : ''
                                             }
                                             <button type="button" onClick={addUI} className="btn btn-success mr-2">{lang["btn.create"]}</button>
                                             <button type="button" onClick={() => back()} data-dismiss="modal" className="btn btn-danger">{lang["btn.close"]}</button>
@@ -1748,7 +1760,7 @@ export default () => {
 
                                     </div>
 
-{/* 
+                                    {/* 
                                     <div class="form-group col-lg-12">
                                         <label><p class="font-weight-bold">{lang["list group by"]}</p></label>
                                         <div class="table-responsive">
@@ -1993,7 +2005,10 @@ export default () => {
                                         <>
                                             {layout === 0 && <Layout1 title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                             {layout === 1 && <Layout2 title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
-                                            {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {/* {layout === 2 && <LayoutViewApi title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />} */}
+                                            {layout === 2 && <LayoutActive title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 3 && <LayoutKeys title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
+                                            {layout === 4 && <LayoutHome title={modalTemp.title} data={tables} fields={modalTemp.fields} calculate={modalTemp.calculates} statistic={modalTemp.statistic_fields} />}
                                         </>
                                     </div>
                                 </form>

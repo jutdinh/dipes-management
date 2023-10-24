@@ -462,7 +462,9 @@ export default {
     "no history yet": "No history yet",
     "list group by": "List of selected field (GroupBy)",
     "no selected group by": "No field selected",
-    "detail ui" : "Project detail"
+    "detail ui" : "Project detail",
+    "next": "Next",
+    "add stage": "Add Stage"
 
 
 }

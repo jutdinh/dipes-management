@@ -6,8 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import Layout2 from './view_layout2'
-import Layout1 from './view_layout1'
+import Layout2 from './layout/view_layout2'
+import Layout1 from './layout/view_layout1'
+import LayoutChart from './layout/home'
+import LayoutKeys from './layout/keys'
+import LayoutActive from './layout/active'
 import responseMessages from "../enum/response-code";
 import { formatDate } from "../../redux/configs/format-date";
 import { fi } from "date-fns/locale";
@@ -213,8 +216,12 @@ export default () => {
                                     </div> */}
                                     <div class="form-group col-md-12">
                                         <label class="font-weight-bold"><b>{lang["preview"]}</b></label>
-                                        {layout === 0 && <Layout1 fields={fieldShow} calculate={fieldCalculates} />}
-                                        {layout === 1 && <Layout2 fields={fieldShow} calculate={fieldCalculates} />}
+                                        {layout === 0 && <Layout1 title={detailUi?.title} fields={fieldShow} calculate={fieldCalculates} />}
+                                        {layout === 1 && <Layout2 title={detailUi?.title}fields={fieldShow} calculate={fieldCalculates} />}
+                                        {layout === 2 && <LayoutActive title={detailUi?.title} fields={fieldShow} calculate={fieldCalculates} />}
+                                        {layout === 3 && <LayoutKeys title={detailUi?.title} fields={fieldShow} calculate={fieldCalculates} />}
+                                        {layout === 4 && <LayoutChart title={detailUi?.title} fields={fieldShow} calculate={fieldCalculates} />}
+                               
 
                                         {/* {layout === 0 && <Layout1 fields={fields}/>}
                                             {layout === 1 && <Layout2 fields={fields} />} */}

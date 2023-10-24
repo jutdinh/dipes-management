@@ -19,6 +19,7 @@
     "dagre": "^0.8.5",
     "data-fns": "^1.1.0",
     "date-fns": "^2.30.0",
+    "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
     "frappe-gantt-react": "^0.2.2",
     "gantt": "^3.1.1",

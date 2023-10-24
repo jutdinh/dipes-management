@@ -1,16 +1,16 @@
 
 import { useParams } from "react-router-dom";
-import Header from "../common/header"
+import Header from "../../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask } from '../enum/status';
+import { StatusEnum, StatusTask } from '../../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileExport, faFileImport, faDownload, faSquarePlus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer, AreaChart, Area, ComposedChart, ScatterChart, Scatter } from 'recharts';
-import MyPieChart from "./chart/pie";
-import { Tables } from ".";
+import MyPieChart from "../chart/pie";
+import { Tables } from "..";
 export default (props) => {
     const { lang, proxy, auth } = useSelector(state => state);
     const { title, data, calculate, statistic, fields } = props;
@@ -294,7 +294,7 @@ export default (props) => {
                                                   
                                                 </div>
                                                 <div className="d-flex justify-content-between align-items-center">
-                                                        <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
+                                                        <p>{lang["show"]} {indexOfFirstUi + 1} - {Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
                                                         <nav aria-label="Page navigation example">
                                                             <ul className="pagination mb-0">
                                                                 <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>
@@ -391,7 +391,7 @@ export default (props) => {
                                                             )
                                                         }
                                                         <div className="d-flex justify-content-between align-items-center">
-                                                            <p>{lang["show"]} {indexOfFirstUi + 1}-{Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
+                                                            <p>{lang["show"]} {indexOfFirstUi + 1} - {Math.min(indexOfLastUi, uis_temp.length)} {lang["of"]} {uis_temp.length} {lang["results"]}</p>
                                                             <nav aria-label="Page navigation example">
                                                                 <ul className="pagination mb-0">
                                                                     <li className={`page-item ${currentPageUi === 1 ? 'disabled' : ''}`}>

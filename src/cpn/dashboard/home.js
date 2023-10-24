@@ -182,7 +182,7 @@ export default () => {
             const totalValue = filteredPayload.reduce((sum, pld) => sum + pld.value, 0);
             if (filteredPayload.length > 0) {
                 return (
-                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '10px' }}>
+                    <div className="custom-tooltip" style={{ textAlign: 'center', background: '#d8e2ed', padding: '1px' }}>
                         <p className="label">{`${lang["year"]} ${label}: ${totalValue} ${lang["projects"]}`}</p>
                         <div style={{ display: 'inline', justifyContent: 'center' }}>
                             {filteredPayload.map((pld) => (
@@ -337,8 +337,6 @@ export default () => {
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                     <div class="col-xs-12 col-md-5 col-lg-5">
                         <div class="white_shd full ">
@@ -352,7 +350,7 @@ export default () => {
                                     <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">
-                                                <PieChart width={250} height={260}>
+                                                <PieChart width={240} height={260}>
                                                     <Pie
                                                         dataKey="value"
                                                         startAngle={360}

@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask } from '../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import Layout2 from './view_layout2'
-import Layout1 from './view_layout1'
+import Layout2 from './layout/view_layout2'
+import Layout1 from './layout/view_layout1'
 import responseMessages from "../enum/response-code";
 import { formatDate } from "../../redux/configs/format-date";
 import { fi } from "date-fns/locale";

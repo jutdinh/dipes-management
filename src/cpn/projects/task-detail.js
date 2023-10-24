@@ -590,15 +590,15 @@ export default () => {
             year: "numeric"
         });
 
-        const header = ['ID', 'Tên công việc', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu (dd/MM/yyyy)', 'Ngày kết thúc (dd/MM/yyyy)', 'Timeline', 'Người thực hiện'];
+        const header = ['ID', 'Tên công việc','Mô tả', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu (dd/MM/yyyy)', 'Ngày kết thúc (dd/MM/yyyy)', 'Timeline', 'Người thực hiện'];
         stageData.forEach((period, periodIndex) => {
             const ws_data = [
                 // Header Information
-                [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , ,],
-                [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", ""],
-                [`Ngày xuất (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", ""],
-                [`Tên giai đoạn: ${period.period_name}`, "", "", "", "", "", "", "", "", "", ""],
-                [`Thời gian thực hiện: ${functions.formatDateTask(period.start)} - ${functions.formatDateTask(period.end)}`, "", "", "", "", "", "", "", "", "", ""],
+                [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , , ,],
+                [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", "", ""],
+                [`Ngày xuất (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", "",""],
+                [`Tên giai đoạn: ${period.period_name}`, "", "", "", "", "", "", "", "", "", "",""],
+                [`Thời gian thực hiện: ${functions.formatDateTask(period.start)} - ${functions.formatDateTask(period.end)}`, "", "", "", "", "", "", "", "", "", "",""],
                 header,
                 // ... (the rest of your data)
             ];
@@ -613,6 +613,7 @@ export default () => {
                     // taskIndex + 1,
                     task.task_id,
                     task.task_name,
+                    task.task_description,
                     getTaskPriorityLabel(task.task_priority),
                     `${task.progress}%`,
                     task.task_approve ? "Đã xác nhận" : "Chưa xác nhận",
@@ -626,7 +627,8 @@ export default () => {
                     ws_data.push([
                         // childIndex + 1,
                         childTask.child_task_id,
-                        childTask.child_task_name,
+                        "→ " + childTask.child_task_name,
+                        childTask.child_task_description,
                         getTaskPriorityLabel(childTask.priority),
                         `${childTask.progress}%`,
                         childTask.task_approve ? "Đã xác nhận" : "Chưa xác nhận",
@@ -683,7 +685,7 @@ export default () => {
                 border: borderStyle
             };
 
-            ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 50 }];
+            ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 40 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 },{ width: 50 }];
             ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
             ws["A1"].s = titleStyle;
             ws["A2"].s = athurStyle;
@@ -699,6 +701,7 @@ export default () => {
             ws["G4"].s = athurStyle;
             ws["H4"].s = athurStyle;
             ws["I4"].s = athurStyle;
+            ws["J4"].s = athurStyle;
 
             ws["C5"].s = athurStyle;
             ws["D5"].s = athurStyle;
@@ -707,6 +710,7 @@ export default () => {
             ws["G5"].s = athurStyle;
             ws["H5"].s = athurStyle;
             ws["I5"].s = athurStyle;
+            ws["J5"].s = athurStyle;
 
             ws["E2"].s = athurStyle;
             ws["F2"].s = athurStyle;
@@ -726,7 +730,8 @@ export default () => {
             ws["H3"].s = athurStyle;
             ws["I2"].s = athurStyle;
             ws["I3"].s = athurStyle;
-
+            ws["J2"].s = athurStyle;
+            ws["J3"].s = athurStyle;
 
 
             ws["A6"].s = headerStyle;
@@ -738,6 +743,7 @@ export default () => {
             ws["G6"].s = headerStyle;
             ws["H6"].s = headerStyle;
             ws["I6"].s = headerStyle;
+            ws["J6"].s = headerStyle;
 
 
             const bodyStyle = {
@@ -765,7 +771,7 @@ export default () => {
 
 
             ws["!merges"] = [
-                { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 9 } },//ghép từ ô tại hàng 0, cột 0 đến ô tại hàng 0, cột 11.
                 { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },
                 { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } },
                 { s: { r: 3, c: 0 }, e: { r: 3, c: 1 } },

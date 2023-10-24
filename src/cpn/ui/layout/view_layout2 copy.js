@@ -1,14 +1,14 @@
 
 import { useParams } from "react-router-dom";
-import Header from "../common/header"
+import Header from "../../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask } from '../enum/status';
+import { StatusEnum, StatusTask } from '../../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileExport, faFileImport, faDownload, faSquarePlus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Tables } from ".";
+import { Tables } from "..";
 export default (props) => {
     const { lang, proxy, auth } = useSelector(state => state);
     const { title, data, calculate, statistic } = props;

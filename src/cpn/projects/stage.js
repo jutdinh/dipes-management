@@ -41,6 +41,7 @@ const Stage = (props) => {
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
     // (dataViewDetail)
     const [formData, setFormData] = useState({});
+    const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
     const [selectedUsernames, setSelectedUsernames] = useState([]);
     const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
     const handleCloseModal = () => {
@@ -196,7 +197,8 @@ const Stage = (props) => {
     //     newExpandedSubsubtasks[childTaskId] = !newExpandedSubsubtasks[childTaskId];
     //     setExpandedSubsubtasks(newExpandedSubsubtasks);
     // };
-    const handleToggle = (taskId) => {
+    const handleToggle = (taskId, event) => {
+        event.stopPropagation();
         const newExpandedTasks = { ...expandedTasks };
         newExpandedTasks[taskId] = !newExpandedTasks[taskId];
 
@@ -209,7 +211,8 @@ const Stage = (props) => {
         setSelectedRowIndex(index);
 
     };
-    const handleSubsubtaskToggle = (childTaskId) => {
+    const handleSubsubtaskToggle = (childTaskId, event) => {
+        event.stopPropagation();
         const newExpandedSubsubtasks = { ...expandedSubsubtasks };
         newExpandedSubsubtasks[childTaskId] = !newExpandedSubsubtasks[childTaskId];
 
@@ -233,9 +236,19 @@ const Stage = (props) => {
 
         return status ? status.color : 'N/A';
     };
-
+    const [taskNameFilter, setTaskNameFilter] = useState("");
+    const [startDateFilter, setStartDateFilter] = useState(null);
+    const [endDateFilter, setEndDateFilter] = useState(null);
     useEffect(() => {
-        const newGanttData = dataTask.map(period => {
+        const newGanttData = dataTask.filter((task) => {
+            let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
+            let taskName = task && task.period_name ? task.period_name.toLowerCase() : '';
+            let taskStart = new Date(task.start);
+            let taskEnd = new Date(task.end);
+            return removeVietnameseTones(taskName).includes(removeVietnameseTones(filterText)) &&
+                (!startDateFilter || taskStart >= new Date(startDateFilter)) &&
+                (!endDateFilter || taskEnd <= new Date(endDateFilter));
+        }).map(period => {
             const tasks = expandedTasks[period.period_id]
                 ? period.tasks.map(task => {
                     const child_tasks = expandedTasks[period.period_id] && expandedSubsubtasks[task.task_id]
@@ -253,7 +266,7 @@ const Stage = (props) => {
         });
 
         setGanttData(newGanttData);
-    }, [dataTask, expandedTasks, expandedSubsubtasks, expandedTasks]);
+    }, [dataTask, expandedTasks, expandedSubsubtasks, expandedTasks, taskNameFilter, startDateFilter, endDateFilter]);
 
 
 
@@ -308,8 +321,8 @@ const Stage = (props) => {
 
     useEffect(() => {
         if (dataStageUpdate.period_id) {
-            const newSelectedUsernames = dataTask.find(period => period.period_id === dataStageUpdate.period_id)?.period_members.map(member => member.username) || [];
-            setSelectedUsernames(newSelectedUsernames);
+            const newSelectedUsernames = dataTask.find(period => period.period_id === dataStageUpdate.period_id)?.period_members.map(member => member.username);
+            setSelectedUsernamesStage(newSelectedUsernames);
 
             setFormData({
                 stage_name: dataStageUpdate.period_name,
@@ -319,6 +332,13 @@ const Stage = (props) => {
         }
     }, [dataStageUpdate]);
 
+    const handleCheckboxChangeStage = (user, isChecked) => {
+        if (isChecked) {
+            setSelectedUsernamesStage(prevState => [...prevState, user.username]);
+        } else {
+            setSelectedUsernamesStage(prevState => prevState.filter(username => username !== user.username));
+        }
+    };
     const handleCheckboxChange = (user, isChecked) => {
         if (isChecked) {
             setSelectedUsernames(prevState => [...prevState, user.username]);
@@ -339,11 +359,12 @@ const Stage = (props) => {
         // Dùng để load danh sách username của các thành viên trong task hiện tại
         if (taskUpdate && taskUpdate.members) {
             const initialSelectedUsernames = taskUpdate?.members.map(member => member.username);
+            // console.log(taskUpdate)
             setSelectedUsernames(initialSelectedUsernames);
         }
     }, [taskUpdate]);
 
-
+    // console.log(taskUpdate)
     useEffect(() => {
         // Dùng để load danh sách username của các thành viên trong task child hiện tại
         if (taskUpdateChild && taskUpdateChild.members) {
@@ -361,6 +382,8 @@ const Stage = (props) => {
         setPeriodId(stage.period_id);
 
     }
+
+
     const updateStage = (e) => {
         e.preventDefault();
 
@@ -393,7 +416,7 @@ const Stage = (props) => {
                 period_name: formData.stage_name,
                 start: formData.stage_start,
                 end: formData.stage_end,
-                members: selectedUsernames
+                members: selectedUsernamesStage
             }
         }
 
@@ -449,15 +472,13 @@ const Stage = (props) => {
         });
     }
 
-
+    // console.log(selectedUsernames)
     const submitAddTask = (e) => {
         e.preventDefault();
         task.members = selectedUsernames;
         const requestBody = {
             period_id: periodId,
-
             task: task
-
         }
         const errors = {};
         if (!task.task_name) {
@@ -501,6 +522,7 @@ const Stage = (props) => {
         })
             .then(res => res && res.json())
             .then((resp) => {
+                // console.log(resp)
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
@@ -510,15 +532,29 @@ const Stage = (props) => {
                     }
                 }
             })
-    };
-    const updateTask = (e) => {
-        e.preventDefault();
+    }
+    const updateTask = (dataUpdate, useDataUpdate = false) => {
+        console.log(dataUpdate)
+        console.log(periodId)
+
+
+
+
+
+        if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
+            const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
+            setSelectedUsernames(initialSelectedUsernames);
+        }
         taskUpdate.members = selectedUsernames;
 
-        const requestBody = {
+        dataUpdate.members = selectedUsernames;
 
-            task: taskUpdate
-        }
+        const currentTask = useDataUpdate ? dataUpdate : taskUpdate;
+        const requestBody = {
+            task: currentTask,
+
+        };
+
         const errors = {};
         if (!taskUpdate.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -570,6 +606,7 @@ const Stage = (props) => {
                 }
             })
     };
+
     const handleDeleteTask = () => {
 
 
@@ -601,6 +638,7 @@ const Stage = (props) => {
             }
         });
     }
+
     const handleConfirmTask = (task, periodId) => {
 
         const newTaskApproveStatus = !task.task_approve;
@@ -629,8 +667,6 @@ const Stage = (props) => {
                 }
             });
     }
-
-
 
     const submitAddTaskChild = (e) => {
         e.preventDefault();
@@ -691,8 +727,8 @@ const Stage = (props) => {
             })
     };
 
-
     const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
+
         if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
             const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
             setSelectedUsernamesChild(initialSelectedUsernames);
@@ -788,7 +824,8 @@ const Stage = (props) => {
             })
     }
     const [progressValues, setProgressValues] = useState({});
-
+    const [progressValuesTask, setProgressValuesTask] = useState({});
+    console.log(progressValues)
     const handleProgressBlur = (e, subsubtask, taskId, periodId, uniqueId) => {
 
         updateTaskChild({
@@ -796,9 +833,27 @@ const Stage = (props) => {
             progress: progressValues[uniqueId] || subsubtask.progress,
         }, true);
     };
+    const handleProgressBlurTask = (e, subtask, taskId, periodId, uniqueId) => {
+        console.log(uniqueId)
+        updateTask({
+            ...subtask,
+            progress: progressValuesTask[uniqueId] || subtask.progress,
+        }, true);
+    };
+
+
+
 
     const handleProgressChange = (normalizedValue, subsubtask, taskId, periodId, uniqueId) => {
         setProgressValues(prevState => ({
+            ...prevState,
+            [uniqueId]: normalizedValue,
+        }));
+        setTaskId(taskId);
+        setPeriodId(periodId);
+    };
+    const handleProgressChangeTask = (normalizedValue, subtask, taskId, periodId, uniqueId) => {
+        setProgressValuesTask(prevState => ({
             ...prevState,
             [uniqueId]: normalizedValue,
         }));
@@ -812,7 +867,12 @@ const Stage = (props) => {
         const usernames = members.map(mem => mem.username)
         setSelectedUsernames(usernames)
     }
+    const handleProgressFocusTask = (childTask) => {
+        const members = childTask.members ? childTask.members : []
 
+        const usernames = members.map(mem => mem.username)
+        setSelectedUsernames(usernames)
+    }
 
     function onlyContainsNumbers(inputString) {
         const value = parseInt(inputString, 10);
@@ -837,6 +897,22 @@ const Stage = (props) => {
         });
 
         setProgressValues(initialProgressValues);
+    }, [dataTask]);
+    useEffect(() => {
+        const initialProgressValues = {};
+
+        // Duyệt qua mỗi task và subtask để thiết lập giá trị ban đầu
+        dataTask.forEach((task, taskIndex) => {
+            task.tasks?.forEach((subtask, subtaskIndex) => {
+
+                const uniqueId = `${task.period_id}-${subtask.task_id}-${subtaskIndex}`;
+
+                initialProgressValues[uniqueId] = subtask.progress;
+
+            });
+        });
+
+        setProgressValuesTask(initialProgressValues);
     }, [dataTask]);
 
 
@@ -884,15 +960,14 @@ const Stage = (props) => {
         setTaskNameFilter({ name: e.target.value });
     }
     // State để lưu giá trị lọc
-    const [taskNameFilter, setTaskNameFilter] = useState("");
+
     const resetTaskNameFilter = () => {
         setTaskNameFilter({ name: "" });
     }
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
 
-    const [startDateFilter, setStartDateFilter] = useState(null);
-    const [endDateFilter, setEndDateFilter] = useState(null);
+    console.log(dataTask)
     // (dataTask)
     return (
         <>
@@ -947,20 +1022,30 @@ const Stage = (props) => {
                         {/* <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addStage">
                         <i class="fa fa-plus" title={lang["addstage"]}></i>
                     </button> */}
-                        <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" alt="#" data-toggle="modal" data-target="#addStage" />
+                        <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" title={lang["add stage"]} data-toggle="modal" data-target="#addStage" />
                     </>
 
 
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto' , marginTop: "5px"}} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
                     ref={scrollRef1}
                     onScroll={handleScroll(scrollRef1, scrollRef2)}
-                    style={{ flex: '0 0 auto', width: containerWidth, border: '1px solid gray', maxWidth: '100%', height: dataGantt.length === 1 ? "65%" : "85%", overflowX: 'auto' }}>
+                    style={{
+                        flex: '0 0 auto',
+                        width: containerWidth,
+                        border: '1px solid gray',
+                        maxWidth: '100%',
+                        height: dataGantt.length === 1 ? "65%" :
+                            (dataGantt.length === 2 ? "70%" :
+                                (dataGantt.length === 3 ? "75%" :
+                                    (dataGantt.length === 4 ? "80%" : "85%"))),
+                        overflowX: 'auto'
+                    }}>
 
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
@@ -1073,17 +1158,18 @@ const Stage = (props) => {
                                 <React.Fragment key={index}>
                                     <tr
                                         key={index}
-                                        
+
                                         className={`font-weight-bold fix-layout ${selectedRowIndex === index ? 'selected-row' : ''}`}
                                         onClick={() => {
-                                            setSelectedUsernames([])
+                                            // setSelectedUsernames([])
                                             handleRowClick(index);
                                             setActionShow(1);
                                             getIdStage(task);
                                             setPeriodId(task.period_id)
                                         }}
                                     >
-                                        <td class="fix-layout" onClick={() => handleToggle(task.period_id)}>
+                                        <td class="fix-layout" onClick={(event) => handleToggle(task.period_id, event)}>
+
                                             {task.tasks.length > 0 ? (expandedTasks[task.period_id]
                                                 ? <i className="fa fa-caret-down size-24 toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
                                                 : <i className="fa fa-caret-right size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
@@ -1137,6 +1223,7 @@ const Stage = (props) => {
                                                     key={uniqueId}
                                                     className={`font-weight-bold fix-layout ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
                                                     onClick={() => {
+                                                        // setSelectedUsernames([])
                                                         handleRowClick(uniqueId)
                                                         setActionShow(2)
                                                         setTaskUpadte(subtask)
@@ -1145,7 +1232,8 @@ const Stage = (props) => {
                                                         setTaskId(subtask.task_id)
                                                     }}
                                                 >
-                                                    <td style={{ width: "50px", paddingLeft: "20px" }} className="fix-layout" onClick={() => handleSubsubtaskToggle(subtask.task_id)}>
+
+                                                    <td style={{ width: "50px", paddingLeft: "20px" }} className="fix-layout" onClick={(event) => handleSubsubtaskToggle(subtask.task_id, event)}>
                                                         {subtask.child_tasks && subtask.child_tasks.length > 0 ? (expandedSubsubtasks[subtask.task_id]
                                                             ? <i className="fa fa-caret-down poniter toggle-down" aria-hidden="true" title={lang["collapse"]}></i>
                                                             : <i className="fa fa-caret-right  size-24 toggle-right" aria-hidden="true" title={lang["expand"]}></i>
@@ -1156,7 +1244,52 @@ const Stage = (props) => {
                                                     <td style={{ paddingLeft: "30px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
                                                     <td style={{ paddingLeft: "10px" }}>{subtask.task_name}</td>
                                                     <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
-                                                    <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
+                                                    {subtask.child_tasks.length > 0 ? (
+                                                        <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
+                                                    ) : (
+                                                        <td style={{ height: "38px", overflowY: "hidden" }}>
+                                                            {
+                                                                (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subtask.approve ?
+                                                                    <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
+                                                                        <input
+                                                                            type="text"
+                                                                            className='form-control'
+                                                                            value={progressValuesTask[uniqueId] ?? ''}
+                                                                            onBlur={(e) => handleProgressBlurTask(e, subtask, subtask.task_id, task.period_id, uniqueId)}
+
+                                                                            onFocus={(e) => { handleProgressFocusTask(subtask) }}
+                                                                            onChange={(e) => {
+                                                                                const value = e.target.value;
+                                                                                if (value === '' || onlyContainsNumbers(value)) {
+                                                                                    const normalizedValue = value === '' ? 0 : parseInt(value, 10);
+                                                                                    handleProgressChangeTask(normalizedValue, subtask, subtask.task_id, task.period_id, uniqueId);
+                                                                                }
+                                                                            }}
+                                                                            style={{ padding: "2px 4px" }}
+                                                                            onKeyDown={(e) => {
+                                                                                if (e.key === 'enter') {
+                                                                                    e.preventDefault();
+                                                                                    updateTask({
+                                                                                        ...subtask,
+                                                                                        progress: progressValuesTask[uniqueId] || subtask.progress,
+                                                                                    });
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>%</span>
+                                                                    </div>
+                                                                    :
+                                                                    <div style={{ display: 'inline-block', position: 'relative' }}>
+                                                                        {!isNaN(parseFloat(progressValues[uniqueId])) ? (parseFloat(progressValues[uniqueId])).toFixed(0) + '%' : 'Invalid value'}
+                                                                    </div>
+                                                            }
+                                                        </td>
+                                                    )
+
+                                                    }
+
+
+
                                                     <td class="font-weight-bold" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
                                                         {getStatusLabel(subtask.task_approve ? 1 : 0)}
                                                     </td>
@@ -1167,42 +1300,42 @@ const Stage = (props) => {
                                                         subtask.members.map(member => member.fullname).join(', ') :
                                                         <>{lang["projectempty"]}</>
                                                     }</td>
-                                                    {/* 
-                                                    <td>
-                                                        {
-                                                            subtask.members && subtask.members.length > 0 ?
-                                                                subtask.members.map(member => (
-                                                                    <img class="img-responsive circle-image-cus-gantt pointer" src={proxy + member.avatar} alt={member.username} title={member.fullname} />
-                                                                )) :
-                                                                <>{lang["projectempty"]} </>
-                                                        }
-                                                    </td> */}
                                                     <td class="align-center" style={{
-                                                        // position: 'sticky',
-
-                                                        // backgroundColor: '#fff',
-                                                        // borderLeft: '1px solid #ccc !important',
-
                                                     }}>
                                                         <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" onClick={() => getDataViewDetail(subtask, task.period_id)} data-target="#viewTask" title={lang["viewdetail"]}></i>
-                                                        {
-                                                            (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                        {subtask.child_tasks.length > 0 ?
                                                             <>
-                                                                {subtask.task_approve
-                                                                    ? (subtask.task_approve === true
-                                                                        ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                        : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                    : (subtask.progress === "100.00"
-                                                                        ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
-                                                                        : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                {
+                                                                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                                    <>
+                                                                        {subtask.task_approve
+                                                                            ? (subtask.task_approve === true
+                                                                                ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                            : (subtask.progress === "100.00"
+                                                                                ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                                : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
+                                                                        }
+
+
+                                                                    </>
                                                                 }
+                                                            </>
+                                                            : <>
+                                                                {
+                                                                    (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                                                                    <>
+                                                                        {subtask.task_approve ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
+                                                                            : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
 
-                                                                {/* <i class="fa fa-plus-square size-24 pointer icon-margin icon-add" onClick={() => getPeriodId(subtask.task_id, task.period_id)} data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
+                                                                        }
 
-                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTask(subtask, task.period_id)} data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
-                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTask(subtask, task.period_id)} title={lang["delete"]}></i> */}
+
+                                                                    </>
+                                                                }
                                                             </>
                                                         }
+
                                                     </td>
                                                 </tr>
                                                 {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map((subsubtask, Subtaskindex) => {
@@ -1212,7 +1345,7 @@ const Stage = (props) => {
                                                             key={uniqueId}
                                                             className={`sub-subtask fix-layout ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
                                                             onClick={() => {
-                                                                setSelectedUsernames([])
+                                                                // setSelectedUsernames([])
                                                                 handleRowClick(uniqueId)
                                                                 setActionShow(3)
                                                                 getIdStage(subsubtask, subtask.task_id, task.period_id);
@@ -1229,7 +1362,7 @@ const Stage = (props) => {
                                                             <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
                                                             <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
                                                             {/* <td>{subsubtask.progress}</td> */}
-                                                            <td style={{height: "38px", overflowY: "hidden"}}>
+                                                            <td style={{ height: "38px", overflowY: "hidden" }}>
                                                                 {
                                                                     (_users.username === manageProject?.username || membersProject?.some(member => member.username === _users.username) || ["ad", "uad"].indexOf(auth.role) !== -1) && !subsubtask.approve ?
                                                                         <div class="fix-layout-input" style={{ display: 'inline-block', position: 'relative' }}>
@@ -1246,7 +1379,7 @@ const Stage = (props) => {
                                                                                         handleProgressChange(normalizedValue, subsubtask, subtask.task_id, task.period_id, uniqueId);
                                                                                     }
                                                                                 }}
-                                                                                style={{padding: "2px 4px"}}
+                                                                                style={{ padding: "2px 4px" }}
                                                                                 onKeyDown={(e) => {
                                                                                     if (e.key === 'enter') {
                                                                                         e.preventDefault();
@@ -1315,7 +1448,12 @@ const Stage = (props) => {
                         </tbody>
                     </table>
                 </div>
-                <div style={{ width: '5px', cursor: 'col-resize', background: '#ccc', height: dataGantt.length === 1 ? "65%" : "85%" }} onMouseDown={handleMouseDown}
+                <div style={{
+                    width: '5px', cursor: 'col-resize', background: '#ccc', height: dataGantt.length === 1 ? "65%" :
+                        (dataGantt.length === 2 ? "70%" :
+                            (dataGantt.length === 3 ? "75%" :
+                                (dataGantt.length === 4 ? "80%" : "85%")))
+                }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
                     className="active"
@@ -1327,7 +1465,10 @@ const Stage = (props) => {
                         background: '#f6f6f6',
                         marginBottom: "10px",
                         maxWidth: '100%',
-                        height: dataGantt.length === 1 ? "65%" : "85%",
+                        height: dataGantt.length === 1 ? "65%" :
+                            (dataGantt.length === 2 ? "70%" :
+                                (dataGantt.length === 3 ? "75%" :
+                                    (dataGantt.length === 4 ? "80%" : "85%"))),
                         overflowY: 'hidden',
                         overflowX: 'auto'
                     }}
@@ -2085,7 +2226,7 @@ const Stage = (props) => {
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {membersProject?.map((user, index) => {
-                                                    const isMember = selectedUsernames.includes(user.username);
+                                                    const isMember = selectedUsernamesStage?.includes(user.username);
                                                     return (
                                                         <div key={index} class="user-checkbox-item">
                                                             <label>
@@ -2094,7 +2235,7 @@ const Stage = (props) => {
                                                                     class="mr-1"
                                                                     value={JSON.stringify(user)}
                                                                     checked={isMember}
-                                                                    onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                    onChange={(e) => handleCheckboxChangeStage(user, e.target.checked)}
                                                                 />
                                                                 {user.fullname}
                                                             </label>
