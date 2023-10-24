@@ -194,6 +194,7 @@ class Projects extends Model {
         this.__addProperty__("tasks", Model.types.model)
         this.tasks.__addProperty__("period_id", Model.types.int, { auto: true })
         this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới",  maxLength: Number.MAX_SAFE_INTEGER  })
+        this.tasks.__addProperty__("period_description", Model.types.string, { default: "Giai đoạn mới",  maxLength: Number.MAX_SAFE_INTEGER  })
         this.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
         this.tasks.__addProperty__("progress", Model.types.number, { default: 0 })
