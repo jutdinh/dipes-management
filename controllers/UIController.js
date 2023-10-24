@@ -521,25 +521,25 @@ class UIController extends Controller {
                         }else{
                             console.log("At least one table does not exist")
                             context.content = "Ít nhất một bảng không tồn tại hoặc đã bị xóa"
-                            context.status = "0x"
+                            context.status = "0x4501229"
                         }
                     }else{
                         // main tables does not exist
                         console.log("Main tables does not exist")
                         context.content = "Bảng chính không tồn tại hoặc đã bị xóa"
-                        context.status = "0x"
+                        context.status = "0x4501228"
                     }                    
                     
                 }else{
                     // ui already existed
                     context.content = "UI này đã tồn tại"
-                    context.status = "0x"
+                    context.status = "0x4501229"
                 }                
 
             }else{
                 // request body khum hop le
                 context.content = "Tham số không hợp lệ"
-                context.status = "0x"
+                context.status = "0x4501230"
             }            
         }
 
