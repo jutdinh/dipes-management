@@ -692,9 +692,10 @@ class ProjectsController extends Controller {
                     })
                     if (task.child_tasks.length > 0) {
                         const calculated = task_progress / task.child_tasks.length
-                        task.progress = calculated.toFixed(2)
+                        task.progress = parseFloat(calculated.toFixed(2))
+                        
                         period_progress += calculated
-                    }else{
+                    }else{                        
                         period_progress += task.progress ? task.progress : 0
                     }
                     task.task_modified = Object.values(task.task_modified)
@@ -745,7 +746,7 @@ class ProjectsController extends Controller {
                     })
                     if (task.child_tasks.length > 0) {
                         const calculated = task_progress / task.child_tasks.length
-                        task.progress = calculated.toFixed(2)
+                        task.progress = parseFloat(calculated.toFixed(2))
                         period_progress += calculated
                     }else{
                         period_progress += task.progress ? task.progress : 0
