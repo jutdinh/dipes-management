@@ -1553,7 +1553,7 @@ export default () => {
                                         modalTemp.fields && modalTemp.fields.length > 0 ? (
                                             <>
                                                 {/* Chọn trường tính toán */}
-                                                {modalTemp.api_method === "get" && (
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["calculated fields"]}</p>
@@ -1598,7 +1598,7 @@ export default () => {
                                                     </div>
                                                 )}
                                                 {/* Chọn trường thống kê */}
-                                                {modalTemp.api_method === "get" && (
+                                                {(modalTemp.api_method === "get" || modalTemp.api_method === "post") && (
                                                     <div class="col-md-12 col-lg-12 bordered">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <p class="font-weight-bold">{lang["statistical fields"]}</p>
