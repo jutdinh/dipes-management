@@ -847,15 +847,16 @@ export default () => {
 
     const [groupBy, setGroupBy] = useState([])
     // console.log(groupBy)
+    const combinedFields = [...(modalTemp.fields || []), ...(modalTemp.calculates || [])];
     const addOrRemoveGroupByField = (fomular_alias) => {
         // console.log(id)
         const corespondingGroupByField = groupBy.find(f => f.fomular_alias == fomular_alias);
-        let newGroupBy = [...groupBy];
+        let newGroupBy 
         if (corespondingGroupByField) {
             newGroupBy = groupBy.filter(f => f.fomular_alias != fomular_alias);
         } else {
 
-            const field = Object.values(selectedFieldsModal2).flat().find(f => f.fomular_alias == fomular_alias);
+            const field = combinedFields.find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
 
@@ -866,6 +867,8 @@ export default () => {
 
 
     const isFieldChecked = (fomular_alias) => {
+        console.log(fomular_alias)
+        console.log(groupBy)
         return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
@@ -1707,7 +1710,7 @@ export default () => {
                                                                                 <td>{statistic.raw_group_by?.map(field => field.display_name).join(", ")}</td>
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editExternalBody" title={lang["edit"]}></i>
+                                                                                    <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => updateFieldStatistical(statistic)} data-toggle="modal" data-target="#editStatistical" title={lang["edit"]}></i>
                                                                                     <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteStatistical(statistic)} title={lang["delete"]}></i>
                                                                                 </td>
                                                                             </tr>
@@ -2703,7 +2706,7 @@ export default () => {
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                          {  [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
@@ -2723,7 +2726,7 @@ export default () => {
 
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
-                                    <div class="form-group col-lg-12">
+                                    {/* <div class="form-group col-lg-12">
                                         <div class="table-responsive">
                                             {
                                                 groupBy.length > 0 ? (
@@ -2755,19 +2758,19 @@ export default () => {
                                                 )
                                             }
                                         </div>
-                                    </div>
-                                    <div className={`form-group col-lg-12`}>
-                                        <label>{lang["select fields"]}<span className='red_star'>*</span></label>
+                                    </div> */}
+                                     <div className={`form-group col-lg-12`}>
+                                        <label>{lang["select fields"]} <span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
-                                            <option value="">{lang["choose"]}</option>
-                                            {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                            <option value="">{lang["select fields"]}</option>
+                                            {modalTemp.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.display_name}--({field.fomular_alias})
+                                                    {field.display_name} ({field.fomular_alias})
                                                 </option>
                                             ))}
-                                            {modalTemp.calculates.map((calculate, index) => (
+                                            {calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                    {calculate.display_name}--{calculate.fomular_alias}
+                                                    {calculate.display_name} ({calculate.fomular_alias})
                                                 </option>
                                             ))}
                                         </select>
@@ -2905,14 +2908,14 @@ export default () => {
 
                                             <div className="form-group checkbox-container-wrapper">
                                                 <div className="checkbox-container">
-                                                    {Object.values(selectedFieldsModal2).flat().map((field, index) => (
+                                                    {   [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                         <div key={index} className="form-check">
                                                             <label className="form-check-label">
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
                                                                     value={field.id}
-                                                                    checked={isFieldChecked(field.id)}
+                                                                    checked={isFieldChecked(field.fomular_alias)}
                                                                     onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                                 />
 
