@@ -66,6 +66,7 @@ export default () => {
     const defaultValuesExternalbody = {
         field_name: "",
         fomular_alias: "",
+        default_vlaue: "",
         props: {
             DATATYPE: "",
             NULL: false,
@@ -2204,6 +2205,17 @@ export default () => {
 
 
                                         {errorApi.fomular_alias && <p className="text-danger">{errorApi.fomular_alias}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label>{lang["fields default"]} <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={externalBody.default_vlaue}
+                                            onChange={(e) => setExternalBody({ ...externalBody, default_vlaue: e.target.value })}
+                                            placeholder=""
+                                        />
+                                        
                                     </div>
                                     <div class="form-group col-lg-12">
                                         <label>{lang["null"]} </label>

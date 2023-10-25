@@ -1062,71 +1062,7 @@ export default () => {
 
 
 
-    const vietnameseChars = [
-        {
-            base: {
-                base: "a",
-                unicode: ["ă", "â"],
-                unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
-            }
-        },
-        {
-            base: {
-                base: "d",
-                unicode: ["đ"],
-                unicodeWithSound: []
-            }
-        },
-        {
-            base: {
-                base: "e",
-                unicode: ["ê"],
-                unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
-            }
-        },
-        {
-            base: {
-                base: "i",
-                unicode: [],
-                unicodeWithSound: ["í", "ì", "ỉ", "ĩ", "ị"]
-            }
-        },
-        {
-            base: {
-                base: "o",
-                unicode: ["ô", "ơ"],
-                unicodeWithSound: ["ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ"]
-            }
-        },
-        {
-            base: {
-                base: "u",
-                unicode: ["ư"],
-                unicodeWithSound: ["ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự"]
-            }
-        },
-        {
-            base: {
-                base: "y",
-                unicode: [],
-                unicodeWithSound: ["ý", "ỳ", "ỷ", "ỹ", "ỵ"]
-            }
-        }
-    ];
-    function transformVietnameseCharacter(char) {
-        for (let group of vietnameseChars) {
-            const { base, unicode, unicodeWithSound } = group.base;
-            if ([...unicode, ...unicodeWithSound].includes(char.toLowerCase())) {
-                return base;
-            }
-        }
-        return char;
-    }
-
-
-    function removeVietnameseTones(str) {
-        return str.split('').map(transformVietnameseCharacter).join('');
-    }
+  
     const validateExternalBody = () => {
         let temp = {};
         temp.field_name = externalBody.field_name ? "" : lang["error.input"];
@@ -2178,6 +2114,17 @@ export default () => {
                                             placeholder=""
                                         />
                                         {errorApi.fomular_alias && <p className="text-danger">{errorApi.fomular_alias}</p>}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label>{lang["fields default"]} <span className='red_star'>*</span></label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={externalBody.default_value}
+                                            onChange={(e) => setExternalBody({ ...externalBody, default_value: e.target.value })}
+                                            placeholder=""
+                                        />
+                                        {errorApi.field_name && <p className="text-danger">{errorApi.field_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-12">
                                         <label>{lang["null"]} </label>

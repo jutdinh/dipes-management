@@ -196,6 +196,7 @@ export default {
     "error.permission": "Please select permissions",
     "error.address": "Please enter the address",
     "error.invalidCharacter":"Only accept non-accented letters, '-', and '_'.",
+    "fields default": "Default Value",
     // modal edit user
     "btn.update": "Save",
     "btn.create": "Create new",
