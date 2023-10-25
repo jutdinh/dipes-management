@@ -88,6 +88,7 @@ export default () => {
         }
     }
     const [modalTemp, setModalTemp] = useState(defaultValues);/////tạo api
+    console.log(modalTemp)
     const [externalBody, setExternalBody] = useState(defaultValuesExternalbody);
     const showApiResponseMessage = (status) => {
         const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
@@ -903,8 +904,8 @@ export default () => {
         // console.log(sta)
         setStatisticalUpdate(sta)
         // console.log(modalTemp.fields)
-
-        const raw_group_by = modalTemp.fields.filter(field => sta.group_by.includes(field.fomular_alias));
+        const data = [...(modalTemp.fields || []), ...(modalTemp.calculates || [])]
+        const raw_group_by = data.filter(field => sta.group_by.includes(field.fomular_alias));
         setGroupBy(raw_group_by)
         // console.log(raw_group_by)
     }
@@ -1004,7 +1005,8 @@ export default () => {
             newGroupBy = groupBy.filter(f => f.fomular_alias != fomular_alias);
         } else {
 
-            const field =combinedFields.find(f => f.fomular_alias == fomular_alias);
+            const field = combinedFields.find(f => f.fomular_alias == fomular_alias);
+
             if (field) {
                 newGroupBy = [...groupBy, field];
                 // console.log(newGroupBy)
@@ -1012,10 +1014,9 @@ export default () => {
         }
         setGroupBy(newGroupBy);
     }
-
+    console.log(groupBy)
     const isFieldChecked = (fomular_alias) => {
         console.log(fomular_alias)
-        console.log(groupBy)
         return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
@@ -1065,7 +1066,7 @@ export default () => {
 
 
 
-  
+
     const validateExternalBody = () => {
         let temp = {};
         temp.field_name = externalBody.field_name ? "" : lang["error.input"];
@@ -1154,7 +1155,7 @@ export default () => {
                                                 onChange={(e) => setModalTemp({ ...modalTemp, remote_url: e.target.value })}
                                                 placeholder=""
                                             />
-                                            
+
                                         </div>
                                     ) : (
                                         <div class="form-group col-lg-6"></div>
@@ -1628,7 +1629,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
-                                                                                <td>{ [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].filter(field => statistic?.group_by?.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
+                                                                                <td>{[...(modalTemp.fields || []), ...(modalTemp.calculates || [])].filter(field => statistic?.group_by?.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
 
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
@@ -2571,7 +2572,7 @@ export default () => {
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                            {  [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
+                                                {[...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
@@ -2772,7 +2773,7 @@ export default () => {
 
                                             <div className="form-group checkbox-container-wrapper">
                                                 <div className="checkbox-container">
-                                                {   [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
+                                                    {[...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                         <div key={index} className="form-check">
                                                             <label className="form-check-label">
                                                                 <input
@@ -2831,12 +2832,12 @@ export default () => {
                                                 <option value="">{lang["choose"]}</option>
                                                 {modalTemp.fields.map((field, index) => (
                                                     <option key={index} value={field.fomular_alias}>
-                                                         {field.display_name} ({field.fomular_alias})
+                                                        {field.display_name} ({field.fomular_alias})
                                                     </option>
                                                 ))}
                                                 {modalTemp.calculates.map((calculate, index) => (
                                                     <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                         {calculate.fomular_alias} ({calculate.fomular_alias})
+                                                        {calculate.fomular_alias} ({calculate.fomular_alias})
                                                     </option>
                                                 ))}
                                             </select>

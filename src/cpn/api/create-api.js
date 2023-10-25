@@ -868,7 +868,7 @@ export default () => {
 
 
     const isFieldChecked = (fomular_alias) => {
-        
+      
         return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
