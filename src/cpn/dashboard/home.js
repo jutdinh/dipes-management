@@ -350,15 +350,15 @@ export default () => {
                                     <div className="row">
                                         <div className="col-md-5 d-flex justify-content-center">
                                             <div className="my-auto">
-                                                <PieChart width={240} height={260}>
+                                                <PieChart width={350} height={260}>
                                                     <Pie
                                                         dataKey="value"
                                                         startAngle={360}
                                                         endAngle={0}
                                                         data={outputData}
-                                                        cx="40%"
+                                                        cx="48%"
                                                         cy="50%"
-                                                        outerRadius={85 + '%'}
+                                                        outerRadius={80 + '%'}
                                                         fill="#8884d8"
                                                         label
                                                         labelLine={{ outerRadius: '90%' }}
