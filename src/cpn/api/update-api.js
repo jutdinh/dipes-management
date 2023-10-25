@@ -995,15 +995,16 @@ export default () => {
     }
     const [groupBy, setGroupBy] = useState([])
     // console.log(groupBy)
-    const addOrRemoveGroupByField = (id) => {
+    const combinedFields = [...(modalTemp.fields || []), ...(modalTemp.calculates || [])];
+    const addOrRemoveGroupByField = (fomular_alias) => {
         // console.log(id)
-        const corespondingGroupByField = groupBy.find(f => f.id == id);
-        let newGroupBy = [...groupBy];
+        const corespondingGroupByField = groupBy.find(f => f.fomular_alias == fomular_alias);
+        let newGroupBy
         if (corespondingGroupByField) {
-            newGroupBy = groupBy.filter(f => f.id != id);
+            newGroupBy = groupBy.filter(f => f.fomular_alias != fomular_alias);
         } else {
 
-            const field = modalTemp.fields.flat().find(f => f.id == id);
+            const field =combinedFields.find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
                 // console.log(newGroupBy)
@@ -1012,8 +1013,10 @@ export default () => {
         setGroupBy(newGroupBy);
     }
 
-    const isFieldChecked = (id) => {
-        return groupBy.some(f => f.id == id);
+    const isFieldChecked = (fomular_alias) => {
+        console.log(fomular_alias)
+        console.log(groupBy)
+        return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
     const [field, setField] = useState("");
@@ -1625,7 +1628,7 @@ export default () => {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{statistic.display_name}</td>
                                                                                 <td>{statistic.field}</td>
-                                                                                <td>{modalTemp.fields.filter(field => statistic?.group_by?.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
+                                                                                <td>{ [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].filter(field => statistic?.group_by?.includes(field.fomular_alias)).map(field => field.display_name).join(", ")}</td>
 
                                                                                 <td>{statistic.fomular}</td>
                                                                                 <td class="align-center" style={{ minWidth: "130px" }}>
@@ -2568,14 +2571,14 @@ export default () => {
 
                                         <div className="form-group checkbox-container-wrapper">
                                             <div className="checkbox-container">
-                                                {modalTemp.fields.map((field, index) => (
+                                            {  [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                     <div key={index} className="form-check">
                                                         <label className="form-check-label">
                                                             <input
                                                                 className="form-check-input"
                                                                 type="checkbox"
-                                                                value={field.id}
-                                                                checked={isFieldChecked(field.id)}
+                                                                value={field.fomular_alias}
+                                                                checked={isFieldChecked(field.fomular_alias)}
                                                                 onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                             />
 
@@ -2588,7 +2591,7 @@ export default () => {
 
                                         {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                     </div>
-                                    <div class="form-group col-lg-12">
+                                    {/* <div class="form-group col-lg-12">
                                         <div class="table-responsive">
                                             {
                                                 groupBy.length > 0 ? (
@@ -2620,19 +2623,19 @@ export default () => {
                                                 )
                                             }
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className={`form-group col-lg-12`}>
                                         <label>{lang["select fields"]} <span className='red_star'>*</span></label>
                                         <select className="form-control" value={field} onChange={(e) => setField(e.target.value)}>
-                                            <option value="">{lang["choose"]}</option>
-                                            {modalTemp.fields.map((field, index) => (
+                                            <option value="">{lang["select fields"]}</option>
+                                            {modalTemp.fields?.map((field, index) => (
                                                 <option key={index} value={field.fomular_alias}>
-                                                    {field.fomular_alias}
+                                                    {field.display_name} ({field.fomular_alias})
                                                 </option>
                                             ))}
-                                            {modalTemp.calculates.map((calculate, index) => (
+                                            {calculates.map((calculate, index) => (
                                                 <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                    {calculate.fomular_alias}
+                                                    {calculate.display_name} ({calculate.fomular_alias})
                                                 </option>
                                             ))}
                                         </select>
@@ -2769,14 +2772,14 @@ export default () => {
 
                                             <div className="form-group checkbox-container-wrapper">
                                                 <div className="checkbox-container">
-                                                    {modalTemp.fields.map((field, index) => (
+                                                {   [...(modalTemp.fields || []), ...(modalTemp.calculates || [])].map((field, index) => (
                                                         <div key={index} className="form-check">
                                                             <label className="form-check-label">
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    value={field.id}
-                                                                    checked={isFieldChecked(field.id)}
+                                                                    value={field.fomular_alias}
+                                                                    checked={isFieldChecked(field.fomular_alias)}
                                                                     onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                                 />
 
@@ -2789,7 +2792,7 @@ export default () => {
 
                                             {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        {/* <div class="form-group col-lg-12">
                                             <div class="table-responsive">
                                                 {
                                                     groupBy.length > 0 ? (
@@ -2821,19 +2824,19 @@ export default () => {
                                                     )
                                                 }
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className={`form-group col-lg-12`}>
                                             <label>{lang["select fields"]}<span className='red_star'>*</span></label>
                                             <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>
                                                 <option value="">{lang["choose"]}</option>
                                                 {modalTemp.fields.map((field, index) => (
                                                     <option key={index} value={field.fomular_alias}>
-                                                        {field.fomular_alias}
+                                                         {field.display_name} ({field.fomular_alias})
                                                     </option>
                                                 ))}
                                                 {modalTemp.calculates.map((calculate, index) => (
                                                     <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                        {calculate.fomular_alias}
+                                                         {calculate.fomular_alias} ({calculate.fomular_alias})
                                                     </option>
                                                 ))}
                                             </select>

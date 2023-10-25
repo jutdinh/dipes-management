@@ -833,6 +833,7 @@ export default () => {
                 ...prev,
                 statistic: updatedStatistical
             }));
+            $("#closeEditStatis").click()
             Swal.fire({
                 title: lang["success.title"],
                 text: lang["success.update"],
@@ -840,7 +841,7 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
-            $("#closeEditStatis").click()
+           
         }
     };
 
@@ -867,8 +868,7 @@ export default () => {
 
 
     const isFieldChecked = (fomular_alias) => {
-        console.log(fomular_alias)
-        console.log(groupBy)
+        
         return groupBy.some(f => f.fomular_alias == fomular_alias);
     }
 
@@ -943,6 +943,7 @@ export default () => {
             setField("");
             setGroupBy([])
             setFomular("");
+         
             Swal.fire({
                 title: lang["success.title"],
                 text: lang["success.add"],
@@ -950,7 +951,9 @@ export default () => {
                 showConfirmButton: false,
                 timer: 1500,
             })
+
             $("#closeAddStatis").click()
+           
         }
 
     };
@@ -2373,46 +2376,7 @@ export default () => {
                 </div>
 
                 {/* Edit Field External Body */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="editExternalBody">
-                    <div class="modal-dialog modal-dialog-center">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">{lang["edit external fields"]}</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div className="row">
-                                        <div className="form-group col-lg-12">
-                                            <label>{lang["fields name"]} <span className='red_star'>*</span></label>
-                                            <input type="text" className="form-control" value={externalBodyUpdate.field_name} onChange={
-                                                (e) => { setExternalBodyUpdate({ ...externalBodyUpdate, field_name: e.target.value }) }
-                                            } placeholder="" />
-                                            {/* {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>} */}
-                                        </div>
-
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-group col-lg-12">
-                                            <label>{lang["alias"]} <span className='red_star'>*</span></label>
-                                            <input type="text" className="form-control" value={externalBodyUpdate.fomular_alias} onChange={
-                                                (e) => { setExternalBodyUpdate({ ...externalBodyUpdate, fomular_alias: e.target.value }) }
-                                            } placeholder="" />
-                                            {/* {errorStatistical.display_name && <p className="text-danger">{errorStatistical.display_name}</p>} */}
-                                        </div>
-
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" onClick={submitupdateFieldStatistical} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" id="closeEditStatis" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                
 
 
                 {/*add Field calculates */}
@@ -2914,7 +2878,7 @@ export default () => {
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    value={field.id}
+                                                                    value={field.fomular_alias}
                                                                     checked={isFieldChecked(field.fomular_alias)}
                                                                     onChange={(e) => addOrRemoveGroupByField(e.target.value)}
                                                                 />
@@ -2928,7 +2892,7 @@ export default () => {
 
                                             {errorStatistical.field && <p className="text-danger">{errorStatistical.field}</p>}
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        {/* <div class="form-group col-lg-12">
                                             <div class="table-responsive">
                                                 {
                                                     groupBy.length > 0 ? (
@@ -2960,19 +2924,19 @@ export default () => {
                                                     )
                                                 }
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className={`form-group col-lg-12`}>
                                             <label>{lang["select fields"]}<span className='red_star'>*</span></label>
                                             <select className="form-control" value={statisticalUpdate.field} onChange={(e) => setStatisticalUpdate({ ...statisticalUpdate, field: e.target.value })}>
                                                 <option value="">{lang["choose"]}</option>
                                                 {modalTemp.fields.map((field, index) => (
                                                     <option key={index} value={field.fomular_alias}>
-                                                        {field.fomular_alias}
+                                                        {field.display_name}  ({field.fomular_alias})
                                                     </option>
                                                 ))}
                                                 {modalTemp.calculates.map((calculate, index) => (
                                                     <option key={`calculate-${index}`} value={calculate.fomular_alias}>
-                                                        {calculate.fomular_alias}
+                                                        {calculate.display_name} ( {calculate.fomular_alias})
                                                     </option>
                                                 ))}
                                             </select>
