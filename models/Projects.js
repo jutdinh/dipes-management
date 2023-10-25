@@ -142,7 +142,7 @@ class Projects extends Model {
         this.versions.apis.__addProperty__("tables", Model.types.array)
         this.versions.apis.__addProperty__("params", Model.types.array)
         this.versions.apis.__addProperty__("body", Model.types.array)
-        this.versions.apis.__addProperty__("external_body", Model.types.array)              
+        this.versions.apis.__addProperty__("external_body", Model.types.array, { default: [] })              
 
         this.versions.apis.__addProperty__("fields", Model.types.model)
         this.versions.apis.fields.__addProperty__("id", Model.types.int)

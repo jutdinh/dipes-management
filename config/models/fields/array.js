@@ -36,7 +36,11 @@ class List extends Field{
             const { required } = props;           
             if( required != undefined ){
                 this.__required = required
-            }            
+            }  
+            
+            if( props.default != undefined ){
+                this.__default = props.default
+            }
         }
     }
 
