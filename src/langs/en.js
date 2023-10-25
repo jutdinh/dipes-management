@@ -107,6 +107,8 @@ export default {
     "task_priority": "Priority",
     "taskmember": "Members",
     "p.description": "Task description",
+    "no description": "No description",
+    "p.description stage": "Stage description",
     "updatestatus": "Status updates",
     "viewdetail": "View detail",
     "delete": "Delete",
@@ -193,7 +195,7 @@ export default {
     "error.vaildphone": "Invalid phone number",
     "error.permission": "Please select permissions",
     "error.address": "Please enter the address",
-
+    "error.invalidCharacter":"Only accept non-accented letters, '-', and '_'.",
     // modal edit user
     "btn.update": "Save",
     "btn.create": "Create new",
@@ -222,7 +224,7 @@ export default {
     "btn.export": "Export",
 
     "detaillog": "Log details",
-    "log.create_user": "Executor",
+    "log.create_user": "Implementer",
     "log.create_at": "Creation date",
     "date execution": "Date of execution",
     "edit fields body": "Edit data fields",

@@ -264,7 +264,12 @@ export default () => {
     const validateExternalBody = () => {
         let temp = {};
         temp.field_name = externalBody.field_name ? "" : lang["error.input"];
-        temp.fomular_alias = externalBody.fomular_alias ? "" : lang["error.input"];
+        const fomularAliasRegex = /^[A-Za-z0-9_-]+$/;
+        if (!fomularAliasRegex.test(externalBody.fomular_alias) || !externalBody.fomular_alias) {
+            temp.fomular_alias = lang["error.invalidCharacter"];
+        } else {
+            temp.fomular_alias = "";
+        }
         temp.DATATYPE = externalBody.props.DATATYPE ? "" : lang["error.input"];
         setErrorApi({
             ...temp
@@ -290,11 +295,11 @@ export default () => {
     console.log(errorApi)
     //update
     const updateFieldExternalBody = (ex) => {
-   
+
         setExternalBodyUpdate(ex)
     }
     const handleDeleteExternal = (ex) => {
-    
+
         // const newCalculates = calculates.filter(item => item.fomular_alias !== cal.fomular_alias);
         // setModalTemp(prev => ({
         //     ...prev,
@@ -313,7 +318,7 @@ export default () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const newExternal = modalTemp.external_body.filter(item => item.fomular_alias !== ex.fomular_alias);
-              
+
                 setModalTemp(prev => ({
                     ...prev,
                     external_body: newExternal,
@@ -488,7 +493,7 @@ export default () => {
     // console.log(tableFields)
     useEffect(() => {
         const fetchFields = async (tableId) => {
-        
+
             const res = await fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}`, {
                 headers: {
                     Authorization: _token
@@ -515,7 +520,7 @@ export default () => {
 
             const fieldsByTable = {};
             for (const { tableId, fields } of results) {
-              
+
                 fieldsByTable[tableId] = fields;
             }
 
@@ -795,7 +800,7 @@ export default () => {
         fomular_alias: ""
     });
     const updateFieldStatistical = (sta) => {
-   
+
         setStatisticalUpdate(sta)
         setGroupBy(sta.raw_group_by)
     }
@@ -851,7 +856,7 @@ export default () => {
             const field = Object.values(selectedFieldsModal2).flat().find(f => f.fomular_alias == fomular_alias);
             if (field) {
                 newGroupBy = [...groupBy, field];
-              
+
             }
         }
         setGroupBy(newGroupBy);
@@ -975,72 +980,7 @@ export default () => {
         setErrorCaculates({})
     };
 
-    const vietnameseChars = [
-        {
-            base: {
-                base: "a",
-                unicode: ["ă", "â"],
-                unicodeWithSound: ["á", "à", "ả", "ã", "ạ", "ắ", "ằ", "ẳ", "ẵ", "ặ", "ấ", "ầ", "ẩ", "ẫ", "ậ"],
-            }
-        },
-        {
-            base: {
-                base: "d",
-                unicode: ["đ"],
-                unicodeWithSound: []
-            }
-        },
-        {
-            base: {
-                base: "e",
-                unicode: ["ê"],
-                unicodeWithSound: ["é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ"]
-            }
-        },
-        {
-            base: {
-                base: "i",
-                unicode: [],
-                unicodeWithSound: ["í", "ì", "ỉ", "ĩ", "ị"]
-            }
-        },
-        {
-            base: {
-                base: "o",
-                unicode: ["ô", "ơ"],
-                unicodeWithSound: ["ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ"]
-            }
-        },
-        {
-            base: {
-                base: "u",
-                unicode: ["ư"],
-                unicodeWithSound: ["ú", "ù", "ủ", "ũ", "ụ", "ứ", "ử", "ử", "ữ", "ự"]
-            }
-        },
-        {
-            base: {
-                base: "y",
-                unicode: [],
-                unicodeWithSound: ["ý", "ỳ", "ỷ", "ỹ", "ỵ"]
-            }
-        }
-    ];
-    function transformVietnameseCharacter(char) {
-        for (let group of vietnameseChars) {
-            const { base, unicode, unicodeWithSound } = group.base;
-            if ([...unicode, ...unicodeWithSound].includes(char.toLowerCase())) {
-                return base;
-            }
-        }
-        return char;
-    }
-
-    // Hàm này sẽ chuyển đổi một chuỗi tiếng Việt có dấu sang không dấu
-    function removeVietnameseTones(str) {
-        return str.split('').map(transformVietnameseCharacter).join('');
-    }
-
+   
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -2220,6 +2160,7 @@ export default () => {
                                     </div>
                                     <div class="form-group col-lg-12">
                                         <label>{lang["alias"]}<span className='red_star'>*</span></label>
+
                                         <input
                                             type="text"
                                             className="form-control"
@@ -2227,29 +2168,39 @@ export default () => {
                                             onInput={(e) => {
                                                 let inputValue = e.target.value;
 
-                                                // Chuyển đổi ký tự nhập vào thành không dấu và chữ hoa
-                                                const formattedValue = removeVietnameseTones(inputValue).toUpperCase();
+                                                // Regex này sẽ cho phép ký tự tiếng Việt, số, "_", và "-" mà không có khoảng trắng hoặc ký tự đặc biệt khác
+                                                const allowedCharactersRegex = /^[A-Za-z0-9À-ỹ_-]+$/;
 
-                                                // Regex để kiểm tra xem chuỗi có chỉ chứa các ký tự từ A-Z và số từ 0-9 không.
-                                                const alphanumericRegex = /^[A-Z0-9]*$/;
-                                                const check = modalTemp.external_body?.find(ex => ex.fomular_alias === formattedValue);
-                                              
-                                                    let temp = {};
-                                                    temp.fomular_alias = check ? lang["duplicate fomular"] : "";
+                                                const check = modalTemp.external_body?.find(ex => ex.fomular_alias === inputValue);
+
+                                                let temp = {};
+                                                temp.fomular_alias = check ? lang["duplicate fomular"] : "";
+
+                                                if (!allowedCharactersRegex.test(inputValue)) {
                                                     setErrorApi({
-                                                        ...temp
+                                                        fomular_alias: lang["error.invalidCharacter"]
                                                     });
-                                                  
-                                                
-                                                    // Kiểm tra xem chuỗi có bắt đầu bằng một số, chỉ chứa các ký tự từ A-Z và 0-9, và không rỗng
-                                                    if (formattedValue && isNaN(formattedValue[0]) && alphanumericRegex.test(formattedValue)) {
-                                                        setExternalBody({ ...externalBody, fomular_alias: formattedValue });
-                                                    } else if (!formattedValue) { // Cho phép chuỗi rỗng để có thể xóa
-                                                        setExternalBody({ ...externalBody, fomular_alias: '' });
-                                                    }
+                                                    // Nếu chuỗi nhập vào không hợp lệ, không làm gì thêm và thoát ra khỏi hàm
+                                                }
+
+                                                setErrorApi({
+                                                    ...temp
+                                                });
+
+                                                // Kiểm tra xem chuỗi có bắt đầu bằng một số
+                                                if (inputValue && isNaN(inputValue[0])) {
+                                                    setExternalBody({ ...externalBody, fomular_alias: inputValue });
+                                                } else if (!inputValue) {
+                                                    setExternalBody({ ...externalBody, fomular_alias: '' });
+                                                }
                                             }}
                                             placeholder=""
                                         />
+
+
+
+
+
                                         {errorApi.fomular_alias && <p className="text-danger">{errorApi.fomular_alias}</p>}
                                     </div>
                                     <div class="form-group col-lg-12">

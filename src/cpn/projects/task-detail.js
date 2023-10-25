@@ -178,6 +178,7 @@ export default () => {
     // console.log(filteredTasks)
     const handleCloseModal = () => {
         setShowModal(false);
+        setSelectedMemberTask([])
         setErrorMessagesadd({})
     };
 
@@ -240,6 +241,7 @@ export default () => {
             project_id: parseInt(project_id),
             period: {
                 period_name: stage.stage_name,
+                period_description: stage.period_description,
                 start: stage.stage_start,
                 end: stage.stage_end,
                 members: stage.members,
@@ -1141,7 +1143,7 @@ export default () => {
                             <div class="table_section padding_infor_info_list_task">
                                 <div class="row column1">
                                     {/* Add Stage */}
-                                    <div class={`modal ${showModal ? 'show' : ''}`} id="addStage">
+                                    <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
                                         <div class="modal-dialog modal-dialog-center">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -1158,6 +1160,15 @@ export default () => {
                                                                 } placeholder={lang["p.stagename"]} />
                                                                 <div style={{ minHeight: '20px' }}>
                                                                     {errorMessagesadd.stage_name && <span class="error-message">{errorMessagesadd.stage_name}</span>}
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>{lang["description"]} <span className='red_star'>*</span></label>
+                                                                <input type="text" class="form-control" value={task.period_description} onChange={
+                                                                    (e) => { setStage({ ...stage, period_description: e.target.value }) }
+                                                                } placeholder={lang["p.description stage"]} />
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                   
                                                                 </div>
                                                             </div>
                                                             <div className="col-lg-6">

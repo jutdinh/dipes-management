@@ -19,7 +19,9 @@ export default () => {
     const back = () => {
         navigate(`/projects/detail/${storedProjectId}`);
     };
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get('myParam');
+    
     const [apis, setApis] = useState([]);
     useEffect(() => {
         fetch(`${proxy}/apis/v/${version_id}`, {
@@ -207,7 +209,7 @@ export default () => {
     };
     const updateApi = (apiData) => {
         // console.log(apiData)
-        window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}`;
+        window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}/?myParam=${myParam}`;
         // window.location.href = `tables`;
     };
 

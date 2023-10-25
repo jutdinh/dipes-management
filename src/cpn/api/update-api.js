@@ -17,7 +17,8 @@ import { da } from "date-fns/locale";
 var hideModal = hideModalInfo => {
     $("#addFieldCalculates").modal("hide");
 };
-
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('myParam');
 
 const types = [
     ValidTypeEnum.INT,
@@ -225,7 +226,7 @@ export default () => {
     const [typeProject, setTypeProject] = useState([]);
 
     useEffect(() => {
-        fetch(`${proxy}/projects/project/27`, {
+        fetch(`${proxy}/projects/project/${myParam}`, {
             headers: {
                 Authorization: _token
             }
@@ -235,7 +236,7 @@ export default () => {
                 const { success, data, status, content } = resp;
                 console.log(resp)
                 if (success) {
-                    setTypeProject(data.typeProject)
+                    setTypeProject(data.project_type)
                 }
 
             })
@@ -1122,14 +1123,19 @@ export default () => {
         return char;
     }
 
-   
+
     function removeVietnameseTones(str) {
         return str.split('').map(transformVietnameseCharacter).join('');
     }
     const validateExternalBody = () => {
         let temp = {};
         temp.field_name = externalBody.field_name ? "" : lang["error.input"];
-        temp.fomular_alias = externalBody.fomular_alias ? "" : lang["error.input"];
+        const fomularAliasRegex = /^[A-Za-z0-9_-]+$/;
+        if (!fomularAliasRegex.test(externalBody.fomular_alias) || !externalBody.fomular_alias) {
+            temp.fomular_alias = lang["error.invalidCharacter"];
+        } else {
+            temp.fomular_alias = "";
+        }
         temp.DATATYPE = externalBody.props.DATATYPE ? "" : lang["error.input"];
         setErrorApi({
             ...temp
@@ -2113,8 +2119,8 @@ export default () => {
                         </div>
                     </div>
                 </div>
- {/*add Field External Body */}
- <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldExternalBody">
+                {/*add Field External Body */}
+                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldExternalBody">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2143,26 +2149,31 @@ export default () => {
                                             onInput={(e) => {
                                                 let inputValue = e.target.value;
 
-                                                // Chuyển đổi ký tự nhập vào thành không dấu và chữ hoa
-                                                const formattedValue = removeVietnameseTones(inputValue).toUpperCase();
+                                                // Regex này sẽ cho phép ký tự tiếng Việt, số, "_", và "-" mà không có khoảng trắng hoặc ký tự đặc biệt khác
+                                                const allowedCharactersRegex = /^[A-Za-z0-9À-ỹ_-]+$/;
 
-                                                // Regex để kiểm tra xem chuỗi có chỉ chứa các ký tự từ A-Z và số từ 0-9 không.
-                                                const alphanumericRegex = /^[A-Z0-9]*$/;
-                                                const check = modalTemp.external_body?.find(ex => ex.fomular_alias === formattedValue);
-                                              
-                                                    let temp = {};
-                                                    temp.fomular_alias = check ? lang["duplicate fomular"] : "";
+                                                const check = modalTemp.external_body?.find(ex => ex.fomular_alias === inputValue);
+
+                                                let temp = {};
+                                                temp.fomular_alias = check ? lang["duplicate fomular"] : "";
+
+                                                if (!allowedCharactersRegex.test(inputValue)) {
                                                     setErrorApi({
-                                                        ...temp
+                                                        fomular_alias: lang["error.invalidCharacter"]
                                                     });
-                                                  
-                                                
-                                                    // Kiểm tra xem chuỗi có bắt đầu bằng một số, chỉ chứa các ký tự từ A-Z và 0-9, và không rỗng
-                                                    if (formattedValue && isNaN(formattedValue[0]) && alphanumericRegex.test(formattedValue)) {
-                                                        setExternalBody({ ...externalBody, fomular_alias: formattedValue });
-                                                    } else if (!formattedValue) { // Cho phép chuỗi rỗng để có thể xóa
-                                                        setExternalBody({ ...externalBody, fomular_alias: '' });
-                                                    }
+                                                    // Nếu chuỗi nhập vào không hợp lệ, không làm gì thêm và thoát ra khỏi hàm
+                                                }
+
+                                                setErrorApi({
+                                                    ...temp
+                                                });
+
+                                                // Kiểm tra xem chuỗi có bắt đầu bằng một số
+                                                if (inputValue && isNaN(inputValue[0])) {
+                                                    setExternalBody({ ...externalBody, fomular_alias: inputValue });
+                                                } else if (!inputValue) {
+                                                    setExternalBody({ ...externalBody, fomular_alias: '' });
+                                                }
                                             }}
                                             placeholder=""
                                         />
@@ -2319,7 +2330,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/*add Field calculates */}
                 <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldCalculates">
                     <div class="modal-dialog modal-dialog-center">

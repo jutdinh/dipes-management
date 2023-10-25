@@ -37,9 +37,10 @@ const Stage = (props) => {
     const [taskUpdate, setTaskUpadte] = useState({});
     const [taskChild, setTaskChild] = useState({ child_task_status: 1 });
 
+
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
-    // (dataViewDetail)
+    console.log(dataViewDetail)
     const [formData, setFormData] = useState({});
     const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
     const [selectedUsernames, setSelectedUsernames] = useState([]);
@@ -326,6 +327,7 @@ const Stage = (props) => {
 
             setFormData({
                 stage_name: dataStageUpdate.period_name,
+                stage_description: dataStageUpdate.period_description,
                 stage_start: dataStageUpdate.start,
                 stage_end: dataStageUpdate.end,
             });
@@ -415,6 +417,7 @@ const Stage = (props) => {
             period: {
                 period_name: formData.stage_name,
                 start: formData.stage_start,
+                period_description: formData.stage_description,
                 end: formData.stage_end,
                 members: selectedUsernamesStage
             }
@@ -837,7 +840,7 @@ const Stage = (props) => {
         console.log(uniqueId)
         updateTask({
             ...subtask,
-            progress: progressValuesTask[uniqueId] ,
+            progress: progressValuesTask[uniqueId],
         }, true);
     };
 
@@ -1209,8 +1212,17 @@ const Stage = (props) => {
                                                 </>
                                             }
                                         </td> */}
-                                        <td>
+                                        {/* <td>
                                             <div style={{ minHeight: "27px" }}></div>
+                                        </td> */}
+                                        <td class="align-center" style={{
+                                            // position: 'sticky',
+                                            right: 0,
+                                            // backgroundColor: '#fff',
+                                            // borderLeft: '1px solid #ccc !important',
+                                            boxSizing: 'border-box',
+                                        }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(task)} data-toggle="modal" data-target="#viewStage" title={lang["viewdetail"]}></i>
+
                                         </td>
                                     </tr>
                                     {expandedTasks[task.period_id] && task.tasks.map((subtask, subtaskIndex) => {
@@ -1256,11 +1268,11 @@ const Stage = (props) => {
                                                                             className='form-control '
                                                                             value={progressValuesTask[uniqueId] ?? ''}
                                                                             onBlur={(e) => {
-                                                                             
+
                                                                                 if (!enterPressed) {
                                                                                     handleProgressBlurTask(e, subtask, subtask.task_id, task.period_id, uniqueId);
                                                                                 }
-                                                                                
+
                                                                                 setEnterPressed(false)
                                                                             }}
 
@@ -1276,8 +1288,8 @@ const Stage = (props) => {
                                                                             onKeyDown={(e) => {
                                                                                 if (e.key === 'Enter') {
                                                                                     e.preventDefault();
-                                                                                  
-                                                                                   setEnterPressed(true)
+
+                                                                                    setEnterPressed(true)
                                                                                     updateTask({
                                                                                         ...subtask,
                                                                                         progress: progressValuesTask[uniqueId],
@@ -1321,7 +1333,7 @@ const Stage = (props) => {
                                                                             ? (subtask.task_approve === true
                                                                                 ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
-                                                                            : (subtask.progress === 100 
+                                                                            : (subtask.progress === 100
                                                                                 ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
@@ -1334,7 +1346,7 @@ const Stage = (props) => {
                                                                 {
                                                                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                     <>
-                                                                         {subtask.task_approve
+                                                                        {subtask.task_approve
                                                                             ? (subtask.task_approve
                                                                                 ? <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-times-circle-o size-24 pointer icon-margin icon-close" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
@@ -1384,11 +1396,11 @@ const Stage = (props) => {
                                                                                 className='form-control'
                                                                                 value={progressValues[uniqueId] ?? ''}
                                                                                 onBlur={(e) => {
-                                                                                    
+
                                                                                     if (!enterPressed) {
                                                                                         handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)
                                                                                     }
-                                                                                  
+
                                                                                     setEnterPressed(false)
                                                                                 }}
                                                                                 onFocus={(e) => { handleProgressFocus(subsubtask) }}
@@ -1400,16 +1412,16 @@ const Stage = (props) => {
                                                                                     }
                                                                                 }}
                                                                                 style={{ padding: "2px 4px" }}
-                                                                             
+
                                                                                 onKeyDown={(e) => {
                                                                                     if (e.key === 'Enter') {
                                                                                         e.preventDefault();
-                                                                                       
-                                                                                       setEnterPressed(true)
-                                                                                       updateTaskChild({
-                                                                                        ...subsubtask,
-                                                                                        progress: progressValues[uniqueId] ,
-                                                                                    }, true);
+
+                                                                                        setEnterPressed(true)
+                                                                                        updateTaskChild({
+                                                                                            ...subsubtask,
+                                                                                            progress: progressValues[uniqueId],
+                                                                                        }, true);
                                                                                     }
                                                                                 }}
                                                                             />
@@ -1500,7 +1512,7 @@ const Stage = (props) => {
                 </div>
 
                 {/* Add Task */}
-                <div class={`modal show`} id="addTask">
+                <div class={`modal show no-select-modal`} id="addTask">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -1612,7 +1624,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* Update Task */}
-                <div class={`modal show`} id="editTask">
+                <div class={`modal show no-select-modal`} id="editTask">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -1726,7 +1738,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* View Task */}
-                <div class={`modal 'show' : ''}`} id="viewTask">
+                <div class={`modal 'show' no-select-modal`} id="viewTask">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -1770,140 +1782,73 @@ const Stage = (props) => {
                                             <span className="d-block"> {lang[`${(statusPriority.find((s) => s.value === Number(dataViewDetail.task_priority)) || {}).label || dataViewDetail.task_priority}`]} </span>
 
                                         </div>
+                                        {
+                                            (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
 
-                                        <div class="form-group col-lg-12">
-                                            <label><b>{lang["log.title"]}</b></label>
-                                            {
-                                                dataViewDetail.task_modified && dataViewDetail.task_modified.length > 0 ? (
-                                                    <>
-                                                        <div class="table-outer">
-                                                            <table class="table-head">
-                                                                <thead>
-                                                                    <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
-                                                                    <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
-                                                                    <th class="scrollbar-measure"></th>
-                                                                </thead>
-                                                            </table>
-                                                            <div class="table-body">
-                                                                <table class="table table-striped">
-                                                                    <tbody>
-                                                                        {dataViewDetail.task_modified.reverse().map((task, index) => (
-                                                                            <tr key={task.id}>
-                                                                                <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
-                                                                                <td scope="row">
-                                                                                    {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                        task.modified_what === "infor" ? lang["log.information"] :
-                                                                                            task.modified_what === "status" ? lang["taskstatus"] :
-                                                                                                task.modified_what}
-                                                                                </td>
-                                                                                <td scope="row">
-                                                                                    {
-                                                                                        task.old_value === true ? lang["approved"] :
-                                                                                            task.old_value === false ? lang["await"] :
-                                                                                                `${task.old_value}`
-                                                                                    }
-                                                                                </td>
-                                                                                <td scope="row">
-                                                                                    {
-                                                                                        task.new_value === true ? lang["approved"] :
-                                                                                            task.new_value === false ? lang["await"] :
-                                                                                                `${task.new_value}`
-                                                                                        // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
-                                                                                    }
-                                                                                </td>
-                                                                                <td scope="row">{functions.formatDate(task.modified_at)}</td>
-                                                                                <td scope="row">
-                                                                                    <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
-                                                                                    {task.modified_by?.fullname}
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
+                                            <div class="form-group col-lg-12">
+                                                <label><b>{lang["log.title"]}</b></label>
+                                                {
+                                                    dataViewDetail.task_modified && dataViewDetail.task_modified.length > 0 ? (
+                                                        <>
+                                                            <div class="table-outer">
+                                                                <table class="table-head">
+                                                                    <thead>
+                                                                        <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
+                                                                        <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
+                                                                        <th class="scrollbar-measure"></th>
+                                                                    </thead>
                                                                 </table>
+                                                                <div class="table-body">
+                                                                    <table class="table table-striped">
+                                                                        <tbody>
+                                                                            {dataViewDetail.task_modified.reverse().map((task, index) => (
+                                                                                <tr key={task.id}>
+                                                                                    <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
+                                                                                    <td scope="row">
+                                                                                        {task.modified_what === "approve" ? lang["confirm"] :
+                                                                                            task.modified_what === "infor" ? lang["log.information"] :
+                                                                                                task.modified_what === "status" ? lang["taskstatus"] :
+                                                                                                    task.modified_what}
+                                                                                    </td>
+                                                                                    <td scope="row">
+                                                                                        {
+                                                                                            task.old_value === true ? lang["approved"] :
+                                                                                                task.old_value === false ? lang["await"] :
+                                                                                                    `${task.old_value}`
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td scope="row">
+                                                                                        {
+                                                                                            task.new_value === true ? lang["approved"] :
+                                                                                                task.new_value === false ? lang["await"] :
+                                                                                                    `${task.new_value}`
+                                                                                            // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td scope="row">{functions.formatDate(task.modified_at)}</td>
+                                                                                    <td scope="row">
+                                                                                        <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
+                                                                                        {task.modified_by?.fullname}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
                                                             </div>
+                                                        </>
+                                                    ) : (
+                                                        <div class="list_cont ">
+                                                            <p>{lang["no history yet"]}</p>
                                                         </div>
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["no history yet"]}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                        {/* <div class="form-group col-lg-12">
-                                            <label><b>{lang["log.title"]}</b></label>
-                                            {
-                                                dataViewDetail.task_modified && dataViewDetail.task_modified.length > 0 ? (
-                                                    <>
-
-                                                        <table class="table">
-                                                            <thead style={{
-                                                                position: 'sticky',
-                                                                top: 0,  // Adjusted from 'right: 0' to 'top: 0'
-                                                                backgroundColor: '#fff',
-                                                                borderLeft: '1px solid #ccc',
-                                                                boxSizing: 'border-box',
-                                                            }}>
-                                                                <th class="font-weight-bold align-center" style={{ width: "45px", height: "53px" }} scope="col">{lang["log.no"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["modify_what"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["oldvalue"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["newvalue"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["time"]}</th>
-                                                                <th class="font-weight-bold align-center" scope="col">{lang["user change"]}</th>
-                                                                <th class="scrollbar-measure"></th>
-                                                            </thead>
-
-                                                            <tbody style={{
-                                                                maxHeight: '300px',  // Adjusted from 'height: 300px' to 'maxHeight: 300px'
-                                                                overflowY: 'auto',   // Adjusted from 'overflow: auto' to 'overflowY: auto'
-                                                            }}>
-                                                                {dataViewDetail.task_modified.reverse().map((task, index) => (
-                                                                    <tr key={task.id}>
-                                                                        <td scope="row" style={{ width: "50px" }}>{index + 1}</td>
-                                                                        <td scope="row">
-                                                                            {task.modified_what === "approve" ? lang["confirm"] :
-                                                                                task.modified_what === "infor" ? lang["log.information"] :
-                                                                                    task.modified_what === "status" ? lang["taskstatus"] :
-                                                                                        task.modified_what}
-                                                                        </td>
-                                                                        <td scope="row">
-                                                                            {
-                                                                                task.old_value === true ? lang["approved"] :
-                                                                                    task.old_value === false ? lang["await"] :
-                                                                                        `${task.old_value}`
-                                                                            }
-                                                                        </td>
-                                                                        <td scope="row">
-                                                                            {
-                                                                                task.new_value === true ? lang["approved"] :
-                                                                                    task.new_value === false ? lang["await"] :
-                                                                                        `${task.new_value}`
-                                                                                // `${task.new_value.slice(0, 100)}${task.new_value.length > 100 ? '...' : ''}`
-                                                                            }
-                                                                        </td>
-                                                                        <td scope="row">{functions.formatDate(task.modified_at)}</td>
-                                                                        <td scope="row">
-                                                                            <img class="img-responsive circle-image-cus" src={proxy + task.modified_by?.avatar} />
-                                                                            {task.modified_by?.fullname}
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-
-
-                                                    </>
-                                                ) : (
-                                                    <div class="list_cont ">
-                                                        <p>{lang["no history yet"]}</p>
-                                                    </div>
-                                                )
-                                            }
-                                        </div> */}
+                                                    )
+                                                }
+                                            </div>
+                                        }
                                     </div>
                                 </form>
                             </div>
@@ -1914,7 +1859,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* Add Task Child */}
-                <div class={`modal show`} id="addTaskChild">
+                <div class={`modal show no-select-modal`} id="addTaskChild">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2028,7 +1973,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* Update Task Child */}
-                <div class={`modal show`} id="editTaskChild">
+                <div class={`modal show no-select-modal`} id="editTaskChild">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2143,7 +2088,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* View Task Child*/}
-                <div class={`modal 'show' : ''}`} id="viewTaskChild">
+                <div class={`modal 'show' no-select-modal`} id="viewTaskChild">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2201,7 +2146,7 @@ const Stage = (props) => {
                     </div>
                 </div>
                 {/* Update Stage */}
-                <div class={`modal 'show'`} id="editStage">
+                <div class={`modal 'show' no-select-modal`} id="editStage">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -2218,6 +2163,15 @@ const Stage = (props) => {
                                             } placeholder={lang["p.stagename"]} />
                                             <div style={{ minHeight: '20px' }}>
                                                 {errorMessagesadd.stage_name && <span class="error-message">{errorMessagesadd.stage_name}</span>}
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label>{lang["description"]} <span className='red_star'>*</span></label>
+                                            <input type="text" class="form-control" value={formData.stage_description || ''} onChange={
+                                                (e) => { setFormData({ ...formData, stage_description: e.target.value }) }
+                                            } placeholder={lang["p.description stage"]} />
+                                            <div style={{ minHeight: '20px' }}>
+                                               
                                             </div>
                                         </div>
                                         <div className="col-lg-6">
@@ -2272,6 +2226,52 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={updateStage} class="btn btn-success ">{lang["btn.update"]}</button>
+                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* View Stage*/}
+                <div class={`modal 'show' no-select-modal`} id="viewStage">
+                    <div class="modal-dialog modal-dialog-center">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{lang["detailtask"]}</h4>
+                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-lg-12">
+                                            <label><b>{lang["taskname"]}</b></label>
+                                            <span className="d-block"> {dataViewDetail.period_name} </span>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label><b>{lang["description"]}</b></label>
+                                            <span className="d-block"> {dataViewDetail.period_description || lang["no description"]} </span>
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["log.daystart"]}</b></label>
+                                            <span className="d-block"> {functions.formatDateTask(dataViewDetail.start)} </span>
+                                        </div>
+
+                                        <div class="form-group col-lg-4">
+                                            <label><b>{lang["log.dayend"]}</b></label>
+                                            <span className="d-block"> {functions.formatDateTask(dataViewDetail.end)} </span>
+                                        </div>
+
+
+                                        <div class="form-group col-lg-4">
+                                            <label><b>%{lang["complete"]}</b></label>
+                                            <span className="d-block">{!isNaN(parseFloat(dataViewDetail.progress)) ? (parseFloat(dataViewDetail.progress)).toFixed(0) + '%' : 'Invalid value'}</span>
+                                        </div>
+
+
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
                                 <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>

@@ -113,7 +113,9 @@ export default {
     "task_priority": "Mức độ ưu tiên",
     "taskmember": "Thành viên",
     "p.description": "Mô tả công việc",
+    "p.description stage": "Mô tả giai đoạn",
     "updatestatus": "Cập nhật trạng thái",
+    "no description": "Không có mô tả",
     "viewdetail": "Xem chi tiết",
     "delete": "Xóa",
     "edit": "Chỉnh sửa",
@@ -437,7 +439,7 @@ export default {
     "december":'Tháng 12',
     "listtask": "Danh sách công việc",
     "gantt.yearmonths":"Năm và tháng",
-
+"error.invalidCharacter":"Chỉ chấp nhận chữ không dấu, '-', và '_'.",
     "create account": "Tạo tài khoản",
     "error.fk":"Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
     "error.date": "Không thể chọn trường đối số có kiểu dữ liệu là DATE hoặc DECIMAL",

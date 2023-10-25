@@ -774,7 +774,7 @@ export default () => {
     };
     const apisManager = (project) => {
 
-        window.location.href = `/projects/${versions[0]?.version_id}/apis`;
+        window.location.href = `/projects/${versions[0]?.version_id}/apis?myParam=${project_id}`;
 
         // window.location.href = `tables`;
     };
