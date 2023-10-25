@@ -356,9 +356,9 @@ export default () => {
                                                         startAngle={360}
                                                         endAngle={0}
                                                         data={outputData}
-                                                        cx="55%"
+                                                        cx="40%"
                                                         cy="50%"
-                                                        outerRadius={75 + '%'}
+                                                        outerRadius={85 + '%'}
                                                         fill="#8884d8"
                                                         label
                                                         labelLine={{ outerRadius: '90%' }}
