@@ -44,8 +44,9 @@ export default () => {
     const { project_id, version_id } = useParams();
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
+  
     const back = () => {
-        navigate(`/projects/${version_id}/apis`);
+        navigate(`/projects/${project_id}/${version_id}/apis`);
     };
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
     const [fieldsShow, setFieldShow] = useState({ id: null, display_name: null, formular: null });
@@ -292,7 +293,7 @@ export default () => {
         }
 
     };
-    console.log(errorApi)
+    // console.log(errorApi)
     //update
     const updateFieldExternalBody = (ex) => {
 
@@ -1018,6 +1019,7 @@ export default () => {
                                         </div>
 
                                     </div>
+                                    
                                     <div class="col-md-12">
                                         <label class="font-weight-bold">{lang["projectstatus"]} <span className='red_star'>*</span></label>
                                         <div class="row">

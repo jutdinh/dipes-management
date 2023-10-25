@@ -54,7 +54,7 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     let navigate = useNavigate();
     const back = () => {
-        navigate(`/projects/${version_id}/apis`);
+        navigate(`/projects/${project_id}/${version_id}/apis`);
     };
     const [apiMethod, setApiMethod] = useState(1); // Default is GET
     const [fieldsShow, setFieldShow] = useState({ id: null, display_name: null, formular: null });
@@ -226,7 +226,7 @@ export default () => {
     const [typeProject, setTypeProject] = useState([]);
 
     useEffect(() => {
-        fetch(`${proxy}/projects/project/${myParam}`, {
+        fetch(`${proxy}/projects/project/${project_id}`, {
             headers: {
                 Authorization: _token
             }
@@ -234,7 +234,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
                 if (success) {
                     setTypeProject(data.project_type)
                 }
@@ -1212,10 +1212,10 @@ export default () => {
                                                 type="text"
                                                 className="form-control"
                                                 value={modalTemp.remote_url}
-                                                onChange={(e) => setModalTemp({ ...modalTemp, api_name: e.target.value })}
+                                                onChange={(e) => setModalTemp({ ...modalTemp, remote_url: e.target.value })}
                                                 placeholder=""
                                             />
-                                            {errorApi.api_name && <p className="text-danger">{errorApi.api_name}</p>}
+                                            
                                         </div>
                                     ) : (
                                         <div class="form-group col-lg-6"></div>

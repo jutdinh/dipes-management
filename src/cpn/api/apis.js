@@ -13,14 +13,15 @@ import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
-    const { version_id } = useParams();
+    const { project_id, version_id } = useParams();
     const storedProjectId = localStorage.getItem('project_id');
     let navigate = useNavigate();
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get('myParam');
     const back = () => {
         navigate(`/projects/detail/${storedProjectId}`);
     };
-    const urlParams = new URLSearchParams(window.location.search);
-    const myParam = urlParams.get('myParam');
+   
     
     const [apis, setApis] = useState([]);
     useEffect(() => {
@@ -48,7 +49,7 @@ export default () => {
     const handleGetApi = (apiid) => {
         // console.log("api", apiid)
     }
-    console.log(apis);
+    // console.log(apis);
     const downloadAPI = () => {
         // console.log(apis);
 
@@ -204,12 +205,12 @@ export default () => {
 
 
     const apisManager = (project) => {
-        window.location.href = `/projects/${version_id}/apis/create`;
+        window.location.href = `/projects/${project_id}/${version_id}/apis/create`;
         // window.location.href = `tables`;
     };
     const updateApi = (apiData) => {
         // console.log(apiData)
-        window.location.href = `/projects/${version_id}/apis/update/${apiData.api_id}/?myParam=${myParam}`;
+        window.location.href = `/projects/${project_id}/${version_id}/apis/update/${apiData.api_id}`;
         // window.location.href = `tables`;
     };
 

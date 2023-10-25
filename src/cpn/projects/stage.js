@@ -40,7 +40,7 @@ const Stage = (props) => {
 
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
-    console.log(dataViewDetail)
+    // console.log(dataViewDetail)
     const [formData, setFormData] = useState({});
     const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
     const [selectedUsernames, setSelectedUsernames] = useState([]);
@@ -537,13 +537,7 @@ const Stage = (props) => {
             })
     }
     const updateTask = (dataUpdate, useDataUpdate = false) => {
-        console.log(dataUpdate)
-        console.log(periodId)
-
-
-
-
-
+      
         if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
             const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
             setSelectedUsernames(initialSelectedUsernames);
@@ -828,7 +822,7 @@ const Stage = (props) => {
     }
     const [progressValues, setProgressValues] = useState({});
     const [progressValuesTask, setProgressValuesTask] = useState({});
-    console.log(progressValues)
+    // console.log(progressValues)
     const handleProgressBlur = (e, subsubtask, taskId, periodId, uniqueId) => {
 
         updateTaskChild({
@@ -837,7 +831,7 @@ const Stage = (props) => {
         }, true);
     };
     const handleProgressBlurTask = (e, subtask, taskId, periodId, uniqueId) => {
-        console.log(uniqueId)
+        // console.log(uniqueId)
         updateTask({
             ...subtask,
             progress: progressValuesTask[uniqueId],
@@ -970,7 +964,7 @@ const Stage = (props) => {
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
 
-    console.log(dataTask)
+    // console.log(dataTask)
     // (dataTask)
     return (
         <>
