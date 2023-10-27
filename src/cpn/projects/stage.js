@@ -38,6 +38,9 @@ const Stage = (props) => {
     const [taskChild, setTaskChild] = useState({ child_task_status: 1 });
 
 
+    const heights = [30, 35, 40, 45, 50, 55, 60, 65, 80]
+
+
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
     // console.log(dataViewDetail)
@@ -57,8 +60,13 @@ const Stage = (props) => {
 
     const [containerWidth, setContainerWidth] = useState('80%');
     const [isResizing, setIsResizing] = useState(false);
-
-
+    const [lenghtTask, setLenghtTask] = useState(false);
+    //Đếm tr
+    const tableRef = useRef();
+    useEffect(() => {
+        const numberOfTR = $(tableRef.current).find('tr').length;
+        setLenghtTask(numberOfTR)
+    }, [dataGantt]);
 
     const containerRef = useRef(null);
     const scrollRef1 = useRef(null);
@@ -93,8 +101,9 @@ const Stage = (props) => {
     const [columnWidths, setColumnWidths] = useState({
         col1: 100,
         col2: 100,
-        // ... (thêm cho các cột khác)
+     
     });
+
 
 
 
@@ -158,16 +167,16 @@ const Stage = (props) => {
             flexDirection: "column"
         })
 
-        $('.midde_cont').css({            
+        $('.midde_cont').css({
             display: "flex",
             flexDirection: "column",
-            flexGrow: 1,            
+            flexGrow: 1,
         })
 
-        $('.midde_cont .container-fluid').css({            
+        $('.midde_cont .container-fluid').css({
             display: "flex",
             flexDirection: "column",
-            flexGrow: 1,            
+            flexGrow: 1,
         })
 
         $('#second-row').css({
@@ -203,7 +212,7 @@ const Stage = (props) => {
         // Khi component được mount, lấy trạng thái từ localStorage và đặt vào state
         const savedExpandedTasks = JSON.parse(localStorage.getItem('expandedTasks')) || {};
         const savedExpandedSubsubtasks = JSON.parse(localStorage.getItem('expandedSubsubtasks')) || {};
-
+     
         setExpandedTasks(savedExpandedTasks);
         setExpandedSubsubtasks(savedExpandedSubsubtasks);
     }, []);
@@ -558,7 +567,7 @@ const Stage = (props) => {
             })
     }
     const updateTask = (dataUpdate, useDataUpdate = false) => {
-      
+
         if (useDataUpdate && Object.keys(dataUpdate).length > 0) {
             const initialSelectedUsernames = dataUpdate.members.map(member => member.username);
             setSelectedUsernames(initialSelectedUsernames);
@@ -1047,7 +1056,7 @@ const Stage = (props) => {
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', minHeight: "30%", height: "98%",overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', minHeight: "30%", height: "98%", overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
@@ -1058,10 +1067,18 @@ const Stage = (props) => {
                         width: containerWidth,
                         border: '1px solid gray',
                         maxWidth: '100%',
-                        // height: dataGantt.length === 1 ? "65%" :
-                        //     (dataGantt.length === 2 ? "70%" :
-                        //         (dataGantt.length === 3 ? "75%" :
-                        //             (dataGantt.length === 4 ? "80%" : "85%"))),
+                        height: lenghtTask === 1 ? "30%" :
+                        (lenghtTask === 2 ? "35%" :
+                            (lenghtTask === 3 ? "40%" :
+                                (lenghtTask === 4 ? "45%" :
+                                    (lenghtTask === 5 ? "50%" :
+                                        (lenghtTask === 6 ? "60%" :
+                                            (lenghtTask === 7 ? "70%" :
+                                                (lenghtTask === 8 ? "75%" :
+                                                    (lenghtTask === 9 ? "80%" :
+                                                        (lenghtTask === 10 ? "85%" :
+                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
+                        // height: heights[ lenghtTask + 1 ] ? `${heights[ lenghtTask + 1 ]}%` : "85%",
                         overflowX: 'auto'
                     }}>
 
@@ -1163,7 +1180,7 @@ const Stage = (props) => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody ref={tableRef}>
                             {dataTask.filter((task) => {
                                 let filterText = taskNameFilter && taskNameFilter.name ? taskNameFilter.name.toLowerCase() : '';
                                 let taskName = task && task.period_name ? task.period_name.toLowerCase() : '';
@@ -1500,10 +1517,17 @@ const Stage = (props) => {
                 </div>
                 <div style={{
                     width: '5px', cursor: 'col-resize', background: '#ccc',
-                    //  height: dataGantt.length === 1 ? "65%" :
-                    //     (dataGantt.length === 2 ? "70%" :
-                    //         (dataGantt.length === 3 ? "75%" :
-                    //             (dataGantt.length === 4 ? "80%" : "85%")))
+                    height: lenghtTask === 1 ? "30%" :
+                        (lenghtTask === 2 ? "35%" :
+                            (lenghtTask === 3 ? "40%" :
+                                (lenghtTask === 4 ? "45%" :
+                                    (lenghtTask === 5 ? "50%" :
+                                        (lenghtTask === 6 ? "60%" :
+                                            (lenghtTask === 7 ? "70%" :
+                                                (lenghtTask === 8 ? "75%" :
+                                                    (lenghtTask === 9 ? "80%" :
+                                                        (lenghtTask === 10 ? "85%" :
+                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
                 }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
@@ -1514,12 +1538,19 @@ const Stage = (props) => {
                         flex: '1',
                         border: '1px solid gray',
                         background: '#f6f6f6',
-                        
+
                         maxWidth: '100%',
-                        // height: dataGantt.length === 1 ? "65%" :
-                        //     (dataGantt.length === 2 ? "70%" :
-                        //         (dataGantt.length === 3 ? "75%" :
-                        //             (dataGantt.length === 4 ? "80%" : "85%"))),
+                        height: lenghtTask === 1 ? "30%" :
+                        (lenghtTask === 2 ? "35%" :
+                            (lenghtTask === 3 ? "40%" :
+                                (lenghtTask === 4 ? "45%" :
+                                    (lenghtTask === 5 ? "50%" :
+                                        (lenghtTask === 6 ? "60%" :
+                                            (lenghtTask === 7 ? "70%" :
+                                                (lenghtTask === 8 ? "75%" :
+                                                    (lenghtTask === 9 ? "80%" :
+                                                        (lenghtTask === 10 ? "85%" :
+                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
                         overflowY: 'hidden',
                         overflowX: 'auto'
                     }}
@@ -2187,7 +2218,7 @@ const Stage = (props) => {
                                                 (e) => { setFormData({ ...formData, stage_description: e.target.value }) }
                                             } placeholder={lang["p.description stage"]} />
                                             <div style={{ minHeight: '20px' }}>
-                                               
+
                                             </div>
                                         </div>
                                         <div className="col-lg-6">
@@ -2293,7 +2324,7 @@ const Stage = (props) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
             {/* <GanttTest data={dataGantt} /> */}
 
         </>

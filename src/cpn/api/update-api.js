@@ -2119,6 +2119,7 @@ export default () => {
                                         />
                                         {errorApi.fomular_alias && <p className="text-danger">{errorApi.fomular_alias}</p>}
                                     </div>
+                                    
                                     <div class="form-group col-lg-12">
                                         <label>{lang["fields default"]} <span className='red_star'>*</span></label>
                                         <input
