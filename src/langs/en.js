@@ -195,7 +195,7 @@ export default {
     "error.vaildphone": "Invalid phone number",
     "error.permission": "Please select permissions",
     "error.address": "Please enter the address",
-    "error.invalidCharacter":"Only accept non-accented letters, '-', and '_'.",
+    "error.invalidCharacter":"Only accept non-accented letters, '-', '_' and '.'",
     "fields default": "Default Value",
     // modal edit user
     "btn.update": "Save",

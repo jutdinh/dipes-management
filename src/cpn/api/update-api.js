@@ -1070,7 +1070,7 @@ export default () => {
     const validateExternalBody = () => {
         let temp = {};
         temp.field_name = externalBody.field_name ? "" : lang["error.input"];
-        const fomularAliasRegex = /^[A-Za-z0-9_-]+$/;
+        const fomularAliasRegex = /^[A-Za-z0-9_.-]+$/;
         if (!fomularAliasRegex.test(externalBody.fomular_alias) || !externalBody.fomular_alias) {
             temp.fomular_alias = lang["error.invalidCharacter"];
         } else {
@@ -2090,7 +2090,7 @@ export default () => {
                                                 let inputValue = e.target.value;
 
                                                 // Regex này sẽ cho phép ký tự tiếng Việt, số, "_", và "-" mà không có khoảng trắng hoặc ký tự đặc biệt khác
-                                                const allowedCharactersRegex = /^[A-Za-z0-9À-ỹ_-]+$/;
+                                                const allowedCharactersRegex = /^[A-Za-z0-9À-ỹ_.-]+$/;
 
                                                 const check = modalTemp.external_body?.find(ex => ex.fomular_alias === inputValue);
 

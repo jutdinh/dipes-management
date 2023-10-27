@@ -439,7 +439,7 @@ export default {
     "december":'Tháng 12',
     "listtask": "Danh sách công việc",
     "gantt.yearmonths":"Năm và tháng",
-"error.invalidCharacter":"Chỉ chấp nhận chữ không dấu, '-', và '_'.",
+"error.invalidCharacter":"Chỉ chấp nhận chữ không dấu, '-', '_' và '.'",
 "fields default": "Giá trị mặc định",
     "create account": "Tạo tài khoản",
     "error.fk":"Không thể chọn trường này vì nó là khóa ngoại và khóa chính tương ứng tồn tại trong danh sách các trường",
