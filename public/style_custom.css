@@ -2712,3 +2712,9 @@ table tr {
     border-radius: 5px;
     width: 100%;
 }
+
+
+
+#gantt-container-grab .gantt-container{
+    /* flex-grow: 1; */
+}

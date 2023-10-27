@@ -8,7 +8,7 @@ import GanttTest from "./gantt-test"
 import FloatingTextBox from '../common/floatingTextBox';
 import CheckList from '../common/checkList';
 import FilterableDate from '../common/searchDate';
-
+import $ from 'jquery';
 import TableScroll from "./table-test-scroll"
 
 const Stage = (props) => {
@@ -152,8 +152,29 @@ const Stage = (props) => {
         };
     }, []);
 
+    useEffect(() => {
+        $('#content').css({
+            display: "flex",
+            flexDirection: "column"
+        })
 
+        $('.midde_cont').css({            
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,            
+        })
 
+        $('.midde_cont .container-fluid').css({            
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,            
+        })
+
+        $('#second-row').css({
+            flexGrow: 1
+        })
+
+    }, [])
 
 
     const handleColumnResizeMouseDown = (colIndex) => (e) => {
@@ -1026,7 +1047,7 @@ const Stage = (props) => {
                 }
             </div>
 
-            <div style={{ display: 'flex', width: '100%', height: "90%", minHeight: "30%", overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <div style={{ display: 'flex', width: '100%', minHeight: "30%", height: "98%",overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
 
                 <div
                     // ref={containerRef}
@@ -1037,10 +1058,10 @@ const Stage = (props) => {
                         width: containerWidth,
                         border: '1px solid gray',
                         maxWidth: '100%',
-                        height: dataGantt.length === 1 ? "65%" :
-                            (dataGantt.length === 2 ? "70%" :
-                                (dataGantt.length === 3 ? "75%" :
-                                    (dataGantt.length === 4 ? "80%" : "85%"))),
+                        // height: dataGantt.length === 1 ? "65%" :
+                        //     (dataGantt.length === 2 ? "70%" :
+                        //         (dataGantt.length === 3 ? "75%" :
+                        //             (dataGantt.length === 4 ? "80%" : "85%"))),
                         overflowX: 'auto'
                     }}>
 
@@ -1478,10 +1499,11 @@ const Stage = (props) => {
                     </table>
                 </div>
                 <div style={{
-                    width: '5px', cursor: 'col-resize', background: '#ccc', height: dataGantt.length === 1 ? "65%" :
-                        (dataGantt.length === 2 ? "70%" :
-                            (dataGantt.length === 3 ? "75%" :
-                                (dataGantt.length === 4 ? "80%" : "85%")))
+                    width: '5px', cursor: 'col-resize', background: '#ccc',
+                    //  height: dataGantt.length === 1 ? "65%" :
+                    //     (dataGantt.length === 2 ? "70%" :
+                    //         (dataGantt.length === 3 ? "75%" :
+                    //             (dataGantt.length === 4 ? "80%" : "85%")))
                 }} onMouseDown={handleMouseDown}
                 ></div>
                 <div
@@ -1492,12 +1514,12 @@ const Stage = (props) => {
                         flex: '1',
                         border: '1px solid gray',
                         background: '#f6f6f6',
-                        marginBottom: "10px",
+                        
                         maxWidth: '100%',
-                        height: dataGantt.length === 1 ? "65%" :
-                            (dataGantt.length === 2 ? "70%" :
-                                (dataGantt.length === 3 ? "75%" :
-                                    (dataGantt.length === 4 ? "80%" : "85%"))),
+                        // height: dataGantt.length === 1 ? "65%" :
+                        //     (dataGantt.length === 2 ? "70%" :
+                        //         (dataGantt.length === 3 ? "75%" :
+                        //             (dataGantt.length === 4 ? "80%" : "85%"))),
                         overflowY: 'hidden',
                         overflowX: 'auto'
                     }}

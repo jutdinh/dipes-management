@@ -1102,9 +1102,18 @@ export default () => {
                     </div>
                 </div>
                 {/* List table */}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="white_shd full">
+                <div class="row" id="second-row">
+                    <div class="col-md-12" style={{ 
+                        display: "flex",
+                        flexDirection: "column",
+                        flexGrow: 1,
+
+                    }}>
+                        <div class="white_shd full" style={{ 
+                                display: "flex",
+                                flexDirection: "column",
+                                flexGrow: 1,                               
+                            }}>
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>
@@ -1140,8 +1149,19 @@ export default () => {
                                 }
 
                             </div>
-                            <div class="table_section padding_infor_info_list_task">
-                                <div class="row column1">
+                            <div class="table_section padding_infor_info_list_task" 
+                                style={{ 
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    flexGrow: 1,
+            
+                                }}
+                                
+                            >
+                                <div class="row column1"  style={{                                     
+                                    flexGrow: 1,
+            
+                                }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
                                         <div class="modal-dialog modal-dialog-center">
@@ -1234,7 +1254,13 @@ export default () => {
                                     {/* Stage */}
                                     {/* <TableScroll /> */}
                                     {/* Progresss */}
-                                    <div class="table_section padding_infor_info_list_task ">
+                                    <div class="table_section padding_infor_info_list_task "
+                                        style={{ 
+                                            display: "flex",
+                                            flexDirection: "column"
+                    
+                                        }}
+                                    >
                                         <div className="d-flex">
 
                                             <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>

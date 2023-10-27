@@ -90,13 +90,20 @@ function GanttTest({ data }) {
         })
     }, [])
     
-      
+
 
     return (
        
 
 
-        <div className="gantt-container grab" style={{ maxWidth: '100%', overflowX: 'auto'}}>
+        <div id="gantt-container-grab" className="gantt-container grab" style={{ 
+            maxWidth: "100%",
+            overflowX: "auto",
+         
+            display: "flex",
+            flexDirection: "column",
+
+        }}>
             
             <ReactGantt
                 columnWidth="20px"
