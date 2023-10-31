@@ -1265,7 +1265,7 @@ const Stage = (props) => {
 
                                                 <tr
                                                     key={uniqueId}
-                                                    className={`font-weight-bold fix-layout ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
+                                                    className={`font-weight-bold fix-layout italic ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
                                                     onClick={() => {
                                                         // setSelectedUsernames([])
                                                         handleRowClick(uniqueId)

@@ -234,7 +234,9 @@ padding: 0;
 }
 
 
-
+.italic {
+    font-style: italic;
+}
 
 
 .table td,
