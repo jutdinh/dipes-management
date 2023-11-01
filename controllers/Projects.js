@@ -1225,7 +1225,7 @@ class ProjectsController extends Controller {
                         }
                         newTask.task_modified = { ...oldTask.task_modified, ...newModified }
 
-                        period.tasks[`${task_id}`] = newTask
+                        period.tasks[`${newTask.task_id}`] = newTask
                         project.tasks[`${period_id}`] = period
 
 
@@ -1289,7 +1289,7 @@ class ProjectsController extends Controller {
                         
                         newTask.task_modified = { ...oldTask.task_modified, ...newModified }
 
-                        period.tasks[`${task_id}`] = newTask
+                        period.tasks[`${newTask.task_id}`] = newTask
                         project.tasks[`${period_id}`] = period
 
 

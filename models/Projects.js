@@ -36,7 +36,7 @@ class Projects extends Model {
         header: `========MYLAN-ACTIVATION-KEY========`,
         bodyLength: 10,
         footer: `==============END-KEY===============`,
-        uuid_format: [ 8, 4, 4, 4, 12 ]
+        uuid_format: [8, 4, 4, 4, 12]
     }
 
     constructor() {
@@ -85,7 +85,7 @@ class Projects extends Model {
         this.versions.tables.foreign_keys.__addProperty__("field_id", Model.types.int)
         this.versions.tables.foreign_keys.__addProperty__("table_id", Model.types.int)
         this.versions.tables.foreign_keys.__addProperty__("ref_field_id", Model.types.int)
-        this.versions.tables.foreign_keys.__addProperty__("cascade", Model.types.bool, {  default: false })
+        this.versions.tables.foreign_keys.__addProperty__("cascade", Model.types.bool, { default: false })
 
         this.versions.tables.__addProperty__("create_at", Model.types.datetime, { default: new Date(), })
         this.versions.tables.__addProperty__("create_by", Model.types.json)
@@ -123,7 +123,7 @@ class Projects extends Model {
         this.versions.tables.fields.props.__addProperty__("DEFAULT_FALSE", Model.types.string, { default: "FALSE" })
 
 
-        this.versions.__addProperty__( "apis", Model.types.model )
+        this.versions.__addProperty__("apis", Model.types.model)
         this.versions.apis.__addProperty__("id", Model.types.int, { auto: true })
         this.versions.apis.__addProperty__("api_id", Model.types.string)
         this.versions.apis.__addProperty__("api_name", Model.types.string)
@@ -131,18 +131,18 @@ class Projects extends Model {
         this.versions.apis.__addProperty__("description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.versions.apis.__addProperty__("url", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.versions.apis.__addProperty__("remote_url", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
-        this.versions.apis.__addProperty__("api_method", Model.types.enum, { values: [ "get", "post", "put", "delete" ] })
-        this.versions.apis.__addProperty__("api_scope", Model.types.enum, { values: [ "private", "public" ] })
-        this.versions.apis.__addProperty__("create_at", Model.types.datetime, { default: new Date() } )
+        this.versions.apis.__addProperty__("api_method", Model.types.enum, { values: ["get", "post", "put", "delete"] })
+        this.versions.apis.__addProperty__("api_scope", Model.types.enum, { values: ["private", "public"] })
+        this.versions.apis.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
         this.versions.apis.__addProperty__("create_by", Model.types.json)
 
         this.versions.apis.create_by.__addProperty__("username", Model.types.string)
-        this.versions.apis.create_by.__addProperty__("fullname", Model.types.string)        
+        this.versions.apis.create_by.__addProperty__("fullname", Model.types.string)
 
         this.versions.apis.__addProperty__("tables", Model.types.array)
         this.versions.apis.__addProperty__("params", Model.types.array)
         this.versions.apis.__addProperty__("body", Model.types.array)
-        this.versions.apis.__addProperty__("external_body", Model.types.array, { default: [] })              
+        this.versions.apis.__addProperty__("external_body", Model.types.array, { default: [] })
 
         this.versions.apis.__addProperty__("fields", Model.types.model)
         this.versions.apis.fields.__addProperty__("id", Model.types.int)
@@ -162,39 +162,39 @@ class Projects extends Model {
         this.versions.apis.statistic.__addProperty__("fomular", Model.types.enum, { values: ["SUM", "AVERAGE", "COUNT"] })
 
 
-        this.versions.__addProperty__( "uis", Model.types.model )
-        this.versions.uis.__addProperty__( "ui_id", Model.types.int, { auto: true } )
-        this.versions.uis.__addProperty__( "title", Model.types.string, { required: true })        
-        this.versions.uis.__addProperty__( "url", Model.types.string, { required: true } ) 
-        this.versions.uis.__addProperty__( "status", Model.types.bool, { default: true })        
-        this.versions.uis.__addProperty__( "params", Model.types.array)
-        this.versions.uis.__addProperty__( "type", Model.types.string, { default: "ui" }) 
-        this.versions.uis.__addProperty__( "create_at", Model.types.datetime );
-        
-        this.versions.uis.__addProperty__( "create_by", Model.types.json );
-        this.versions.uis.create_by.__addProperty__("username", Model.types.string)
-        this.versions.uis.create_by.__addProperty__("fullname", Model.types.string)            
+        this.versions.__addProperty__("uis", Model.types.model)
+        this.versions.uis.__addProperty__("ui_id", Model.types.int, { auto: true })
+        this.versions.uis.__addProperty__("title", Model.types.string, { required: true })
+        this.versions.uis.__addProperty__("url", Model.types.string, { required: true })
+        this.versions.uis.__addProperty__("status", Model.types.bool, { default: true })
+        this.versions.uis.__addProperty__("params", Model.types.array)
+        this.versions.uis.__addProperty__("type", Model.types.string, { default: "ui" })
+        this.versions.uis.__addProperty__("create_at", Model.types.datetime);
 
-        this.versions.uis.__addProperty__( "components", Model.types.model )
-        this.versions.uis.components.__addProperty__( "component_id", Model.types.int, { auto: true })
-        this.versions.uis.components.__addProperty__( "component_name", Model.types.string, { required: true })        
-        this.versions.uis.components.__addProperty__( "layout_id", Model.types.int)     
-        this.versions.uis.components.__addProperty__( "table_id", Model.types.int )
-        this.versions.uis.components.__addProperty__( "api_get", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_post", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_put", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_delete", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_search", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_export", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_import", Model.types.string )
-        this.versions.uis.components.__addProperty__( "api_detail", Model.types.string )
+        this.versions.uis.__addProperty__("create_by", Model.types.json);
+        this.versions.uis.create_by.__addProperty__("username", Model.types.string)
+        this.versions.uis.create_by.__addProperty__("fullname", Model.types.string)
+
+        this.versions.uis.__addProperty__("components", Model.types.model)
+        this.versions.uis.components.__addProperty__("component_id", Model.types.int, { auto: true })
+        this.versions.uis.components.__addProperty__("component_name", Model.types.string, { required: true })
+        this.versions.uis.components.__addProperty__("layout_id", Model.types.int)
+        this.versions.uis.components.__addProperty__("table_id", Model.types.int)
+        this.versions.uis.components.__addProperty__("api_get", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_post", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_put", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_delete", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_search", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_export", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_import", Model.types.string)
+        this.versions.uis.components.__addProperty__("api_detail", Model.types.string)
 
         /* TASK & TASK MODIFIES */
 
         this.__addProperty__("tasks", Model.types.model)
         this.tasks.__addProperty__("period_id", Model.types.int, { auto: true })
-        this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới",  maxLength: Number.MAX_SAFE_INTEGER  })
-        this.tasks.__addProperty__("period_description", Model.types.string, { default: "Giai đoạn mới",  maxLength: Number.MAX_SAFE_INTEGER  })
+        this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới", maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.__addProperty__("period_description", Model.types.string, { default: "Giai đoạn mới", maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
         this.tasks.__addProperty__("progress", Model.types.number, { default: 0 })
@@ -206,7 +206,7 @@ class Projects extends Model {
 
         this.tasks.__addProperty__("tasks", Model.types.model)
         this.tasks.tasks.__addProperty__("task_id", Model.types.int, { auto: true })
-        this.tasks.tasks.__addProperty__("task_name", Model.types.string,{ maxLength: Number.MAX_SAFE_INTEGER })
+        this.tasks.tasks.__addProperty__("task_name", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.__addProperty__("task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.__addProperty__("task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.tasks.__addProperty__("task_priority", Model.types.int, { default: 1 })
@@ -220,14 +220,14 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.__addProperty__("child_task_id", Model.types.int, { auto: true })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_name", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
-        this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })      
+        this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("approve", Model.types.bool, { default: false })
         this.tasks.tasks.child_tasks.__addProperty__("priority", Model.types.int, { default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)
-        this.tasks.tasks.child_tasks.__addProperty__("end", Model.types.datetime)   
+        this.tasks.tasks.child_tasks.__addProperty__("end", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("progress", Model.types.number, { default: 0 })
-        
+
         this.tasks.tasks.child_tasks.__addProperty__("members", Model.types.model)
         this.tasks.tasks.child_tasks.members.__addProperty__("username", Model.types.string)
         this.tasks.tasks.child_tasks.members.__addProperty__("fullname", Model.types.string)
@@ -251,7 +251,7 @@ class Projects extends Model {
         this.tasks.tasks.task_modified.modified_by.__addProperty__("fullname", Model.types.string)
         this.tasks.tasks.task_modified.modified_by.__addProperty__("avatar", Model.types.string)
 
-        this.tasks.tasks.task_modified.__addProperty__("modified_at", Model.types.datetime, { format: "DD-MM-YYYY lúc hh:mm" } )
+        this.tasks.tasks.task_modified.__addProperty__("modified_at", Model.types.datetime, { format: "DD-MM-YYYY lúc hh:mm" })
         this.tasks.tasks.task_modified.__addProperty__("modified_what", Model.types.enum, { values: ["infor", "status", "approve", "other"] })
         this.tasks.tasks.task_modified.__addProperty__("old_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.task_modified.__addProperty__("new_value", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
@@ -263,10 +263,10 @@ class Projects extends Model {
 
 
 
-        this.__addProperty__("activation", Model.types.model)        
-        this.activation.__addProperty__( "ACTIVATION_KEY", Model.types.string, { required: true, maxLength: 512 })
-        this.activation.__addProperty__( "MAC_ADDRESS", Model.types.string )
-        this.activation.__addProperty__( "ACTIVATE_AT", Model.types.datetime, { default: new Date() } )
+        this.__addProperty__("activation", Model.types.model)
+        this.activation.__addProperty__("ACTIVATION_KEY", Model.types.string, { required: true, maxLength: 512 })
+        this.activation.__addProperty__("MAC_ADDRESS", Model.types.string)
+        this.activation.__addProperty__("ACTIVATE_AT", Model.types.datetime, { default: new Date() })
 
 
         this.__addPrimaryKey__(["id"])
@@ -275,25 +275,25 @@ class Projects extends Model {
     }
 
 
-    static generateProjectLine = ( project_id ) => {
+    static generateProjectLine = (project_id) => {
         const Cipher = new Crypto()
-        const encryptedProjectId = Cipher.encrypt( project_id.toString() )        
+        const encryptedProjectId = Cipher.encrypt(project_id.toString())
         const { uuid_format } = Projects.validator
 
-        const sumSlice = ( arr, destination ) => {
+        const sumSlice = (arr, destination) => {
             let sum = 0;
-            for( let i = 0 ; i < destination; i++ ){
+            for (let i = 0; i < destination; i++) {
                 sum += arr[i]
             }
             return sum
         }
 
-        const splitted = uuid_format.map( (length, index) => {
+        const splitted = uuid_format.map((length, index) => {
             const previous = uuid_format[index - 1]
-            if( previous != undefined ){
-                const current = encryptedProjectId.slice( sumSlice( uuid_format, index ), length + sumSlice( uuid_format, index ) )
+            if (previous != undefined) {
+                const current = encryptedProjectId.slice(sumSlice(uuid_format, index), length + sumSlice(uuid_format, index))
                 return current;
-            }else{
+            } else {
                 return encryptedProjectId.slice(0, length)
             }
         })
@@ -302,12 +302,12 @@ class Projects extends Model {
     }
 
 
-    static generateActivationKey = ( targetKey, project_id = 0 ) => {        
+    static generateActivationKey = (targetKey, project_id = 0) => {
         const head = `========MYLAN-ACTIVATION-KEY========\n`
         let body = `${targetKey}\n`;
-        body += `${ Projects.generateProjectLine( project_id ) }\n`
+        body += `${Projects.generateProjectLine(project_id)}\n`
         // console.log(body)
-        for( let i = 0 ; i < 8; i++ ){
+        for (let i = 0; i < 8; i++) {
             const uniString = uuidv4();
             const row = uniString.toUpperCase()
             body += `${row}\n`
@@ -316,14 +316,14 @@ class Projects extends Model {
         return head + body + tail
     }
 
-    static getTaskStatusName = ( statusValue ) => {
+    static getTaskStatusName = (statusValue) => {
         const validTaskStatus = Projects.validTaskStatus;
         const corespondingName = {}
-        validTaskStatus.map( status => {
-            corespondingName[`${ status }`] = `__status_of_${status}`
+        validTaskStatus.map(status => {
+            corespondingName[`${status}`] = `__status_of_${status}`
         })
 
-        return corespondingName[`${ statusValue }`]
+        return corespondingName[`${statusValue}`]
     }
 }
 class ProjectsRecord extends Projects {
@@ -336,6 +336,56 @@ class ProjectsRecord extends Projects {
 
     }
 
+    calculateProjectProgress = () => {
+        const project = this.getData()
+        const { tasks } = project
+
+        const periods = Object.values(tasks)
+
+        periods.map(period => {
+            period.tasks = Object.values(period.tasks)
+            period.period_members = Object.values(period.period_members)
+            let period_progress = 0
+            period.tasks.map(task => {
+                task.members = Object.values(task.members)
+                task.child_tasks = Object.values(task.child_tasks)
+                let task_progress = 0
+                task.child_tasks.map(c_task => {
+                    c_task.members = Object.values(c_task.members)
+                    task_progress += c_task.progress
+                })
+                if (task.child_tasks.length > 0) {
+                    const calculated = task_progress / task.child_tasks.length
+                    task.progress = parseFloat(calculated.toFixed(2))
+
+                    period_progress += calculated
+                } else {
+                    period_progress += task.progress ? task.progress : 0
+                }
+                task.task_modified = Object.values(task.task_modified)
+            })
+
+            if (period.tasks.length > 0) {
+                const period_calculated = period_progress / period.tasks.length
+                period.progress = parseFloat(period_calculated.toFixed(2))
+            } else {
+                period.progress = 0
+            }
+        })
+
+        let sumerizedProgress = 0
+        for( let i = 0 ; i < periods.length; i++ ){
+            sumerizedProgress += periods[i].progress
+        }
+        
+        if( periods.length == 0 ){
+            return 0
+        }else{
+            const progress = sumerizedProgress  / periods.length
+            return parseFloat( progress.toFixed(2) )
+        }
+    }
+
     getProjectAndManager = () => {
 
         const project = this.getData()
@@ -344,16 +394,12 @@ class ProjectsRecord extends Projects {
         project.members = members
         const currentVersion = project.versions[project.active_version] ? project.versions[project.active_version] : {}
         project.version = currentVersion
-        project.versions = versions
-        const tasks = Object.values(project.tasks)
-        if (tasks.length > 0) {
-            const doneTasks = tasks.filter(task => task.task_status == 3 && task.task_approve == true)            
-            project.progress = `${Math.ceil(doneTasks.length * 100 / tasks.length)}`
-        } else {
-            project.progress = "0"
-        }
-        delete project.tasks;
+        project.versions = versions        
         
+        project.progress = this.calculateProjectProgress()
+
+        delete project.tasks;
+
         delete project.versions;
         return project
     }
@@ -366,19 +412,14 @@ class ProjectsRecord extends Projects {
         const currentVersion = project.versions[project.active_version] ? project.versions[project.active_version] : {}
         project.version = currentVersion
         project.versions = versions
-        const tasks = Object.values(project.tasks)
-        if (tasks.length > 0) {
-            const doneTasks = tasks.filter(task => task.task_status == 3 && task.task_approve == true)            
-            project.progress = `${Math.ceil(doneTasks.length * 100 / tasks.length)}`
-        } else {
-            project.progress = "0"
-        }
+        
+        project.progress = this.calculateProjectProgress()
         return project
     }
 
     getGeneralData = () => {
         const project = this.getData();
-        const { 
+        const {
             project_id,
             project_name,
             project_code,
@@ -386,13 +427,14 @@ class ProjectsRecord extends Projects {
             project_description,
             project_type,
             proxy_server,
-            create_at 
-        } = project;        
-        return {  project_id, project_name, project_code, project_status, project_description, project_type, proxy_server, create_at  
+            create_at
+        } = project;
+        return {
+            project_id, project_name, project_code, project_status, project_description, project_type, proxy_server, create_at
         }
     }
 
-    matchSearch = ( criteria ) => {
+    matchSearch = (criteria) => {
         console.log(criteria)
         console.log(this.getPaths())
     }
@@ -404,7 +446,7 @@ class ProjectsRecord extends Projects {
         this.__modifyChildren__("project_status", project_status)
         this.__modifyChildren__("project_description", project_description)
         this.__modifyChildren__("proxy_server", proxy_server)
-        this.__modifyChildren__("project_type", project_type)        
+        this.__modifyChildren__("project_type", project_type)
         this.__modifyChildren__("manager", manager)
     }
 
@@ -444,7 +486,7 @@ class ProjectsRecord extends Projects {
         this.setData(data)
     }
 
-    createPeriod = async ( period ) => {
+    createPeriod = async (period) => {
         const data = this.getData()
         const model = this.getModel()
         const id = await model.__getNewId__()
@@ -452,7 +494,7 @@ class ProjectsRecord extends Projects {
 
         const { tasks } = data;
         data.tasks = { ...tasks, [`${id}`]: period }
-        this.setData( data )
+        this.setData(data)
     }
 
     addTask = async (period_id, task) => {
@@ -465,27 +507,27 @@ class ProjectsRecord extends Projects {
         serializedData[`${id}`] = task;
 
         const { tasks } = data;
-        const period = tasks[`${ period_id }`]
-        
-        if( period ){
-            if( !period.tasks ){
+        const period = tasks[`${period_id}`]
+
+        if (period) {
+            if (!period.tasks) {
                 period.tasks = {}
             }
-            period.tasks[`${ id }`] = task 
-            tasks[`${ period_id }`] = period
-    
+            period.tasks[`${id}`] = task
+            tasks[`${period_id}`] = period
+
             data.tasks = tasks
             this.setData(data)
         }
     }
 
     addChildTask = async (period_id, task_id, childTask) => {
-        const data = this.getData() 
+        const data = this.getData()
         const model = this.getModel()
         const id = await model.__getNewId__()
         childTask.child_task_id = id;
 
-        data.tasks[`${ period_id }`].tasks[`${task_id}`].child_tasks[`${ id }`] = childTask
+        data.tasks[`${period_id}`].tasks[`${task_id}`].child_tasks[`${id}`] = childTask
         this.setData(data)
     }
 
@@ -536,7 +578,7 @@ class ProjectsRecord extends Projects {
         return newTable
     }
 
-    createField = async (field, creator) => {        
+    createField = async (field, creator) => {
         const { field_name } = field
         const model = this.getModel()
         const field_id = await model.__getNewId__()
@@ -579,12 +621,12 @@ class ProjectsRecord extends Projects {
 
     createFields = async (fields, creator) => {
         const serializedFields = []
-        for( let i = 0 ; i < fields.length; i++ ){
-            if( fields[i].id == undefined ){
-                const serializedField = await this.createField( this.formatRawFieldToFormedState( fields[i] ) , creator)
+        for (let i = 0; i < fields.length; i++) {
+            if (fields[i].id == undefined) {
+                const serializedField = await this.createField(this.formatRawFieldToFormedState(fields[i]), creator)
                 serializedFields.push(serializedField)
             }
-        }        
+        }
         return serializedFields
     }
 
@@ -593,17 +635,17 @@ class ProjectsRecord extends Projects {
         return uniString.toUpperCase().replaceAll("-", "")
     }
 
-    createAPI = async ( api = {}, creator = {} ) => {
+    createAPI = async (api = {}, creator = {}) => {
         const model = this.getModel()
         const id = await model.__getNewId__()
         const api_id = this.makeApiID()
-        
+
 
 
         const serializedApi = {
             ...api,
-            url: `/api/${ api_id }`,
-            remote_url: `/api/${ api_id }`,
+            url: `/api/${api_id}`,
+            remote_url: `/api/${api_id}`,
             create_by: creator,
             id,
             api_id
@@ -611,20 +653,20 @@ class ProjectsRecord extends Projects {
         return serializedApi
     }
 
-    createUIAPI = async ( apiObject = {}, creator = {} ) => {
+    createUIAPI = async (apiObject = {}, creator = {}) => {
 
         const { type, api } = apiObject
 
         const model = this.getModel()
         const id = await model.__getNewId__()
         const api_id = this.makeApiID()
-        
+
 
 
         const serializedApi = {
             ...api,
-            url: `/${type}/${ api_id }`,
-            remote_url: `/${type}/${ api_id }`,
+            url: `/${type}/${api_id}`,
+            remote_url: `/${type}/${api_id}`,
             create_by: creator,
             id,
             api_id
@@ -640,16 +682,16 @@ class ProjectsRecord extends Projects {
         const components = {}
         const { table_id, layout_id, apis } = widget;
 
-        components[`${ component_id }`] = {
+        components[`${component_id}`] = {
             component_id,
             component_name: ui.title,
             layout_id,
             table_id,
-            api_get:    apis[0]?.url,
-            api_post:   apis[1]?.url,
-            api_put:    apis[2]?.url,
+            api_get: apis[0]?.url,
+            api_post: apis[1]?.url,
+            api_put: apis[2]?.url,
             api_delete: apis[3]?.url,
-            
+
             api_search: apis[4]?.url,
             api_export: apis[5]?.url,
             api_import: apis[6]?.url,
@@ -668,18 +710,18 @@ class ProjectsRecord extends Projects {
             components
         }
     }
-    createAPIView = async ( title, layout_id, api, url, create_by ) => {
+    createAPIView = async (title, layout_id, api, url, create_by) => {
         const model = this.getModel()
         const ui_id = await model.__getNewId__()
         const component_id = await model.__getNewId__()
 
-        const components = {}        
+        const components = {}
 
-        components[`${ component_id }`] = {
+        components[`${component_id}`] = {
             component_id,
             component_name: api.title,
-            layout_id,            
-            api_get:    api.url
+            layout_id,
+            api_get: api.url
         }
 
         return {
