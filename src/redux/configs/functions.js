@@ -169,6 +169,7 @@ function formatDate(isoString) {
     }
 }
 
+
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
     showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate

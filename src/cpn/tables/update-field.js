@@ -1668,10 +1668,6 @@ export default () => {
                                                 );
                                             })}
                                         </div>
-
-
-
-
                                         <div class="form-group col-lg-6">
                                             <label>{lang["creator"]} <span className='red_star'>*</span></label>
                                             <input class="form-control" type="text" value={users.fullname} readOnly />
