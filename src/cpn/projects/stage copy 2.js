@@ -1255,7 +1255,7 @@ const Stage = (props) => {
                                             boxSizing: 'border-box',
                                         }}> 
                                         <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(task)} data-toggle="modal" data-target="#viewStage" title={lang["viewdetail"]}></i>
-                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view icon-hidden"></i>
+                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view icon hidden"></i>
                                      
 
                                         </td>
