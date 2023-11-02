@@ -84,10 +84,23 @@ export default () => {
         return item ? lang[item.label] || '' : '';
     }
 
-    const exportToExcel = (project) => {
-        // console.log(project)
+    const exportToExcel = (project , enableExport) => {
+       if(!enableExport)
+       {
+        Swal.fire({
+            title: lang["error.title"],
+            text: lang["not found task"],
+            icon: 'error',
+            showConfirmButton: true,
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class'
+            }
+        })
+        return
+       }
         const workbook = XLSX.utils.book_new();
         const projectTasks = project.tasks;
+
         if (projectTasks && projectTasks.length > 0) {
 
         }
@@ -335,11 +348,24 @@ export default () => {
             }
         }).then(res => res.json()).then(res => {
             const { success } = res;
-            // console.log(res)
-            if (success) {
-                const { data } = res;
-                const { project } = data
-                exportToExcel(project)
+
+            if (success ) {
+                let enableExport;
+                if(res.data.project?.tasks.length > 0){
+                    enableExport= true
+                    const { data } = res;
+                    const { project } = data
+                    exportToExcel(project,enableExport)
+                }else 
+                {
+                    enableExport= false
+                    const { data } = res;
+                    const { project } = data
+                    exportToExcel(project,enableExport)
+                }
+               
+             
+               
             }
         })
     }
@@ -359,7 +385,7 @@ export default () => {
     const indexOfLastReport = currentPage * rowsPerPage;
     const indexOfFirstReport = indexOfLastReport - rowsPerPage;
     const currentReport = filteredProjects.slice(indexOfFirstReport, indexOfLastReport);
-
+    // console.log(currentReport)
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const totalPages = Math.ceil(filteredProjects.length / rowsPerPage);
     return (

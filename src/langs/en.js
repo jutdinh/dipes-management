@@ -470,7 +470,8 @@ export default {
     "detail ui" : "Project detail",
     "next": "Next",
     "add stage": "Add Stage",
-    "duplicate fomular": "A fields with this fomular alias has already exited"
+    "duplicate fomular": "A fields with this fomular alias has already exited",
+    "not found task": "The project has no task"
 
 
 }

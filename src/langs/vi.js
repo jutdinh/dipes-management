@@ -475,7 +475,8 @@ export default {
     "detail ui" : "Chi tiết dự án",
     "next": "Tiếp tục",
     "add stage": "Thêm giai đoạn",
-    "duplicate fomular": "Trường với bí danh này đã tồn tại"
+    "duplicate fomular": "Trường với bí danh này đã tồn tại",
+    "not found task": "Dự án không có yêu cầu"
 
 
 
