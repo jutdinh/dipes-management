@@ -1076,6 +1076,7 @@ export default () => {
         }
         setPriorityFilter(newFilter);
     };
+    
     const [startDateFilter, setStartDateFilter] = useState(null);
     const [endDateFilter, setEndDateFilter] = useState(null);
     const [showDateInputs, setShowDateInputs] = useState(false);
@@ -1085,7 +1086,20 @@ export default () => {
         return item ? lang[item.label] || '' : '';
     }
 
-
+    const [fullscreen, setFullscreen] = useState(false);
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch((e) => {
+            // console.error('An error occurred while trying to switch into fullscreen mode:', e);
+          });
+          setFullscreen(true)
+        } else if (document.exitFullscreen) {
+          document.exitFullscreen().catch((e) => {
+            // console.error('An error occurred while trying to exit from fullscreen mode:', e);
+          });
+          setFullscreen(false)
+        }
+      };
 
     return (
         <div class="midde_cont" >
@@ -1101,6 +1115,7 @@ export default () => {
                         </div>
                     </div>
                 </div>
+             
                 {/* List table */}
                 <div class="row" id="second-row" >
                     <div class="col-md-12" style={{
@@ -1109,6 +1124,7 @@ export default () => {
                         flexGrow: 1
 
                     }}>
+
                         <div class="white_shd full" style={{
                             display: "flex",
                             flexDirection: "column",
@@ -1119,8 +1135,8 @@ export default () => {
                                     <h5>
                                         {lang["listtask"]}
                                     </h5>
-
                                 </div>
+
                                 {/* <div class="ml-auto">
                                     <select
                                         class="form-control ml-4 pointer">
@@ -1140,6 +1156,7 @@ export default () => {
                                         {lang[`${(statusProject.find((s) => s.value === projectdetail.project_status) || {}).label || 'Trạng thái không xác định'}`]}
                                     </span>
                                 </div>
+
                                 {
                                     stageData && stageData.length > 0 ? (
                                         <div class="ml-2 mt-1" title={lang["export task"]} onClick={exportToExcel}>
@@ -1147,6 +1164,7 @@ export default () => {
                                         </div>
                                     ) : null
                                 }
+                                   <button onClick={toggleFullscreen}>Toggle Fullscreen</button>
 
                             </div>
                             <div class="table_section padding_infor_info_list_task"
@@ -1155,12 +1173,10 @@ export default () => {
                                     flexDirection: "column",
                                     flexGrow: 1,
 
-                                }}
+                                }}>
 
-                            >
                                 <div class="row column1" style={{
                                     flexGrow: 1,
-
                                 }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
@@ -1255,12 +1271,8 @@ export default () => {
                                     {/* <TableScroll /> */}
                                     {/* Progresss */}
 
-
-
                                     <div className="table_section padding_infor_info_list_task" style={{ display: "flex", flexDirection: "column" }}>
-
                                         <div className="d-flex">
-
                                             <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                         </div>
                                         <div class="progress skill-bar ">
@@ -1792,7 +1804,7 @@ export default () => {
             </div >
 
 
-            <div className="full-screen-ganttchart">
+            <div className="full-screen-ganttchart" style={{ display: fullscreen ? "block": "none" }}>
                 <div class="row" id="second-row" >
                     <div class="col-md-12" style={{
                         display: "flex",
@@ -1838,6 +1850,7 @@ export default () => {
                                         </div>
                                     ) : null
                                 }
+                                 <button onClick={toggleFullscreen}>Toggle Fullscreen</button>
 
                             </div>
                             <div class="table_section padding_infor_info_list_task"
@@ -1845,13 +1858,11 @@ export default () => {
                                     display: "flex",
                                     flexDirection: "column",
                                     flexGrow: 1,
-
                                 }}
 
                             >
                                 <div class="row column1" style={{
                                     flexGrow: 1,
-
                                 }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
@@ -1946,19 +1957,14 @@ export default () => {
                                     {/* <TableScroll /> */}
                                     {/* Progresss */}
 
-
-
                                     <div className="table_section padding_infor_info_list_task" style={{ display: "flex", flexDirection: "column" }}>
-
                                         <div className="d-flex">
-
                                             <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                         </div>
                                         <div class="progress skill-bar ">
                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                             </div>
                                         </div>
-
                                         < Stage data={stageData} members={projectdetail} />
                                     </div>
                                     {/* Add Progress */}
@@ -2089,6 +2095,7 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
+
                                     {/* Update Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="editTask">
                                         <div class="modal-dialog modal-dialog-center">
@@ -2188,6 +2195,7 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
+
                                     {/* View Task */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="viewTask">
                                         <div class="modal-dialog modal-dialog-center">
@@ -2473,6 +2481,7 @@ export default () => {
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
