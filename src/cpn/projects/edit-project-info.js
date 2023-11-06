@@ -116,6 +116,8 @@ export default () => {
     const [selectedUsers, setSelectedUsers] = useState([]); // admin
     const [selectedImple, setSelectedImple] = useState([]);
     const [selectedMonitor, setSelectedMonitor] = useState([]);
+    console.log(selectedImple)
+    console.log(selectedUsers)
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
     // console.log(selectedUsers)
@@ -162,7 +164,9 @@ export default () => {
 
     };
 
+   
 
+    
     const combinedArray = selectedUsers.concat(selectedUsers, selectedImple, selectedMonitor);
     const uniqueArray = Array.from(new Set(combinedArray.map(user => user.username)))
         .map(username => {
@@ -216,7 +220,7 @@ export default () => {
 
 
         }
-        // console.log(requestBody)
+        console.log(requestBody)
         const response = await fetch(`${proxy}/projects/update`, {
             method: "PUT",
             headers: {
@@ -230,11 +234,11 @@ export default () => {
         const { success, content, data, status } = resp;
         // console.log(resp)
 
-        if (success) {
-            showApiResponseMessage(status);
-        } else {
-            showApiResponseMessage(status);
-        }
+        // if (success) {
+        //     showApiResponseMessage(status);
+        // } else {
+        //     showApiResponseMessage(status);
+        // }
 
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
@@ -462,23 +466,21 @@ export default () => {
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                    // if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                    if (user.username !== manager ) {
                                                         return (
                                                             <div key={user.username} class="user-item">
-                                                                <label class="pointer" onClick={() => handleAdminCheck(user, 'supervisor')}>
-                                                                    <input
-                                                                        class="user-checkbox"
-                                                                        type="checkbox"
-                                                                        checked={tempSelectedUsers.some(u => u.username === user.username)}
-                                                                        onChange={() => handleAdminCheck(user, 'supervisor')}
-                                                                    />
-                                                                    <span class="user-name">
-
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-
-                                                                    </span>
-                                                                </label>
-                                                            </div>
+                                                            <input
+                                                                id={"admin-check-" + user.username} 
+                                                                class="user-checkbox pointer"
+                                                                type="checkbox"
+                                                                checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                onChange={() => handleAdminCheck(user, 'supervisor')} // Gắn sự kiện onChange ở đây
+                                                            />
+                                                            <label for={"admin-check-" + user.username} class="pointer user-name">
+                                                                <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                            </label>
+                                                        </div>
                                                         )
                                                     }
                                                     return null;
@@ -497,25 +499,22 @@ export default () => {
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                    // if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                        if (user.username !== manager ) {
                                                         return (
+                                                            
                                                             <div key={user.username} class="user-item">
-                                                                <label class="pointer" onClick={() => handleImpleCheck(user, 'deployer')}>
-                                                                    <input
-                                                                        class="user-checkbox"
-                                                                        type="checkbox"
-                                                                        checked={tempSelectedImple.some(u => u.username === user.username)}
-                                                                        onChange={() => handleImpleCheck(user, 'deployer')}
-                                                                    />
-                                                                    <span class="user-name">
-
-
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-
-
-                                                                    </span>
-                                                                </label>
-                                                            </div>
+                                                            <input
+                                                                id={"user-check-" + user.username} // Thêm một ID duy nhất cho mỗi checkbox
+                                                                class="user-checkbox pointer"
+                                                                type="checkbox"
+                                                                checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                onChange={()  => handleImpleCheck(user, 'deployer')} // Gắn sự kiện onChange ở đây
+                                                            />
+                                                            <label for={"user-check-" + user.username} class="pointer user-name">
+                                                                <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+                                                            </label>
+                                                        </div>
                                                         )
                                                     }
                                                     return null;
