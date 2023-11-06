@@ -1,4 +1,11 @@
-
+.element {
+    background-color: lightyellow;
+  }
+  
+  .element:fullscreen {
+    background-color: lightpink;
+  }
+  
 .table td,
 .table th .fix-layout {
     padding-bottom: 4.7px !important;
@@ -847,7 +854,13 @@ padding: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
+.truncate {
+    white-space: nowrap;     
+    overflow: hidden;         
+    text-overflow: ellipsis;  
+    max-width: 150px;         
+  }
+  
 .view-more-link {
     min-width: 85px;
     padding-top: -15px;

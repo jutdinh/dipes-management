@@ -168,9 +168,35 @@ function formatDate(isoString) {
         return "";  // or maybe return a default date or another string to indicate the error
     }
 }
+function toggleFullScreen() {
+    // Đây là thẻ div bạn muốn hiển thị ở chế độ toàn màn hình
+    const elem = document.querySelector('.table_section');
+
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+            document.msExitFullscreen();
+        }
+    }
+}
 
 
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate
+    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate, toggleFullScreen
 }

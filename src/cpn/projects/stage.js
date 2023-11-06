@@ -1213,7 +1213,7 @@ const Stage = (props) => {
                                         </td>
                                         {/* <td>{task.period_id}</td> */}
                                         <td>{index + 1}</td>
-                                        <td >{task.period_name}</td>
+                                        <td class="truncate" >{task.period_name}</td>
                                         <td></td>
                                         {/* <td>{task.progress}</td> */}
                                         <td>{!isNaN(parseFloat(task.progress)) ? (parseFloat((task.progress))).toFixed(0) + '%' : 'Invalid value'}</td>
@@ -1289,7 +1289,7 @@ const Stage = (props) => {
                                                     </td>
                                                     {/* <td>{subtask.task_id}</td> */}
                                                     <td style={{ paddingLeft: "30px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
-                                                    <td style={{ paddingLeft: "10px" }}>{subtask.task_name}</td>
+                                                    <td class="truncate"  style={{ paddingLeft: "20px" }}>{subtask.task_name}</td>
                                                     <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
                                                     {subtask.child_tasks.length > 0 ? (
                                                         <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
@@ -1419,7 +1419,7 @@ const Stage = (props) => {
                                                             <td class="fix-layout" ></td>
                                                             {/* <td >{subsubtask.child_task_id}</td> */}
                                                             <td style={{ paddingLeft: "40px" }}>{`${index + 1}.${subtaskIndex + 1}.${Subtaskindex + 1}`}</td>
-                                                            <td style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
+                                                            <td class="truncate" style={{ paddingLeft: "40px" }}>{subsubtask.child_task_name}</td>
                                                             <td>{getTaskPriorityLabel(subsubtask.priority)}</td>
                                                             {/* <td>{subsubtask.progress}</td> */}
                                                             <td style={{ height: "38px", overflowY: "hidden" }}>

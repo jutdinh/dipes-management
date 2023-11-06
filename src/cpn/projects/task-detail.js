@@ -592,15 +592,15 @@ export default () => {
             year: "numeric"
         });
 
-        const header = ['ID', 'Tên công việc','Mô tả', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu (dd/MM/yyyy)', 'Ngày kết thúc (dd/MM/yyyy)', 'Timeline', 'Người thực hiện'];
+        const header = ['ID', 'Tên công việc', 'Mô tả', 'Mức độ ưu tiên', '% Hoàn thành', 'Xác nhận', 'Ngày bắt đầu (dd/MM/yyyy)', 'Ngày kết thúc (dd/MM/yyyy)', 'Timeline', 'Người thực hiện'];
         stageData.forEach((period, periodIndex) => {
             const ws_data = [
                 // Header Information
                 [`DANH SÁCH CÁC CÔNG VIỆC CỦA DỰ ÁN ${projectName}`, , , , ,],
                 [`Trưởng dự án: ${projectMaster}`, "", "", "", "", "", `Nhân viên xuất: ${auth?.fullname}`, "", "", ""],
-                [`Ngày xuất (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", "",""],
-                [`Tên giai đoạn: ${period.period_name}`, "", "", "", "", "", "", "", "", "", "",""],
-                [`Thời gian thực hiện: ${functions.formatDateTask(period.start)} - ${functions.formatDateTask(period.end)}`, "", "", "", "", "", "", "", "", "", "",""],
+                [`Ngày xuất (dd/MM/yyyy): ${date}`, "", "", "", "", "", "", "", "", "", "", ""],
+                [`Tên giai đoạn: ${period.period_name}`, "", "", "", "", "", "", "", "", "", "", ""],
+                [`Thời gian thực hiện: ${functions.formatDateTask(period.start)} - ${functions.formatDateTask(period.end)}`, "", "", "", "", "", "", "", "", "", "", ""],
                 header,
                 // ... (the rest of your data)
             ];
@@ -687,7 +687,7 @@ export default () => {
                 border: borderStyle
             };
 
-            ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 40 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 },{ width: 50 }];
+            ws["!cols"] = [{ width: 6 }, { width: 40 }, { width: 40 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 50 }];
             ws["!rows"] = [{ height: 40 }, { height: 30 }, { height: 30 }, { height: 40 }];
             ws["A1"].s = titleStyle;
             ws["A2"].s = athurStyle;
@@ -753,7 +753,7 @@ export default () => {
                 alignment: { horizontal: "left", vertical: "center", wrapText: true },
                 border: borderStyle
             };
-            
+
 
             for (let i = 0; i < stageData.length; i++) {
                 for (let j = 0; j < stageData[i].length; j++) {
@@ -1085,10 +1085,10 @@ export default () => {
         return item ? lang[item.label] || '' : '';
     }
 
-    // console.log(tasks)
 
+    
     return (
-        <div class="midde_cont">
+        <div class="midde_cont" >
             <div class="container-fluid">
                 <div class="row column_title">
                     <div class="col-md-12">
@@ -1102,18 +1102,18 @@ export default () => {
                     </div>
                 </div>
                 {/* List table */}
-                <div class="row" id="second-row">
-                    <div class="col-md-12" style={{ 
+                <div class="row" id="second-row" >
+                    <div class="col-md-12" style={{
                         display: "flex",
                         flexDirection: "column",
                         flexGrow: 1,
 
                     }}>
-                        <div class="white_shd full" style={{ 
-                                display: "flex",
-                                flexDirection: "column",
-                                flexGrow: 1,                               
-                            }}>
+                        <div class="white_shd full" style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            flexGrow: 1,
+                        }}>
                             <div class="full graph_head d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>
@@ -1131,8 +1131,8 @@ export default () => {
                                 {/* <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addStage">
                                     <i class="fa fa-plus" title={lang["btn.create"]}></i>
                                 </button> */}
-                                
-                                <div class= "ml-auto">
+
+                                <div class="ml-auto">
                                     <span className="status-label d-block " style={{
                                         backgroundColor: (statusProject.find((s) => s.value === projectdetail.project_status) || {}).color,
                                         whiteSpace: "nowrap"
@@ -1149,18 +1149,18 @@ export default () => {
                                 }
 
                             </div>
-                            <div class="table_section padding_infor_info_list_task" 
-                                style={{ 
+                            <div class="table_section padding_infor_info_list_task"
+                                style={{
                                     display: "flex",
                                     flexDirection: "column",
                                     flexGrow: 1,
-            
+
                                 }}
-                                
+
                             >
-                                <div class="row column1"  style={{                                     
+                                <div class="row column1" style={{
                                     flexGrow: 1,
-            
+
                                 }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
@@ -1188,7 +1188,7 @@ export default () => {
                                                                     (e) => { setStage({ ...stage, period_description: e.target.value }) }
                                                                 } placeholder={lang["p.description stage"]} />
                                                                 <div style={{ minHeight: '20px' }}>
-                                                                   
+
                                                                 </div>
                                                             </div>
                                                             <div className="col-lg-6">
@@ -1254,13 +1254,11 @@ export default () => {
                                     {/* Stage */}
                                     {/* <TableScroll /> */}
                                     {/* Progresss */}
-                                    <div class="table_section padding_infor_info_list_task "
-                                        style={{ 
-                                            display: "flex",
-                                            flexDirection: "column"
-                    
-                                        }}
-                                    >
+
+
+                                   
+                                    <div className="table_section padding_infor_info_list_task" style={{ display: "flex", flexDirection: "column" }}>
+
                                         <div className="d-flex">
 
                                             <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
@@ -1269,7 +1267,7 @@ export default () => {
                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                             </div>
                                         </div>
-                                       
+
                                         < Stage data={stageData} members={projectdetail} />
                                     </div>
                                     {/* Add Progress */}
