@@ -1,6 +1,8 @@
 const { Controller } = require('../config/controllers');
 const { Projects, ProjectsRecord } = require("../models/Projects");
 const { Accounts, AccountsRecord } = require('../models/Accounts');
+const { Notification, NotificationRecord } = require('../models/Notification')
+
 const { intValidate, objectComparator } = require('../functions/validator');
 
 const { Database } = require('../config/models/database');
@@ -293,7 +295,7 @@ class ProjectsController extends Controller {
                     project.create_at = today
                     const Project = new ProjectsRecord(project)
                     await Project.createVersion(decodedToken)
-                    
+
                     await Project.save()
                     context.data = Project.getData()
 
@@ -552,6 +554,24 @@ class ProjectsController extends Controller {
                     this.saveLog("info", req.ip, "__addmembertoproject", `__projectname ${project.project_name}| __username ${members.filter(mem => mem.permission != undefined).map(mem => `${mem.username}-${mem.fullname}( ${mem.permission} )`).join(", ")}`, decodedToken.username)
 
                     Project.__modifyAndSaveChange__("members", Project.getData().members)
+
+                    for (let i = 0; i < users.length; i++) {
+                        const { username } = users[i]
+                        const notify = {
+                            image_url: decodedToken.avatar,
+                            url: `/projects/detail/task/${project.project_id}`,
+                            content: {
+                                vi: `[${decodedToken.fullname}] đã thêm bạn vào dự án [${project.project_name}]`,
+                                en: `[${decodedToken.fullname}] has added you to [${project.project_name}]`,
+                            },
+                            username,
+                            notify_at: new Date()
+                        }
+
+                        const Notify = new NotificationRecord(notify)
+                        await Notify.save()
+                    }
+
                     context.success = true;
                     context.content = "Thêm thành viên thành công"
                     context.status = "0x4501062"
@@ -592,12 +612,25 @@ class ProjectsController extends Controller {
                 delete project.members[username]
 
                 const Project = new ProjectsRecord(project)
+                const tasks = this.deleteUserFromTasks(project, username)
                 await Project.__modifyAndSaveChange__("members", project.members)
+                await Project.__modifyAndSaveChange__("tasks", tasks)
 
                 await this.saveLog("info", req.ip,
                     "__removeprojectmember",
                     `__projectname ${project.project_name} | __username ${username}`,
                     decodedToken.username)
+
+                const notify = {
+                    image_url: decodedToken.avatar,
+                    content: {
+                        vi: `[${decodedToken.fullname}] đã xóa bạn khỏi dự án [${project.project_name}]`,
+                        en: `[${decodedToken.fullname}] has removed you from project [${project.project_name}]`,
+                    },
+                    username,
+                }
+                const Nofity = new NotificationRecord(notify)
+                await Nofity.save()
 
                 context.status = "0x4501107"
             } else {
@@ -642,6 +675,20 @@ class ProjectsController extends Controller {
                     await this.saveLog("warn", req.ip, "__modifypermission",
                         `__projectname ${project.project_name} | __username ${username} | __permission __${oldPer} => __${targetPermission} `,
                         decodedToken.username)
+
+                    const notify = {
+                        image_url: decodedToken.avatar,
+                        url: `/projects/detail/${ project.project_id }`,
+                        content: {
+                            vi: `[${decodedToken.fullname}] đã thay đổi phân quyền của bạn trong dự án [${project.project_name}]`,
+                            en: `[${decodedToken.fullname}] has changed your project privileges in [${project.project_name}]`,
+                        },
+                        username: username
+                    }
+
+
+                    const Notify = new NotificationRecord(notify)
+                    await Notify.save()
                 } else {
                     context.content = "Khum thể thay đổi quyền lớn hơn quyền của người thực hiện"
                     context.status = "0x4501095"
@@ -689,9 +736,9 @@ class ProjectsController extends Controller {
                     if (task.child_tasks.length > 0) {
                         const calculated = task_progress / task.child_tasks.length
                         task.progress = parseFloat(calculated.toFixed(2))
-                        
+
                         period_progress += calculated
-                    }else{                        
+                    } else {
                         period_progress += task.progress ? task.progress : 0
                     }
                     task.task_modified = Object.values(task.task_modified)
@@ -744,7 +791,7 @@ class ProjectsController extends Controller {
                         const calculated = task_progress / task.child_tasks.length
                         task.progress = parseFloat(calculated.toFixed(2))
                         period_progress += calculated
-                    }else{
+                    } else {
                         period_progress += task.progress ? task.progress : 0
                     }
                 })
@@ -789,16 +836,17 @@ class ProjectsController extends Controller {
                     const project = Project.getData()
 
                     const periods = Object.values(project.tasks)
-                    const doesThisNameExist  = periods.find( p => period.period_name.toLowerCase() == p.period_name.toLowerCase() )
+                    const doesThisNameExist = periods.find(p => period.period_name.toLowerCase() == p.period_name.toLowerCase())
 
-                    if(!doesThisNameExist ){
+                    if (!doesThisNameExist) {
 
                         const { start, end, members } = period
                         const startDate = new Date(start)
                         const endDate = new Date(end)
-    
+
                         if (endDate && startDate && endDate - startDate >= 0) {
                             const memberNames = []
+                            let users = [];
                             if (members && Array.isArray(members)) {
                                 const AccountsModel = new Accounts()
                                 const users = await AccountsModel.findAll({ username: { $in: members } })
@@ -809,23 +857,40 @@ class ProjectsController extends Controller {
                                 })
                                 period.period_members = serializedUsers
                             }
-    
-    
+
+
                             await Project.createPeriod(period)
                             await Project.save()
-    
+
                             context.content = "Tạo giai đoạn thành công"
                             context.success = true
                             context.status = "0x4501253"
-                            
+
+                            for (let i = 0; i < members.length; i++) {
+
+                                const  username  = users[i]
+
+                                const notify = {
+                                    image_url: decodedToken.avatar,
+                                    url: `/projects/detail/task/${project.project_id}?period=${period.period_id}`,
+                                    content: {
+                                        vi: `[${decodedToken.fullname}] đã thêm bạn vào giai đoạn [${period.period_name}] của dự án [${project.project_name}]`,
+                                        en: `[${decodedToken.fullname}] has added you to phase [${period.period_name}] of project [${project.project_name}]`
+                                    },
+                                    username
+                                }
+                                const Notify = new NotificationRecord(notify)
+                                await Notify.save()
+                            }
+
                             this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
-    
+
                         } else {
                             context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
                             context.success = true
                             context.status = "0x4501252"
                         }
-                    }else{
+                    } else {
                         context.content = "Tên giai đoạn đã tồn tại"
                         context.success = true
                         context.status = "0x4501262"
@@ -1008,7 +1073,7 @@ class ProjectsController extends Controller {
                             serializedUsers[user.username] = user
                         })
                         task.members = serializedUsers;
-                        await Project.addTask(period_id, task)
+                        const newTask = await Project.addTask(period_id, task)
                         await Project.save()
                         const project = Project.getData()
 
@@ -1018,6 +1083,22 @@ class ProjectsController extends Controller {
                         context.status = "0x4501119"
                         context.success = true
                         context.tasks = Object.values(project.tasks)
+
+                        for (let i = 0; i < users.length; i++) {
+                            const { username } = users[i]
+
+                            const notify = {
+                                image_url: decodedToken.avatar,
+                                url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${newTask.task_id}`,
+                                content: {
+                                    vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
+                                    en: `[${decodedToken.fullname}] has added you to a new task`
+                                },
+                                username
+                            }
+                            const Notify = new NotificationRecord(notify)
+                            await Notify.save()
+                        }
 
                     } else {
                         context.content = "Body khum hợp lệ"
@@ -1075,10 +1156,28 @@ class ProjectsController extends Controller {
                             serializedUsers[user.username] = user
                         })
                         childTask.members = serializedUsers;
-                        await Project.addChildTask(period_id, task_id, childTask)
+                        const newChild = await Project.addChildTask(period_id, task_id, childTask)
                         await Project.save()
 
                         this.saveLog("info", req.ip, "__createChildTask", `__projectname: ${project.project_name}| __period_name: ${period.period_name}| __taskname: ${task.task_name} | __childtaskname: ${childTask.child_task_name} |  __childtaskdescription: ${childTask.child_task_description} | __priority ${childTask.priority} | __taskmembers: ${users.map(u => `${u.username}(${u.fullname})`).join(", ")}`, decodedToken.username)
+
+
+                        for (let i = 0; i < users.length; i++) {
+                            const { username } = users[i]
+
+                            const notify = {
+                                image_url: decodedToken.avatar,
+                                url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}&child_task_id=${newChild.child_task_id}`,
+                                content: {
+                                    vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
+                                    en: `[${decodedToken.fullname}] has added you to a new task`
+                                },
+                                username
+                            }
+                            const Notify = new NotificationRecord(notify)
+                            await Notify.save()
+                        }
+
 
                         context.content = "Thêm thành công"
                         context.status = "0x4501119"
@@ -1282,7 +1381,7 @@ class ProjectsController extends Controller {
 
                         let newModified = {}
                         const inforFields = ["task_name", "task_description", "task_priority", "start", "timeline", "end", "members"]
-                        
+
                         newTask.task_modified = { ...oldTask.task_modified, ...newModified }
 
                         period.tasks[`${newTask.task_id}`] = newTask
@@ -1410,12 +1509,12 @@ class ProjectsController extends Controller {
                             })
 
                             newTask.members = serializedUsers;
-                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = newTask;                          
+                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = newTask;
 
 
                             const oldUsernames = Object.values(oldChildTask.members).map(user => user.fullname).join(", ")
 
-                            const infofields = [ "child_task_name", "child_task_description", "child_task_status", "approve", "priority", "start", "timeline", "end", "progress", "members" ]
+                            const infofields = ["child_task_name", "child_task_description", "child_task_status", "approve", "priority", "start", "timeline", "end", "progress", "members"]
 
                             const newModified = await Project.makeModified(
                                 "infor",
@@ -1423,9 +1522,9 @@ class ProjectsController extends Controller {
                                 this.stringifyObject({ ...oldChildTask, members: oldUsernames }, infofields),
                                 this.stringifyObject({ ...newTask, members: Object.values(serializedUsers).map(u => u.fullname).join(", ") }, infofields)
                             )
-                            
+
                             task.task_modified = { ...task.task_modified, ...newModified }
-                            period.tasks[`${task_id}`] = task                            
+                            period.tasks[`${task_id}`] = task
 
                             await this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskpriority: ${task.task_priority} => ${newTask.task_priority} |  __taskname ${task.task_name} => ${newTask.task_name} | __taskdescription: ${task.task_description} => ${newTask.task_description}`, decodedToken.username)
                             await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
@@ -1480,24 +1579,24 @@ class ProjectsController extends Controller {
 
                     const childTask = task.child_tasks[`${child_task_id}`]
                     if (childTask) {
-                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || true ) {
-                            
+                        if (permission == Controller.permission.mgr || this.isAdmin(decodedToken) || true) {
+
                             const oldApprove = childTask.approve
                             const approve = child_task?.approve;
                             childTask.approve = approve
-                            
-                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = childTask;                                                                           
-                            
+
+                            period.tasks[`${task_id}`].child_tasks[`${child_task_id}`] = childTask;
+
                             const newModified = await Project.makeModified(
                                 "approve",
                                 decodedToken,
-                                `${ childTask.child_task_id } - ${childTask.child_task_name} - ${oldApprove}`,
-                                `${ childTask.child_task_id } - ${childTask.child_task_name} - ${approve}`
+                                `${childTask.child_task_id} - ${childTask.child_task_name} - ${oldApprove}`,
+                                `${childTask.child_task_id} - ${childTask.child_task_name} - ${approve}`
                             )
 
                             task.task_modified = { ...task.task_modified, ...newModified }
-                            period.tasks[`${task_id}`] = task                            
-                            
+                            period.tasks[`${task_id}`] = task
+
                             await Project.__modifyAndSaveChange__(`tasks.${period_id}`, period)
 
                             context.status = "0x4501261"

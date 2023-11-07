@@ -519,6 +519,7 @@ class ProjectsRecord extends Projects {
             data.tasks = tasks
             this.setData(data)
         }
+        return task
     }
 
     addChildTask = async (period_id, task_id, childTask) => {
@@ -529,6 +530,7 @@ class ProjectsRecord extends Projects {
 
         data.tasks[`${period_id}`].tasks[`${task_id}`].child_tasks[`${id}`] = childTask
         this.setData(data)
+        return childTask
     }
 
     makeModified = async (modified_what, modified_by, old_value, new_value, modified_at = new Date()) => {
