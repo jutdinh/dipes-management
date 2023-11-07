@@ -7,11 +7,12 @@ const { Accounts, AccountsRecord } = require('../models/Accounts');
 const { EventLogsRecord } = require( '../models/EventLogs' );
 
 const Crypto = require('./Crypto');
+const { Projects, ProjectsRecord } = require('../models/Projects');
 
 class Auth extends Controller {
     #__accounts = undefined
     #__default = Accounts.__defaultAccount;
- 
+    #__projects = new Projects()
     constructor(){
         super();        
         this.#__accounts = new Accounts();        
@@ -354,6 +355,22 @@ class Auth extends Controller {
                         )                            
                         await Account.destroy()                        
                     }
+                    const projects = await this.#__projects.findAll();
+                    for( let i = 0 ; i < projects.length; i++ ){
+                        const project = projects[i]
+                        const Project = new ProjectsRecord(project)
+                        delete project.members[ this.dotEncode(username) ]
+
+                        if( this.dotEncode(project.manager.username) == this.dotEncode( username )){
+                            project.manager = {}
+                        }
+                        const tasks = this.deleteUserFromTasks(project, username)
+
+                        
+                        await Project.__modifyAndSaveChange__("manager", project.manager)
+                        await Project.__modifyAndSaveChange__("members", project.members)
+                        await Project.__modifyAndSaveChange__("tasks", tasks)
+                    }
                 }
             }
         }else{
@@ -362,6 +379,48 @@ class Auth extends Controller {
         }
 
         res.status(200).send(context)
+    }
+
+    deleteUserFromTasks = (project, username) => {
+        const { tasks } = project;
+        if( tasks ){                        
+            const periodIndexes = Object.keys( tasks )
+
+            for( let i = 0; i < periodIndexes.length; i++ ){
+                const periodIndex = periodIndexes[i]
+                const period = tasks[ periodIndex ]
+
+                delete period.period_members[ this.dotEncode(username) ]
+
+                const _tasks = period.tasks ? period.tasks : {} ;
+                const _tasksIndexes = Object.keys( _tasks )
+                
+                for( let ii = 0 ; ii < _tasksIndexes.length; ii++ ){
+                    const _taskIndex = _tasksIndexes[ii]
+                    const _task = _tasks[_taskIndex]
+
+                    delete _task.members[ this.dotEncode( username )]
+
+                    
+                    const __tasks =_tasks.child_tasks ? _tasks.child_tasks : {} 
+                    const __taskIndexes = Object.keys( __tasks )
+
+                    for( let iii = 0 ; iii < __taskIndexes.length; iii++ ){
+                        const __taskIndex = __taskIndexes[iii]
+                        const __task = __tasks[__taskIndex]
+
+                        delete __task.members[ this.dotEncode(username) ]
+
+                        __tasks[__taskIndex] = __task
+                    }
+
+                    _tasks[_taskIndex] = _task;
+                }
+
+                tasks[ periodIndex ] = period
+            }
+        }
+        return tasks
     }
 
     updateUser = async ( req, res, privileges = [] ) => {

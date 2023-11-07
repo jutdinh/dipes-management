@@ -293,11 +293,7 @@ class ProjectsController extends Controller {
                     project.create_at = today
                     const Project = new ProjectsRecord(project)
                     await Project.createVersion(decodedToken)
-                    await Project.createPeriod({
-                        period_name: "Giai đoạn một",
-                        start: today,
-                        end: new Date(`${today.getFullYear()}-${today.getMonth() + 1 + 1}-${today.getDate()}`)
-                    })
+                    
                     await Project.save()
                     context.data = Project.getData()
 
