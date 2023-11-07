@@ -43,6 +43,7 @@ const {
   Api,
   UI,
   Activation,
+  Notify,
   socketController
    } = require('./routes');
 
@@ -63,6 +64,7 @@ app.use('/db/fields', Fields );
 app.use('/apis', Api );
 app.use('/uis', UI );
 app.use('/activation', Activation )
+app.use('/notify', Notify)
 
 // app.get('/api/14EBA032522745649FEA16143F570413', (req, res) => {
 //   res.send({ success: true, message: "This response is from remote server" })

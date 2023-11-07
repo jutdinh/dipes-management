@@ -10,6 +10,8 @@ const Versions = require('./versions')
 const Activation = require('./activation')
 
 const Log = require('./Logs')
+const Notify = require('./notify')
+
 const socketController = require('./socket')
 
 module.exports = {
@@ -23,5 +25,6 @@ module.exports = {
     Versions,
     Activation,
     Log,
+    Notify,
     socketController
 }
