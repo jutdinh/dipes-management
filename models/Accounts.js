@@ -32,6 +32,9 @@ class Accounts extends Model{
 
         
         this.__addPrimaryKey__("username")
+        this.__addIndexing__(["username", "password"])
+        this.__addIndexing__(["username"])
+        
         this.__traversal__()
     }
 

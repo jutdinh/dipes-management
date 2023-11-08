@@ -270,6 +270,7 @@ class Projects extends Model {
 
 
         this.__addPrimaryKey__(["id"])
+        this.__addIndexing__("project_id")
 
         this.__traversal__()
     }

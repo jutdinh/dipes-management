@@ -25,6 +25,7 @@ class Model {
     #__database = undefined
     #__data = undefined
     #__paths = []  
+    #__indexings = []
 
     static getType = () => {
         return "model"
@@ -179,6 +180,25 @@ class Model {
                     errorLog(`Thêm khóa chính thất bại: Trường ${ field } không tồn tại`)
                 }
             }
+        }
+    }
+
+    __getPrimaryKey__ = () => {
+        return this.#__primaryKey
+    }
+
+    __addIndexing__ = (fields = []) => {
+        const indexing = {}
+        for( let i = 0; i < fields.length; i++ ){
+            indexing[fields[i]] = 1
+        }
+
+        this.#__indexings.push( indexing )
+    }
+
+    __applyIndexings__ = async () => {
+        for( let i = 0 ; i < this.#__indexings.length ; i++ ){
+            await Database.createIndex( this.__modelName, this.#__indexings[i] )
         }
     }
 

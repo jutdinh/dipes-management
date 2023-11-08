@@ -11,6 +11,7 @@ class EventLogs extends Model{
         this.__addProperty__( "create_user", Model.types.string , { required: true })
         this.__addProperty__( "create_at", Model.types.datetime )
 
+        this.__addIndexing__( ["event_id"] )
         this.__addPrimaryKey__( ["id"] )        
     }
 

@@ -89,6 +89,35 @@ class Mongo {
         return id + 1;
     }
 
+    createIndex = async ( table, indexing ) => {
+        /**
+         * @desc createIndex là phương thức tạo indexing trên bảng dữ liệu
+         *     
+         *     
+         * @params 
+         *      - table String - tên bảng cần gọi dữ liệu
+         *      - indexing {} - Object khởi tạo indexing
+         * @author DS
+         * 
+         **/
+
+        await this.init()
+        await new Promise( (resolve, reject) => {
+            this.dbo.collection( table ).createIndex(indexing, (err, result) => {             
+                if( result ){
+                    if(result.length <= 1){                        
+                        resolve( result[0] )
+                    } else{
+                        resolve( result )
+                    }
+                }else{
+                    resolve([])
+                }
+            })          
+            
+        }); 
+    }
+
     select = async ( table, criteria = undefined) => {
 
         /**
