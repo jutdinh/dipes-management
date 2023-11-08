@@ -27,6 +27,12 @@ class Notification extends Model{
         const model = this.getModel()
         await model.__manualUpdate__({ notify_id: parseInt(notify_id) }, { read: true } )
     }
+
+    removeNotifies = async (username = "") => {
+        
+        const model = this.getModel()
+        await model.__deleteObjects__({username: this.__dotEncode__(username)})
+    }
 }   
 class NotificationRecord extends Notification {
     constructor( data ){

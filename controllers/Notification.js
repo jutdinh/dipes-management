@@ -68,15 +68,43 @@ class NotificationController extends Controller {
         }
 
         if( verified ){
-            const decodedToken = this.decodeToken(req.header( "Authorization" ))
-            const { username } = decodedToken;
-
             const { notify_id } = req.body;
 
             await this.#__notify.changeSeenState( notify_id )
             
             context.success = true;
             context.content = "Successfully updated data"            
+        }
+        res.status(200).send(context)
+    }
+
+    removeNotifies = async ( req, res ) => {
+
+        /**
+         *  desc: Thay đổi trạng thấy [chưa xem]/[đã xem] của thông báo bằng thay đổi giá trị của read false => true
+         *  method: DELETE
+         *  headers: {
+         *      Authorization: <Token>
+         *  }
+         * 
+         */
+
+        const verified = await this.verifyToken(req)
+
+        const context = {
+            success: false,
+            content: "Invalid token",
+            data: []
+        }
+
+        if( verified ){
+            const decodedToken = this.decodeToken(req.header( "Authorization" ))
+            const { username } = decodedToken;
+
+            await this.#__notify.removeNotifies( username )
+            
+            context.success = true;
+            context.content = "Successfully deleted data"            
         }
         res.status(200).send(context)
     }
