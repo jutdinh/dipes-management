@@ -559,7 +559,7 @@ class ProjectsController extends Controller {
                         const { username } = users[i]
                         const notify = {
                             image_url: decodedToken.avatar,
-                            url: `/projects/detail/task/${project.project_id}`,
+                            url: `/projects/detail/${project.project_id}`,
                             content: {
                                 vi: `[${decodedToken.fullname}] đã thêm bạn vào dự án [${project.project_name}]`,
                                 en: `[${decodedToken.fullname}] has added you to [${project.project_name}]`,
