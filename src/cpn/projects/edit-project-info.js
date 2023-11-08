@@ -381,7 +381,7 @@ export default () => {
 
                                     <div class="form-group col-lg-12 ">
                                         <label>{lang["projectdescripton"]} </label>
-                                        <textarea rows="7" type="text" class="form-control" value={project.project_description} onChange={
+                                        <textarea rows="6" type="text" class="form-control" value={project.project_description} onChange={
                                             (e) => { setProject({ ...project, project_description: e.target.value }) }
                                         } placeholder={lang["p.projectdescripton"]} />
                                     </div>

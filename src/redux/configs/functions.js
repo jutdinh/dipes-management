@@ -56,15 +56,15 @@ const vietnameseChars = [
     }
 ];
 
-const dateGenerator = ( dateString ) => {
-    const date = new Date( dateString );
-    return `${ formatDateNumber(date.getDate()) }/${ formatDateNumber(date.getMonth() + 1) }/${ date.getFullYear() } lúc ${ formatDateNumber(date.getHours()) }:${ formatDateNumber(date.getMinutes()) }`
+const dateGenerator = (dateString) => {
+    const date = new Date(dateString);
+    return `${formatDateNumber(date.getDate())}/${formatDateNumber(date.getMonth() + 1)}/${date.getFullYear()} lúc ${formatDateNumber(date.getHours())}:${formatDateNumber(date.getMinutes())}`
 }
 
 const formatDateNumber = (int) => {
-    if( int < 10 ){
+    if (int < 10) {
         return `0${int}`
-    }else{
+    } else {
         return `${int}`
     }
 }
@@ -77,7 +77,7 @@ const openTab = (url) => {
 
 
 function titleCase(str) {
-    return str.toLowerCase().split(' ').map(function(word) {
+    return str.toLowerCase().split(' ').map(function (word) {
         return word.replace(word[0], word[0].toUpperCase());
     }).join(' ');
 }
@@ -85,10 +85,10 @@ function titleCase(str) {
 const uid = () => {
     let id = uuidv4();
     id = id.replaceAll('-', '');
-    return `#${ id }`
+    return `#${id}`
 }
 
-const removeDuplicate = ( data ) => {
+const removeDuplicate = (data) => {
 
     const uniqueArray = data.filter((value, index) => {
         const _value = JSON.stringify(value);
@@ -105,7 +105,7 @@ const showApiResponseMessage = (status, reload = true) => {
 
     const title = message?.[langItem]?.type || "Unknown error";
     const description = message?.[langItem]?.description || "Unknown error";
-    let icon = "error";  
+    let icon = "error";
     if (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") {
         icon = "success";
     } else if (message?.[langItem]?.type === "Cảnh báo" || message?.[langItem]?.type === "Warning") {
@@ -119,6 +119,8 @@ const showApiResponseMessage = (status, reload = true) => {
             icon,
             showConfirmButton: false,
             timer: 1500,
+            target: document.getElementById("second-row"),
+
         }).then(() => {
             if (reload) {
                 window.location.reload();
@@ -130,13 +132,13 @@ const showApiResponseMessage = (status, reload = true) => {
             text: description,
             icon,
             showConfirmButton: true,
+            target: document.getElementById("second-row"),
             customClass: {
                 confirmButton: 'swal2-confirm my-confirm-button-class'
             }
         });
     }
 };
-
 const removeVietnameseTones = (str) => {
     vietnameseChars.forEach(char => {
         const { base, unicode, unicodeWithSound } = char.base;

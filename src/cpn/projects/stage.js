@@ -20,7 +20,7 @@ const Stage = (props) => {
     const { removeVietnameseTones } = functions
     const [expandedTasks, setExpandedTasks] = useState({});
     const [expandedSubsubtasks, setExpandedSubsubtasks] = useState({});
-
+    const [showGantt, setShowGantt] = useState(false);
     const [dataGantt, setGanttData] = useState([]);
     const [errorMessagesadd, setErrorMessagesadd] = useState({});
 
@@ -32,7 +32,7 @@ const Stage = (props) => {
     const [typeAction, setTypeAction] = useState(0)
     const [actionShow, setActionShow] = useState(0)
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-
+    console.log(actionShow)
     const [task, setTask] = useState({ task_status: 1 });
     const [taskUpdate, setTaskUpadte] = useState({});
     const [taskChild, setTaskChild] = useState({ child_task_status: 1 });
@@ -45,11 +45,84 @@ const Stage = (props) => {
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
     // console.log(dataViewDetail)
     const [formData, setFormData] = useState({});
+
     const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
+
     const [selectedUsernames, setSelectedUsernames] = useState([]);
+
+    const [selectedUsernamesAdd, setSelectedUsernamesAdd] = useState([]);
+
     const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
+
+
+    console.log(selectedUsernames)
     const handleCloseModal = () => {
+
+        setSelectedUsernamesChild([])
         setErrorMessagesadd({})
+        setTask({
+
+            task_name: '',
+            task_priority: '',
+            task_status: 1,
+            start: '',
+            end: '',
+            timeline: '',
+            task_description: '',
+            members: []
+        });
+        setTaskChild({
+            child_task_status: 1,
+            child_task_name: "",
+            priority: "",
+            start: "",
+            end: "",
+            timeline: "",
+            child_task_description: "",
+            members: []
+        });
+    };
+    const handleCloseModalAdd = () => {
+        setSelectedUsernamesAdd([]);
+
+        setErrorMessagesadd({})
+        setTask({
+
+            task_name: '',
+            task_priority: '',
+            task_status: 1,
+            start: '',
+            end: '',
+            timeline: '',
+            task_description: '',
+            members: []
+        });
+        setTaskChild({
+            child_task_status: 1,
+            child_task_name: "",
+            priority: "",
+            start: "",
+            end: "",
+            timeline: "",
+            child_task_description: "",
+            members: []
+        });
+    };
+
+    const clearModalChild = () => {
+
+        setSelectedUsernamesChild([])
+        setErrorMessagesadd({})
+        setTaskChild({
+            child_task_status: 1,
+            child_task_name: "",
+            priority: "",
+            start: "",
+            end: "",
+            timeline: "",
+            child_task_description: "",
+            members: []
+        });
     };
     const [enterPressed, setEnterPressed] = useState(false);
     const dataTask = props.data
@@ -74,6 +147,19 @@ const Stage = (props) => {
     useEffect(() => {
         containerRef.current = scrollRef1.current;
     }, []);
+    useEffect(() => {
+        if (!showGantt) {
+            setContainerWidth("100%")
+        } else {
+            setContainerWidth("80%")
+        }
+    }, [showGantt]);
+
+    const handleShowGantt = () => {
+        setShowGantt(!showGantt)
+
+    };
+
     const handleScroll = (ref1, ref2) => {
         return () => {
             if (ref1.current && ref2.current) {
@@ -101,7 +187,7 @@ const Stage = (props) => {
     const [columnWidths, setColumnWidths] = useState({
         col1: 100,
         col2: 100,
-     
+
     });
 
 
@@ -212,7 +298,7 @@ const Stage = (props) => {
         // Khi component được mount, lấy trạng thái từ localStorage và đặt vào state
         const savedExpandedTasks = JSON.parse(localStorage.getItem('expandedTasks')) || {};
         const savedExpandedSubsubtasks = JSON.parse(localStorage.getItem('expandedSubsubtasks')) || {};
-     
+
         setExpandedTasks(savedExpandedTasks);
         setExpandedSubsubtasks(savedExpandedSubsubtasks);
     }, []);
@@ -299,10 +385,6 @@ const Stage = (props) => {
         setGanttData(newGanttData);
     }, [dataTask, expandedTasks, expandedSubsubtasks, expandedTasks, taskNameFilter, startDateFilter, endDateFilter]);
 
-
-
-
-
     const statusPriority = [
         { id: 0, label: "high", value: 1, color: "#1ed085" },
         { id: 1, label: "medium", value: 2, color: "#8884d8" },
@@ -371,6 +453,17 @@ const Stage = (props) => {
             setSelectedUsernamesStage(prevState => prevState.filter(username => username !== user.username));
         }
     };
+    const handleCheckboxChangeAdd = (user, isChecked) => {
+        setSelectedUsernamesAdd(prevState => {
+            if (isChecked) {
+                // Thêm username nếu checkbox được chọn
+                return [...prevState, user.username];
+            } else {
+                // Loại bỏ username nếu checkbox không được chọn
+                return prevState.filter(username => username !== user.username);
+            }
+        });
+    };
     const handleCheckboxChange = (user, isChecked) => {
         if (isChecked) {
             setSelectedUsernames(prevState => [...prevState, user.username]);
@@ -378,6 +471,20 @@ const Stage = (props) => {
             setSelectedUsernames(prevState => prevState.filter(username => username !== user.username));
         }
     };
+
+    const handleCheckboxChangeChildAdd = (user, isChecked) => {
+        setSelectedUsernamesChild(prevState => {
+            const isAlreadySelected = prevState.includes(user.username);
+            if (isChecked && !isAlreadySelected) {
+                return [...prevState, user.username];
+            } else if (!isChecked && isAlreadySelected) {
+                return prevState.filter(username => username !== user.username);
+            } else {
+                return prevState;
+            }
+        });
+    };
+
     const handleCheckboxChangeChild = (user, isChecked) => {
         if (isChecked) {
             setSelectedUsernamesChild(prevState => [...prevState, user.username]);
@@ -465,9 +572,12 @@ const Stage = (props) => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, false);
+                    props.callDataTask()
+                    $('#closeModalUpdateStage').click()
                 } else {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, false);
+                    props.callDataTask()
                 }
             })
 
@@ -483,6 +593,7 @@ const Stage = (props) => {
             showCancelButton: true,
             confirmButtonText: lang["btn.delete"],
             cancelButtonText: lang["btn.cancel"],
+            target: document.getElementById("second-row"),
             customClass: {
                 confirmButton: 'swal2-confirm my-confirm-button-class'
             }
@@ -499,7 +610,10 @@ const Stage = (props) => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        setSelectedRowIndex(null)
+                        setActionShow(0)
+                        props.callDataTask()
                     });
             }
         });
@@ -508,7 +622,7 @@ const Stage = (props) => {
     // console.log(selectedUsernames)
     const submitAddTask = (e) => {
         e.preventDefault();
-        task.members = selectedUsernames;
+        task.members = selectedUsernamesAdd;
         const requestBody = {
             period_id: periodId,
             task: task
@@ -559,9 +673,15 @@ const Stage = (props) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        functions.showApiResponseMessage(status);
+
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+
+                        $('#closeModalAddTask').click()
                     } else {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalAddTask').click()
                     }
                 }
             })
@@ -626,9 +746,13 @@ const Stage = (props) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalUpdateTask').click()
                     } else {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalUpdateTask').click()
                     }
                 }
             })
@@ -644,6 +768,7 @@ const Stage = (props) => {
             showCancelButton: true,
             confirmButtonText: lang["btn.delete"],
             cancelButtonText: lang["btn.cancel"],
+            target: document.getElementById("second-row"),
             customClass: {
                 confirmButton: 'swal2-confirm my-confirm-button-class'
             }
@@ -660,7 +785,10 @@ const Stage = (props) => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        setSelectedRowIndex(null)
+                        setActionShow(0)
+                        props.callDataTask()
                     });
             }
         });
@@ -688,9 +816,11 @@ const Stage = (props) => {
                 const { success, content, data, status } = resp;
 
                 if (success) {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, false);
+                    props.callDataTask()
                 } else {
-                    functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status, false);
+                    props.callDataTask()
                 }
             });
     }
@@ -732,7 +862,7 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-
+        console.log(requestBody)
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}`, {
             method: "POST",
             headers: {
@@ -746,9 +876,13 @@ const Stage = (props) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalAddTaskChild').click()
                     } else {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalAddTaskChild').click()
                     }
                 }
             })
@@ -813,9 +947,13 @@ const Stage = (props) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalUpdateTaskChild').click()
                     } else {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
+                        $('#closeModalUpdateTaskChild').click()
                     }
                 }
             })
@@ -843,9 +981,11 @@ const Stage = (props) => {
                 if (resp) {
                     const { success, content, data, status } = resp;
                     if (success) {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
                     } else {
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        props.callDataTask()
                     }
                 }
             })
@@ -953,6 +1093,7 @@ const Stage = (props) => {
             showCancelButton: true,
             confirmButtonText: lang["btn.delete"],
             cancelButtonText: lang["btn.cancel"],
+            target: document.getElementById("second-row"),
             customClass: {
                 confirmButton: 'swal2-confirm my-confirm-button-class'
             }
@@ -969,7 +1110,10 @@ const Stage = (props) => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        functions.showApiResponseMessage(status);
+                        functions.showApiResponseMessage(status, false);
+                        setSelectedRowIndex(null)
+                        setActionShow(0)
+                        props.callDataTask()
                     });
             }
         });
@@ -999,11 +1143,18 @@ const Stage = (props) => {
     return (
         <>
             <div class="d-flex align-items-center mt-2">
+               
+                    <button class="btn btn-info" style={{width: "115px"}} onClick={() => handleShowGantt()}>
+                       {showGantt ? lang["hidden-gantt"]: lang["show-gantt"]}
+                    </button>
+                       
+                    
+
+                
                 {actionShow === 1 ? (
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
                         <i className={`fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
-
                         <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
                         <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
                     </>
@@ -1011,10 +1162,7 @@ const Stage = (props) => {
 
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
-
-
-                        <i class="fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto" data-toggle="modal" data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
-
+                        <i class="fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto" data-toggle="modal" onClick={() => clearModalChild()} data-target="#addTaskChild" title={lang["addtaskchild"]}></i>
                         <i class="fa fa-edit size-32 pointer icon-margin icon-edit" data-toggle="modal" data-target="#editTask" title={lang["edit"]}></i>
                         <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTask()} title={lang["delete"]}></i>
                     </>
@@ -1023,25 +1171,18 @@ const Stage = (props) => {
                     (
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
-
                             <i class="fa fa-edit size-32 pointer icon-margin icon-edit ml-auto" data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
-
                             <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
                         </>
-                    ) :
+                    ) : actionShow === 0 ?
                     (
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
-                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add-task ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
-
-                            <i className={`fa fa-edit size-32 pointer icon-margin icon-edit ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
-                            <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete ${typeAction === 1 ? '' : 'disabled_action'}`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add-task ml-auto disabled_action`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                            <i className={`fa fa-edit size-32 pointer icon-margin icon-edit disabled_action`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                            <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete disabled_action`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
                         </>
-                    )
-
-
-
-
+                    ): null
                 }
                 {
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
@@ -1050,9 +1191,8 @@ const Stage = (props) => {
                         <i class="fa fa-plus" title={lang["addstage"]}></i>
                     </button> */}
                         <img class="img-responsive mr-1 pointer" width={32} src="/images/icon/add.png" title={lang["add stage"]} data-toggle="modal" data-target="#addStage" />
+
                     </>
-
-
                 }
             </div>
 
@@ -1068,16 +1208,16 @@ const Stage = (props) => {
                         border: '1px solid gray',
                         maxWidth: '100%',
                         height: lenghtTask === 1 ? "30%" :
-                        (lenghtTask === 2 ? "35%" :
-                            (lenghtTask === 3 ? "40%" :
-                                (lenghtTask === 4 ? "45%" :
-                                    (lenghtTask === 5 ? "50%" :
-                                        (lenghtTask === 6 ? "60%" :
-                                            (lenghtTask === 7 ? "70%" :
-                                                (lenghtTask === 8 ? "75%" :
-                                                    (lenghtTask === 9 ? "80%" :
-                                                        (lenghtTask === 10 ? "85%" :
-                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
+                            (lenghtTask === 2 ? "35%" :
+                                (lenghtTask === 3 ? "40%" :
+                                    (lenghtTask === 4 ? "45%" :
+                                        (lenghtTask === 5 ? "50%" :
+                                            (lenghtTask === 6 ? "60%" :
+                                                (lenghtTask === 7 ? "70%" :
+                                                    (lenghtTask === 8 ? "75%" :
+                                                        (lenghtTask === 9 ? "80%" :
+                                                            (lenghtTask === 10 ? "85%" :
+                                                                (lenghtTask === 11 ? "90%" : "100")))))))))),
                         // height: heights[ lenghtTask + 1 ] ? `${heights[ lenghtTask + 1 ]}%` : "85%",
                         overflowX: 'auto'
                     }}>
@@ -1247,16 +1387,16 @@ const Stage = (props) => {
                                         {/* <td>
                                             <div style={{ minHeight: "27px" }}></div>
                                         </td> */}
-                                        <td class="align-center" style={{
+                                        <td class="" style={{
                                             // position: 'sticky',
                                             right: 0,
                                             // backgroundColor: '#fff',
                                             // borderLeft: '1px solid #ccc !important',
                                             boxSizing: 'border-box',
-                                        }}> 
-                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(task)} data-toggle="modal" data-target="#viewStage" title={lang["viewdetail"]}></i>
-                                        <i class="fa fa-eye size-24 pointer icon-margin icon-view icon-hidden"></i>
-                                     
+                                        }}>
+                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(task)} data-toggle="modal" data-target="#viewStage" title={lang["viewdetail"]}></i>
+                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view icon-hidden"></i>
+
 
                                         </td>
                                     </tr>
@@ -1289,7 +1429,7 @@ const Stage = (props) => {
                                                     </td>
                                                     {/* <td>{subtask.task_id}</td> */}
                                                     <td style={{ paddingLeft: "30px" }}>{`${index + 1}.${task.tasks.indexOf(subtask) + 1}`}</td>
-                                                    <td class="truncate"  style={{ paddingLeft: "20px" }}>{subtask.task_name}</td>
+                                                    <td class="truncate" style={{ paddingLeft: "20px" }}>{subtask.task_name}</td>
                                                     <td>{getTaskPriorityLabel(subtask.task_priority)}</td>
                                                     {subtask.child_tasks.length > 0 ? (
                                                         <td>{!isNaN(parseFloat(subtask.progress)) ? (parseFloat(subtask.progress)).toFixed(0) + '%' : 'Invalid value'}</td>
@@ -1343,9 +1483,6 @@ const Stage = (props) => {
                                                     )
 
                                                     }
-
-
-
                                                     <td class="font-weight-bold" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
                                                         {getStatusLabel(subtask.task_approve ? 1 : 0)}
                                                     </td>
@@ -1356,8 +1493,13 @@ const Stage = (props) => {
                                                         subtask.members.map(member => member.fullname).join(', ') :
                                                         <>{lang["projectempty"]}</>
                                                     }</td>
-                                                    <td class="align-center" style={{
-                                                    }}>
+                                                    <td class="" style={{
+                                                                // position: 'sticky',
+                                                                right: 0,
+                                                                // backgroundColor: '#fff',
+                                                                // borderLeft: '1px solid #ccc !important',
+                                                                boxSizing: 'border-box',
+                                                            }}>
                                                         <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" onClick={() => getDataViewDetail(subtask, task.period_id)} data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                         {subtask.child_tasks.length > 0 ?
                                                             <>
@@ -1372,8 +1514,6 @@ const Stage = (props) => {
                                                                                 ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
-
-
                                                                     </>
                                                                 }
                                                             </>
@@ -1389,13 +1529,10 @@ const Stage = (props) => {
                                                                                 ? <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" onClick={() => handleConfirmTask(subtask, task.period_id)} title={lang["updatestatus"]}></i>
                                                                                 : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
-
-
                                                                     </>
                                                                 }
                                                             </>
                                                         }
-
                                                     </td>
                                                 </tr>
                                                 {expandedSubsubtasks[subtask.task_id] && subtask.child_tasks.map((subsubtask, Subtaskindex) => {
@@ -1413,7 +1550,6 @@ const Stage = (props) => {
                                                                 setTaskId(subtask.task_id)
                                                                 setTaskUpadteChild(subsubtask)
                                                                 setChildTask(subsubtask)
-
                                                             }}
                                                         >
                                                             <td class="fix-layout" ></td>
@@ -1431,11 +1567,9 @@ const Stage = (props) => {
                                                                                 className='form-control'
                                                                                 value={progressValues[uniqueId] ?? ''}
                                                                                 onBlur={(e) => {
-
                                                                                     if (!enterPressed) {
                                                                                         handleProgressBlur(e, subsubtask, subtask.task_id, task.period_id, uniqueId)
                                                                                     }
-
                                                                                     setEnterPressed(false)
                                                                                 }}
                                                                                 onFocus={(e) => { handleProgressFocus(subsubtask) }}
@@ -1447,7 +1581,6 @@ const Stage = (props) => {
                                                                                     }
                                                                                 }}
                                                                                 style={{ padding: "2px 4px" }}
-
                                                                                 onKeyDown={(e) => {
                                                                                     if (e.key === 'Enter') {
                                                                                         e.preventDefault();
@@ -1480,13 +1613,14 @@ const Stage = (props) => {
                                                                     <>{lang["projectempty"]}</>
                                                                 }
                                                             </td>
-                                                            <td class="align-center" style={{
+                                                            <td class="" style={{
                                                                 // position: 'sticky',
                                                                 right: 0,
                                                                 // backgroundColor: '#fff',
                                                                 // borderLeft: '1px solid #ccc !important',
                                                                 boxSizing: 'border-box',
-                                                            }}> <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(subsubtask)} data-toggle="modal" data-target="#viewTaskChild" title={lang["viewdetail"]}></i>
+                                                            }}> 
+                                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(subsubtask)} data-toggle="modal" data-target="#viewTaskChild" title={lang["viewdetail"]}></i>
                                                                 {
                                                                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                     <>
@@ -1499,7 +1633,6 @@ const Stage = (props) => {
                                                                                 : <i class="fa fa-check-circle-o size-24 pointer icon-margin icon-check" style={{ pointerEvents: "none", opacity: 0.4 }} title={lang["updatestatus"]}></i>)
                                                                         }
                                                                         {/* <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => getInfoTaskChild(subsubtask, subtask.task_id, task.period_id)} data-toggle="modal" data-target="#editTaskChild" title={lang["edit"]}></i>
-
                                                                         <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteTaskChild(subsubtask, subtask.task_id, task.period_id)} title={lang["delete"]}></i> */}
                                                                     </>
                                                                 }
@@ -1512,62 +1645,65 @@ const Stage = (props) => {
                                         )
                                     }
                                     )}
-
                                 </React.Fragment >
                             ))}
                         </tbody>
                     </table>
                 </div>
-                <div style={{
-                    width: '5px', cursor: 'col-resize', background: '#ccc',
-                    height: lenghtTask === 1 ? "30%" :
-                        (lenghtTask === 2 ? "35%" :
-                            (lenghtTask === 3 ? "40%" :
-                                (lenghtTask === 4 ? "45%" :
-                                    (lenghtTask === 5 ? "50%" :
-                                        (lenghtTask === 6 ? "60%" :
-                                            (lenghtTask === 7 ? "70%" :
-                                                (lenghtTask === 8 ? "75%" :
-                                                    (lenghtTask === 9 ? "80%" :
-                                                        (lenghtTask === 10 ? "85%" :
-                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
-                }} onMouseDown={handleMouseDown}
-                ></div>
-                <div
-                    className="active"
-                    ref={scrollRef2}
-                    onScroll={handleScroll(scrollRef2, scrollRef1)}
-                    style={{
-                        flex: '1',
-                        border: '1px solid gray',
-                        background: '#f6f6f6',
+                {showGantt ?
+                    (<>
+                        <div style={{
+                            width: '5px', cursor: 'col-resize', background: '#ccc',
+                            height: lenghtTask === 1 ? "30%" :
+                                (lenghtTask === 2 ? "35%" :
+                                    (lenghtTask === 3 ? "40%" :
+                                        (lenghtTask === 4 ? "45%" :
+                                            (lenghtTask === 5 ? "50%" :
+                                                (lenghtTask === 6 ? "60%" :
+                                                    (lenghtTask === 7 ? "70%" :
+                                                        (lenghtTask === 8 ? "75%" :
+                                                            (lenghtTask === 9 ? "80%" :
+                                                                (lenghtTask === 10 ? "85%" :
+                                                                    (lenghtTask === 11 ? "90%" : "")))))))))),
+                        }} onMouseDown={handleMouseDown}></div>
 
-                        maxWidth: '100%',
-                        height: lenghtTask === 1 ? "30%" :
-                        (lenghtTask === 2 ? "35%" :
-                            (lenghtTask === 3 ? "40%" :
-                                (lenghtTask === 4 ? "45%" :
-                                    (lenghtTask === 5 ? "50%" :
-                                        (lenghtTask === 6 ? "60%" :
-                                            (lenghtTask === 7 ? "70%" :
-                                                (lenghtTask === 8 ? "75%" :
-                                                    (lenghtTask === 9 ? "80%" :
-                                                        (lenghtTask === 10 ? "85%" :
-                                                            (lenghtTask === 11 ? "90%" : "")))))))))),
-                        overflowY: 'hidden',
-                        overflowX: 'auto'
-                    }}
-                >
-                    {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
-                </div>
-
+                        <div
+                            className="active"
+                            ref={scrollRef2}
+                            onScroll={handleScroll(scrollRef2, scrollRef1)}
+                            style={{
+                                flex: '1',
+                                border: '1px solid gray',
+                                background: '#f6f6f6',
+                                maxWidth: '100%',
+                                height: lenghtTask === 1 ? "30%" :
+                                    (lenghtTask === 2 ? "35%" :
+                                        (lenghtTask === 3 ? "40%" :
+                                            (lenghtTask === 4 ? "45%" :
+                                                (lenghtTask === 5 ? "50%" :
+                                                    (lenghtTask === 6 ? "60%" :
+                                                        (lenghtTask === 7 ? "70%" :
+                                                            (lenghtTask === 8 ? "75%" :
+                                                                (lenghtTask === 9 ? "80%" :
+                                                                    (lenghtTask === 10 ? "85%" :
+                                                                        (lenghtTask === 11 ? "90%" : "")))))))))),
+                                overflowY: 'hidden',
+                                overflowX: 'auto'
+                            }}
+                        >
+                            {dataGantt.length > 0 && <GanttTest data={dataGantt} />}
+                        </div>
+                    </>
+                    )
+                    : null
+                }
                 {/* Add Task */}
                 <div class={`modal show no-select-modal`} id="addTask">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["addtask"]}</h4>
-                                <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>
+                                <button type="button" class="close" onClick={handleCloseModalAdd} data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form>
@@ -1648,13 +1784,13 @@ const Stage = (props) => {
                                                     dataTask
                                                         ?.find((period) => period.period_id === periodId)
                                                         ?.period_members?.map((user, index) => (
-                                                            <div key={index} className="user-checkbox-item ">
-                                                                <label class="pointer">
+                                                            <div key={index} className="user-checkbox-item">
+                                                                <label className="pointer">
                                                                     <input
                                                                         type="checkbox"
                                                                         className="mr-1"
-                                                                        value={JSON.stringify(user)}
-                                                                        onChange={(e) => handleCheckboxChange(user, e.target.checked)}
+                                                                        checked={selectedUsernamesAdd.includes(user.username)}
+                                                                        onChange={(e) => handleCheckboxChangeAdd(user, e.target.checked)}
                                                                     />
                                                                     {user.fullname}
                                                                 </label>
@@ -1668,7 +1804,7 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitAddTask} class="btn btn-success">{lang["btn.create"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleCloseModalAdd} id="closeModalAddTask" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1782,7 +1918,7 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={updateTask} class="btn btn-success">{lang["btn.update"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleCloseModal} id="closeModalUpdateTask" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -1995,14 +2131,13 @@ const Stage = (props) => {
                                                         ?.tasks.find((task) => task.task_id === taskId)
                                                         ?.members?.map((user, index) => {
                                                             return (
-                                                                <div key={index} className="user-checkbox-item">
-                                                                    <label class="pointer">
+                                                                <div key={user.username} className="user-checkbox-item">
+                                                                    <label className="pointer">
                                                                         <input
                                                                             type="checkbox"
                                                                             className="mr-1"
-                                                                            value={JSON.stringify(user)}
-
-                                                                            onChange={(e) => handleCheckboxChangeChild(user, e.target.checked)}
+                                                                            checked={selectedUsernamesChild.includes(user.username)}
+                                                                            onChange={(e) => handleCheckboxChangeChildAdd(user, e.target.checked)}
                                                                         />
                                                                         {user.fullname}
                                                                     </label>
@@ -2017,7 +2152,7 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={submitAddTaskChild} class="btn btn-success">{lang["btn.create"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleCloseModal} id="closeModalAddTaskChild" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2132,7 +2267,7 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={updateTaskChild} class="btn btn-success">{lang["btn.update"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleCloseModal} id="closeModalUpdateTaskChild" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>
@@ -2276,7 +2411,7 @@ const Stage = (props) => {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" onClick={updateStage} class="btn btn-success ">{lang["btn.update"]}</button>
-                                <button type="button" onClick={handleCloseModal} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
+                                <button type="button" onClick={handleCloseModal} id="closeModalUpdateStage" data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}</button>
                             </div>
                         </div>
                     </div>

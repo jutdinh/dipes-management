@@ -1,0 +1,146 @@
+.notification-popup {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(0.1, 0, 0, 0.4);
+    /* width: 300px; */
+    width: 40%;
+    overflow: hidden; 
+}
+
+.notification-header {
+
+    padding: 10px;
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center; */
+    text-align: center;
+    font-weight: bold;
+    color: #434360;
+}
+
+.clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f00;
+    font-size: 14px;
+}
+
+.notification-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 300px; /* Set a max-height for scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
+
+    padding-top: 5px; 
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+
+   
+}
+
+
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-title {
+    display: block;
+    /* color: #333; */
+    overflow: hidden; /* Prevents text overflow */
+    text-overflow: ellipsis; /* Adds an ellipsis to truncated text */
+    white-space: nowrap; /* Ensures the text is on one line */
+
+ 
+    padding-top: 0px; 
+    padding-left: 5px;
+    padding-bottom: 0px;
+    padding-right: 5px;
+    border-radius: 3px; 
+
+    
+}
+
+.notification-time {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    white-space: nowrap; 
+
+    padding-top: 0px; 
+    /* padding-left: 5px; */
+    padding-bottom: 0px;
+    padding-right: 5px;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+
+
+.notification-time {
+    display: block;
+    color: #666;
+    font-size: 14px;
+}
+
+.notification-footer {
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.2); 
+}
+.opacity-footer{
+    opacity: 0.5; 
+} 
+.notification-footer a {
+    text-decoration: none;
+    color: rgb(70, 70, 189);
+    font-size: 14px;
+}
+
+
+.notification-item.unread {
+    background-color: #eaeaea; 
+    /* font-weight: bold;  */
+}
+
+/* Khi thông báo đã đọc */
+.notification-item {
+    background-color: #ffffff; 
+    font-weight: normal;
+    padding: 3px;
+    border-top: 1px solid #dfd5d5; 
+}
+.notification-item p:hover {
+   color: rgb(70, 70, 189) !important;
+}
+
+.notification-item p {
+    color: #434360 !important;
+font-size: 14px;
+line-height: 21px;
+
+ }
+
+
+.notification-item:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}  
+
+.notification-more {
+ 
+    font-size: 14px;
+    margin-left: 10px; 
+  }
+  .notification-more:hover {
+  
+   color: rgb(70, 70, 189)
+  }

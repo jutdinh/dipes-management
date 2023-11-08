@@ -455,7 +455,7 @@ export default {
     "createproject":"Create project",
     "avatar": "Avatar",
     "copied":"Copied",
-    "addstage": "Add Stage",
+    "addstage": "New Stage",
     "updatestage": "Update Stage",
     "stagename": "Stage name",
     "p.stagename": "Enter a stage name",
@@ -469,9 +469,20 @@ export default {
     "no selected group by": "No field selected",
     "detail ui" : "Project detail",
     "next": "Next",
-    "add stage": "Add Stage",
+    "add stage": "New Stage",
     "duplicate fomular": "A fields with this fomular alias has already exited",
-    "not found task": "The project has no task"
+    "not found task": "The project has no task",
+    "hidden-gantt": "Hide Gantt",
+    "show-gantt": "Display Gantt",
+    "mins ago": "mins ago",
+ 
+    "secs ago": "secs ago",
+    "hours ago": "hours ago",
+    "days ago": "days ago",
+    "months ago": "months ago",
+    "years ago": "years ago",
+    "notification": "Notifications"
+
 
 
 }

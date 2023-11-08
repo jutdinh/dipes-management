@@ -246,6 +246,7 @@ padding: 0;
 }
 .icon-hidden {
     visibility: hidden;
+    
 }
 
 
@@ -472,9 +473,18 @@ padding: 0;
 
 
 
+/* .gantt .grid-header {
+    position: sticky;
+    top: 0; 
+    z-index: 10; 
+} */
+.icon-fullscreen {
+   color: #8e9096
+}
 
-
-
+.height-960{
+    max-height: 960px !important;
+}
 
 .fix-layout-header-table thead th {
     vertical-align: middle !important;

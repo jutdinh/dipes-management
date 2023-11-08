@@ -1,21 +1,23 @@
 import { useSelector } from "react-redux";
 import { Dropdown } from "../common";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMediaQuery } from 'react-responsive';
 import $ from 'jquery';
-import { useLocation  } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import da from "date-fns/esm/locale/da/index.js";
 
 export default () => {
     const { proxy, lang, auth, profiles } = useSelector((state) => state);
     const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
     const [defaultValue, setDefaultValue] = useState({});
     const fullname = localStorage.getItem("fullname");
-
+    const _token = localStorage.getItem("_token");
+    let langItemCheck = localStorage.getItem("lang").toLowerCase();
     const langs = [
         { id: 0, label: lang["vi"], flag: "vietnam.png", value: "Vi" },
         { id: 1, label: lang["en"], flag: "united-kingdom.png", value: "En" },
     ];
-
+    const [data, setData] = useState([]);
     const options = langs;
 
     useEffect(() => {
@@ -24,7 +26,7 @@ export default () => {
         const defaultLang = langs.filter((l) => l.value === langItem)[0];
         setDefaultValue(defaultLang);
     }, []);
-
+    console.log(langItemCheck)
 
     const location = useLocation();
 
@@ -38,12 +40,12 @@ export default () => {
         const initialPageState = storedPageState ? JSON.parse(storedPageState) : false;
         setPageState(initialPageState);
 
-        if (initialPageState) {           
+        if (initialPageState) {
             $('head').append(`                
                 <link id="second-style-sheet" rel="stylesheet" href="/css/color_2.css" />
             `);
             $("#primary-style-sheet").remove()
-            
+
         } else {
             $('#second-style-sheet').remove();
             $('head').append(`                
@@ -52,7 +54,7 @@ export default () => {
         }
 
         // Listen for route changes
-       
+
 
     }, []);
     useEffect(() => {
@@ -61,7 +63,7 @@ export default () => {
         const initialPageState = storedPageState ? JSON.parse(storedPageState) : false;
         setPageState(initialPageState);
     }, [location]);
-    
+
     const LanguageRender = ({ name, flag }) => {
         return (
             <div className="d-flex flex-nowrap">
@@ -110,12 +112,12 @@ export default () => {
     const changeTheme = () => {
         const newPageState = !pageState;
 
-        if (newPageState) {           
+        if (newPageState) {
             $('head').append(`                
                 <link id="second-style-sheet" rel="stylesheet" href="/css/color_2.css" />
             `);
             $("#primary-style-sheet").remove()
-            
+
         } else {
             $('#second-style-sheet').remove();
             $('head').append(`                
@@ -126,6 +128,142 @@ export default () => {
         setPageState(newPageState);
 
         localStorage.setItem("pageState", JSON.stringify(newPageState));
+    };
+
+
+
+
+
+    useEffect(() => {
+        fetch(`${proxy}/notify/notifies`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                console.log(resp)
+                if (success) {
+                    setData(data)
+                }
+            })
+    }, [])
+
+    console.log(data)
+    const [showPopup, setShowPopup] = useState(false);
+    const popupRef = useRef();
+
+    useEffect(() => {
+        // Hàm này sẽ được gọi mỗi khi người dùng nhấn vào
+        function handleClickOutside(event) {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setShowPopup(false);
+            }
+        }
+
+        // Đặt event listener khi popup được hiển thị
+        if (showPopup) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        // Dọn dẹp event listener khi component unmounted hoặc trước khi component update
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showPopup]);
+
+    const countUnreadNotifications = (notifications) => {
+        let unreadCount = 0;
+
+        for (const notification of notifications) {
+            if (!notification.read) {
+                unreadCount++;
+            }
+        }
+
+        return unreadCount;
+    };
+    const unreadCount = countUnreadNotifications(data);
+    console.log(`Số thông báo chưa đọc: ${unreadCount}`);
+
+
+    const [currentTimestamp, setCurrentTimestamp] = useState(new Date());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // Cập nhật thời gian hiện tại mỗi 60 giây
+            setCurrentTimestamp(new Date());
+        }, 60000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
+
+    const getElapsedTime = (notifyAt) => {
+        const notifyTimestamp = new Date(notifyAt);
+        const elapsedMilliseconds = currentTimestamp - notifyTimestamp;
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+        const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+        const elapsedHours = Math.floor(elapsedMinutes / 60);
+        const elapsedDays = Math.floor(elapsedHours / 24);
+        const elapsedMonths = Math.floor(elapsedDays / 30);
+        const elapsedYears = Math.floor(elapsedMonths / 12);
+
+        if (elapsedYears > 0) {
+            return `${elapsedYears} ${lang["years ago"]}`;
+        } else if (elapsedMonths > 0) {
+            return `${elapsedMonths} ${lang["months ago"]}`;
+        } else if (elapsedDays > 0) {
+            return `${elapsedDays} ${lang["days ago"]}`;
+        } else if (elapsedHours > 0) {
+            return `${elapsedHours} ${lang["hours ago"]}`;
+        } else if (elapsedMinutes > 0) {
+            return `${elapsedMinutes} ${lang["mins ago"]}`;
+        } else {
+            return `${elapsedSeconds} ${lang["secs ago"]}`;
+        }
+    };
+    const markAsRead = (index) => {
+        const notificationToMarkAsRead = data[index];
+        if (!notificationToMarkAsRead.read) {
+            const newNotifications = [...data];
+            newNotifications[index].read = true;
+            setData(newNotifications);
+
+            // Gửi yêu cầu PUT để đánh dấu thông báo là đã đọc bằng API
+            fetch(`${proxy}/notify/seen/state`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${_token}`,
+                },
+                body: JSON.stringify({ notify_id: notificationToMarkAsRead.notify_id }),
+            })
+                .then((res) => res.json())
+                .then((resp) => {
+                    const { success, content, data, status } = resp;
+                    console.log(resp);
+                })
+                .catch((error) => {
+                    // console.error("Lỗi khi gửi yêu cầu PUT:", error);
+                });
+        }
+        window.location.href = `${notificationToMarkAsRead.url}`
+    };
+
+    const formatContent = (imageSrc, content, lang) => {
+        const regex = /\[(.*?)\]/g;
+        const boldContent = content.replace(regex, "<strong>$1</strong>");
+        return (
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <img src={proxy + imageSrc} alt="Avatar" style={{ width: "40px", marginTop: "10px", borderRadius: "100%", height: "40px", marginRight: "10px" }} />
+                <span className="notification-title pointer" style={{ margin: 0 }}
+                    dangerouslySetInnerHTML={{ __html: lang === "vi" ? boldContent : content }}
+                />
+            </div>
+        );
     };
 
     return (
@@ -165,16 +303,14 @@ export default () => {
                     <div className="d-flex flex-nowrap">
                         <div className="icon_info">
                             <ul>
-                                {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li>
-                <li><a href="#"><i className="fa fa-bell-o"></i><span className="badge">2</span></a></li> 
-                                 <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
+                                {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li> */}
+                                <li><a href="#"><i className="fa fa-bell-o" onClick={() => setShowPopup(!showPopup)}></i><span className="badge">{unreadCount}</span></a></li>
+                                {/* <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
                                 <li>
                                     <a href="#" onClick={changeTheme}>
                                         <i className={pageState ? "fa fa-moon-o" : "fa fa-sun-o"}></i>
                                     </a>
                                 </li>
-
-
                             </ul>
                             <ul className="user_profile_dd ">
                                 <li>
@@ -185,7 +321,7 @@ export default () => {
                                     <div className="dropdown-menu">
 
                                         <a className="dropdown-item" href="/profile">
-                                           <>{lang["my profile"]}</> 
+                                            <>{lang["my profile"]}</>
                                         </a>
                                         {/* <a className="dropdown-item" href="settings.html">
                                             {lang["settings"]}
@@ -199,11 +335,46 @@ export default () => {
                                     </div>
                                 </li>
                             </ul>
+
                         </div>
                     </div>
+                    {showPopup && (
+                        <div ref={popupRef} class="notification-popup">
+                            <div class="notification-header algin-center">
+                                {lang["notification"]}
+                                {/* <button class="clear-btn">CLEAR ALL</button> */}
+                            </div>
+                            <ul class="notification-list ml-1 mr-1 mt-1">
+                                {data && data.length > 0 ?
+                                    data.map((notification, index) => (
+                                        <li
+                                            key={notification.id}
+                                            className={`notification-item ${!notification.read ? "unread" : ""}`}
+                                            onClick={() => markAsRead(index)}
+                                        >
+                                            {/* <span className="notification-title">{langItemCheck === "Vi" ? notification.content.vi : notification.content.en}</span> */}
+                                            <p>
+                                                {formatContent(notification.image_url, notification.content[langItemCheck], langItemCheck)}</p>
+                                            <div class=" d-flex">
+
+                                                <span className="notification-time">{getElapsedTime(notification.notify_at)}</span>
+                                                {/* <span className="ml-auto notification-more pointer">More</span> */}
+                                            </div>
+                                        </li>
+                                    )) :
+                                    <li className={`notification-item`}>
+                                        <span className="notification-title">Chưa có thông báo</span>
+                                    </li>
+                                }
+                            </ul>
+                            <div class={`notification-footer ${data && data.length > 0 ? `` : `opacity-footer`}`}>
+                                <a href="#">View all Notifications</a>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
-            
+
         </div>
     );
 };

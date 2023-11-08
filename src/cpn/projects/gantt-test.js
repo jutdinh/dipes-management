@@ -91,7 +91,21 @@ function GanttTest({ data }) {
     }, [])
     
 
-
+    useEffect(() => {
+        const ganttContainer = document.querySelector('.gantt-container');
+    
+        const handleScroll = () => {
+            const gridHeader = ganttContainer.querySelector('.gantt .grid-header');
+            if (gridHeader) {
+                gridHeader.style.transform = `translateX(-${ganttContainer.scrollLeft}px)`;
+            }
+        };
+    
+        ganttContainer.addEventListener('scroll', handleScroll);
+    
+        return () => ganttContainer.removeEventListener('scroll', handleScroll);
+    }, []);
+    
     return (
        
 

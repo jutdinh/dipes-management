@@ -2,16 +2,25 @@
     .modal-dialog {
         max-width: 50%; 
     }
+    .notification-popup {
+        width: 30%;
+    }
 }
 @media (min-width: 1920px) {
     .modal-dialog {
         max-width: 50%; 
+    }
+    .notification-popup {
+        width: 40%;
     }
 }
 
 @media (min-width: 1366) {
     .modal-dialog {
         max-width: 50%; 
+    }
+    .notification-popup {
+        width: 30%;
     }
 }
 @media (min-width: 1080px) {
@@ -45,9 +54,20 @@
     .responsive-div {
         height: 50vh;
     }
-}
+    .notification-popup {
+        width: 60%;
+    }
 
+}
+@media (max-width: 575px)
+{
+    .notification-popup {
+       min-width: 80%;
+    }
+
+}
 @media (min-width: 480px) {
+   
     /* .user-popup2 {
         padding: 5px;
     }
@@ -55,3 +75,10 @@
         padding: 5px;
     } */
 }
+@media (max-width: 768px) {
+    .notification-popup {
+      font-size: 14px; /* Điều chỉnh kích thước font */
+      padding: 5px; /* Điều chỉnh khoảng cách bên trong */
+      min-width: 100%; /* Không giới hạn chiều rộng tối đa */
+    }
+  }
