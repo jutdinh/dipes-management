@@ -26,7 +26,7 @@ const socketController = (socket) => {
             case "project/add-member":
                 vi = `[${actor.fullname}] đã thêm bạn vào dự án [${note.project_name}]`;
                 en = `[${actor.fullname}] has added you to [${note.project_name}]`;
-                url = `/projects/detail/${project.project_id}`
+                url = `/projects/detail/${note.project_id}`
                 break;
             
             case "project/remove-member":
@@ -37,7 +37,7 @@ const socketController = (socket) => {
             case "project/change-privilege":
                 vi = `[${actor.fullname}] đã thay đổi phân quyền của bạn trong dự án [${note.project_name}]`
                 en = `[${actor.fullname}] has changed your project privileges in [${note.project_name}]`
-                url = `/projects/detail/${project.project_id}`
+                url = `/projects/detail/${note.project_id}`
                 break;
                 
             case "project/add-period-member":
