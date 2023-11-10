@@ -11,8 +11,11 @@ import responseMessages from "../enum/response-code";
 import { Tables } from ".";
 import { formatDate } from "../../redux/configs/format-date";
 export default () => {
-    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
+    const stringifiedUser = localStorage.getItem("user");
+    const _users = JSON.parse(stringifiedUser)
+    // console.log(_users)
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
     const back = () => {
@@ -35,9 +38,10 @@ export default () => {
     const [showImplementationPopup, setShowImplementationPopup] = useState(false);
     const [showMonitorPopup, setShowMonitorPopup] = useState(false);
     const [manager, setManager] = useState({})
-
-
-
+    const [projectTemp, setProjectTemp] = useState({});
+    const [memberProjectTemp, setMemberProjectTemp] = useState([]);
+    // console.log("Member Temp", memberProjectTemp)
+    // console.log("Member", projectmember)
     useEffect(() => {
 
         fetch(`${proxy}/projects/project/${project_id}`, {
@@ -51,7 +55,7 @@ export default () => {
                 // console.log(resp)
                 if (success) {
                     if (data) {
-
+                        setMemberProjectTemp(data.members)
                         setProject(data);
                         setProjectMember(data.members)
                         setManager(data.manager.username)
@@ -168,6 +172,54 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
+    // console.log(uniqueArray)
+
+
+
+
+//    Function ktra trạng thái user (Thêm, xóa, thay đổi quyền)
+
+    function findDifferences(memberProjectTemp, uniqueArray) {
+        // Tạo bản đồ từ cả hai mảng dựa trên 'username' và coi 'role' và 'permission' như là một
+        const mapTemp = new Map(memberProjectTemp.map(item => [item.username, item.permission || item.role]));
+        const mapUnique = new Map(uniqueArray.map(item => [item.username, item.permission || item.role]));
+      
+        // Tìm những người dùng bị xóa hoặc thêm vào dựa trên 'username'
+        const removedUsers = memberProjectTemp.filter(item => !mapUnique.has(item.username));
+        const addedUsers = uniqueArray.filter(item => !mapTemp.has(item.username));
+      
+        // Tìm những người dùng có sự thay đổi về quyền hạn
+        const changedPermissions = uniqueArray.filter(item => 
+          mapTemp.has(item.username) && mapTemp.get(item.username) !== (item.permission || item.role)
+        );
+      
+        let status;
+        let changedUsers;
+        if (removedUsers.length > 0) {
+          status = 'users removed';
+          changedUsers = removedUsers;
+        } else if (addedUsers.length > 0) {
+          status = 'users added';
+          changedUsers = addedUsers;
+        } else if (changedPermissions.length > 0) {
+          status = 'permissions changed';
+          changedUsers = changedPermissions;
+        } else {
+          status = 'no change';
+          changedUsers = [];
+        }
+      
+        return { status, changedUsers };
+      }
+      
+      // Sử dụng hàm findDifferences để xác định người dùng đã bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+      const result = findDifferences(memberProjectTemp, uniqueArray);
+      
+      // Xuất kết quả
+    //   console.log(result.status); // 'users removed', 'users added', 'permissions changed', hoặc 'no change'
+    //   console.log(result.changedUsers); // Danh sách người dùng bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+      
+
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -186,6 +238,7 @@ export default () => {
     updateProjectMembers();
     const submitUpdateProject = async (e) => {
         e.preventDefault();
+
         if (project.project_type === "database") {
             project.proxy_server = proxy;
         }
@@ -203,6 +256,53 @@ export default () => {
             setErrorMessagesedit(errors);
             return;
         }
+
+        let dataSocket;
+        let tagetUser;
+        if (result.status === "users added") {
+            dataSocket = {
+                targets: result.changedUsers,
+                actor: {
+                    fullname: _users.fullname,
+                    username: _users.username,
+                    avatar: _users.avatar
+                },
+                context: 'project/add-member',
+                note: {
+                    project_name: project.project_name,
+                    project_id: project_id
+                }
+            }
+        } else if (result.status === "users removed") {
+            dataSocket = {
+                targets: result.changedUsers,
+                actor: {
+                    fullname: _users.fullname,
+                    username: _users.username,
+                    avatar: _users.avatar
+                },
+                context: 'project/remove-member',
+                note: {
+                    project_name: project.project_name,
+                    project_id: project_id
+                }
+            }
+        }else if (result.status === "permissions changed") {
+            dataSocket = {
+                targets: result.changedUsers,
+                actor: {
+                    fullname: _users.fullname,
+                    username: _users.username,
+                    avatar: _users.avatar
+                },
+                context: 'project/change-privilege',
+                note: {
+                    project_name: project.project_name,
+                    project_id: project_id
+                }
+            }
+        }
+
         const requestBody = {
             project: {
                 ...project,
@@ -232,6 +332,7 @@ export default () => {
 
         if (success) {
             showApiResponseMessage(status);
+
         } else {
             showApiResponseMessage(status);
         }
@@ -239,10 +340,10 @@ export default () => {
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
         if (!areTwoArraysEqual(uniqueArray, projectmember)) {
-            addMember(e);
+            addMember(e, dataSocket);
         }
     };
-    const addMember = (e) => {
+    const addMember = (e, dataSocket) => {
         e.preventDefault();
 
         fetch(`${proxy}/projects/members`, {
@@ -259,6 +360,8 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+                if (success)
+                    socket.emit("project/notify", dataSocket)
                 // if (success) {
                 //     showApiResponseMessage(status);
                 // }
@@ -457,8 +560,8 @@ export default () => {
                                     </div>
                                     {showAdminPopup && (
                                         <div class="user-popup4">
-                                            <div class="user-popup-title"> 
-                                            <h5>{lang["supervisor"]}</h5>
+                                            <div class="user-popup-title">
+                                                <h5>{lang["supervisor"]}</h5>
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
@@ -492,8 +595,8 @@ export default () => {
                                     )}
                                     {showImplementationPopup && (
                                         <div class="user-popup2">
-                                            <div class="user-popup-title"> 
-                                            <h5>{lang["deployers"]}</h5>
+                                            <div class="user-popup-title">
+                                                <h5>{lang["deployers"]}</h5>
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {

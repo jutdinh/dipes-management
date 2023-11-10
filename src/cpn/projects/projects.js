@@ -26,6 +26,7 @@ export default () => {
     const [regent, setRegent] = useState(false)
 
     const _users = JSON.parse(stringifiedUser)
+    // console.log(_users)
     // const showApiResponseMessage = (status) => {
     //     const message = responseMessages[status];
 
@@ -434,12 +435,13 @@ export default () => {
     //     }
     // }, [projects])
     // console.log(projects)
+
+
     const sortedProjects = projects?.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
     const [searchName, setSearchName] = useState('');
     const [searchCode, setSearchCode] = useState('');
     const [searchDate, setSearchDate] = useState('');
     const [searchStatus, setSearchStatus] = useState(null);
-
 
     const filteredProjects = sortedProjects.filter(project =>
         (project.project_name ? project.project_name.toLowerCase() : "").includes(searchName.toLowerCase()) &&

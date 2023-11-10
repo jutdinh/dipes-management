@@ -12,12 +12,13 @@ import $ from 'jquery';
 import TableScroll from "./table-test-scroll"
 
 const Stage = (props) => {
-    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const { project_id, version_id } = useParams();
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const _users = JSON.parse(stringifiedUser)
     const { removeVietnameseTones } = functions
+
     const [expandedTasks, setExpandedTasks] = useState({});
     const [expandedSubsubtasks, setExpandedSubsubtasks] = useState({});
     const [showGantt, setShowGantt] = useState(false);
@@ -32,7 +33,7 @@ const Stage = (props) => {
     const [typeAction, setTypeAction] = useState(0)
     const [actionShow, setActionShow] = useState(0)
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-    console.log(actionShow)
+    // console.log(actionShow)
     const [task, setTask] = useState({ task_status: 1 });
     const [taskUpdate, setTaskUpadte] = useState({});
     const [taskChild, setTaskChild] = useState({ child_task_status: 1 });
@@ -43,7 +44,7 @@ const Stage = (props) => {
 
     const [dataViewDetail, setDataViewDetail] = useState({})
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
-    // console.log(dataViewDetail)
+
     const [formData, setFormData] = useState({});
 
     const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
@@ -55,10 +56,11 @@ const Stage = (props) => {
     const [selectedUsernamesChild, setSelectedUsernamesChild] = useState([]);
 
 
-    console.log(selectedUsernames)
     const handleCloseModal = () => {
 
         setSelectedUsernamesChild([])
+        setSelectedRowIndex(null)
+        setActionShow(0)
         setErrorMessagesadd({})
         setTask({
 
@@ -70,7 +72,8 @@ const Stage = (props) => {
             timeline: '',
             task_description: '',
             members: []
-        });
+        })
+
         setTaskChild({
             child_task_status: 1,
             child_task_name: "",
@@ -82,9 +85,11 @@ const Stage = (props) => {
             members: []
         });
     };
+
     const handleCloseModalAdd = () => {
         setSelectedUsernamesAdd([]);
-
+        setSelectedRowIndex(null)
+        setActionShow(0)
         setErrorMessagesadd({})
         setTask({
 
@@ -96,7 +101,8 @@ const Stage = (props) => {
             timeline: '',
             task_description: '',
             members: []
-        });
+        })
+
         setTaskChild({
             child_task_status: 1,
             child_task_name: "",
@@ -106,7 +112,8 @@ const Stage = (props) => {
             timeline: "",
             child_task_description: "",
             members: []
-        });
+        })
+
     };
 
     const clearModalChild = () => {
@@ -134,6 +141,7 @@ const Stage = (props) => {
     const [containerWidth, setContainerWidth] = useState('80%');
     const [isResizing, setIsResizing] = useState(false);
     const [lenghtTask, setLenghtTask] = useState(false);
+
     //Đếm tr
     const tableRef = useRef();
     useEffect(() => {
@@ -144,9 +152,11 @@ const Stage = (props) => {
     const containerRef = useRef(null);
     const scrollRef1 = useRef(null);
     const scrollRef2 = useRef(null);
+
     useEffect(() => {
         containerRef.current = scrollRef1.current;
     }, []);
+
     useEffect(() => {
         if (!showGantt) {
             setContainerWidth("100%")
@@ -157,7 +167,6 @@ const Stage = (props) => {
 
     const handleShowGantt = () => {
         setShowGantt(!showGantt)
-
     };
 
     const handleScroll = (ref1, ref2) => {
@@ -167,13 +176,16 @@ const Stage = (props) => {
             }
         };
     };
+
     const handleMouseDown = useCallback(() => {
         setIsResizing(true);
     }, []);
 
+
     const handleMouseUp = useCallback(() => {
         setIsResizing(false);
     }, []);
+
 
     const handleMouseMove = useCallback(
         (e) => {
@@ -184,14 +196,12 @@ const Stage = (props) => {
         },
         [isResizing]
     );
+
     const [columnWidths, setColumnWidths] = useState({
         col1: 100,
         col2: 100,
 
     });
-
-
-
 
     useEffect(() => {
         let isDown = false;
@@ -543,9 +553,9 @@ const Stage = (props) => {
 
 
 
-        // if (!selectedUsernames || selectedUsernames.length === 0) {
-        //     errors.members = lang["error.members"];
-        // }
+        if (!selectedUsernamesStage || selectedUsernamesStage.length === 0) {
+            errors.members = lang["error.members_stage"];
+        }
         if (Object.keys(errors).length > 0) {
             setErrorMessagesadd(errors);
             return;
@@ -627,6 +637,15 @@ const Stage = (props) => {
             period_id: periodId,
             task: task
         }
+        const data = {
+            targets: selectedUsernamesAdd, 
+            actor:  { fullname: _users.username }  , 
+            context: 'project/add-task-member', 
+            note: { 
+              project_name: props.projectname,
+              project_id: project_id
+            }
+        }
         const errors = {};
         if (!task.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -685,6 +704,10 @@ const Stage = (props) => {
                     }
                 }
             })
+            
+       
+        
+        socket.emit("project/notify", data)
     }
     const updateTask = (dataUpdate, useDataUpdate = false) => {
 
@@ -756,6 +779,7 @@ const Stage = (props) => {
                     }
                 }
             })
+            
     };
 
     const handleDeleteTask = () => {
@@ -831,6 +855,15 @@ const Stage = (props) => {
         const requestBody = {
             child_task: taskChild
         }
+        const data = {
+            targets: selectedUsernamesChild, 
+            actor:  { fullname: _users.username }  , 
+            context: 'project/add-child-task-member', 
+            note: { 
+              project_name: props.projectname,
+              project_id: project_id
+            }
+        }
 
         const errors = {};
         if (!taskChild.child_task_name) {
@@ -862,7 +895,7 @@ const Stage = (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        console.log(requestBody)
+        // console.log(requestBody)
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}`, {
             method: "POST",
             headers: {
@@ -886,6 +919,7 @@ const Stage = (props) => {
                     }
                 }
             })
+            socket.emit("project/notify", data)
     };
 
     const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
@@ -1143,14 +1177,14 @@ const Stage = (props) => {
     return (
         <>
             <div class="d-flex align-items-center mt-2">
-               
-                    <button class="btn btn-info" style={{width: "115px"}} onClick={() => handleShowGantt()}>
-                       {showGantt ? lang["hidden-gantt"]: lang["show-gantt"]}
-                    </button>
-                       
-                    
 
-                
+                <button class="btn btn-info" style={{ width: "115px" }} onClick={() => handleShowGantt()}>
+                    {showGantt ? lang["hidden-gantt"] : lang["show-gantt"]}
+                </button>
+
+
+
+
                 {actionShow === 1 ? (
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
@@ -1175,14 +1209,14 @@ const Stage = (props) => {
                             <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
                         </>
                     ) : actionShow === 0 ?
-                    (
-                        (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
-                        <>
-                            <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add-task ml-auto disabled_action`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
-                            <i className={`fa fa-edit size-32 pointer icon-margin icon-edit disabled_action`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
-                            <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete disabled_action`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
-                        </>
-                    ): null
+                        (
+                            (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
+                            <>
+                                <i className={`fa fa-plus-square size-32  pointer icon-margin icon-add-task ml-auto disabled_action`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
+                                <i className={`fa fa-edit size-32 pointer icon-margin icon-edit disabled_action`} onClick={() => getIdStage(task)} data-toggle="modal" data-target="#editStage" title={lang["editstage"]}></i>
+                                <i class={`fa fa-trash-o size-32 pointer icon-margin  mb-1  icon-delete disabled_action`} onClick={() => handleDeleteStage(task)} title={lang["deletetask"]}></i>
+                            </>
+                        ) : null
                 }
                 {
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
@@ -1333,7 +1367,6 @@ const Stage = (props) => {
                                 <React.Fragment key={index}>
                                     <tr
                                         key={index}
-
                                         className={`font-weight-bold fix-layout ${selectedRowIndex === index ? 'selected-row' : ''}`}
                                         onClick={() => {
                                             // setSelectedUsernames([])
@@ -1494,12 +1527,12 @@ const Stage = (props) => {
                                                         <>{lang["projectempty"]}</>
                                                     }</td>
                                                     <td class="" style={{
-                                                                // position: 'sticky',
-                                                                right: 0,
-                                                                // backgroundColor: '#fff',
-                                                                // borderLeft: '1px solid #ccc !important',
-                                                                boxSizing: 'border-box',
-                                                            }}>
+                                                        // position: 'sticky',
+                                                        right: 0,
+                                                        // backgroundColor: '#fff',
+                                                        // borderLeft: '1px solid #ccc !important',
+                                                        boxSizing: 'border-box',
+                                                    }}>
                                                         <i class="fa fa-eye size-24 pointer icon-margin icon-view" data-toggle="modal" onClick={() => getDataViewDetail(subtask, task.period_id)} data-target="#viewTask" title={lang["viewdetail"]}></i>
                                                         {subtask.child_tasks.length > 0 ?
                                                             <>
@@ -1619,8 +1652,8 @@ const Stage = (props) => {
                                                                 // backgroundColor: '#fff',
                                                                 // borderLeft: '1px solid #ccc !important',
                                                                 boxSizing: 'border-box',
-                                                            }}> 
-                                                            <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(subsubtask)} data-toggle="modal" data-target="#viewTaskChild" title={lang["viewdetail"]}></i>
+                                                            }}>
+                                                                <i class="fa fa-eye size-24 pointer icon-margin icon-view" onClick={() => getDataViewDetail(subsubtask)} data-toggle="modal" data-target="#viewTaskChild" title={lang["viewdetail"]}></i>
                                                                 {
                                                                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                                                                     <>
@@ -1759,7 +1792,7 @@ const Stage = (props) => {
                                             {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                         </div>
                                         <div className="col-lg-6">
-                                            <label>Timeline <span className='red_star'>*</span></label>
+                                            <label>Timeline </label>
                                             <input type="date" min={task.start} max={task.end} className="form-control" value={task.timeline} onChange={
                                                 (e) => { setTask({ ...task, timeline: e.target.value }) }
                                             } />
@@ -1777,7 +1810,7 @@ const Stage = (props) => {
                                             </div>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                            <label>{lang["taskmember"]} </label>
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {
@@ -1869,7 +1902,7 @@ const Stage = (props) => {
                                             {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                         </div>
                                         <div className="col-lg-6">
-                                            <label>Timeline <span className='red_star'>*</span></label>
+                                            <label>Timeline </label>
                                             <input type="date" min={taskUpdate.start} max={taskUpdate.end} className="form-control" value={taskUpdate.timeline} onChange={
                                                 (e) => { setTaskUpadte({ ...taskUpdate, timeline: e.target.value }) }
                                             } />
@@ -1887,7 +1920,7 @@ const Stage = (props) => {
                                             </div>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                            <label>{lang["taskmember"]} </label>
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {
@@ -2104,7 +2137,7 @@ const Stage = (props) => {
                                             {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                         </div>
                                         <div className="col-lg-6">
-                                            <label>Timeline <span className='red_star'>*</span></label>
+                                            <label>Timeline </label>
                                             <input type="date" min={taskChild.start} max={taskChild.end} className="form-control" value={taskChild.timeline} onChange={
                                                 (e) => { setTaskChild({ ...taskChild, timeline: e.target.value }) }
                                             } />
@@ -2122,7 +2155,7 @@ const Stage = (props) => {
                                             </div>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                            <label>{lang["taskmember"]} </label>
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {
@@ -2217,7 +2250,7 @@ const Stage = (props) => {
                                             {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
                                         </div>
                                         <div className="col-lg-6">
-                                            <label>Timeline <span className='red_star'>*</span></label>
+                                            <label>Timeline </label>
                                             <input type="date" min={taskUpdateChild.start} max={taskUpdateChild.end} className="form-control" value={taskUpdateChild.timeline} onChange={
                                                 (e) => { setTaskUpadteChild({ ...taskUpdateChild, timeline: e.target.value }) }
                                             } />
@@ -2235,7 +2268,7 @@ const Stage = (props) => {
                                             </div>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                            <label>{lang["taskmember"]} </label>
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {
@@ -2384,7 +2417,7 @@ const Stage = (props) => {
                                             </div>
                                         </div>
                                         <div class="form-group col-lg-12">
-                                            <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
+                                            <label>{lang["taskmember"]} <span className='red_star'>*</span> </label>
                                             {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                             <div class="user-checkbox-container">
                                                 {membersProject?.map((user, index) => {

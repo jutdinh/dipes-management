@@ -18,6 +18,7 @@ import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
 import { Workflow } from './workflow';
+import { View_Notication } from './navbar';
 import Keys  from './keys/keys'
 import "../css/index.scss";
 
@@ -98,6 +99,7 @@ function App() {
         <Route path="/workflow" element={<Navigation Child={Workflow} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
+        <Route path="/notifications" element={<Navigation Child={View_Notication} />} />
         <Route path="/profile" element={<Navigation Child={Profile} />} />
         <Route path="/settings" element={<Navigation Child={Settings} />} />
         <Route path="/about" element={<Navigation Child={About} />} />

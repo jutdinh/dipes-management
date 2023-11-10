@@ -418,7 +418,7 @@ export default {
     "error.checkday_start": "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
     "error.checkday_end": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
     "error.task_description": "Vui lòng nhập mô tả cho yêu cầu công việc",
-    "error.members": "Vui lòng chọn người thực hiện yêu cầu",
+    "error.members": "Vui lòng chọn thành viên",
     "error.task_priority": " Vui lòng chọn mức độ ưu tiên",
     "error.members_stage": "Vui lòng chọn người thực hiện giai đoạn",
     "gantt.year": "Năm",
@@ -479,14 +479,23 @@ export default {
     "not found task": "Dự án không có yêu cầu",
     "hidden-gantt": "Ẩn Gantt",
     "show-gantt": "Hiển thị Gantt",
-
+"just now": "Vừa xong",
     "mins ago": "phút trước",
     "secs ago": "giây trước",
     "hours ago": "giờ trước",
     "days ago": "ngày trước",
     "months ago": "tháng trước",
     "years ago": "năm trước",
-    "notification": "Thông báo"
+    "notification": "Thông báo",
+    "notifi content": "Nội dung thông báo",
+    "notifi status": "Trạng thái",
+    "notifi time": "Thời gian nhận thông báo",
+    "unread": "Chưa đọc",
+    "read": "Đã đọc",
+    "not notification":"Chưa có thông báo",
+    "view all notificaton": "Xem tất cả thông báo",
+    "not found notification": "Không tìm thấy thông báo"
+
 
 
 

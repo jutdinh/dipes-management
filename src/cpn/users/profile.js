@@ -189,7 +189,7 @@ export default (props) => {
                                         <h5>{lang["profile user"]}</h5>
                                     </div>
                                     {user.role !== "uad" ? (
-                                        <i className="fa fa-edit size pointer" data-toggle="modal" data-target="#editMember"></i>
+                                        <i className="fa fa-edit size-32 pointer" data-toggle="modal" data-target="#editMember"></i>
                                     ) : null
 
                                     }

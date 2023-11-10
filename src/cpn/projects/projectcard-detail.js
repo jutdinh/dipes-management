@@ -14,7 +14,7 @@ import responseMessages from "../enum/response-code";
 
 import { formatDate } from "../../redux/configs/format-date";
 export default () => {
-    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const _users = JSON.parse(stringifiedUser)
@@ -374,7 +374,15 @@ export default () => {
 
     const addMember = (e) => {
         e.preventDefault();
-
+        const dataSocket = {
+            targets: selectedMemberTask,
+            actor: { fullname: _users.username },
+            context: 'project/add-member',
+            note: {
+                project_name: project.project_name,
+                project_id: project_id
+            }
+        }
         fetch(`${proxy}/projects/members`, {
             method: "POST",
             headers: {
@@ -391,6 +399,7 @@ export default () => {
                 const { success, content, data, status } = resp;
                 if (success) {
                     showApiResponseMessage(status);
+                    socket.emit("project/notify", dataSocket)
                 } else {
                     showApiResponseMessage(status);
                 }
@@ -656,7 +665,19 @@ export default () => {
             project_id: project.project_id,
             username: member.username
         };
+        const dataSocket = {
+            targets: member.username,
+            actor: {
+                fullname: _users.fullname,
+                username: _users.username,
+                avatar: _users.avatar
+            },
+            context: 'project/remove-member',
+            note: {
+                project_name: project.project_name,
 
+            }
+        }
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.member"],
@@ -694,6 +715,7 @@ export default () => {
                             return;
                         }
                         if (success) {
+                            socket.emit("project/notify", dataSocket)
                             showApiResponseMessage(status);
                         } else {
                             showApiResponseMessage(status);
@@ -1103,11 +1125,37 @@ export default () => {
 
 
     // Tìm member trong sortedMembers có username trùng với _users.username
-    const memberCheck = sortedMembers?.find(member => member.username === _users.username);
+    let memberCheck = { }
+    
+     memberCheck = sortedMembers?.find(member => member.username === _users.username);
 
+    // useEffect(() => {
+    //     if (!memberCheck || memberCheck === undefined) {
+
+    //         Swal.fire({
+    //             title: lang["confirm"],
+    //             text: lang["delete.task"],
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: lang["btn.delete"],
+    //             cancelButtonText: lang["btn.cancel"],
+    //             target: document.getElementById("second-row"),
+    //             customClass: {
+    //                 confirmButton: 'swal2-confirm my-confirm-button-class'
+    //             }
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 window.history.back()
+    //             }
+    //         });
+
+    //     }
+    // }, []);
+    // console.log(memberCheck)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
+           
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
@@ -1125,7 +1173,7 @@ export default () => {
                                     <div class="heading1_project_detail  margin_0">
                                         <h5>{lang["project.info"]}</h5>
                                     </div>
-                                    
+
                                     {
                                         (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck?.permission === "supervisor" || projectmanager.username === _users.username) &&
                                         <div class="" onClick={editProject}>
@@ -1210,7 +1258,7 @@ export default () => {
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
-                                                                   ( ["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username )&&
+                                                                    (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username) &&
                                                                     <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.action"]}</th>
                                                                 }
                                                             </tr>

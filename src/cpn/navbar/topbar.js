@@ -7,12 +7,21 @@ import { useLocation } from 'react-router-dom';
 import da from "date-fns/esm/locale/da/index.js";
 
 export default () => {
-    const { proxy, lang, auth, profiles } = useSelector((state) => state);
+    const { proxy, lang, auth, profiles, socket } = useSelector((state) => state);
     const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
     const [defaultValue, setDefaultValue] = useState({});
     const fullname = localStorage.getItem("fullname");
     const _token = localStorage.getItem("_token");
-    let langItemCheck = localStorage.getItem("lang").toLowerCase();
+    const stringifiedUser = localStorage.getItem("user");
+    const _users = JSON.parse(stringifiedUser)
+
+    let langItemCheck = localStorage.getItem("lang");
+    if (langItemCheck) {
+        langItemCheck = langItemCheck.toLowerCase();
+    } else {
+        langItemCheck = "vi";
+    }
+
     const langs = [
         { id: 0, label: lang["vi"], flag: "vietnam.png", value: "Vi" },
         { id: 1, label: lang["en"], flag: "united-kingdom.png", value: "En" },
@@ -26,7 +35,7 @@ export default () => {
         const defaultLang = langs.filter((l) => l.value === langItem)[0];
         setDefaultValue(defaultLang);
     }, []);
-    console.log(langItemCheck)
+    // console.log(langItemCheck)
 
     const location = useLocation();
 
@@ -132,7 +141,37 @@ export default () => {
 
 
 
+    useEffect(() => {
 
+        socket.on('project/notify', (data) => {
+            // console.log(data)
+      
+            const dataRespon =
+            {
+
+                image_url: data.actor.avatar,
+                url: data.url,
+                content: data.content,
+                read: false,
+                notify_at: new Date().toISOString(),
+                username: data.targets.map(target => target.username).join(', ')
+            }
+
+            // console.log(dataRespon)
+
+          
+
+            if (data.targets.some(target => target.username === _users.username)) {
+                // Cập nhật state nếu người dùng hiện tại có trong danh sách targets
+                setData(prevData => [dataRespon, ...prevData]);
+            }
+
+        });
+
+        return () => {
+            socket.off("/project/notify");
+        }
+    }, []);
 
     useEffect(() => {
         fetch(`${proxy}/notify/notifies`, {
@@ -143,14 +182,20 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log(resp)
+                // console.log(resp)
+                const sortedData = data.sort((a, b) => {
+                    const dateA = new Date(a.notify_at);
+                    const dateB = new Date(b.notify_at);
+
+                    return dateB - dateA;
+                });
                 if (success) {
-                    setData(data)
+                    setData(sortedData)
                 }
             })
     }, [])
 
-    console.log(data)
+    // console.log(data)
     const [showPopup, setShowPopup] = useState(false);
     const popupRef = useRef();
 
@@ -185,7 +230,7 @@ export default () => {
         return unreadCount;
     };
     const unreadCount = countUnreadNotifications(data);
-    console.log(`Số thông báo chưa đọc: ${unreadCount}`);
+
 
 
     const [currentTimestamp, setCurrentTimestamp] = useState(new Date());
@@ -221,8 +266,11 @@ export default () => {
             return `${elapsedHours} ${lang["hours ago"]}`;
         } else if (elapsedMinutes > 0) {
             return `${elapsedMinutes} ${lang["mins ago"]}`;
-        } else {
+        } else if (elapsedMilliseconds > 0) {
+
             return `${elapsedSeconds} ${lang["secs ago"]}`;
+        } else {
+            return lang["just now"];
         }
     };
     const markAsRead = (index) => {
@@ -244,13 +292,14 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
-                    console.log(resp);
+                    // console.log(resp);
                 })
                 .catch((error) => {
                     // console.error("Lỗi khi gửi yêu cầu PUT:", error);
                 });
         }
-        window.location.href = `${notificationToMarkAsRead.url}`
+
+        window.location.href = `${notificationToMarkAsRead.url !== undefined ? notificationToMarkAsRead.url : "#"}`
     };
 
     const formatContent = (imageSrc, content, lang) => {
@@ -259,9 +308,7 @@ export default () => {
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
                 <img src={proxy + imageSrc} alt="Avatar" style={{ width: "40px", marginTop: "10px", borderRadius: "100%", height: "40px", marginRight: "10px" }} />
-                <span className="notification-title pointer" style={{ margin: 0 }}
-                    dangerouslySetInnerHTML={{ __html: lang === "vi" ? boldContent : content }}
-                />
+                <span className="notification-title pointer" style={{ margin: 0 }} dangerouslySetInnerHTML={{ __html: boldContent }} />
             </div>
         );
     };
@@ -304,7 +351,7 @@ export default () => {
                         <div className="icon_info">
                             <ul>
                                 {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li> */}
-                                <li><a href="#"><i className="fa fa-bell-o" onClick={() => setShowPopup(!showPopup)}></i><span className="badge">{unreadCount}</span></a></li>
+                                <li><a href="#"><i className="fa fa-bell-o" onClick={() => setShowPopup(!showPopup)}></i><span className="badge">{unreadCount < 100 ? unreadCount : "99+"}</span></a></li>
                                 {/* <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
                                 <li>
                                     <a href="#" onClick={changeTheme}>
@@ -344,12 +391,12 @@ export default () => {
                                 {lang["notification"]}
                                 {/* <button class="clear-btn">CLEAR ALL</button> */}
                             </div>
-                            <ul class="notification-list ml-1 mr-1 mt-1">
+                            <ul class="notification-list mt-1">
                                 {data && data.length > 0 ?
                                     data.map((notification, index) => (
                                         <li
                                             key={notification.id}
-                                            className={`notification-item ${!notification.read ? "unread" : ""}`}
+                                            className={`notification-item pointer ${!notification.read ? "unread" : ""}`}
                                             onClick={() => markAsRead(index)}
                                         >
                                             {/* <span className="notification-title">{langItemCheck === "Vi" ? notification.content.vi : notification.content.en}</span> */}
@@ -362,14 +409,15 @@ export default () => {
                                             </div>
                                         </li>
                                     )) :
-                                    <li className={`notification-item`}>
-                                        <span className="notification-title">Chưa có thông báo</span>
+                                    <li className={`notification-item align-center`}>
+                                        <span className="notification-title">{lang["not notification"]}</span>
                                     </li>
                                 }
                             </ul>
-                            <div class={`notification-footer ${data && data.length > 0 ? `` : `opacity-footer`}`}>
-                                <a href="#">View all Notifications</a>
-                            </div>
+                            {data && data.length > 0 ? (
+                                <div class={`notification-footer ${data && data.length > 0 ? `` : `opacity-footer`}`}>
+                                    <a href="/notifications">{lang["view all notificaton"]}</a>
+                                </div>) : null}
                         </div>
                     )}
                 </div>

@@ -196,7 +196,7 @@ function toggleFullScreen() {
         }
     }
 }
-
+ 
 
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,

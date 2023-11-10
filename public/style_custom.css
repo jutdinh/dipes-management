@@ -153,7 +153,20 @@
 .upload-button:hover {
     background-color: #0056b3;
 }
-
+.icon_info span.badge {
+    font-size: 12px;
+    line-height: 16px;
+    padding: 1px 3px;
+    position: absolute;
+    right: -9px;
+    top: -7px;
+    background: #ffffff;
+    border-radius: 100%;
+    color: #ff0000;
+    font-weight: 600;
+    width: 27px;
+    height: 20px;
+}
 .icon {
     font-size: 50px;
     margin-right: 20px;
@@ -246,7 +259,7 @@ padding: 0;
 }
 .icon-hidden {
     visibility: hidden;
-    
+
 }
 
 

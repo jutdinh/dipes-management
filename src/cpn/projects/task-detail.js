@@ -20,7 +20,7 @@ import $ from 'jquery';
 import TableScroll from "./table-test-scroll"
 
 export default () => {
-    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const _users = JSON.parse(stringifiedUser)
@@ -40,7 +40,7 @@ export default () => {
     const [project, setProject] = useState({}); //// Update project
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
-    console.log(selectedMemberTask)
+    // console.log(selectedMemberTask)
 
 
 
@@ -93,7 +93,7 @@ export default () => {
     const [taskDetail, setTaskDetail] = useState([]);
 
     const [stage, setStage] = useState([]);
-    console.log(stage)
+    // console.log(stage)
     const [stageData, setStageData] = useState([]);
     // console.log(stageData)
     const [process, setProcess] = useState({});
@@ -231,6 +231,22 @@ export default () => {
     const submitAddStage = (e) => {
         e.preventDefault();
         stage.members = selectedMemberTask.map(user => user.username);
+        const dataSocket = {
+            targets: selectedMemberTask, 
+            actor: {
+                fullname: _users.fullname,
+                username: _users.username,
+                avatar: _users.avatar
+            }, 
+            context: 'project/add-period-member', 
+            note: { 
+              project_name: project.project_name,
+              period_name: stage.stage_name,
+              project_id: project_id
+            }
+        }
+
+
         const errors = {};
         if (!stage.stage_name) {
             errors.stage_name = lang["error.stagename"];
@@ -284,6 +300,7 @@ export default () => {
                     if (success) {
                         setStage([])
                         functions.showApiResponseMessage(status, false);
+                        socket.emit("project/notify", dataSocket)
                         callDataTask()
                         setSelectedMemberTask([])
                         $('#closeModalAddStage').click()
@@ -296,6 +313,7 @@ export default () => {
                     }
                 }
             })
+        
 
     }
 
@@ -1333,7 +1351,7 @@ export default () => {
                                             </div>
                                         </div>
 
-                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} />
+                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={ project.project_name } />
                                     </div>
                                    
                                     {/* Add Progress */}

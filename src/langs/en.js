@@ -413,9 +413,9 @@ export default {
     "error.checkday_start": "The start date must be less than the end date",
     "error.checkday_end": "The end date must be greater than to the start date",
     "error.task_description": "Please enter a description",
-    "error.members": "Please select the person to carry out the task",
+    "error.members": "Please select a member",
     "error.task_priority":" Please choose a priority",
-    "error.members_stage": "Please select the person to carry out the stage",
+    "error.members_stage": "Please select a member",
     "gantt.year": "Year",
     "gantt.quarters": "Quarters",
     "gantt.months": "Months",
@@ -475,14 +475,21 @@ export default {
     "hidden-gantt": "Hide Gantt",
     "show-gantt": "Display Gantt",
     "mins ago": "mins ago",
- 
+    "just now": "just now",
     "secs ago": "secs ago",
     "hours ago": "hours ago",
     "days ago": "days ago",
     "months ago": "months ago",
     "years ago": "years ago",
-    "notification": "Notifications"
-
+    "notification": "Notifications",
+    "notifi content": "Contents of the notifications",
+    "notifi status": "Status",
+    "notifi time": "Time to receive notifications",
+    "unread": "Unread",
+    "read": "Read",
+    "not notification":"Not notifications yet",
+    "view all notificaton": "View all Notifications",
+    "not found notification": "No notifications found."
 
 
 }
