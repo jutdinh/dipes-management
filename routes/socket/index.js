@@ -58,10 +58,10 @@ const socketController = (socket) => {
         }
 
         const translatedContext = {
-            vi, en, url
+            vi, en
         }
 
-        socket.broadcast.emit("project/notify", { targets, actor, context: translatedContext  })
+        socket.broadcast.emit("project/notify", { targets, actor, content: translatedContext, url  })
     })
 }
 
