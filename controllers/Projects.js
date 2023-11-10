@@ -253,13 +253,24 @@ class ProjectsController extends Controller {
             const { project_id } = req.params;
             if (intValidate(project_id)) {
 
+                const { decodedToken } = objects;
                 const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
 
+                const { members, manager } = project;
                 if (project) {
-                    const Project = new ProjectsRecord(project)
-                    context.data = Project.getFullProjectData(false)
-                    context.success = true
-                    context.status = "0x4501041"
+                
+                    if( manager.username == decodedToken.username || members[ this.dotEncode(decodedToken.username) ] != undefined ){
+
+                        const Project = new ProjectsRecord(project)
+                        context.data = Project.getFullProjectData(false)
+                        context.success = true
+                        context.status = "0x4501041"
+                    }else{
+                        context.success = false
+                        context.status = "0x4501049"    
+                        context.content = "Not a member"
+                    }
+
                 } else {
                     context.success = false
                     context.status = "0x4501049"
@@ -849,7 +860,7 @@ class ProjectsController extends Controller {
                             let users = [];
                             if (members && Array.isArray(members)) {
                                 const AccountsModel = new Accounts()
-                                const users = await AccountsModel.findAll({ username: { $in: members } })
+                                users = await AccountsModel.findAll({ username: { $in: members } })
                                 const serializedUsers = {}
                                 users.map(user => {
                                     serializedUsers[user.username] = user
@@ -866,9 +877,9 @@ class ProjectsController extends Controller {
                             context.success = true
                             context.status = "0x4501253"
 
-                            for (let i = 0; i < members.length; i++) {
+                            for (let i = 0; i < users.length; i++) {
 
-                                const  username  = users[i]
+                                const  { username } = users[i]
 
                                 const notify = {
                                     image_url: decodedToken.avatar,
@@ -949,6 +960,8 @@ class ProjectsController extends Controller {
                         const { start, end, members } = period
                         const startDate = new Date(start)
                         const endDate = new Date(end)
+                        const newMembersUsernameList = period.members;
+                        const originMembers = oldPeriod.period_members;
 
                         if (endDate && startDate && endDate - startDate >= 0) {
                             const newMemberNames = []
@@ -961,7 +974,7 @@ class ProjectsController extends Controller {
                                     newMemberNames.push(user.fullname)
                                 })
                                 period.period_members = serializedUsers
-                            }
+                            }                            
 
                             const newPeriod = { ...oldPeriod, ...period }
 
@@ -972,6 +985,15 @@ class ProjectsController extends Controller {
 
                             await Project.__modifyAndSaveChange__(`tasks.${period_id}`, newPeriod)
                             this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${oldPeriod.period_name} => ${newPeriod.period_name} | __period_start: ${oldPeriod.start} => ${newPeriod.start} | __period_end: ${oldPeriod.end} => ${newPeriod.end} | __member: ${oldMemberNames.join(", ")} => ${newMemberNames.join(', ')}`, decodedToken.username)
+
+
+                            const newAddedMembers = newMembersUsernameList.filter( mem => originMembers[this.dotEncode(mem)] == undefined )
+                            console.log(newAddedMembers)
+
+                            const arraizedOldMembers = Object.values(originMembers).map( u => u.username )
+                            const deletedUsers = arraizedOldMembers.filter( u => newMembersUsernameList.indexOf(u) == -1 ? true: false )
+                            console.log( deletedUsers )
+
                             context.content = "Cập nhật giai đoạn thành công"
                             context.success = true
                             context.status = "0x4501257"
