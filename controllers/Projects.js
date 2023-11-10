@@ -259,7 +259,7 @@ class ProjectsController extends Controller {
                 const { members, manager } = project;
                 if (project) {
                 
-                    if( manager.username == decodedToken.username || members[ this.dotEncode(decodedToken.username) ] != undefined ){
+                    if( this.isAdmin( decodedToken ) || manager.username == decodedToken.username || members[ this.dotEncode(decodedToken.username) ] != undefined ){
 
                         const Project = new ProjectsRecord(project)
                         context.data = Project.getFullProjectData(false)
