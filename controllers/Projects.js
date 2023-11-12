@@ -1330,6 +1330,45 @@ class ProjectsController extends Controller {
                                     this.stringifyObject({ ...newTask, members: usernames.join(", ") }, inforFields)
                                 )
                                 this.saveLog("info", req.ip, "__modifytaskinfor", `__projectname: ${project.project_name}| __period_name: ${period.period_name} | __taskname ${task.task_name} | __taskpriority: ${task.task_priority} => ${newTask.task_priority} |  __taskname ${task.task_name} => ${newTask.task_name} | __taskdescription: ${task.task_description} => ${newTask.task_description}`, decodedToken.username)
+
+                                const oldMemberUsernames = Object.values(oldTask.members).map(user => user.username);
+                                const newMemberUsernames = req.body.task.members;
+
+                                const newAddedMembers = newMemberUsernames.filter( mem => oldMemberUsernames.indexOf(mem) == -1 )
+
+                                const deletedMembers  = oldMemberUsernames.filter( mem => newMemberUsernames.indexOf( mem ) == -1 )
+                                
+                                console.log(newAddedMembers)
+                                for( let i = 0; i < newAddedMembers.length; i++ ){
+                                    const notify = {    
+                                        image_url: decodedToken.avatar,
+                                        url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}`,
+                                        content: {
+                                            vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
+                                            en: `[${decodedToken.fullname}] has added you to a new task`,
+                                        },
+                                        username: newAddedMembers[i]
+                                    }
+                                    const Notify = new NotificationRecord(notify)
+                                    await Notify.save()
+                                }
+
+                                console.log(deletedMembers)
+
+                                for( let i = 0; i < deletedMembers.length; i++ ){
+                                    const notify = {    
+                                        image_url: decodedToken.avatar,
+                                        url: ``,
+                                        content: {
+                                            vi: `[${decodedToken.fullname}] đã xóa bạn khỏi một công viên`,
+                                            en: `[${decodedToken.fullname}] has removed you from a task`
+                                        },
+                                        username: deletedMembers[i]
+                                    }
+                                    const Notify = new NotificationRecord(notify)
+                                    await Notify.save()
+                                }
+
                                 break;
 
                             case "status":
@@ -1574,6 +1613,48 @@ class ProjectsController extends Controller {
 
                             context.status = "0x4501261"
                             context.content = "Cập nhật thành công"
+
+
+
+
+                            const oldMemberUsernames = Object.values(oldChildTask.members).map(user => user.username);
+                            const newMemberUsernames = req.body.child_task.members;
+
+
+                            
+                            const newAddedMembers = newMemberUsernames.filter( mem => oldMemberUsernames.indexOf(mem) == -1 )
+                            const deletedMembers  = oldMemberUsernames.filter( mem => newMemberUsernames.indexOf( mem ) == -1 )                            
+                            
+                            for( let i = 0; i < newAddedMembers.length; i++ ){
+                                const notify = {    
+                                    image_url: decodedToken.avatar,
+                                    url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}&child_task_id=${child_task.child_task_id}`,
+                                    content: {
+                                        vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
+                                        en: `[${decodedToken.fullname}] has added you to a new task`,
+                                    },
+                                    username: newAddedMembers[i]
+                                }
+                                const Notify = new NotificationRecord(notify)
+                                await Notify.save()
+                            }
+                            
+                            
+
+                            for( let i = 0; i < deletedMembers.length; i++ ){
+                                const notify = {    
+                                    image_url: decodedToken.avatar,
+                                    url: ``,
+                                    content: {
+                                        vi: `[${decodedToken.fullname}] đã xóa bạn khỏi một công viên`,
+                                        en: `[${decodedToken.fullname}] has removed you from a task`
+                                    },
+                                    username: deletedMembers[i]
+                                }
+                                const Notify = new NotificationRecord(notify)
+                                await Notify.save()
+                            }
+                            
                         } else {
                             context.content = "Khum có quyền thực hiện thao tác này"
                             context.status = "0x4501137"
