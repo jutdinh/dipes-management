@@ -553,7 +553,7 @@ class ProjectsController extends Controller {
                 if (project) {
                     const AccountsModel = new Accounts()
                     const Project = new ProjectsRecord(project)
-
+                    const oldProject = project;
                     const usernamesArray = usernames.map(({ username }) => username)
                     const queryStart = new Date()
                     const users = await AccountsModel.findAll({ username: { $in: usernamesArray } })
@@ -565,9 +565,12 @@ class ProjectsController extends Controller {
                     this.saveLog("info", req.ip, "__addmembertoproject", `__projectname ${project.project_name}| __username ${members.filter(mem => mem.permission != undefined).map(mem => `${mem.username}-${mem.fullname}( ${mem.permission} )`).join(", ")}`, decodedToken.username)
 
                     Project.__modifyAndSaveChange__("members", Project.getData().members)
+                    
+                    const oldProjectUsernameArray = Object.values( project.members ).map( m => m.username )
+                    const newAddedMembers = usernamesArray.filter( u => oldProjectUsernameArray.indexOf(u) == -1 )
 
-                    for (let i = 0; i < users.length; i++) {
-                        const { username } = users[i]
+                    for (let i = 0; i < newAddedMembers.length; i++) {
+                        const username = newAddedMembers[i]
                         const notify = {
                             image_url: decodedToken.avatar,
                             url: `/projects/detail/${project.project_id}`,
@@ -581,6 +584,22 @@ class ProjectsController extends Controller {
 
                         const Notify = new NotificationRecord(notify)
                         await Notify.save()
+                    }
+
+                    const deletedUsers = oldProjectUsernameArray.filter( u => usernamesArray.indexOf( u ) == -1 )
+
+                    for( let i = 0; i < deletedUsers.length; i++ ){
+                        const username = deletedUsers[i]
+                        const notify = {
+                            image_url: decodedToken.avatar,
+                            content: {
+                                vi: `[${decodedToken.fullname}] đã xóa bạn khỏi dự án [${project.project_name}]`,
+                                en: `[${decodedToken.fullname}] has removed you from project [${project.project_name}]`,
+                            },
+                            username,
+                        }
+                        const Nofity = new NotificationRecord(notify)
+                        await Nofity.save()
                     }
 
                     context.success = true;
