@@ -565,6 +565,11 @@ class ProjectsController extends Controller {
                     this.saveLog("info", req.ip, "__addmembertoproject", `__projectname ${project.project_name}| __username ${members.filter(mem => mem.permission != undefined).map(mem => `${mem.username}-${mem.fullname}( ${mem.permission} )`).join(", ")}`, decodedToken.username)
 
                     Project.__modifyAndSaveChange__("members", Project.getData().members)
+
+
+                    const deployers = members.filter( mem => mem.permission == Controller.permission.dpr || mem.role == Controller.permission.dpr )
+                
+
                     
                     const oldProjectUsernameArray = Object.values( project.members ).map( m => m.username )
                     const newAddedMembers = usernamesArray.filter( u => oldProjectUsernameArray.indexOf(u) == -1 )

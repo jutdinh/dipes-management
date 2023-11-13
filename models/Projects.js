@@ -65,6 +65,16 @@ class Projects extends Model {
         this.members.__addProperty__("avatar", Model.types.string)
         this.members.__addProperty__("permission", Model.types.enum, { required: true, values: ["manager", "supervisor", "deployer"] })
 
+        this.__addProperty__("deployers", Model.types.model)
+        this.deployers.__addProperty__("username", Model.types.string)
+        this.deployers.__addProperty__("fullname", Model.types.string)
+        this.deployers.__addProperty__("avatar", Model.types.string)
+
+        this.__addProperty__("superviser", Model.types.model)
+        this.superviser.__addProperty__("username", Model.types.string)
+        this.superviser.__addProperty__("fullname", Model.types.string)
+        this.superviser.__addProperty__("avatar", Model.types.string)
+
         this.__addProperty__("create_by", Model.types.json);
         this.create_by.__addProperty__("username", Model.types.string, { required: true })
         this.create_by.__addProperty__("fullname", Model.types.string)
