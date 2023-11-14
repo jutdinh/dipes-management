@@ -534,6 +534,12 @@ class ProjectsController extends Controller {
         res.status(200).send(context)
     }
 
+    getProjectMembers = ( project ) => {
+        const { deployers, supervisors } = project;
+        const members = [ ...Object.values( deployers ), ...Object.values( supervisors ) ]
+        return members
+    }
+
     addMembers = async (req, res, privileges = []) => {
         this.writeReq(req)
         const context = await this.generalCheck(req)
@@ -551,27 +557,38 @@ class ProjectsController extends Controller {
                 console.log(`QUERY PROJECT PROCESSING TIME: ${queryEnd - queryStart}`)
 
                 if (project) {
+                    
                     const AccountsModel = new Accounts()
-                    const Project = new ProjectsRecord(project)
-                    const oldProject = project;
+                    const Project = new ProjectsRecord(project)                                        
+                    
                     const usernamesArray = usernames.map(({ username }) => username)
                     const queryStart = new Date()
                     const users = await AccountsModel.findAll({ username: { $in: usernamesArray } })
                     const queryEnd = new Date()
                     console.log(`QUERY USER PROCESSING TIME: ${queryEnd - queryStart}`)
 
-                    const members = usernames.map(({ username, permission, role }) => Project.createMember(users, username, permission || role)).filter(result => result != undefined)
-                    Project.updateMembers(members)
+                    const members = usernames.map(({ username, permission, role }) => Project.createMember(users, username, permission || role)).filter(result => result != undefined)                    
                     this.saveLog("info", req.ip, "__addmembertoproject", `__projectname ${project.project_name}| __username ${members.filter(mem => mem.permission != undefined).map(mem => `${mem.username}-${mem.fullname}( ${mem.permission} )`).join(", ")}`, decodedToken.username)
-
-                    Project.__modifyAndSaveChange__("members", Project.getData().members)
-
+                   
 
                     const deployers = members.filter( mem => mem.permission == Controller.permission.dpr || mem.role == Controller.permission.dpr )
-                
+                    const supervisors = members.filter( mem => mem.permission == Controller.permission.spv || mem.role == Controller.permission.spv )
 
                     
-                    const oldProjectUsernameArray = Object.values( project.members ).map( m => m.username )
+                    const serializedDeployers   = {}
+                    const serializedSupervisors = {}
+                    deployers.map( mem => {
+                        serializedDeployers[mem.username] = mem
+                    })
+
+                    supervisors.map( mem => {
+                        serializedSupervisors[mem.username] = mem
+                    })
+
+                    await Project.__modifyAndSaveChange__("deployers", serializedDeployers)
+                    await Project.__modifyAndSaveChange__("supervisors", serializedSupervisors)
+
+                    const oldProjectUsernameArray = this.getProjectMembers( project ).map( m => m.username )
                     const newAddedMembers = usernamesArray.filter( u => oldProjectUsernameArray.indexOf(u) == -1 )
 
                     for (let i = 0; i < newAddedMembers.length; i++) {
@@ -639,16 +656,23 @@ class ProjectsController extends Controller {
             const { Project, decodedToken } = objects
             const project = Project.getData()
             const username = this.dotEncode(req.body.username);
+            const permission = req.body.permission;
             if (
                 permission == Controller.permission.manager ||
                 this.isAdmin(decodedToken) ||
                 this.checkPrivilege(permission, project.members[username].permission)
             ) {
-                delete project.members[username]
+                if( permission == Controller.permission.dpr ){
+                    delete project.deployers[username]
+                }
+                if( permission == Controller.permission.spv ){
+                    delete project.supervisors[username]
+                }
 
                 const Project = new ProjectsRecord(project)
                 const tasks = this.deleteUserFromTasks(project, username)
-                await Project.__modifyAndSaveChange__("members", project.members)
+                await Project.__modifyAndSaveChange__("deployers", project.deployers)
+                await Project.__modifyAndSaveChange__("supervisors", project.supervisors)
                 await Project.__modifyAndSaveChange__("tasks", tasks)
 
                 await this.saveLog("info", req.ip,
@@ -729,6 +753,37 @@ class ProjectsController extends Controller {
                     context.status = "0x4501095"
                     context.success = false
                 }
+            } else {
+                context.content = "Khum thể thay đổi quyền của người dùng có quyền cao hơn người thực hiện"
+                context.status = "0x4501096"
+                context.success = false
+            }
+        }
+
+        const end = new Date()
+        console.log(`PROCCESSING TIME: ${end - start}`)
+        delete context.objects;
+        res.status(200).send(context)
+    }
+
+    changeMemberPrivileges = async (req, res) => {
+        this.writeReq(req)
+        const context = await this.projectGeneralCheck(req, req.body.project_id)
+        const { success, objects, permission } = context;
+        const start = new Date()
+
+        if (success) {
+            const username = this.dotEncode(req.body.username);
+            const targetPermission = req.body.permission
+
+            const { Project, decodedToken } = objects
+            const project = Project.getData()
+            if (
+                permission == Controller.permission.manager ||
+                this.isAdmin(decodedToken)
+               
+            ) {
+                console.log(req.body)
             } else {
                 context.content = "Khum thể thay đổi quyền của người dùng có quyền cao hơn người thực hiện"
                 context.status = "0x4501096"

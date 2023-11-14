@@ -87,4 +87,14 @@ router.put("/project/member/privilege", async (req, res) => {
         res.send({ success: false, status: "0x4501246" })
     }
 })
+
+router.put("/project/members/privileges", async (req, res) => { 
+    try{
+        await ProjectsController.changeMemberPrivileges( req, res ) 
+        
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
 module.exports = router;

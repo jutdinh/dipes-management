@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const { Model } = require('../config/models');
 const Crypto = require('../controllers/Crypto');
+const { Controller } = require('../config/controllers');
 
 class Projects extends Model {
 
@@ -70,10 +71,10 @@ class Projects extends Model {
         this.deployers.__addProperty__("fullname", Model.types.string)
         this.deployers.__addProperty__("avatar", Model.types.string)
 
-        this.__addProperty__("superviser", Model.types.model)
-        this.superviser.__addProperty__("username", Model.types.string)
-        this.superviser.__addProperty__("fullname", Model.types.string)
-        this.superviser.__addProperty__("avatar", Model.types.string)
+        this.__addProperty__("supervisors", Model.types.model)
+        this.supervisors.__addProperty__("username", Model.types.string)
+        this.supervisors.__addProperty__("fullname", Model.types.string)
+        this.supervisors.__addProperty__("avatar", Model.types.string)
 
         this.__addProperty__("create_by", Model.types.json);
         this.create_by.__addProperty__("username", Model.types.string, { required: true })
@@ -416,10 +417,16 @@ class ProjectsRecord extends Projects {
     }
 
     getFullProjectData = () => {
-        const project = this.getData()
-        const members = Object.values(project.members)
+        const project = this.getData()        
+        const supervisors = Object.values(project.supervisors);
+        const deployers = Object.values(project.deployers);
+        supervisors.map( mem => { mem.permission = Controller.permission.spv } )
+        deployers.map( mem => { mem.permission = Controller.permission.dpr } )
+
+        project.members = [ ...supervisors, ...deployers ]
+
         const versions = Object.values(project.versions)
-        project.members = members
+        
         const currentVersion = project.versions[project.active_version] ? project.versions[project.active_version] : {}
         project.version = currentVersion
         project.versions = versions
