@@ -43,7 +43,7 @@ class NotificationController extends Controller {
             notifies.map( notify => {
                 for( let i = 0 ; i < keys.length; i++ ){
                     const key = keys[i]
-                    notify.content = notify.content.replace( key, lang[key] )
+                    notify.content = notify.content.replaceAll( key, lang[key] )
                 }
             })
 
@@ -116,6 +116,47 @@ class NotificationController extends Controller {
             await this.#__notify.removeNotifies( username )
             
             context.success = true;
+            context.content = "Successfully deleted data"            
+        }
+        res.status(200).send(context)
+    }
+
+    translateNotify = async ( req, res ) => {
+        
+        /**
+         *  desc: Dịch thông báo
+         *  method: POST
+         *  headers: {
+         *      Authorization: <Token>
+         *  }
+         * 
+         * body {
+         *      notify: <String>,
+         *      lang: ENUM ["vi", "en"]
+         *  }
+         * 
+         */
+        const verified = await this.verifyToken(req)
+        const context = {
+            success: false,
+            content: "Invalid token",
+            data: []
+        }
+
+        if( verified ){           
+
+            const langAbbr = req.body.lang
+            let notify  = req.body.notify ? req.body.notify : ""
+            const lang = langs[langAbbr] ? langs[langAbbr] : langs.vi            
+            const keys = Object.keys( lang )           
+
+            for( let i = 0 ; i < keys.length; i++ ){
+                const key = keys[i]
+                notify = notify.replaceAll( key, lang[key] )
+            }            
+            
+            context.success = true;
+            context.data = notify
             context.content = "Successfully deleted data"            
         }
         res.status(200).send(context)
