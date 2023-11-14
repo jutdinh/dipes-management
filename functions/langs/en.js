@@ -123,6 +123,15 @@ const en = {
     "__path": "Path",
     
 
+    "__has_added_you_to": "has added you to",
+    "__has_removed_you_from_project": "has removed you from project",
+    "__has_changed_your_project_privileges_in": "has changed your project privileges in",
+    "__has_added_you_to_phase": "has added you to phase",
+    "__of_project": "of project",
+    "__has_removed_you_from_phase": "has removed you from phase",
+    "__has_added_you_to_a_new_task": "has added you to a new task",
+
+
     info: "Information",
     warn: "Warning",
     error: "Error",

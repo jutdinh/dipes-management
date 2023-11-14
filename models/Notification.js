@@ -6,11 +6,8 @@ class Notification extends Model{
         this.__addProperty__( "notify_id", Model.types.int, { auto: true } )
         this.__addProperty__( "image_url", Model.types.string )
         this.__addProperty__( "url", Model.types.string )
-        this.__addProperty__( "content", Model.types.json )
+        this.__addProperty__( "content", Model.types.string )
         this.__addProperty__( "read", Model.types.bool, { default: false })
-
-        this.content.__addProperty__("vi", Model.types.string )
-        this.content.__addProperty__("en", Model.types.string )
 
         this.__addProperty__("notify_at", Model.types.datetime, { default: new Date() } )
         this.__addProperty__("username", Model.types.string )

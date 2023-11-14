@@ -2,6 +2,8 @@
 const { Controller } = require('../config/controllers');
 const { Notification, NotificationRecord } = require('../models/Notification');
 
+const langs = require('../functions/langs/index')
+
 class NotificationController extends Controller {
     #__notify = new Notification()
 
@@ -32,9 +34,19 @@ class NotificationController extends Controller {
         if( verified ){
             const decodedToken = this.decodeToken(req.header( "Authorization" ))
             const { username } = decodedToken;
+            const langAbbr = req.header("lang")
+            const lang = langs[langAbbr] ? langs[langAbbr] : langs.vi            
+            const keys = Object.keys( lang )           
 
             const notifies = await this.#__notify.findAll({ username })
             
+            notifies.map( notify => {
+                for( let i = 0 ; i < keys.length; i++ ){
+                    const key = keys[i]
+                    notify.content = notify.content.replace( key, lang[key] )
+                }
+            })
+
             context.success = true;
             context.content = "Successfully retrieve data"
             context.data = notifies.map( noti => {

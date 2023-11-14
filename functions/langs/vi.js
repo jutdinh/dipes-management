@@ -126,6 +126,14 @@ const vi = {
     info: "Thông tin",
     warn: "Cảnh báo",
     error: "Lỗi",
+
+    "__has_added_you_to": "đã thêm bạn vào dự án",
+    "__has_removed_you_from_project": "đã xóa bạn khỏi dự án",
+    "__has_changed_your_project_privileges_in": "đã thay đổi phân quyền của bạn trong dự án",
+    "__has_added_you_to_phase": "đã thêm bạn vào giai đoạn",
+    "__of_project": "của dự án",
+    "__has_removed_you_from_phase": "đã xóa bạn khỏi giai đoạn",
+    "__has_added_you_to_a_new_task": "đã thêm bạn vào một công việc mới",
 }
 
 module.exports = vi

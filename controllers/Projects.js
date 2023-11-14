@@ -596,10 +596,7 @@ class ProjectsController extends Controller {
                         const notify = {
                             image_url: decodedToken.avatar,
                             url: `/projects/detail/${project.project_id}`,
-                            content: {
-                                vi: `[${decodedToken.fullname}] đã thêm bạn vào dự án [${project.project_name}]`,
-                                en: `[${decodedToken.fullname}] has added you to [${project.project_name}]`,
-                            },
+                            content: `[${decodedToken.fullname}] __has_added_you_to [${project.project_name}]`,
                             username,
                             notify_at: new Date()
                         }
@@ -614,10 +611,7 @@ class ProjectsController extends Controller {
                         const username = deletedUsers[i]
                         const notify = {
                             image_url: decodedToken.avatar,
-                            content: {
-                                vi: `[${decodedToken.fullname}] đã xóa bạn khỏi dự án [${project.project_name}]`,
-                                en: `[${decodedToken.fullname}] has removed you from project [${project.project_name}]`,
-                            },
+                            content: `[${decodedToken.fullname}] __has_removed_you_from_project [${project.project_name}]`,
                             username,
                         }
                         const Nofity = new NotificationRecord(notify)
@@ -682,10 +676,7 @@ class ProjectsController extends Controller {
 
                 const notify = {
                     image_url: decodedToken.avatar,
-                    content: {
-                        vi: `[${decodedToken.fullname}] đã xóa bạn khỏi dự án [${project.project_name}]`,
-                        en: `[${decodedToken.fullname}] has removed you from project [${project.project_name}]`,
-                    },
+                    content: `[${decodedToken.fullname}] __has_removed_you_from_project [${project.project_name}]`,
                     username,
                 }
                 const Nofity = new NotificationRecord(notify)
@@ -738,10 +729,7 @@ class ProjectsController extends Controller {
                     const notify = {
                         image_url: decodedToken.avatar,
                         url: `/projects/detail/${ project.project_id }`,
-                        content: {
-                            vi: `[${decodedToken.fullname}] đã thay đổi phân quyền của bạn trong dự án [${project.project_name}]`,
-                            en: `[${decodedToken.fullname}] has changed your project privileges in [${project.project_name}]`,
-                        },
+                        content: `[${decodedToken.fullname}] __has_changed_your_project_privileges_in [${project.project_name}]`,
                         username: username
                     }
 
@@ -963,10 +951,7 @@ class ProjectsController extends Controller {
                                 const notify = {
                                     image_url: decodedToken.avatar,
                                     url: `/projects/detail/task/${project.project_id}?period=${period.period_id}`,
-                                    content: {
-                                        vi: `[${decodedToken.fullname}] đã thêm bạn vào giai đoạn [${period.period_name}] của dự án [${project.project_name}]`,
-                                        en: `[${decodedToken.fullname}] has added you to phase [${period.period_name}] of project [${project.project_name}]`
-                                    },
+                                    content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
                                     username
                                 }
                                 const Notify = new NotificationRecord(notify)
@@ -1070,10 +1055,7 @@ class ProjectsController extends Controller {
                                 const notify = {    
                                     image_url: decodedToken.avatar,
                                     url: `/projects/detail/${project.project_id}`,
-                                    content: {
-                                        vi: `[${decodedToken.fullname}] đã thêm bạn vào giai đoạn [${period.period_name}] của dự án [${project.project_name}]`,
-                                        en: `[${decodedToken.fullname}] has added you to phase [${period.period_name}] of project [${project.project_name}]`
-                                    },
+                                    content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
                                     username: newAddedMembers[i]
                                 }
                                 const Notify = new NotificationRecord(notify)
@@ -1088,10 +1070,7 @@ class ProjectsController extends Controller {
                                 const notify = {    
                                     image_url: decodedToken.avatar,
                                     url: ``,
-                                    content: {
-                                        vi: `[${decodedToken.fullname}] đã xóa bạn khỏi giai đoạn [${period.period_name}] của dự án [${project.project_name}]`,
-                                        en: `[${decodedToken.fullname}] has removed you from phase [${period.period_name}] of project [${project.project_name}]`
-                                    },
+                                    content: `[${decodedToken.fullname}] has removed you from phase [${period.period_name}] of project [${project.project_name}]`,
                                     username: deletedUsers[i]
                                 }
                                 const Notify = new NotificationRecord(notify)
@@ -1215,10 +1194,7 @@ class ProjectsController extends Controller {
                             const notify = {
                                 image_url: decodedToken.avatar,
                                 url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${newTask.task_id}`,
-                                content: {
-                                    vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
-                                    en: `[${decodedToken.fullname}] has added you to a new task`
-                                },
+                                content: `[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
                                 username
                             }
                             const Notify = new NotificationRecord(notify)
@@ -1291,10 +1267,7 @@ class ProjectsController extends Controller {
                             const notify = {
                                 image_url: decodedToken.avatar,
                                 url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}&child_task_id=${newChild.child_task_id}`,
-                                content: {
-                                    vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
-                                    en: `[${decodedToken.fullname}] has added you to a new task`
-                                },
+                                content: `[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
                                 username
                             }
                             const Notify = new NotificationRecord(notify)
@@ -1422,10 +1395,7 @@ class ProjectsController extends Controller {
                                     const notify = {    
                                         image_url: decodedToken.avatar,
                                         url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}`,
-                                        content: {
-                                            vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
-                                            en: `[${decodedToken.fullname}] has added you to a new task`,
-                                        },
+                                        content:`[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
                                         username: newAddedMembers[i]
                                     }
                                     const Notify = new NotificationRecord(notify)
@@ -1438,10 +1408,7 @@ class ProjectsController extends Controller {
                                     const notify = {    
                                         image_url: decodedToken.avatar,
                                         url: ``,
-                                        content: {
-                                            vi: `[${decodedToken.fullname}] đã xóa bạn khỏi một công viên`,
-                                            en: `[${decodedToken.fullname}] has removed you from a task`
-                                        },
+                                        content: `[${decodedToken.fullname}] __has_removed_you_from_a_task`,
                                         username: deletedMembers[i]
                                     }
                                     const Notify = new NotificationRecord(notify)
@@ -1708,10 +1675,7 @@ class ProjectsController extends Controller {
                                 const notify = {    
                                     image_url: decodedToken.avatar,
                                     url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${task.task_id}&child_task_id=${child_task.child_task_id}`,
-                                    content: {
-                                        vi: `[${decodedToken.fullname}] đã thêm bạn vào một công việc mới`,
-                                        en: `[${decodedToken.fullname}] has added you to a new task`,
-                                    },
+                                    content: `[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
                                     username: newAddedMembers[i]
                                 }
                                 const Notify = new NotificationRecord(notify)
@@ -1724,10 +1688,7 @@ class ProjectsController extends Controller {
                                 const notify = {    
                                     image_url: decodedToken.avatar,
                                     url: ``,
-                                    content: {
-                                        vi: `[${decodedToken.fullname}] đã xóa bạn khỏi một công viên`,
-                                        en: `[${decodedToken.fullname}] has removed you from a task`
-                                    },
+                                    content: `[${decodedToken.fullname}] has_removed_you_from_a_task`,
                                     username: deletedMembers[i]
                                 }
                                 const Notify = new NotificationRecord(notify)
