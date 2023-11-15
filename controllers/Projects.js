@@ -1277,6 +1277,7 @@ class ProjectsController extends Controller {
 
                         context.content = "Thêm thành công"
                         context.status = "0x4501119"
+                        context.child_task = newChild
                     } else {
                         context.content = "Body khum hợp lệ"
                         context.status = "0x4501122"
