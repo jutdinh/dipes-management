@@ -255,10 +255,10 @@ class ProjectsController extends Controller {
 
                 const { decodedToken } = objects;
                 const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
-
-                const { supervisors, deployers,manager } = project;
                 if (project) {
+                    const Project = new ProjectsRecord(project)
                 
+                    const { supervisors, deployers, manager } = Project.getData();
                     if( 
                         this.isAdmin( decodedToken ) || 
                         manager.username == decodedToken.username || 
