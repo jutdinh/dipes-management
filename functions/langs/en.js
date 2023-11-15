@@ -128,6 +128,7 @@ const en = {
     "__has_added_you_to_phase": "has added you to phase",
     "__has_removed_you_from_phase": "has removed you from phase",
     "__has_added_you_to_a_new_task": "has added you to a new task",
+    "__has_removed_you_from_a_task": "has removed you from a task",
     "__has_added_you_to": "has added you to",
     "__of_project": "of project",
     

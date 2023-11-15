@@ -1187,6 +1187,7 @@ class ProjectsController extends Controller {
                         context.status = "0x4501119"
                         context.success = true
                         context.tasks = Object.values(project.tasks)
+                        context.task = newTask
 
                         for (let i = 0; i < users.length; i++) {
                             const { username } = users[i]
