@@ -256,10 +256,15 @@ class ProjectsController extends Controller {
                 const { decodedToken } = objects;
                 const project = await ProjectsModel.find({ project_id: parseInt(project_id) })
 
-                const { members, manager } = project;
+                const { supervisors, deployers,manager } = project;
                 if (project) {
                 
-                    if( this.isAdmin( decodedToken ) || manager.username == decodedToken.username || members[ this.dotEncode(decodedToken.username) ] != undefined ){
+                    if( 
+                        this.isAdmin( decodedToken ) || 
+                        manager.username == decodedToken.username || 
+                        supervisors[ this.dotEncode(decodedToken.username) ] != undefined ||  
+                        deployers[ this.dotEncode(decodedToken.username) ] != undefined 
+                    ){
 
                         const Project = new ProjectsRecord(project)
                         context.data = Project.getFullProjectData(false)
