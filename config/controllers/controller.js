@@ -260,6 +260,56 @@ class Controller {
         return tasks
     }
     
+
+    updateUserOnAllTasks = ( project, account ) => {
+        const { tasks } = project;
+        const { username } = account
+        if( tasks ){                        
+            const periodIndexes = Object.keys( tasks )
+
+            for( let i = 0; i < periodIndexes.length; i++ ){
+                const periodIndex = periodIndexes[i]
+                const period = tasks[ periodIndex ]
+
+                if(period.period_members[ this.dotEncode(username) ] != undefined){
+                    period.period_members[ this.dotEncode(username) ] = account
+                }
+
+                const _tasks = period.tasks ? period.tasks : {} ;
+                const _tasksIndexes = Object.keys( _tasks )
+                
+                for( let ii = 0 ; ii < _tasksIndexes.length; ii++ ){
+                    const _taskIndex = _tasksIndexes[ii]
+                    const _task = _tasks[_taskIndex]
+
+
+                    if(_task.members[ this.dotEncode( username )] != undefined){
+                        _task.members[ this.dotEncode( username )] = account
+                    }
+
+                    
+                    const __tasks =_tasks.child_tasks ? _tasks.child_tasks : {} 
+                    const __taskIndexes = Object.keys( __tasks )
+
+                    for( let iii = 0 ; iii < __taskIndexes.length; iii++ ){
+                        const __taskIndex = __taskIndexes[iii]
+                        const __task = __tasks[__taskIndex]
+
+                        if(__task.members[ this.dotEncode(username) ] != undefined){
+                            __task.members[ this.dotEncode(username) ] = account
+                        }
+
+                        __tasks[__taskIndex] = __task
+                    }
+
+                    _tasks[_taskIndex] = _task;
+                }
+
+                tasks[ periodIndex ] = period
+            }
+        }
+        return tasks
+    }
 }
 
 module.exports = Controller

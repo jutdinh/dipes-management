@@ -357,9 +357,11 @@ class Auth extends Controller {
                     }
                     const projects = await this.#__projects.findAll();
                     for( let i = 0 ; i < projects.length; i++ ){
-                        const project = projects[i]
-                        const Project = new ProjectsRecord(project)
-                        delete project.members[ this.dotEncode(username) ]
+                        const Project = new ProjectsRecord(projects[i])
+                        const project = Project.getData()
+                        
+                        delete project.supervisors[ this.dotEncode(username) ]
+                        delete project.deployers[ this.dotEncode(username) ]
 
                         if( this.dotEncode(project.manager.username) == this.dotEncode( username )){
                             project.manager = {}
@@ -368,7 +370,8 @@ class Auth extends Controller {
 
                         
                         await Project.__modifyAndSaveChange__("manager", project.manager)
-                        await Project.__modifyAndSaveChange__("members", project.members)
+                        await Project.__modifyAndSaveChange__("supervisors", project.supervisors)
+                        await Project.__modifyAndSaveChange__("deployers", project.deployers)
                         await Project.__modifyAndSaveChange__("tasks", tasks)
                     }
                 }
@@ -490,8 +493,31 @@ class Auth extends Controller {
         res.status(200).send(context )
     }
 
-    updateAllProject = ( account ) => {
-        console.log( account )
+    updateAllProject = async ( account ) => {
+        const projects = await this.#__projects.findAll()
+        const encodedUsername = this.dotEncode( account.username )
+
+        for( let i = 0 ; i < projects.length; i++ ){
+            const Project = new ProjectsRecord( projects[i] )
+
+            const project = Project.getData()
+
+            if( project.supervisors[encodedUsername] != undefined){
+                project.supervisors[encodedUsername] = account
+            }
+
+            if( project.deployers[encodedUsername] != undefined ){
+                project.deployers[encodedUsername] = account
+            }
+
+            if( this.dotEncode(project.manager.username) == encodedUsername ){
+                project.manager = account
+            }
+            project.tasks = this.updateUserOnAllTasks(project, account)
+
+            Project.setData(project)
+            await Project.save()
+        }
     }
 
     changeAva = async ( req, res, privileges = [] ) => {

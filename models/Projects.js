@@ -401,9 +401,16 @@ class ProjectsRecord extends Projects {
     getProjectAndManager = () => {
 
         const project = this.getData()
-        const members = Object.values(project.members)
         const versions = Object.values(project.versions)
-        project.members = members
+        
+        const supervisors = Object.values(project.supervisors);
+        const deployers = Object.values(project.deployers);
+        supervisors.map( mem => { mem.permission = Controller.permission.spv } )
+        deployers.map( mem => { mem.permission = Controller.permission.dpr } )
+
+        project.members = [ ...supervisors, ...deployers ]
+
+
         const currentVersion = project.versions[project.active_version] ? project.versions[project.active_version] : {}
         project.version = currentVersion
         project.versions = versions        
