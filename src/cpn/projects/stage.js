@@ -2,6 +2,8 @@ import { da } from 'date-fns/locale';
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMaximize, faMinimize, faDownload, faCompress, faChartBar, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { StatusEnum, StatusTask, StatusAprove } from '../enum/status';
 import GanttTest from "./gantt-test"
@@ -16,7 +18,7 @@ const Stage = (props) => {
     const { project_id, version_id } = useParams();
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
     const { removeVietnameseTones } = functions
 
     const [expandedTasks, setExpandedTasks] = useState({});
@@ -27,7 +29,7 @@ const Stage = (props) => {
 
     const [dataStageUpdate, setDataStageUpdate] = useState([])
     const [periodId, setPeriodId] = useState(null)
-
+    // console.log(dataStageUpdate.period_members)
     const [taskId, setTaskId] = useState(null)
     const [childTask, setChildTask] = useState(null)
     const [typeAction, setTypeAction] = useState(0)
@@ -46,9 +48,9 @@ const Stage = (props) => {
     const [taskUpdateChild, setTaskUpadteChild] = useState({});
 
     const [formData, setFormData] = useState({});
-
+    // console.log(formData)
     const [selectedUsernamesStage, setSelectedUsernamesStage] = useState([]);
-
+    // console.log(selectedUsernamesStage)
     const [selectedUsernames, setSelectedUsernames] = useState([]);
 
     const [selectedUsernamesAdd, setSelectedUsernamesAdd] = useState([]);
@@ -147,7 +149,8 @@ const Stage = (props) => {
     useEffect(() => {
         const numberOfTR = $(tableRef.current).find('tr').length;
         setLenghtTask(numberOfTR)
-    }, [dataGantt]);
+        
+    }, [dataGantt,expandedTasks]);
 
     const containerRef = useRef(null);
     const scrollRef1 = useRef(null);
@@ -448,6 +451,7 @@ const Stage = (props) => {
             setSelectedUsernamesStage(newSelectedUsernames);
 
             setFormData({
+                stage_id: dataStageUpdate.period_id,
                 stage_name: dataStageUpdate.period_name,
                 stage_description: dataStageUpdate.period_description,
                 stage_start: dataStageUpdate.start,
@@ -531,6 +535,36 @@ const Stage = (props) => {
         setPeriodId(stage.period_id);
 
     }
+    function findDifferences(memberProjectTemp, uniqueArray) {
+        // console.log("123", memberProjectTemp)
+        // console.log("456", uniqueArray)
+        const mapTemp = new Map(memberProjectTemp.map(item => [item.username, item])) || [];
+        const mapUnique = new Map(uniqueArray.map(username => [username, true]));
+
+        // Tìm những người dùng bị xóa dựa trên 'username'
+        const removedUsers = memberProjectTemp.filter(item => !mapUnique.has(item.username)).map(item => item.username);
+
+        // Tìm những người dùng mới được thêm vào dựa trên 'username'
+        const addedUsers = uniqueArray.filter(username => !mapTemp.has(username));
+
+        let status;
+        let changedUsers;
+        if (removedUsers.length > 0) {
+            status = 'users removed';
+            changedUsers = removedUsers.map(username => ({ username }));
+        } else if (addedUsers.length > 0) {
+            status = 'users added';
+            changedUsers = addedUsers.map(username => ({ username }));
+        } else {
+            status = 'no change';
+            changedUsers = [];
+        }
+
+        return { status, changedUsers };
+    }
+
+
+
 
 
     const updateStage = (e) => {
@@ -550,15 +584,50 @@ const Stage = (props) => {
             errors.checkday = lang["error.checkday_end"];
         }
 
-
-
-
         if (!selectedUsernamesStage || selectedUsernamesStage.length === 0) {
             errors.members = lang["error.members_stage"];
         }
         if (Object.keys(errors).length > 0) {
             setErrorMessagesadd(errors);
             return;
+        }
+
+        const result = findDifferences(dataStageUpdate.period_members, selectedUsernamesStage);
+
+        // console.log("data check", result);
+        // console.log("data check 1", selectedUsernamesStage);
+        let dataSocket
+        if (result.status === "users added") {
+            dataSocket = {
+                targets: result.changedUsers,
+                actor: {
+                    fullname: _users.fullname,
+                    username: _users.username,
+                    avatar: _users.avatar
+                },
+                context: 'project/add-period-member',
+                note: {
+                    project_name: props.projectname,
+                    period_name: formData.stage_name,
+                    project_id: project_id
+                }
+            }
+        } else if (result.status === "users removed") {
+            dataSocket = {
+                targets: result.changedUsers,
+                actor: {
+                    fullname: _users.fullname,
+                    username: _users.username,
+                    avatar: _users.avatar
+                },
+                context: 'project/remove-period-member',
+                note: {
+                    project_name: props.projectname,
+                    period_name: formData.stage_name,
+                    period_id: formData.stage_id,
+                    project_id: project_id
+                }
+            }
         }
         const requestBody = {
             period: {
@@ -569,7 +638,7 @@ const Stage = (props) => {
                 members: selectedUsernamesStage
             }
         }
-
+        // console.log(requestBody)
         fetch(`${proxy}/projects/project/${project_id}/period/${periodId}`, {
             method: "PUT",
             headers: {
@@ -583,6 +652,7 @@ const Stage = (props) => {
                 const { success, content, data, status } = resp;
                 if (success) {
                     functions.showApiResponseMessage(status, false);
+                    socket.emit("project/notify", dataSocket)
                     props.callDataTask()
                     $('#closeModalUpdateStage').click()
                 } else {
@@ -629,23 +699,19 @@ const Stage = (props) => {
         });
     }
 
-    // console.log(selectedUsernames)
+    // console.log(task)
     const submitAddTask = (e) => {
+
         e.preventDefault();
         task.members = selectedUsernamesAdd;
         const requestBody = {
             period_id: periodId,
             task: task
         }
-        const data = {
-            targets: selectedUsernamesAdd, 
-            actor:  { fullname: _users.username }  , 
-            context: 'project/add-task-member', 
-            note: { 
-              project_name: props.projectname,
-              project_id: project_id
-            }
-        }
+
+       
+
+ 
         const errors = {};
         if (!task.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -690,10 +756,26 @@ const Stage = (props) => {
             .then((resp) => {
                 // console.log(resp)
                 if (resp) {
-                    const { success, content, data, status } = resp;
+                    const { success, content, data, task, status } = resp;
                     if (success) {
 
+                        const dataSocket = {
+                            targets: selectedUsernamesAdd.map(username => ({ username })),
+                            actor: {
+                                fullname: _users.fullname,
+                                username: _users.username,
+                                avatar: _users.avatar
+                            },
+                            context: 'project/add-task-member',
+                            note: {
+                                project_name: props.projectname,
+                                project_id: project_id,
+                                task_id: task.task_id
+                            }
+                        }
+                 
                         functions.showApiResponseMessage(status, false);
+                        socket.emit("project/notify", dataSocket)
                         props.callDataTask()
 
                         $('#closeModalAddTask').click()
@@ -704,10 +786,10 @@ const Stage = (props) => {
                     }
                 }
             })
-            
-       
-        
-        socket.emit("project/notify", data)
+
+
+
+
     }
     const updateTask = (dataUpdate, useDataUpdate = false) => {
 
@@ -724,7 +806,20 @@ const Stage = (props) => {
             task: currentTask,
 
         };
-
+        const dataSocket = {
+            targets: selectedUsernamesAdd.map(username => ({ username })),
+            actor: {
+                fullname: _users.fullname,
+                username: _users.username,
+                avatar: _users.avatar
+            },
+            context: 'project/add-task-member',
+            note: {
+                project_name: props.projectname,
+                project_id: project_id,
+                task_id: taskUpdate.task_id
+            }
+        }
         const errors = {};
         if (!taskUpdate.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -779,11 +874,10 @@ const Stage = (props) => {
                     }
                 }
             })
-            
+
     };
 
     const handleDeleteTask = () => {
-
 
         Swal.fire({
             title: lang["confirm"],
@@ -797,6 +891,7 @@ const Stage = (props) => {
                 confirmButton: 'swal2-confirm my-confirm-button-class'
             }
         }).then((result) => {
+
             if (result.isConfirmed) {
                 fetch(`${proxy}/projects/project/${project_id}/period/${periodId}/task/${taskId}`, {
                     method: 'DELETE',
@@ -855,15 +950,7 @@ const Stage = (props) => {
         const requestBody = {
             child_task: taskChild
         }
-        const data = {
-            targets: selectedUsernamesChild, 
-            actor:  { fullname: _users.username }  , 
-            context: 'project/add-child-task-member', 
-            note: { 
-              project_name: props.projectname,
-              project_id: project_id
-            }
-        }
+        
 
         const errors = {};
         if (!taskChild.child_task_name) {
@@ -906,10 +993,26 @@ const Stage = (props) => {
         })
             .then(res => res && res.json())
             .then((resp) => {
+                // console.log(resp)
                 if (resp) {
-                    const { success, content, data, status } = resp;
+                    const { success, content, data, status, child_task } = resp;
                     if (success) {
+                        const dataSocket = {
+                            targets: selectedUsernamesChild.map(username => ({ username })),
+                           actor: {
+                                    fullname: _users.fullname,
+                                    username: _users.username,
+                                    avatar: _users.avatar
+                                },
+                            context: 'project/add-child-task-member',
+                            note: {
+                                project_name: props.projectname,
+                                project_id: project_id,
+                                child_task_id: child_task.child_task_id
+                            }
+                        }
                         functions.showApiResponseMessage(status, false);
+                        socket.emit("project/notify", dataSocket)
                         props.callDataTask()
                         $('#closeModalAddTaskChild').click()
                     } else {
@@ -919,7 +1022,7 @@ const Stage = (props) => {
                     }
                 }
             })
-            socket.emit("project/notify", data)
+     
     };
 
     const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
@@ -1034,6 +1137,7 @@ const Stage = (props) => {
             progress: progressValues[uniqueId],
         }, true);
     };
+
     const handleProgressBlurTask = (e, subtask, taskId, periodId, uniqueId) => {
         // console.log(uniqueId)
         updateTask({
@@ -1041,9 +1145,6 @@ const Stage = (props) => {
             progress: progressValuesTask[uniqueId],
         }, true);
     };
-
-
-
 
     const handleProgressChange = (normalizedValue, subsubtask, taskId, periodId, uniqueId) => {
         setProgressValues(prevState => ({
@@ -1053,6 +1154,7 @@ const Stage = (props) => {
         setTaskId(taskId);
         setPeriodId(periodId);
     };
+
     const handleProgressChangeTask = (normalizedValue, subtask, taskId, periodId, uniqueId) => {
         setProgressValuesTask(prevState => ({
             ...prevState,
@@ -1068,6 +1170,7 @@ const Stage = (props) => {
         const usernames = members.map(mem => mem.username)
         setSelectedUsernames(usernames)
     }
+
     const handleProgressFocusTask = (childTask) => {
         const members = childTask.members ? childTask.members : []
 
@@ -1079,11 +1182,13 @@ const Stage = (props) => {
         const value = parseInt(inputString, 10);
         return !isNaN(value) && value >= 0 && value <= 100;
     }
+
     function formatPercentage(value) {
         let num = parseFloat(value);
         num = Math.max(0, Math.min(num, 100));
         return num.toFixed(2) + '%';
     }
+
     useEffect(() => {
         const initialProgressValues = {};
 
@@ -1099,6 +1204,7 @@ const Stage = (props) => {
 
         setProgressValues(initialProgressValues);
     }, [dataTask]);
+
     useEffect(() => {
         const initialProgressValues = {};
 
@@ -1112,14 +1218,10 @@ const Stage = (props) => {
 
             });
         });
-
         setProgressValuesTask(initialProgressValues);
     }, [dataTask]);
 
-
     const handleDeleteTaskChild = () => {
-
-
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.task"],
@@ -1153,39 +1255,37 @@ const Stage = (props) => {
         });
     }
 
-
-
     // lọc để set điều kiện chọn ngày 
     const currentPeriod = dataTask.find(period => period.period_id === periodId) || [];
+
     const currentTask = dataTask?.flatMap((period) => period.tasks)?.find((task) => task.task_id === taskId) || [];
 
     //filter
     const [tableFilter, setTableFilter] = useState({ task_name: false });
+
     const handleTaskNameFilterChange = (e) => {
         setTaskNameFilter({ name: e.target.value });
     }
-    // State để lưu giá trị lọc
 
+    // State để lưu giá trị lọc
     const resetTaskNameFilter = () => {
         setTaskNameFilter({ name: "" });
     }
+
     const [showStartDateInput, setShowStartDateInput] = useState(false);
+
     const [showEndDateInput, setShowEndDateInput] = useState(false);
 
-    // console.log(dataTask)
-    // (dataTask)
     return (
         <>
             <div class="d-flex align-items-center mt-2">
-
-                <button class="btn btn-info" style={{ width: "115px" }} onClick={() => handleShowGantt()}>
+                {/* <button class="btn btn-info" style={{ width: "115px" }} onClick={() => handleShowGantt()}>
                     {showGantt ? lang["hidden-gantt"] : lang["show-gantt"]}
-                </button>
-
-
-
-
+                </button> */}
+                <span>{props.process}%</span>
+                <i class="fa fa-eye size-24 pointer ml-auto icon-view icon-hidden"></i>
                 {actionShow === 1 ? (
+
                     (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                     <>
                         <i className={`fa fa-plus-square size-32 pointer icon-margin icon-add-task ml-auto ${typeAction === 1 ? '' : 'disabled_action'}`} data-toggle="modal" data-target="#addTask" title={lang["addtask"]}></i>
@@ -1202,6 +1302,7 @@ const Stage = (props) => {
                     </>
 
                 ) : actionShow === 3 ?
+
                     (
                         (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                         <>
@@ -1209,6 +1310,7 @@ const Stage = (props) => {
                             <i class="fa fa-trash-o size-32 pointer icon-margin  mb-1 icon-delete" onClick={() => handleDeleteTaskChild()} title={lang["delete"]}></i>
                         </>
                     ) : actionShow === 0 ?
+
                         (
                             (_users.username === manageProject?.username || ["ad", "uad"].indexOf(auth.role) !== -1) &&
                             <>
@@ -1228,10 +1330,10 @@ const Stage = (props) => {
 
                     </>
                 }
+                <FontAwesomeIcon icon={faChartBar} onClick={() => handleShowGantt()} className="ml-2 size-28 pointer icon-showgantt" title={showGantt ? lang["hidden-gantt"] : lang["show-gantt"]} />
             </div>
 
             <div style={{ display: 'flex', width: '100%', minHeight: "30%", height: "98%", overflowY: 'auto', marginTop: "5px" }} class="no-select" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-
                 <div
                     // ref={containerRef}
                     ref={scrollRef1}
@@ -1255,7 +1357,6 @@ const Stage = (props) => {
                         // height: heights[ lenghtTask + 1 ] ? `${heights[ lenghtTask + 1 ]}%` : "85%",
                         overflowX: 'auto'
                     }}>
-
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
                             <tr style={{ height: "59px" }}>
@@ -1267,6 +1368,7 @@ const Stage = (props) => {
                                         onMouseDown={handleColumnResizeMouseDown(1)}
                                     />
                                 </th>
+
                                 {/* <th style={{ width: `${columnWidths.col2}px`, position: 'relative' }} class="font-weight-bold align-center"># */}
                                 <th style={{ minWidth: `85px`, maxWidth: `85px`, position: 'relative' }} class="font-weight-bold align-center">#
                                     <div
@@ -1274,6 +1376,7 @@ const Stage = (props) => {
                                         onMouseDown={handleColumnResizeMouseDown(2)}
                                     />
                                 </th>
+
                                 <th class="font-weight-bold" style={{ minWidth: `400px`, maxWidth: `400px` }}>
                                     {lang["title.task"]}
                                     <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_name: !tableFilter.task_name }) }} />
@@ -1290,10 +1393,13 @@ const Stage = (props) => {
                                         </div>
                                     }
                                 </th>
+
                                 <th class="font-weight-bold">
                                     {lang["task_priority"]}
                                 </th>
+
                                 <th class="font-weight-bold" style={{ width: `80px` }}>%{lang["complete"]}</th>
+
                                 <th class="font-weight-bold align-center position-relative" scope="col">
                                     {lang["confirm"]}
                                     {/* <i className="fa fa-filter icon-view block ml-2" onClick={() => { setTableFilter({ task_approve: !tableFilter.task_approve }) }} /> */}
@@ -1311,6 +1417,7 @@ const Stage = (props) => {
                                     </div>
                                 } */}
                                 </th>
+
                                 <th class="font-weight-bold" style={{ minWidth: `130px`, maxWidth: `130px` }}>
                                     {lang["log.daystart"]}
                                     <i className="fa fa-filter icon-view block ml-2" onClick={() => {
@@ -1326,6 +1433,7 @@ const Stage = (props) => {
                                         closePopup={() => setShowStartDateInput(false)}
                                     />
                                 </th>
+
                                 <th class="font-weight-bold" style={{ minWidth: `130px`, maxWidth: `130px` }}>
                                     {lang["log.dayend"]}
                                     <i className="fa fa-filter icon-view block ml-2" onClick={() => {
@@ -1341,8 +1449,11 @@ const Stage = (props) => {
                                         closePopup={() => setShowEndDateInput(false)}
                                     />
                                 </th>
+
                                 <th class="font-weight-bold" style={{ minWidth: `115px`, maxWidth: `115px` }}>Timeline</th>
+
                                 <th class="font-weight-bold ">{lang["log.create_user"]}</th>
+
                                 <th class="font-weight-bold align-center"
                                     style={{
                                         // position: 'sticky', 
@@ -1352,6 +1463,7 @@ const Stage = (props) => {
                                     }} scope="col">
                                     {lang["log.action"]}
                                 </th>
+
                             </tr>
                         </thead>
                         <tbody ref={tableRef}>
@@ -1441,7 +1553,7 @@ const Stage = (props) => {
 
                                                 <tr
                                                     key={uniqueId}
-                                                    className={`font-weight-bold fix-layout italic ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
+                                                    className={`fix-layout italic ${selectedRowIndex === uniqueId ? 'selected-row' : ''}`}
                                                     onClick={() => {
                                                         // setSelectedUsernames([])
                                                         handleRowClick(uniqueId)
@@ -1516,7 +1628,7 @@ const Stage = (props) => {
                                                     )
 
                                                     }
-                                                    <td class="font-weight-bold" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
+                                                    <td class="font-weight-bold italic-non" style={{ color: getStatusColor(subtask.task_approve ? 1 : 0), textAlign: "center" }}>
                                                         {getStatusLabel(subtask.task_approve ? 1 : 0)}
                                                     </td>
                                                     <td>{functions.formatDateTask(subtask.start)}</td>

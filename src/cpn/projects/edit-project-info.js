@@ -14,7 +14,7 @@ export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
     // console.log(_users)
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
@@ -40,8 +40,9 @@ export default () => {
     const [manager, setManager] = useState({})
     const [projectTemp, setProjectTemp] = useState({});
     const [memberProjectTemp, setMemberProjectTemp] = useState([]);
-    // console.log("Member Temp", memberProjectTemp)
-    // console.log("Member", projectmember)
+    console.log("Member Temp", memberProjectTemp)
+    console.log("Member", projectmember)
+    console.log(project)
     useEffect(() => {
 
         fetch(`${proxy}/projects/project/${project_id}`, {
@@ -52,7 +53,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                console.log("data Project",resp)
                 if (success) {
                     if (data) {
                         setMemberProjectTemp(data.members)
@@ -123,6 +124,8 @@ export default () => {
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
     // console.log(selectedUsers)
+    const userAdd = [...selectedImple, ...selectedUsers]
+
     const updateProjectMembers = () => {
 
         const updatedMembers = [
@@ -143,8 +146,8 @@ export default () => {
         // Cập nhật project.members
         project.members = updatedMembers;
     }
-    const handleAdminCheck = (user, role) => {
-        const userWithRole = { username: user.username, role };
+    const handleAdminCheck = (user, permission) => {
+        const userWithRole = { username: user.username, permission };
         setTempSelectedUsers(prevTempSelectedUsers => {
             if (prevTempSelectedUsers.some(u => u.username === user.username)) {
                 return prevTempSelectedUsers.filter(u => u.username !== user.username);
@@ -154,8 +157,8 @@ export default () => {
         });
     };
 
-    const handleImpleCheck = (user, role) => {
-        const userWithRole = { username: user.username, role };
+    const handleImpleCheck = (user, permission) => {
+        const userWithRole = { username: user.username, permission };
         setTempSelectedImple(prevTempSelectedImple => {
             if (prevTempSelectedImple.some(u => u.username === user.username)) {
                 return prevTempSelectedImple.filter(u => u.username !== user.username);
@@ -172,53 +175,55 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // console.log(uniqueArray)
+    console.log(uniqueArray)
+    console.log(combinedArray)
 
 
 
 
-//    Function ktra trạng thái user (Thêm, xóa, thay đổi quyền)
+    //    Function ktra trạng thái user (Thêm, xóa, thay đổi quyền)
 
-    function findDifferences(memberProjectTemp, uniqueArray) {
+    function findDifferences(memberProjectTemp, userAdd) {
         // Tạo bản đồ từ cả hai mảng dựa trên 'username' và coi 'role' và 'permission' như là một
         const mapTemp = new Map(memberProjectTemp.map(item => [item.username, item.permission || item.role]));
-        const mapUnique = new Map(uniqueArray.map(item => [item.username, item.permission || item.role]));
-      
+        const mapUnique = new Map(userAdd.map(item => [item.username, item.permission || item.role]));
+
         // Tìm những người dùng bị xóa hoặc thêm vào dựa trên 'username'
         const removedUsers = memberProjectTemp.filter(item => !mapUnique.has(item.username));
-        const addedUsers = uniqueArray.filter(item => !mapTemp.has(item.username));
-      
+        const addedUsers = userAdd.filter(item => !mapTemp.has(item.username));
+
         // Tìm những người dùng có sự thay đổi về quyền hạn
-        const changedPermissions = uniqueArray.filter(item => 
-          mapTemp.has(item.username) && mapTemp.get(item.username) !== (item.permission || item.role)
+        const changedPermissions = userAdd.filter(item =>
+            mapTemp.has(item.username) && mapTemp.get(item.username) !== (item.permission || item.role)
         );
-      
+
         let status;
         let changedUsers;
         if (removedUsers.length > 0) {
-          status = 'users removed';
-          changedUsers = removedUsers;
+            status = 'users removed';
+            changedUsers = removedUsers;
         } else if (addedUsers.length > 0) {
-          status = 'users added';
-          changedUsers = addedUsers;
+            status = 'users added';
+            changedUsers = addedUsers;
         } else if (changedPermissions.length > 0) {
-          status = 'permissions changed';
-          changedUsers = changedPermissions;
+            status = 'permissions changed';
+            changedUsers = changedPermissions;
         } else {
-          status = 'no change';
-          changedUsers = [];
+            status = 'no change';
+            changedUsers = [];
         }
-      
+
         return { status, changedUsers };
-      }
-      
-      // Sử dụng hàm findDifferences để xác định người dùng đã bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
-      const result = findDifferences(memberProjectTemp, uniqueArray);
-      
-      // Xuất kết quả
-    //   console.log(result.status); // 'users removed', 'users added', 'permissions changed', hoặc 'no change'
-    //   console.log(result.changedUsers); // Danh sách người dùng bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
-      
+    }
+
+    // Sử dụng hàm findDifferences để xác định người dùng đã bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+    const result = findDifferences(memberProjectTemp, userAdd);
+
+    // Xuất kết quả
+      console.log(result.status); // 'users removed', 'users added', 'permissions changed', hoặc 'no change'
+    console.log(result.changedUsers); // Danh sách người dùng bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+
+
 
 
     const handleSaveUsers = () => {
@@ -234,6 +239,7 @@ export default () => {
 
     // console.log(manager)
     const dataManager = users.find(user => user.username === manager);
+
     // console.log(dataManager)
     updateProjectMembers();
     const submitUpdateProject = async (e) => {
@@ -287,7 +293,7 @@ export default () => {
                     project_id: project_id
                 }
             }
-        }else if (result.status === "permissions changed") {
+        } else if (result.status === "permissions changed") {
             dataSocket = {
                 targets: result.changedUsers,
                 actor: {
@@ -303,7 +309,9 @@ export default () => {
             }
         }
 
-        const requestBody = {
+        //RequestBody
+        let requestBody
+        requestBody = {
             project: {
                 ...project,
                 project_status: parseInt(project.project_status),
@@ -314,10 +322,34 @@ export default () => {
                 }
             }
 
-
         }
-        // console.log(requestBody)
-        const response = await fetch(`${proxy}/projects/update`, {
+        // if (result.status === "permissions changed") {
+        //     requestBody = {
+        //         projetct_id: project.project_id,
+        //         username: result.changedUsers.username,
+        //         permission: result?.changedUsers.permission
+        //     }
+        // } else {
+        //     requestBody = {
+        //         project: {
+        //             ...project,
+        //             project_status: parseInt(project.project_status),
+        //             manager: {
+        //                 username: dataManager.username,
+        //                 fullname: dataManager.fullname,
+        //                 avatar: dataManager.avatar
+        //             }
+        //         }
+
+        //     }
+
+        // }
+        console.log(requestBody)
+        let API_URL
+       
+            API_URL = "/projects/update"
+        
+        const response = await fetch(`${proxy}${API_URL}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -339,36 +371,40 @@ export default () => {
 
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
-        if (!areTwoArraysEqual(uniqueArray, projectmember)) {
+        if (!areTwoArraysEqual(userAdd, projectmember)) {
             addMember(e, dataSocket);
         }
     };
+    console.log(selectedUsers)
+    console.log(selectedImple)
+  
     const addMember = (e, dataSocket) => {
         e.preventDefault();
-
+        const requestBody = {
+            project_id: project_id,
+            usernames: userAdd
+        }
+        console.log(requestBody)
         fetch(`${proxy}/projects/members`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `${_token}`,
             },
-            body: JSON.stringify({
-                project_id: project_id,
-                usernames: uniqueArray,
-            }),
+            body: JSON.stringify(requestBody),
         })
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success)
+             
                     socket.emit("project/notify", dataSocket)
                 // if (success) {
                 //     showApiResponseMessage(status);
                 // }
             })
-
-
     };
+
     useEffect(() => {
         let pm = projectmember.filter(member => member.permission === 'supervisor');
         let pd = projectmember.filter(member => member.permission === 'deployer');
@@ -565,23 +601,24 @@ export default () => {
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                    // if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                    if (user.username !== manager) {
                                                         return (
-                                                            <div key={user.username} class="user-item">
-                                                                <label class="pointer" onClick={() => handleAdminCheck(user, 'supervisor')}>
+                                                            <div key={user.username} className="user-item">
+                                                                <label className="pointer">
                                                                     <input
-                                                                        class="user-checkbox"
+                                                                        className="user-checkbox"
                                                                         type="checkbox"
                                                                         checked={tempSelectedUsers.some(u => u.username === user.username)}
                                                                         onChange={() => handleAdminCheck(user, 'supervisor')}
                                                                     />
-                                                                    <span class="user-name">
-
-                                                                        <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
-
+                                                                    <span className="user-name">
+                                                                        <img width={20} className="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />
+                                                                        {user.username}-{user.fullname}
                                                                     </span>
                                                                 </label>
                                                             </div>
+
                                                         )
                                                     }
                                                     return null;
@@ -600,10 +637,11 @@ export default () => {
                                             </div>
                                             <div class="user-popup-content">
                                                 {users && users.map(user => {
-                                                    if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                    // if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                    if (user.username !== manager) {
                                                         return (
                                                             <div key={user.username} class="user-item">
-                                                                <label class="pointer" onClick={() => handleImpleCheck(user, 'deployer')}>
+                                                                <label class="pointer">
                                                                     <input
                                                                         class="user-checkbox"
                                                                         type="checkbox"

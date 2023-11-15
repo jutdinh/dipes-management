@@ -332,7 +332,7 @@ export default () => {
                                                 <th scope="col" class="align-center pointer">
                                                     <div className="d-flex align-items-center"
                                                         onClick={() => { setTableFilter({ event_type: !tableFilter.event_type }) }}
-                                                    >{lang["log.type"]} <i className="fa fa-filter block ml-auto" /></div>
+                                                    >{lang["log.type"]} <i className="fa fa-filter icon-view block ml-auto" /></div>
                                                     {tableFilter.event_type && <div className="position-relative">
                                                         <div className="position-absolute shadow" style={{ top: 0, left: -8, width: "150px" }}>
                                                             <CheckList

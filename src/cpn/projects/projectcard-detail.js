@@ -17,7 +17,7 @@ export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
 
     const { showApiResponseMessage } = functions
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
@@ -192,6 +192,7 @@ export default () => {
 
     }, [project_id]);
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
+    // console.log(projectdetail)
     const [project, setProject] = useState({}); //// Update project
     const [projectmember, setProjectMember] = useState([]);
     const [versions, setProjectVersion] = useState([]);
@@ -661,12 +662,14 @@ export default () => {
         });
     }
     const handleDeleteUser = (member) => {
+        console.log(member)
         const requestBody = {
             project_id: project.project_id,
-            username: member.username
+            username: member.username,
+            permission: member.permission
         };
         const dataSocket = {
-            targets: member.username,
+            targets: [{username: member.username}],
             actor: {
                 fullname: _users.fullname,
                 username: _users.username,
@@ -675,6 +678,7 @@ export default () => {
             context: 'project/remove-member',
             note: {
                 project_name: project.project_name,
+                project_id: project.project_id
 
             }
         }
@@ -1125,13 +1129,12 @@ export default () => {
 
 
     // Tìm member trong sortedMembers có username trùng với _users.username
-    let memberCheck = { }
-    
-     memberCheck = sortedMembers?.find(member => member.username === _users.username);
+    let memberCheck = {}
+
+    memberCheck = sortedMembers?.find(member => member.username === _users.username);
 
     // useEffect(() => {
     //     if (!memberCheck || memberCheck === undefined) {
-
     //         Swal.fire({
     //             title: lang["confirm"],
     //             text: lang["delete.task"],
@@ -1148,18 +1151,17 @@ export default () => {
     //                 window.history.back()
     //             }
     //         });
-
     //     }
     // }, []);
     // console.log(memberCheck)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
-           
+
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h4><label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
+                            <h4><label class="pointer mb-0" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["project_detail.title"]}
                             </label> </h4>
                         </div>
                     </div>
@@ -1258,7 +1260,8 @@ export default () => {
                                                                 <th class="font-weight-bold" scope="col">{lang["fullname"]}</th>
                                                                 <th class="font-weight-bold" style={{ width: "100px" }} scope="col">{lang["duty"]}</th>
                                                                 {
-                                                                    (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username) &&
+                                                                    // (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username) &&
+                                                                    (["ad", "uad"].indexOf(auth.role) != -1 || projectmanager.username === _users.username) &&
                                                                     <th class="font-weight-bold" style={{ width: "80px" }}>{lang["log.action"]}</th>
                                                                 }
                                                             </tr>
@@ -1269,7 +1272,7 @@ export default () => {
                                                                     <td scope="row">{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                                                     <td class="align-center"><img src={proxy + member.avatar} class="img-responsive circle-image-cus " alt="#" /></td>
                                                                     <td>{member.fullname}</td>
-                                                                    {
+                                                                    {/* {
                                                                         (_users.username === projectdetail.manager?.username || ["ad", "uad"].indexOf(auth.role) !== -1) ? (
                                                                             <td className="align-center" style={{ minWidth: "130px" }}>
                                                                                 <select
@@ -1296,9 +1299,16 @@ export default () => {
                                                                                 }
                                                                             </td>
                                                                         )
-                                                                    }
+                                                                    } */}
+                                                                    <td style={{ minWidth: "80px" }}>
+                                                                        {
+                                                                            member.permission === "supervisor" ? lang["supervisor"] :
+                                                                                member.permission === "deployer" ? lang["deployers"] :
+                                                                                    "Khác"
+                                                                        }
+                                                                    </td>
                                                                     {
-                                                                        (["ad", "uad"].indexOf(auth.role) != -1 || memberCheck.permission === "supervisor" || projectmanager.username === _users.username) &&
+                                                                        (["ad", "uad"].indexOf(auth.role) != -1 || projectmanager.username === _users.username) &&
                                                                         <td class="align-center">
                                                                             <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDeleteUser(member)} title={lang["delete"]}></i>
                                                                         </td>

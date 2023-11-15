@@ -7,7 +7,7 @@ import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/st
 import $ from 'jquery';
 import { formatDate } from '../../redux/configs/format-date';
 export default () => {
-    const { lang, proxy, auth, functions } = useSelector(state => state);
+    const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const storedProjects = useSelector(state => state.projects)
 
     const dispatch = useDispatch()
@@ -21,11 +21,11 @@ export default () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
     const stringifiedUser = localStorage.getItem("user");
-
+    const [memberProjectTemp, setMemberProjectTemp] = useState([])
 
     const [regent, setRegent] = useState(false)
 
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
     // console.log(_users)
     // const showApiResponseMessage = (status) => {
     //     const message = responseMessages[status];
@@ -151,6 +151,59 @@ export default () => {
             return combinedArray.find(user => user.username === username);
         });
 
+    // console.log(uniqueArray)
+
+    //    Function ktra trạng thái user (Thêm, xóa, thay đổi quyền)
+
+    function findDifferences(memberProjectTemp, uniqueArray) {
+        // Tạo bản đồ từ cả hai mảng dựa trên 'username' và coi 'role' và 'permission' như là một
+        const mapTemp = new Map(memberProjectTemp.map(item => [item.username, item.permission || item.role]));
+        const mapUnique = new Map(uniqueArray.map(item => [item.username, item.permission || item.role]));
+
+        // Tìm những người dùng bị xóa hoặc thêm vào dựa trên 'username'
+        const removedUsers = memberProjectTemp.filter(item => !mapUnique.has(item.username));
+        const addedUsers = uniqueArray.filter(item => !mapTemp.has(item.username));
+
+        // Tìm những người dùng có sự thay đổi về quyền hạn
+        const changedPermissions = uniqueArray.filter(item =>
+            mapTemp.has(item.username) && mapTemp.get(item.username) !== (item.permission || item.role)
+        );
+
+        let status;
+        let changedUsers;
+        if (removedUsers.length > 0) {
+            status = 'users removed';
+            changedUsers = removedUsers;
+        } else if (addedUsers.length > 0) {
+            status = 'users added';
+            changedUsers = addedUsers;
+        } else if (changedPermissions.length > 0) {
+            status = 'permissions changed';
+            changedUsers = changedPermissions;
+        } else {
+            status = 'no change';
+            changedUsers = [];
+        }
+
+        return { status, changedUsers };
+    }
+
+    // Sử dụng hàm findDifferences để xác định người dùng đã bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+    const result = findDifferences(memberProjectTemp, uniqueArray);
+
+    // Xuất kết quả
+
+
+
+
+
+
+
+
+
+
+
+
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
         setTempSelectedUsers([]);
@@ -200,6 +253,7 @@ export default () => {
     // const users = JSON.parse(stringifiedUser)
     const [project, setProject] = useState({ project_type: "database" });
     const [projects, setProjects] = useState(storedProjects);
+    // console.log(projects)
     // const [projects, setProjects] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -311,6 +365,7 @@ export default () => {
             if (project.project_type === "database") {
                 project.proxy_server = proxy;
             }
+            let dataSocket
             const body = {
                 project,
                 manager: { username: manager },
@@ -330,11 +385,26 @@ export default () => {
                 .then((res) => res.json())
                 .then((resp) => {
                     const { success, content, data, status } = resp;
+                    // console.log(resp)
                     functions.showApiResponseMessage(status);
                     if (success) {
-
-
                         const projectId = data.project_id;
+                        if (result.status === "users added") {
+                             dataSocket = {
+                                targets: result.changedUsers,
+                                actor: {
+                                    fullname: _users.fullname,
+                                    username: _users.username,
+                                    avatar: _users.avatar
+                                },
+                                context: 'project/add-member',
+                                note: {
+                                    project_name: project.project_name,
+                                    project_id: projectId
+                                }
+                            }
+                        }
+
                         return fetch(`${proxy}/projects/members`, {
                             method: "POST",
                             headers: {
@@ -363,7 +433,9 @@ export default () => {
                 .then((resp) => {
                     if (resp) {
                         const { success, content, data, status } = resp;
-
+                        if (success) {
+                            socket.emit("project/notify", dataSocket)
+                        }
 
 
                     }
@@ -373,7 +445,7 @@ export default () => {
 
 
     };
-    const handleDeleteUser = (project) => {
+    const handleDeleteProject = (project) => {
 
         const requestBody = {
             project: {
@@ -462,7 +534,7 @@ export default () => {
     const indexOfFirstProject = indexOfLastProject - rowsPerPage;
 
     const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
-
+// console.log(currentProjects)
     const paginate = (pageNumber) => {
         if (pageNumber < 1) return;
         if (pageNumber > totalPages) return;
@@ -655,7 +727,8 @@ export default () => {
                                             <div class="user-popup4">
                                                 <div class="user-popup-content">
                                                     {users && users.map(user => {
-                                                        if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                        // if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
+                                                        if (user.username !== manager) {
                                                             return (
                                                                 <div key={user.username} class="user-item">
                                                                     <label class="pointer">
@@ -687,7 +760,8 @@ export default () => {
                                             <div class="user-popup2">
                                                 <div class="user-popup-content">
                                                     {users && users.map(user => {
-                                                        if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                        // if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
+                                                        if (user.username !== manager) {
                                                             return (
                                                                 <div key={user.username} class="user-item">
                                                                     <label class="pointer">
@@ -780,13 +854,13 @@ export default () => {
                                                                                         <h5 class="project-name d-flex align-items-center" >{item.project_name.slice(0, 25)}{item.project_name.length > 50 ? "..." : ""}</h5>
                                                                                     </div>
                                                                                     {item.manager.username === _users.username ||
-                                                                                            ["ad", "uad"].indexOf(auth.role) !== -1 ? (
-                                                                                                <div class="col-sm-2 cross-hide pointer scaled-hover">
-                                                                                                <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteUser(item)}></img>
-                                                                                            </div>
-                                                                                        ) : (
-                                                                                            null
-                                                                                        )}
+                                                                                        ["ad", "uad"].indexOf(auth.role) !== -1 ? (
+                                                                                        <div class="col-sm-2 cross-hide pointer scaled-hover">
+                                                                                            <img width={20} className="scaled-hover-target" src="/images/icon/cross-color.png" onClick={() => handleDeleteProject(item)}></img>
+                                                                                        </div>
+                                                                                    ) : (
+                                                                                        null
+                                                                                    )}
                                                                                 </div>
                                                                                 <p class="card-title font-weight-bold">{lang["projectcode"]}: {item.project_code?.slice(0, 22)}{item.project_code?.length > 22 ? "..." : ""}</p>
                                                                                 {/* <p class="card-text">{lang["createby"]}: {item.create_by.fullname}</p> */}

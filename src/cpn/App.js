@@ -26,6 +26,9 @@ function App() {
   const { lang, proxy, auth } = useSelector(state => state);
   const dispatch = useDispatch()
   const _token = localStorage.getItem("_token");
+
+  
+
   useEffect(() => {
     const specialURLs = ["/login", "/signup", "/signout"]
     const url = window.location.pathname;
@@ -34,7 +37,7 @@ function App() {
     const user = JSON.parse(stringifiedUser)
 
     if (specialURLs.indexOf(url) === -1) {
-      if (!_token) {
+      if (!_token ) {
         window.location = '/login'
       }
       if (user) {
@@ -104,6 +107,7 @@ function App() {
         <Route path="/settings" element={<Navigation Child={Settings} />} />
         <Route path="/about" element={<Navigation Child={About} />} />
         <Route path="*" element={<PageNotFound />} />
+        
       </Routes>
     </Router>
   );

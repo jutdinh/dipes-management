@@ -12,7 +12,7 @@ import { formatDate } from '../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
 
 
     let langItemCheck = localStorage.getItem("lang");
@@ -21,18 +21,20 @@ export default () => {
     } else {
         langItemCheck = "vi";
     }
-    
-// console.log(langItemCheck)
+
+    // console.log(langItemCheck)
     const _token = localStorage.getItem("_token");
     const dispatch = useDispatch()
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
     const [data, setData] = useState([]);
     // console.log(data)
+
     useEffect(() => {
         fetch(`${proxy}/notify/notifies`, {
             headers: {
-                Authorization: _token
+                Authorization: _token,
+                lang: langItemCheck
             }
         })
             .then(res => res.json())
@@ -43,11 +45,9 @@ export default () => {
                     const sortedData = data.sort((a, b) => {
                         const dateA = new Date(a.notify_at);
                         const dateB = new Date(b.notify_at);
-                      
                         return dateB - dateA;
-                      });
+                    });
                     setData(sortedData)
-
                 }
             })
     }, [])
@@ -56,32 +56,44 @@ export default () => {
 
         socket.on('project/notify', (data) => {
             // console.log(data)
-      
             const dataRespon =
             {
-
                 image_url: data.actor.avatar,
                 url: data.url,
                 content: data.content,
                 read: false,
                 notify_at: new Date().toISOString(),
-                username: data.targets.map(target => target.username).join(', ')
+                username: data?.targets?.map(target => target.username).join(', ')
             }
-
             // console.log(dataRespon)
-
             if (data.targets.some(target => target.username === _users.username)) {
-                // Cập nhật state nếu người dùng hiện tại có trong danh sách targets
-                setData(prevData => [dataRespon, ...prevData]);
+                const requestBody = {
+                    lang: langItemCheck,
+                    notify: data.content
+                }
+                fetch(`${proxy}/notify/translate`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody),
+                })
+                    .then((res) => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        dataRespon.content = data;
+
+                        setData(prevData => [dataRespon, ...prevData]);
+                    })
+                    .catch((error) => {
+                    });
             }
-
         });
-
         return () => {
             socket.off("/project/notify");
         }
     }, []);
-
 
     const markAsRead = (index) => {
         const notificationToMarkAsRead = data[index];
@@ -89,18 +101,13 @@ export default () => {
             const newNotifications = [...data];
             newNotifications[index].read = true;
             setData(newNotifications);
-
-            // Gửi yêu cầu PUT để đánh dấu thông báo là đã đọc bằng API
-
+            // Gửi yêu cầuPUT để đánh dấu thông báo là đã đọc 
             fetch(`${proxy}/notify/seen/state`, {
-
                 method: "PUT",
-
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${_token}`,
                 },
-
                 body: JSON.stringify({ notify_id: notificationToMarkAsRead.notify_id }),
             })
                 .then((res) => res.json())
@@ -114,14 +121,13 @@ export default () => {
                 });
         }
         // console.log(notificationToMarkAsRead.url)
-        window.location.href = `${notificationToMarkAsRead.url !== undefined ? notificationToMarkAsRead.url : "#" }`
+        window.location.href = `${notificationToMarkAsRead.url !== undefined ? notificationToMarkAsRead.url : "#"}`
     };
-
 
     const formatContent = (imageSrc, content, lang) => {
         const regex = /\[(.*?)\]/g;
         const boldContent = content.replace(regex, "<strong>$1</strong>");
-    
+
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
                 <img src={proxy + imageSrc} alt="Avatar" style={{ width: "40px", borderRadius: "100%", height: "40px", marginRight: "10px" }} />
@@ -131,7 +137,6 @@ export default () => {
             </div>
         );
     };
-
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 12;
@@ -157,9 +162,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="white_shd full ">
                             <div class="full padding_infor_info" style={{ height: "83.8vh" }}>
-
                                 <div className="container-fluid">
-
                                     <div class="col-md-12">
                                         <div class="table-responsive" style={{ height: "78.6vh" }}>
                                             {
@@ -172,9 +175,7 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["notifi content"]}</th>
                                                                     <th class="font-weight-bold" style={{ width: "200px" }} scope="col">{lang["notifi status"]}</th>
                                                                     <th class="font-weight-bold" style={{ width: "180px" }} scope="col">{lang["time"]}</th>
-
                                                                     {
-
                                                                         <th class="font-weight-bold align-center" style={{ width: "80px" }}>{lang["log.action"]}</th>
                                                                     }
                                                                 </tr>
@@ -191,8 +192,7 @@ export default () => {
                                                                                 whiteSpace: "nowrap",
                                                                                 border: "none"
                                                                             }}>
-
-                                                                                {formatContent(notifi.image_url, notifi.content[langItemCheck], langItemCheck)}
+                                                                                {formatContent(notifi.image_url, notifi.content, langItemCheck)}
 
                                                                             </div>
                                                                         </td>
@@ -212,7 +212,6 @@ export default () => {
                                                                             <a href={notifi.url}>
                                                                                 <i class="fa fa-arrow-circle-right size-32" onClick={() => markAsRead(index)} aria-hidden="true" ></i>
                                                                             </a>
-
                                                                         </td>
                                                                     </tr>
                                                                 ))}
@@ -277,8 +276,6 @@ export default () => {
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>

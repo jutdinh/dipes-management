@@ -26,7 +26,7 @@ export default () => {
             </div>
          </div>
          <div class="sidebar_blog_2">
-            <h4>{lang["general"]}</h4>
+            {/* <h4>{lang["general"]}</h4> */}
             <ul class="list-unstyled components">
                <li className="navbar-item">
                   <NavLink to="/" activeClassName="nav-active">

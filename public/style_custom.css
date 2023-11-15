@@ -153,19 +153,21 @@
 .upload-button:hover {
     background-color: #0056b3;
 }
+
+
 .icon_info span.badge {
     font-size: 12px;
     line-height: 16px;
-    padding: 1px 3px;
+    padding: 2px 4px;
     position: absolute;
-    right: -9px;
+    right: -7px;
     top: -7px;
-    background: #ffffff;
+    background: #ff5722;
     border-radius: 100%;
-    color: #ff0000;
+    color: #fff;
     font-weight: 600;
-    width: 27px;
-    height: 20px;
+    width: 23px;
+    height: 21px;
 }
 .icon {
     font-size: 50px;
@@ -256,6 +258,9 @@ padding: 0;
 
 .italic {
     font-style: italic;
+}
+.italic-non {
+    font-style: normal;
 }
 .icon-hidden {
     visibility: hidden;
@@ -482,9 +487,22 @@ padding: 0;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
-
-
-
+#sidebar ul.components {
+    padding: 0px 0;
+    margin: 0;
+    float: left;
+    width: 100%;
+}
+#sidebar ul li a {
+    padding: 19.5px 25px;
+    display: block;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+}
+.icon-download{
+    color: #007afd
+}
 
 /* .gantt .grid-header {
     position: sticky;
@@ -492,8 +510,11 @@ padding: 0;
     z-index: 10; 
 } */
 .icon-fullscreen {
-   color: #8e9096
+   color: #2b51f2
 }
+.icon-showgantt {
+    color: #6a35c0
+ }
 
 .height-960{
     max-height: 960px !important;
@@ -697,7 +718,7 @@ padding: 0;
 
 .sidebar_user_info_custom {
     padding: 5px 15px;
-    padding-top: 8px;
+    padding-top: 7px;
     background: #15283c;
     padding-bottom: 9px;
 }
@@ -2341,6 +2362,11 @@ input[type="date"]:valid+.date-label {
 
 .size-32 {
     font-size: 32px;
+}
+
+
+.size-28{
+    font-size: 28px;
 }
 
 .size-status {

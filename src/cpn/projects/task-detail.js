@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Header from "../common/header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMaximize, faMinimize, faDownload, faCompress } from '@fortawesome/free-solid-svg-icons';
+import { faMaximize, faMinimize, faDownload, faCompress, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusEnum, StatusTask, StatusAprove } from '../enum/status';
@@ -23,7 +23,7 @@ export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
     const { project_id, version_id } = useParams();
     const { removeVietnameseTones } = functions
     let navigate = useNavigate();
@@ -232,17 +232,17 @@ export default () => {
         e.preventDefault();
         stage.members = selectedMemberTask.map(user => user.username);
         const dataSocket = {
-            targets: selectedMemberTask, 
+            targets: selectedMemberTask,
             actor: {
                 fullname: _users.fullname,
                 username: _users.username,
                 avatar: _users.avatar
-            }, 
-            context: 'project/add-period-member', 
-            note: { 
-              project_name: project.project_name,
-              period_name: stage.stage_name,
-              project_id: project_id
+            },
+            context: 'project/add-period-member',
+            note: {
+                project_name: project.project_name,
+                period_name: stage.stage_name,
+                project_id: project_id
             }
         }
 
@@ -283,7 +283,7 @@ export default () => {
             }
 
         }
-        console.log(requestBody)
+        // console.log(requestBody)
 
         fetch(`${proxy}/projects/periods`, {
             method: "POST",
@@ -313,7 +313,7 @@ export default () => {
                     }
                 }
             })
-        
+
 
     }
 
@@ -1168,7 +1168,7 @@ export default () => {
                     <div class="col-md-12">
                         <div class="page_title">
                             <h4>
-                                <label class="pointer" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
+                                <label class="pointer mb-0" onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2" title={lang["back"]}></i>
                                     {lang["projectprocess"]}: {project.project_name}
                                 </label>
                             </h4>
@@ -1218,7 +1218,7 @@ export default () => {
                                 {
                                     stageData && stageData.length > 0 ? (
                                         <div class="ml-2 mt-1" title={lang["export task"]} onClick={exportToExcel}>
-                                            <i class="fa fa-download size-32 pointer icon-ui"></i>
+                                            <i class="fa fa-download size-32 pointer icon-download"></i>
                                         </div>
                                     ) : null
                                 }
@@ -1228,7 +1228,7 @@ export default () => {
                                         :
                                         <FontAwesomeIcon icon={faMaximize} onClick={toggleFullscreen} className=" ml-2 size-32 pointer icon-fullscreen" title="Full Screen" />
                                 }
-                             
+
 
                             </div>
 
@@ -1237,7 +1237,7 @@ export default () => {
                                     display: "flex",
                                     flexDirection: "column",
                                     flexGrow: 1,
-                                    
+
                                 }}
                             >
                                 <div class="row column1" style={{ flexGrow: 1, }}>
@@ -1342,18 +1342,20 @@ export default () => {
 
                                         }}
                                     >
-                                        <div className="d-flex">
 
-                                            <span class="skill mt-0" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
-                                        </div>
                                         <div class="progress skill-bar ">
                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                             </div>
                                         </div>
+                                        {/* <div className="d-flex">
 
-                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={ project.project_name } />
+                                            <span class="skill mt-0 mr-auto" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
+                                        </div> */}
+                                       
+
+                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={project.project_name} process= {process.progress} />
                                     </div>
-                                   
+
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
                                         <div class="modal-dialog modal-dialog-center">

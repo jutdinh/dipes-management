@@ -13,7 +13,7 @@ export default () => {
     const fullname = localStorage.getItem("fullname");
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const _users = JSON.parse(stringifiedUser)
+    const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
 
     let langItemCheck = localStorage.getItem("lang");
     if (langItemCheck) {
@@ -145,25 +145,46 @@ export default () => {
 
         socket.on('project/notify', (data) => {
             // console.log(data)
-      
+
             const dataRespon =
             {
-
                 image_url: data.actor.avatar,
                 url: data.url,
                 content: data.content,
                 read: false,
                 notify_at: new Date().toISOString(),
-                username: data.targets.map(target => target.username).join(', ')
+                username: data?.targets?.map(target => target.username).join(', ')
             }
 
             // console.log(dataRespon)
-
-          
-
             if (data.targets.some(target => target.username === _users.username)) {
-                // Cập nhật state nếu người dùng hiện tại có trong danh sách targets
-                setData(prevData => [dataRespon, ...prevData]);
+                const requestBody = {
+                    lang: langItemCheck,
+                    notify: data.content
+                }
+                fetch(`${proxy}/notify/translate`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody),
+
+                })
+
+                    .then((res) => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        console.log(resp)
+                        dataRespon.content = data;
+               
+                        setData(prevData => [dataRespon, ...prevData]);
+                    })
+                    .catch((error) => {
+                       
+                    });
+          
+               
             }
 
         });
@@ -176,7 +197,8 @@ export default () => {
     useEffect(() => {
         fetch(`${proxy}/notify/notifies`, {
             headers: {
-                Authorization: _token
+                Authorization: _token,
+                lang: langItemCheck
             }
         })
             .then(res => res.json())
@@ -199,24 +221,37 @@ export default () => {
     const [showPopup, setShowPopup] = useState(false);
     const popupRef = useRef();
 
+    const handleBellClick = (event) => {
+        // Prevent event from propagating to other elements
+        event.stopPropagation();
+
+        // Toggle popup visibility
+        setShowPopup(prevShowPopup => !prevShowPopup);
+    };
+
     useEffect(() => {
-        // Hàm này sẽ được gọi mỗi khi người dùng nhấn vào
-        function handleClickOutside(event) {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setShowPopup(false);
-            }
-        }
+        // Function to be called when the user clicks outside
+        // const handleClickOutside = (event) => {
+        //     if (popupRef.current && !popupRef.current.contains(event.target)) {
+        //         setShowPopup(prevShowPopup => !prevShowPopup);
+        //     }
+        // };
 
-        // Đặt event listener khi popup được hiển thị
+        // Add event listener when the popup is shown
         if (showPopup) {
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('click', handleBellClick);
         }
 
-        // Dọn dẹp event listener khi component unmounted hoặc trước khi component update
+        // Cleanup the event listener when the component is unmounted or before the component updates
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('click', handleBellClick);
         };
-    }, [showPopup]);
+    }, [showPopup]); // Depend on showPopup to add/remove the event listener
+
+    // Make sure to stop propagation on the popup's click event as well to prevent handleClickOutside from being triggered
+    const handlePopupClick = (event) => {
+        event.stopPropagation();
+    };
 
     const countUnreadNotifications = (notifications) => {
         let unreadCount = 0;
@@ -267,7 +302,6 @@ export default () => {
         } else if (elapsedMinutes > 0) {
             return `${elapsedMinutes} ${lang["mins ago"]}`;
         } else if (elapsedMilliseconds > 0) {
-
             return `${elapsedSeconds} ${lang["secs ago"]}`;
         } else {
             return lang["just now"];
@@ -351,7 +385,7 @@ export default () => {
                         <div className="icon_info">
                             <ul>
                                 {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li> */}
-                                <li><a href="#"><i className="fa fa-bell-o" onClick={() => setShowPopup(!showPopup)}></i><span className="badge">{unreadCount < 100 ? unreadCount : "99+"}</span></a></li>
+                                <li><a href="#"><i className="fa fa-bell-o" onClick={handleBellClick}></i><span className="badge">{unreadCount < 10 ? unreadCount : "9+"}</span></a></li>
                                 {/* <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
                                 <li>
                                     <a href="#" onClick={changeTheme}>
@@ -386,7 +420,7 @@ export default () => {
                         </div>
                     </div>
                     {showPopup && (
-                        <div ref={popupRef} class="notification-popup">
+                        <div ref={popupRef} class="notification-popup" onClick={handlePopupClick}>
                             <div class="notification-header algin-center">
                                 {lang["notification"]}
                                 {/* <button class="clear-btn">CLEAR ALL</button> */}
@@ -401,7 +435,7 @@ export default () => {
                                         >
                                             {/* <span className="notification-title">{langItemCheck === "Vi" ? notification.content.vi : notification.content.en}</span> */}
                                             <p>
-                                                {formatContent(notification.image_url, notification.content[langItemCheck], langItemCheck)}</p>
+                                                {formatContent(notification.image_url, notification.content, langItemCheck)}</p>
                                             <div class=" d-flex">
 
                                                 <span className="notification-time">{getElapsedTime(notification.notify_at)}</span>

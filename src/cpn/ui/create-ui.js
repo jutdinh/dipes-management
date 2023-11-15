@@ -22,7 +22,7 @@ export default () => {
     const { lang, proxy, auth, functions } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
-    const users = JSON.parse(stringifiedUser)
+    const users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
     const { tempFieldParam } = useSelector(state => state);
     const dispatch = useDispatch();
     const { project_id, version_id } = useParams();
