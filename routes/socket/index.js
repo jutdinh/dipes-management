@@ -52,7 +52,7 @@ const socketController = (socket) => {
                 url = `/projects/detail/task/${note.project_id}?period=${note.period_id}&task_id=${note.task_id}`
                 break;
             case "project/add-child-task-member":                
-                en = `[${actor.fullname}]___has_added_you_to_a_new_task`
+                en = `[${actor.fullname}] __has_added_you_to_a_new_task`
                 url = `/projects/detail/task/${note.project_id}?period=${note.period_id}&task_id=${note.task_id}&child_task_id=${note.child_task_id}`
                 break;
         }
