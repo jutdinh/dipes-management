@@ -5,7 +5,57 @@
   .element:fullscreen {
     background-color: lightpink;
   }
-  
+
+
+  .fake-model-bg{
+
+  }
+
+  .modal-content{
+    position: relative;
+    z-index: 10;
+  }
+
+  .fake-model-bg::after{
+    position: fixed;
+    z-index: 0;
+    content: "";
+    width: 200vw;
+    height: 200vh;
+    background: rgba(0,0,0,0.5);
+    top: -100vh;
+    left: -100vw;
+  }
+
+
+  .custom-backdrop {
+    position: fixed; /* Stay in place */
+    z-index: 1040; /* Sit on top of everything (make sure this is higher than your modal's z-index) */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: hidden; /* Ensure no scrolling on the backdrop */
+    background-color: rgba(0,0,0,0.5); /* Black with opacity */
+    display: none; /* Hidden by default */
+}
+
+/* Style for animating the fade in of the backdrop */
+.fadeIn {
+    animation-name: fadeIn;
+    animation-duration: 0.5s; /* Adjust time as necessary */
+    animation-fill-mode: forwards; /* Keep the element visible after the animation */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+} 
+
+
+
+
+
 .table td,
 .table th .fix-layout {
     padding-bottom: 4.7px !important;

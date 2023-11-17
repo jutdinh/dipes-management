@@ -1795,7 +1795,7 @@ export default () => {
                     </div>
                 </div>
                 {/*add table */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addTables">
+                <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addTables">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -1849,7 +1849,7 @@ export default () => {
                     </div>
                 </div>
                 {/*add fieldParam */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addFieldParam">
+                <div class={`modal  no-select-modal ${showModal ? 'show' : ''}`} id="addFieldParam">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">

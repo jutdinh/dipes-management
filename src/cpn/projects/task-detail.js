@@ -1138,9 +1138,14 @@ export default () => {
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
+
             tableSectionRef.current?.requestFullscreen().catch((e) => {
                 console.error('Error attempting to enable full-screen mode:', e);
             });
+            // const body = document.getElementById("root-body")
+            // body.requestFullscreen().catch((e) => {
+            //     console.error('Error attempting to enable full-screen mode:', e);
+            // });
         } else if (document.exitFullscreen) {
             document.exitFullscreen().catch((e) => {
                 console.error('Error attempting to exit full-screen mode:', e);
@@ -1161,6 +1166,36 @@ export default () => {
             document.removeEventListener('fullscreenchange', handleFullScreenChange);
         };
     }, []);
+
+    function showBackdrop() {
+        // Tạo một phần tử div mới
+        let backdrop = document.createElement('div');
+        backdrop.classList.add('custom-backdrop');
+
+        // Đặt id cho backdrop để có thể dễ dàng tìm và xóa sau này
+        backdrop.id = 'custom-backdrop';
+
+        // Hiển thị backdrop
+        backdrop.style.display = 'block';
+
+        // Thêm vào DOM, thường là vào phần tử body
+        document.body.appendChild(backdrop);
+    }
+
+    // Hàm để ẩn và xóa backdrop khỏi DOM
+    function hideBackdrop() {
+        let backdrop = document.getElementById('custom-backdrop');
+        if (backdrop) {
+            backdrop.style.display = 'none'; // Ẩn backdrop
+            backdrop.parentNode.removeChild(backdrop); // Xóa backdrop khỏi DOM
+        }
+    }
+
+
+
+
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1243,7 +1278,7 @@ export default () => {
                                 <div class="row column1" style={{ flexGrow: 1, }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
-                                        <div class="modal-dialog modal-dialog-center">
+                                        <div class={`modal-dialog modal-dialog-center ${ fullScreen ? "fake-model-bg": "" }`}>
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">{lang["addstage"]}</h4>
@@ -1351,15 +1386,15 @@ export default () => {
 
                                             <span class="skill mt-0 mr-auto" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                         </div> */}
-                                       
 
-                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={project.project_name} process= {process.progress} />
+
+                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={project.project_name} process={process.progress} fullScreen= {fullScreen} />
                                     </div>
 
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
-                                        <div class="modal-dialog modal-dialog-center">
-                                            <div class="modal-content">
+                                        <div class={`modal-dialog modal-dialog-center ${ fullScreen ? "fake-model-bg": "" }`}>
+                                            <div class={`modal-content`}>
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">{lang["addtask"]}</h4>
                                                     <button type="button" class="close" onClick={handleCloseModal} data-dismiss="modal">&times;</button>

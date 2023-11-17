@@ -59,7 +59,7 @@ const Stage = (props) => {
 
 
     const handleCloseModal = () => {
-
+        hideBackdrop()
         setSelectedUsernamesChild([])
         setSelectedRowIndex(null)
         setActionShow(0)
@@ -89,6 +89,7 @@ const Stage = (props) => {
     };
 
     const handleCloseModalAdd = () => {
+        hideBackdrop()
         setSelectedUsernamesAdd([]);
         setSelectedRowIndex(null)
         setActionShow(0)
@@ -137,20 +138,21 @@ const Stage = (props) => {
     const dataTask = props.data
     const membersProject = props.members.members
     const manageProject = props.manager
+    const fullScreen = props.fullScreen
 
     //drop
 
     const [containerWidth, setContainerWidth] = useState('80%');
     const [isResizing, setIsResizing] = useState(false);
-    const [lenghtTask, setLenghtTask] = useState(false);
+    const [lenghtTask, setLenghtTask] = useState(1);
 
     //Đếm tr
     const tableRef = useRef();
     useEffect(() => {
         const numberOfTR = $(tableRef.current).find('tr').length;
         setLenghtTask(numberOfTR)
-        
-    }, [dataGantt,expandedTasks]);
+
+    }, [dataGantt, expandedTasks]);
 
     const containerRef = useRef(null);
     const scrollRef1 = useRef(null);
@@ -709,9 +711,9 @@ const Stage = (props) => {
             task: task
         }
 
-       
 
- 
+
+
         const errors = {};
         if (!task.task_name) {
             errors.task_name = lang["error.taskname"];
@@ -773,7 +775,7 @@ const Stage = (props) => {
                                 task_id: task.task_id
                             }
                         }
-                 
+
                         functions.showApiResponseMessage(status, false);
                         socket.emit("project/notify", dataSocket)
                         props.callDataTask()
@@ -950,7 +952,7 @@ const Stage = (props) => {
         const requestBody = {
             child_task: taskChild
         }
-        
+
 
         const errors = {};
         if (!taskChild.child_task_name) {
@@ -999,11 +1001,11 @@ const Stage = (props) => {
                     if (success) {
                         const dataSocket = {
                             targets: selectedUsernamesChild.map(username => ({ username })),
-                           actor: {
-                                    fullname: _users.fullname,
-                                    username: _users.username,
-                                    avatar: _users.avatar
-                                },
+                            actor: {
+                                fullname: _users.fullname,
+                                username: _users.username,
+                                avatar: _users.avatar
+                            },
                             context: 'project/add-child-task-member',
                             note: {
                                 project_name: props.projectname,
@@ -1022,7 +1024,7 @@ const Stage = (props) => {
                     }
                 }
             })
-     
+
     };
 
     const updateTaskChild = (dataUpdate, useDataUpdate = false) => {
@@ -1271,6 +1273,27 @@ const Stage = (props) => {
     const resetTaskNameFilter = () => {
         setTaskNameFilter({ name: "" });
     }
+    function showBackdrop() {
+
+        let backdrop = document.createElement('div');
+        backdrop.classList.add('custom-backdrop');
+
+        backdrop.id = 'custom-backdrop';
+        backdrop.style.display = 'block';
+
+        document.body.appendChild(backdrop);
+    }
+
+
+    function hideBackdrop() {
+        let backdrop = document.getElementById('custom-backdrop');
+        if (backdrop) {
+            backdrop.style.display = 'none';
+            backdrop.parentNode.removeChild(backdrop);
+        }
+    }
+
+
 
     const [showStartDateInput, setShowStartDateInput] = useState(false);
 
@@ -1278,7 +1301,9 @@ const Stage = (props) => {
 
     return (
         <>
-            <div class="d-flex align-items-center mt-2">
+            <div class="d-flex align-items-center mt-2" >
+                <div class="custom-backdrop" id="custom-backdrop"></div>
+
                 {/* <button class="btn btn-info" style={{ width: "115px" }} onClick={() => handleShowGantt()}>
                     {showGantt ? lang["hidden-gantt"] : lang["show-gantt"]}
                 </button> */}
@@ -1330,6 +1355,7 @@ const Stage = (props) => {
 
                     </>
                 }
+                
                 <FontAwesomeIcon icon={faChartBar} onClick={() => handleShowGantt()} className="ml-2 size-28 pointer icon-showgantt" title={showGantt ? lang["hidden-gantt"] : lang["show-gantt"]} />
             </div>
 
@@ -1353,13 +1379,13 @@ const Stage = (props) => {
                                                     (lenghtTask === 8 ? "75%" :
                                                         (lenghtTask === 9 ? "80%" :
                                                             (lenghtTask === 10 ? "85%" :
-                                                                (lenghtTask === 11 ? "90%" : "100")))))))))),
+                                                                (lenghtTask === 11 ? "90%" : "")))))))))),
                         // height: heights[ lenghtTask + 1 ] ? `${heights[ lenghtTask + 1 ]}%` : "85%",
                         overflowX: 'auto'
                     }}>
                     <table className="table fix-layout-header-table" style={{ maxWidth: '100%', whiteSpace: 'nowrap' }}>
                         <thead>
-                            <tr style={{ height: "59px" }}>
+                            <tr class="color-tr" style={{ height: "50px" }}>
 
                                 {/* <th style={{ width: `${columnWidths.col1}px`, position: 'relative' }}> */}
                                 <th style={{ minWidth: `45px`, maxWidth: `45px`, minHeight: "37px", maxHeight: "37px", position: 'relative' }}>
@@ -1458,7 +1484,7 @@ const Stage = (props) => {
                                     style={{
                                         // position: 'sticky', 
                                         right: 0,
-                                        backgroundColor: '#fff',
+                                        // backgroundColor: '#fff',
                                         borderLeft: '1px solid #ccc'
                                     }} scope="col">
                                     {lang["log.action"]}
@@ -1844,7 +1870,7 @@ const Stage = (props) => {
                 }
                 {/* Add Task */}
                 <div class={`modal show no-select-modal`} id="addTask">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["addtask"]}</h4>
@@ -1956,7 +1982,7 @@ const Stage = (props) => {
                 </div>
                 {/* Update Task */}
                 <div class={`modal show no-select-modal`} id="editTask">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["edittask"]}</h4>
@@ -2070,7 +2096,7 @@ const Stage = (props) => {
                 </div>
                 {/* View Task */}
                 <div class={`modal 'show' no-select-modal`} id="viewTask">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["detailtask"]}</h4>
@@ -2191,7 +2217,7 @@ const Stage = (props) => {
                 </div>
                 {/* Add Task Child */}
                 <div class={`modal show no-select-modal`} id="addTaskChild">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["addtask"]} con</h4>
@@ -2304,7 +2330,7 @@ const Stage = (props) => {
                 </div>
                 {/* Update Task Child */}
                 <div class={`modal show no-select-modal`} id="editTaskChild">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["edittaskchild"]}</h4>
@@ -2419,7 +2445,7 @@ const Stage = (props) => {
                 </div>
                 {/* View Task Child*/}
                 <div class={`modal 'show' no-select-modal`} id="viewTaskChild">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["detailtask"]}</h4>
@@ -2477,7 +2503,7 @@ const Stage = (props) => {
                 </div>
                 {/* Update Stage */}
                 <div class={`modal 'show' no-select-modal`} id="editStage">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["updatestage"]}</h4>
@@ -2563,7 +2589,7 @@ const Stage = (props) => {
                 </div>
                 {/* View Stage*/}
                 <div class={`modal 'show' no-select-modal`} id="viewStage">
-                    <div class="modal-dialog modal-dialog-center">
+                    <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">{lang["detailtask"]}</h4>
