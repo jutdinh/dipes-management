@@ -354,7 +354,7 @@ class ProjectsRecord extends Projects {
 
         const periods = Object.values(tasks)
 
-        periods.map(period => {
+        periods.map(period => {            
             period.tasks = Object.values(period.tasks)
             period.period_members = Object.values(period.period_members)
             let period_progress = 0
@@ -380,9 +380,7 @@ class ProjectsRecord extends Projects {
             if (period.tasks.length > 0) {
                 const period_calculated = period_progress / period.tasks.length
                 period.progress = parseFloat(period_calculated.toFixed(2))
-            } else {
-                period.progress = 0
-            }
+            }             
         })
 
         let sumerizedProgress = 0
