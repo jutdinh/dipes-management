@@ -3,6 +3,10 @@ import responseMessages from "../../cpn/enum/response-code"
 import Swal from 'sweetalert2';
 import { format, parseISO } from 'date-fns';
 
+import $ from 'jquery';
+
+import Blocks from './blocks/index'
+
 
 const vietnameseChars = [
     {
@@ -196,9 +200,78 @@ function toggleFullScreen() {
         }
     }
 }
- 
+
+
+
+
+const getFormatedUUID = () => {
+    /** 
+     *  @type: functions
+     * 
+     *  @libr: uuid 
+     * 
+     *  @desc:
+     *  Tạo uuid với format là một chuỗi 32 ký tự liền nhau gồm số và chữ cái viết hoa
+     *  (1): Tạo UUID từ thư viện
+     *  (2): Biến đổi toàn bộ ký tự thường thành ký tự in hoa
+     *  (3): Xoá toàn bộ dấu gạch [__dash__] 
+     * 
+     */
+    let id = uuidv4()               // (1)
+    id = id.toUpperCase()           // (2)  
+    id = id.replaceAll("-", "")     // (3)
+    return id
+}
+
+
+
+const minimizeFloatingBG = () => {
+    $('.floating-boxes').css({
+        width: 0,
+        height: 0
+    })
+    $('.floating-bg').hide()
+}
+
+
+const restoreFloatingBG = () => {
+    $('.floating-boxes').css({
+        width: "100vw",
+        height: "100vh"
+    })
+    $('.floating-bg').show()
+}
+
+
+const getComponentByName = ( name ) => {
+
+    const Compoennt = Blocks[name]
+    
+    if( Compoennt ){
+        return Compoennt
+    }
+    return undefined
+}
+
+const fillIDToBlockAndChildren = ( block ) => {
+
+    const { children } = block;
+    block.id = getFormatedUUID()
+    if( children ){
+        for( let i = 0; i < children.length; i++ ){
+            children[i] = fillIDToBlockAndChildren( { parent: block.id, ...children[i]} )
+        }
+    }
+    return block
+}
 
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate, toggleFullScreen
+    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate, toggleFullScreen,
+
+    getFormatedUUID,
+    minimizeFloatingBG,
+    restoreFloatingBG,
+    getComponentByName,
+    fillIDToBlockAndChildren
 }

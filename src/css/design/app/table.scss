@@ -1,0 +1,285 @@
+.table-design{
+
+    .table-name{
+        display: flex;
+        flex-wrap: nowrap;
+
+
+
+        .main-input{
+            flex-grow: 1;
+            font-size: 16px;
+            padding: 0.5em;
+            color: #000;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+        }
+    
+        .input-active{
+            border: 1px solid #000;
+        }
+
+        .edit-icon{
+            width: 36px;            
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+    }   
+    
+    
+    .configs{
+        overflow: hidden;
+        
+        .title{
+            span{
+                font-size: 1.25em;
+                display: block;
+                
+            }
+            padding: 0.5em;
+        }
+
+        .source-config{
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .devider{
+            border-top: 1px solid #ccc;
+        }
+
+        .source{
+            padding: 0.5em;
+            display: flex;
+            width: max-content;
+
+            .source-title{
+                display: flex;
+                align-items: center;                  
+            }
+
+            .type-selection{                
+                width: 225px;
+                margin-left: 1em;
+                .type{
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    
+                    display: flex;
+                    flex-wrap: nowrap;
+                    .type-name{
+                        padding: 0.5em 1em;
+                        flex-grow: 1;
+                    }
+
+                    .type-icon{
+                        border-left: 1px solid #ccc;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 32px;
+                        cursor: pointer;
+                    }
+                }
+
+                .options-container{
+                    position: relative;
+                    width: 100%;
+                    padding: unset;
+                    .options{
+                    
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        width: calc(100% - 32px);
+                        position: absolute;                        
+                        top: 0;
+                        left: 0;
+
+                        .option{
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            display: block;
+                            flex-direction: unset;
+                            
+                            border: unset;
+                            border-radius: unset;
+                            
+                            
+                            &:hover{
+                                background-color: #ccc;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        .api-drop{
+            padding: 0.5em;
+            display: flex;
+            width: max-content;
+
+            .api-drop-title{
+                display: flex;
+                align-items: center;          
+            }
+
+            .api-drop-checkbox{
+                display: flex;
+                align-items: center; 
+                margin-right: 2em;
+                input{
+                    transform: scale(1.25);
+                }
+            }
+
+            .selection{                
+                width: 512px;
+                margin-left: 1em;
+                .select{
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    
+                    display: flex;
+                    flex-wrap: nowrap;
+                    .select-name{
+                        padding: 0.5em 1em;
+                        flex-grow: 1;
+                    }
+
+                    .drop-icon{
+                        border-left: 1px solid #ccc;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 32px;
+                        cursor: pointer;
+                    }
+                }
+
+                .options-container{
+                    position: relative;
+                    width: 100%;
+
+                    padding: unset;
+
+                    .options{
+                    
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        width: calc(100% - 32px);
+                        position: absolute;                        
+                        top: 0;
+                        left: 0;
+                        max-height: 200px;
+                        overflow-y: scroll;
+
+                        .option{
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            display: block;
+                            flex-direction: unset;
+                            
+                            border: unset;
+                            border-radius: unset;                            
+                            
+                            &:hover{
+                                background-color: #ccc;
+                            }
+                        }
+                    }
+                }
+
+                .input-box{
+                    input{
+                        border-radius: 0;
+                        border: 1px solid #ccc;
+                        outline: none;     
+                        padding: 0.5em 1em;     
+                        font-size: 16px;
+                        height: 38px;
+                        width: 96px;
+                    }
+                }
+            }
+
+            .selection-deactive{
+                color: #ccc;
+
+                .drop-icon{
+                    pointer-events: none;
+                }
+            }
+
+        }
+    }
+
+    .navigation{
+        // margin-top: 2em;
+    }
+
+    .buttons{
+        .api-drop-title{
+            width: 108px;
+        }
+    }
+
+    .visibility{
+        .group{
+            display: flex;
+        }
+        .selection{
+            width: max-content !important;
+        }
+    }
+
+    .preview{
+        font-size: 0.9em;
+        margin-top: 2em;
+        .top-utils{
+            display: flex;
+            justify-content: flex-end;
+            .util{
+                font-size: 2em;
+                padding: 0.5em 0;
+                cursor: pointer;
+            }
+        }
+
+        .preview-table{
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            width: 100%;
+            tr{
+            }
+            
+            th, td{
+                padding: 8px;                
+                border: 1px solid #ccc;
+            }
+
+            .icons{
+                display: flex;
+                
+                .icon{
+                    display: inline-block;
+                    padding: 0.25em;
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}

@@ -16,6 +16,8 @@ $color-6: #e8eb00;  // yellow
 $nav-color: #34A1C7;
 *{
     outline: none !important;
+    user-select: none;
+    // transition: ease-in-out 0.25s;
 }
 
 

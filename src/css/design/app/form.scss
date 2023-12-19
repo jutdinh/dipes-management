@@ -1,0 +1,272 @@
+.form-design{
+    position: relative;        
+
+    .design-zone-container{
+        width: unset;
+    }
+
+    .placeholder{
+        display: block;
+        width: 100%;
+        
+        .default-text{
+            
+            font-size: 14px;
+            display: block;
+            padding: 12px;
+            text-align: center;
+        }
+    }
+
+    .grid-active{
+        background-color: #ccc;
+        pointer-events: initial;
+        &:hover{
+            background-color: #aaa;
+            cursor: pointer;
+        }
+    }
+
+    .flex-utilities{
+        position: absolute;
+        right: 0;
+        top: 0;     
+        display: flex;
+        z-index: 100;
+        
+        .style-group{
+            display: flex;                
+            padding: 4px;
+
+            .icon-ne{
+                font-size: 24px;
+                padding: 0.25em;
+                margin: 4px;                                
+                width: 24px;
+                height: 24px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                cursor: pointer;
+                &:hover{
+                    transform: scale(1.1);
+                }
+            }
+        }
+    }
+
+
+    .configs{
+        // overflow: hidden;
+        
+        .title{
+            span{
+                font-size: 1.25em;
+                display: block;
+                
+            }
+            padding: 0.5em;
+        }
+
+        .source-config{
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .devider{
+            border-top: 1px solid #ccc;
+        }
+
+        .source{
+            padding: 0.5em;
+            display: flex;
+            width: max-content;
+
+            .source-title{
+                display: flex;
+                align-items: center;                  
+            }
+
+            .type-selection{                
+                width: 225px;
+                margin-left: 1em;
+                .type{
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    
+                    display: flex;
+                    flex-wrap: nowrap;
+                    .type-name{
+                        padding: 0.5em 1em;
+                        flex-grow: 1;
+                        border: none;
+
+                    }
+
+                    .type-icon{
+                        border-left: 1px solid #ccc;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 32px;
+                        cursor: pointer;
+                    }
+                }
+
+                .options-container{
+                    position: relative;
+                    width: 100%;
+                    padding: unset;
+                    .options{
+                    
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        width: calc(100% - 32px);
+                        position: absolute;                        
+                        top: 0;
+                        left: 0;
+                        max-height: 200px;
+                        overflow-y: scroll;
+
+                        .option{
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            display: block;
+                            flex-direction: unset;
+                            
+                            border: unset;
+                            border-radius: unset;
+                            
+                            
+                            &:hover{
+                                background-color: #ccc;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        .api-drop{
+            padding: 0.5em;
+            display: flex;
+            width: max-content;
+
+            .api-drop-title{
+                display: flex;
+                align-items: center;          
+            }
+
+            .api-drop-checkbox{
+                display: flex;
+                align-items: center; 
+                margin-right: 2em;
+                input{
+                    transform: scale(1.25);
+                }
+            }
+
+            .selection{                
+                width: 512px;
+                margin-left: 1em;
+                .select{
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    
+                    display: flex;
+                    flex-wrap: nowrap;
+                    .select-name{
+                        padding: 0.5em 1em;
+                        flex-grow: 1;
+                    }
+
+                    .drop-icon{
+                        border-left: 1px solid #ccc;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 32px;
+                        cursor: pointer;
+                    }
+                }
+
+                .options-container{
+                    position: relative;
+                    width: 100%;
+
+                    padding: unset;
+
+                    .options{
+                    
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        width: calc(100% - 32px);
+                        position: absolute;                        
+                        top: 0;
+                        left: 0;
+                        max-height: 200px;
+                        overflow-y: scroll;
+
+                        .option{
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            padding: 0.5em;
+                            cursor: pointer;
+
+                            display: block;
+                            flex-direction: unset;
+                            
+                            border: unset;
+                            border-radius: unset;                            
+                            
+                            &:hover{
+                                background-color: #ccc;
+                            }
+                        }
+                    }
+                }
+
+                .input-box{
+                    input{
+                        border-radius: 0;
+                        border: 1px solid #ccc;
+                        outline: none;     
+                        padding: 0.5em 1em;     
+                        font-size: 16px;
+                        height: 38px;
+                        width: 96px;
+                    }
+                }
+            }
+
+            .selection-deactive{
+                color: #ccc;
+
+                .drop-icon{
+                    pointer-events: none;
+                }
+            }
+
+        }
+    }
+
+    .navigation{
+        // margin-top: 2em;
+    }
+
+    .buttons{
+        .api-drop-title{
+            width: 108px;
+        }
+    }
+}
+
+
+.form-design-active{
+    // padding-right: 10em;
+}

@@ -1,0 +1,186 @@
+.floating-boxes {
+    position: fixed;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+
+
+    .floating-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+    }
+
+    .floating-box {
+        position: absolute;
+        // top: 0;
+        // left: 0;
+        z-index: 2;
+        // width: 225px;
+        // height: 150px;
+        background: #fff;
+        box-shadow: 1px 1px 5px 1px #ccc;
+        border-radius: 12px;
+    }
+
+    .page-modify {
+        width: 320px;
+        min-height: 200px;
+
+        .page-name {
+            text-align: center;
+            padding: 1em 0.5em;
+
+            span {
+                font-weight: bold;
+            }
+        }
+
+        .page-utils {
+
+            .util {
+                padding: 0.5em 1em;
+                display: flex;
+                align-items: center;
+                border-radius: 12px;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: #fafafa;
+                }
+
+                .icon-container {
+                    width: 2em;
+                }
+
+            }
+
+            .content {
+                display: block;
+                margin-left: 2em;
+            }
+
+            .util-input {
+                padding: 0.5em 1em;
+
+                input {
+                    display: block;
+                    width: 100%;
+                    border: none;
+                    border-bottom: 1px solid #ccc;
+                    padding: 0.5em;
+                    outline: none;
+                }
+            }
+
+            .util-btn {
+                display: flex;
+                justify-content: flex-end;
+                padding: 0.5em;
+
+                button {
+                    display: block;
+                    border-radius: 12px;
+                    border: none;
+                    color: #0051ff;
+                    font-weight: bold;
+                    cursor: pointer;
+                    background-color: #fff;
+                }
+            }
+        }
+    }
+
+    .change-icon {
+        width: 512px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 256px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                text-align: center;
+                font-weight: bold;
+                padding: 1em;
+            }
+        }
+
+        .icons-container {
+            flex-grow: 1;
+            overflow: auto;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .icons {
+                display: flex;
+                flex-wrap: wrap;
+                // border: 1px solid #ccc;
+                border-radius: 12px;
+                justify-content: center;
+
+                .icon {
+                    width: max-content;
+                    min-width: 72px;
+                    height: 72px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    border: 1px solid #ccc;
+                    margin: 12px;
+                    font-size: 1.5em;
+                    border-radius: inherit;
+                    cursor: pointer;
+
+                    &:hover {
+                        transform: scale(1.2);
+                    }
+
+
+                    .icon-name {
+                        font-size: 0.5em;
+                        // font-weight: bold;
+                        display: block;
+                        text-align: center;
+                        margin: 6px;
+                    }
+                }
+            }
+        }
+    }
+
+    .design-block {
+        .block {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #ccc;
+            margin: 8px;
+            cursor: pointer;
+
+            .block-icon {
+                font-size: 2em;
+            }
+            
+        }
+
+    }
+}

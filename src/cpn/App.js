@@ -13,7 +13,8 @@ import { Tasks } from './tasks';
 import { Logs } from './logs';
 import { Tables, Field, UpdateField } from './tables';
 import { Apis, CreateApi, UpdateAi, StatisticalField } from './api';
-import { UI, CreateUi, Detail } from './ui'
+// import { UI, CreateUi, Detail } from './ui'
+import UI from './ui/Program'
 import updateApi from './api/update-api';
 import Statistical from './statistical/static';
 import Report from './report/report';
@@ -94,9 +95,8 @@ function App() {
         <Route path="/projects/:project_id/:version_id/apis" element={<Navigation Child={Apis} />} />
         <Route path="/projects/:project_id/:version_id/apis/create" element={<Navigation Child={CreateApi} />} />
         <Route path="/projects/:project_id/:version_id/apis/update/:api_id" element={<Navigation Child={updateApi} />} />
-        <Route path="/projects/:version_id/uis" element={<Navigation Child={UI} />} />
-        <Route path="/projects/:version_id/uis/create" element={<Navigation Child={CreateUi} />} />
-        <Route path="/projects/:version_id/uis/detail/:ui_id" element={<Navigation Child={Detail} />} />
+        <Route path="/projects/:version_id/uis" element={<UI />} />
+        
         <Route path="/statis" element={<Navigation Child={Statistical} />} />
         <Route path="/report" element={<Navigation Child={Report} />} />
         <Route path="/workflow" element={<Navigation Child={Workflow} />} />

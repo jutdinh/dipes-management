@@ -989,11 +989,31 @@ export default () => {
             })
     }
 
+    const exportNewUI = () => {
+        const { version } = exporter;
+        const ver = versions.find(v => v.version_id == version)
+
+        fetch(`${proxy}/uis/${version}/savedui`, {
+            method: "GET",
+            headers: {
+                Authorization: `${_token}`
+            }
+        }).then((res) => res.json())
+            .then((res) => {
+                const { pages } = res.data.ui;                
+
+                const jsonData = JSON.stringify({ data: pages });
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                saveAs(blob, `${project.project_name}-${ver.version_name}-ui.json`);
+            })
+    }
+
     const exportTypes = [
         { id: 0, label: lang["export.types.wholeProjects"], func: exportWholeProject },
         { id: 1, label: lang["export.types.tablesOnly"], func: exportTablesOnly },
         { id: 2, label: lang["export.types.apisOnly"], func: exportApisOnly },
         { id: 3, label: lang["export.types.uiOnly"], func: exportUIOnly },
+        { id: 4, label: `${lang["export.types.uiOnly"]} 2`, func: exportNewUI },
     ]
 
     const generateKey = () => {

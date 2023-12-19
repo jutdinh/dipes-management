@@ -1,0 +1,104 @@
+b{
+    font-weight: bold;
+}
+
+.app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 355px);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    // padding: 4em;
+    padding-bottom: 0;
+    // padding-top: 4em;
+    
+
+    .app-container{
+        display: block;
+        flex-grow: 1;
+        background-color: #f8f8f8;  
+        // border: 1px solid #ccc;              
+        overflow-y: scroll;
+        position: relative;
+
+
+        .app-topbar{            
+            display: flex;
+            align-items: center;
+            padding: 0.25em;
+        }
+
+        &::-webkit-scrollbar{
+            display: none;
+        }
+    }
+}
+
+.design-zone-container{
+    width: 100%;
+    // margin-top: 10px;
+    padding: 0.25em;
+    position: relative;
+
+    .front-line{
+        display: block;
+        height: 10px;
+        width: 100%;        
+        border-radius: 12px;   
+        background-color: transparent;     
+        pointer-events: none;
+    }
+    
+    .back-line{
+        display: block;
+        height: 10px;
+        width: 100%;                
+        border-radius: 12px;
+        background-color: transparent;
+        pointer-events: none;
+    }
+    
+    .line-active{
+        background-color: #ccc;
+        pointer-events: initial;
+        &:hover{
+            background-color: #aaa;
+            cursor: pointer;
+        }
+    }
+}
+
+.design-zone{    
+    width: 100%;
+    border: 1px solid transparent;
+    padding: 0.5em;
+    position: relative;
+    
+    .trigger-bg{
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+    }
+}
+
+.design-zone-active{
+    border: 1px solid #ccc;
+}
+
+#playground-bg{
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: transparent;
+}
+
+.main-page * {
+    transition: ease-in-out 0.2s;
+}
