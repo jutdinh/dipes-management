@@ -202,7 +202,7 @@ class VersionsController extends Controller {
                 api.fields = Object.values( api.fields )
                 api.statistic = Object.values( api.statistic )
                 api.calculates = Object.values( api.calculates )
-            })
+            })            
             const Cipher = new Crypto()
             const primalData = { apis }
             const stringifiedData = JSON.stringify(primalData)

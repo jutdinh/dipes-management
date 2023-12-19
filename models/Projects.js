@@ -200,14 +200,30 @@ class Projects extends Model {
         this.versions.uis.components.__addProperty__("api_import", Model.types.string)
         this.versions.uis.components.__addProperty__("api_detail", Model.types.string)
 
+        this.versions.__addProperty__("ui", Model.types.json)
+        this.versions.ui.__addProperty__("pages", Model.types.array)
+        this.versions.ui.__addProperty__("last_modified_by", Model.types.json)
+        
+        this.versions.ui.last_modified_by.__addProperty__("username", Model.types.string)
+        this.versions.ui.last_modified_by.__addProperty__("fullname", Model.types.string)
+        this.versions.ui.last_modified_by.__addProperty__("avatar", Model.types.string)
+
+        this.versions.ui.__addProperty__("last_modified_at", Model.types.datetime)
+
         /* TASK & TASK MODIFIES */
 
         this.__addProperty__("tasks", Model.types.model)
         this.tasks.__addProperty__("period_id", Model.types.int, { auto: true })
         this.tasks.__addProperty__("period_name", Model.types.string, { default: "Giai đoạn mới", maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.__addProperty__("period_description", Model.types.string, { default: "Giai đoạn mới", maxLength: Number.MAX_SAFE_INTEGER })
+
+        this.tasks.__addProperty__("period_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
+        this.tasks.__addProperty__("period_priority", Model.types.int, { default: 1 })
+        this.tasks.__addProperty__("period_approve", Model.types.bool, { default: false })
+
         this.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
+        this.tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.__addProperty__("progress", Model.types.number, { default: 0 })
 
         this.tasks.__addProperty__("period_members", Model.types.model)

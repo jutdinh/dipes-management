@@ -21,6 +21,10 @@ router.post('/api/and/ui', async (req, res) => {
     // }
 })
 
+router.post('/saveui', async (req, res) => {
+    await UIController.saveUI(req, res);
+})
+
 router.post('/apiview', async (req, res) => { 
     await UIController.createAPIView(req, res)         
 })

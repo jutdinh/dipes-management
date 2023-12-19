@@ -668,6 +668,41 @@ class UIController extends Controller {
         res.send(context)
     }
 
+
+
+
+    saveUI = async (req, res) => {
+        const { version_id, ui } = req.body;
+        const context = await this.generalCheck( req, version_id )
+
+        const { success, objects } = context;
+        if( success ){
+            const { Project, user } = objects;            
+            const UI = {
+                pages: ui,
+                last_modified_by: user,
+                last_modified_at: new Date()
+            }
+            await Project.__modifyAndSaveChange__(`versions.${ version_id }.ui`, UI)
+        }
+        delete context.objects
+        res.send(context)
+    }
+
+    getSavedUI = async ( req, res ) => {
+        const { version_id } = req.params;
+        const context = await this.generalCheck( req, version_id )
+        const { success, objects } = context;
+
+        if( success ){
+            const { version } = objects;            
+            const { ui } = version
+            context.data = { ui }
+        }
+        delete context.objects
+        res.send(context)
+    }
+
 }
 module.exports = UIController
 
