@@ -973,7 +973,7 @@ class ProjectsController extends Controller {
                         // }
                     } else {
                         context.content = "Tên giai đoạn đã tồn tại"
-                        context.success = true
+                        context.success = false
                         context.status = "0x4501262"
                     }
 
