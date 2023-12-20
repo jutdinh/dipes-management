@@ -1075,87 +1075,87 @@ class ProjectsController extends Controller {
 
                     const nullCheck = this.notNullCheck(period, ["period_name", "start", "end"])
 
-                    if (nullCheck.valid) {
-                        const { start, end, members } = period
-                        const startDate = new Date(start)
-                        const endDate = new Date(end)
-                        const newMembersUsernameList = period.members;
-                        const originMembers = oldPeriod.period_members;
+                    const { start, end, members } = period
+                    const startDate = new Date(start)
+                    const endDate = new Date(end)
+                    const newMembersUsernameList = period.members;
+                    const originMembers = oldPeriod.period_members;
 
-                        const newMemberNames = []
-                        if (members && Array.isArray(members)) {
-                            const AccountsModel = new Accounts()
-                            const users = await AccountsModel.findAll({ username: { $in: members } })
-                            const serializedUsers = {}
-                            users.map(user => {
-                                serializedUsers[user.username] = user
-                                newMemberNames.push(user.fullname)
-                            })
-                            period.period_members = serializedUsers
-                        }                            
+                    const newMemberNames = []
+                    if (members && Array.isArray(members)) {
+                        const AccountsModel = new Accounts()
+                        const users = await AccountsModel.findAll({ username: { $in: members } })
+                        const serializedUsers = {}
+                        users.map(user => {
+                            serializedUsers[user.username] = user
+                            newMemberNames.push(user.fullname)
+                        })
+                        period.period_members = serializedUsers
+                    }                            
 
-                        const newPeriod = { ...oldPeriod, ...period }
+                    const newPeriod = { ...oldPeriod, ...period }
 
-                        delete newPeriod.members // this may cause error
+                    delete newPeriod.members // this may cause error
 
-                        const oldMembers = Object.values( oldPeriod.period_members )
-                        const oldMemberNames = oldMembers.map( mem => mem.fullname )
+                    const oldMembers = Object.values( oldPeriod.period_members )
+                    const oldMemberNames = oldMembers.map( mem => mem.fullname )
 
-                        await Project.__modifyAndSaveChange__( `tasks.${ period_id }`, newPeriod )
-                        this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${project.project_code} | __periodname: ${oldPeriod.period_name} => ${newPeriod.period_name} | __period_start: ${oldPeriod.start} => ${newPeriod.start} | __period_end: ${oldPeriod.end} => ${newPeriod.end} | __member: ${oldMemberNames.join(", ")} => ${newMemberNames.join(', ')}`, decodedToken.username )
+                    await Project.__modifyAndSaveChange__( `tasks.${ period_id }`, newPeriod )
+                    this.saveLog("info", req.ip, "__updateTaskPeriod", `__projectname: ${ project.project_name } | __project_code: ${project.project_code} | __periodname: ${oldPeriod.period_name} => ${newPeriod.period_name} | __period_start: ${oldPeriod.start} => ${newPeriod.start} | __period_end: ${oldPeriod.end} => ${newPeriod.end} | __member: ${oldMemberNames.join(", ")} => ${newMemberNames.join(', ')}`, decodedToken.username )
 
-                        const newAddedMembers = newMembersUsernameList.filter( mem => originMembers[this.dotEncode(mem)] == undefined )
-                        for( let i = 0; i < newAddedMembers.length; i++ ){
-                            const notify = {    
-                                image_url: decodedToken.avatar,
-                                url: `/projects/detail/${project.project_id}`,
-                                content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
-                                username: newAddedMembers[i]
-                            }
-                            const Notify = new NotificationRecord(notify)
-                            await Notify.save()
+                    const newAddedMembers = newMembersUsernameList.filter( mem => originMembers[this.dotEncode(mem)] == undefined )
+                    for( let i = 0; i < newAddedMembers.length; i++ ){
+                        const notify = {    
+                            image_url: decodedToken.avatar,
+                            url: `/projects/detail/${project.project_id}`,
+                            content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
+                            username: newAddedMembers[i]
                         }
-
-                        const arraizedOldMembers = Object.values(originMembers).map( u => u.username )
-                        const deletedUsers = arraizedOldMembers.filter( u => newMembersUsernameList.indexOf(u) == -1 ? true: false )
-                        console.log( deletedUsers )
-
-                        for( let i = 0; i < deletedUsers.length; i++ ){
-                            const notify = {    
-                                image_url: decodedToken.avatar,
-                                url: ``,
-                                content: `[${decodedToken.fullname}] has removed you from phase [${period.period_name}] of project [${project.project_name}]`,
-                                username: deletedUsers[i]
-                            }
-                            const Notify = new NotificationRecord(notify)
-                            await Notify.save()
-                        }
-
-                        context.content = "Cập nhật giai đoạn thành công"
-                        context.success = true
-                        context.status = "0x4501257"
-                        // if (endDate && startDate && endDate - startDate >= 0) {
-                        // } else {
-                        //     context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
-                        //     context.success = true
-                        //     context.status = "0x4501252"
-                        // }
-
-                    } else {
-                        if (!period.period_name) {
-                            context.content = "Tên giai đoạn không hợp lệ hoặc rỗng"
-                            context.status = "0x4501248"
-                        }
-                        if (!period.start) {
-                            context.content = "Ngày bắt đầu không hợp lệ hoặc rỗng"
-                            context.status = "0x4501250"
-                        }
-                        if (!period.end) {
-                            context.content = "Ngày kết thúc không hợp lệ hoặc rỗng"
-                            context.status = "0x4501251"
-                        }
-                        context.success = false
+                        const Notify = new NotificationRecord(notify)
+                        await Notify.save()
                     }
+
+                    const arraizedOldMembers = Object.values(originMembers).map( u => u.username )
+                    const deletedUsers = arraizedOldMembers.filter( u => newMembersUsernameList.indexOf(u) == -1 ? true: false )
+                    console.log( deletedUsers )
+
+                    for( let i = 0; i < deletedUsers.length; i++ ){
+                        const notify = {    
+                            image_url: decodedToken.avatar,
+                            url: ``,
+                            content: `[${decodedToken.fullname}] has removed you from phase [${period.period_name}] of project [${project.project_name}]`,
+                            username: deletedUsers[i]
+                        }
+                        const Notify = new NotificationRecord(notify)
+                        await Notify.save()
+                    }
+
+                    context.content = "Cập nhật giai đoạn thành công"
+                    context.success = true
+                    context.status = "0x4501257"
+                    // if (endDate && startDate && endDate - startDate >= 0) {
+                    // } else {
+                    //     context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                    //     context.success = true
+                    //     context.status = "0x4501252"
+                    // }
+                    // if (nullCheck.valid) {
+
+                    // } else {
+                    //     if (!period.period_name) {
+                    //         context.content = "Tên giai đoạn không hợp lệ hoặc rỗng"
+                    //         context.status = "0x4501248"
+                    //     }
+                    //     if (!period.start) {
+                    //         context.content = "Ngày bắt đầu không hợp lệ hoặc rỗng"
+                    //         context.status = "0x4501250"
+                    //     }
+                    //     if (!period.end) {
+                    //         context.content = "Ngày kết thúc không hợp lệ hoặc rỗng"
+                    //         context.status = "0x4501251"
+                    //     }
+                    //     context.success = false
+                    // }
                 } else {
                     context.content = "Thông tin giai đoạn không hợp lệ hoặc rỗng"
                     context.status = "0x4501249"
