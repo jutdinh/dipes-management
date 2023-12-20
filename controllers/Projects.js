@@ -927,49 +927,49 @@ class ProjectsController extends Controller {
                         const startDate = new Date(start)
                         const endDate = new Date(end)
 
-                        if (endDate && startDate && endDate - startDate >= 0) {
-                            const memberNames = []
-                            let users = [];
-                            if (members && Array.isArray(members)) {
-                                const AccountsModel = new Accounts()
-                                users = await AccountsModel.findAll({ username: { $in: members } })
-                                const serializedUsers = {}
-                                users.map(user => {
-                                    serializedUsers[user.username] = user
-                                    memberNames.push(user.fullname)
-                                })
-                                period.period_members = serializedUsers
-                            }
-
-
-                            await Project.createPeriod(period)
-                            await Project.save()
-
-                            context.content = "Tạo giai đoạn thành công"
-                            context.success = true
-                            context.status = "0x4501253"
-
-                            for (let i = 0; i < users.length; i++) {
-
-                                const  { username } = users[i]
-
-                                const notify = {
-                                    image_url: decodedToken.avatar,
-                                    url: `/projects/detail/task/${project.project_id}?period=${period.period_id}`,
-                                    content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
-                                    username
-                                }
-                                const Notify = new NotificationRecord(notify)
-                                await Notify.save()
-                            }
-
-                            this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
-
-                        } else {
-                            context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
-                            context.success = true
-                            context.status = "0x4501252"
+                        const memberNames = []
+                        let users = [];
+                        if (members && Array.isArray(members)) {
+                            const AccountsModel = new Accounts()
+                            users = await AccountsModel.findAll({ username: { $in: members } })
+                            const serializedUsers = {}
+                            users.map(user => {
+                                serializedUsers[user.username] = user
+                                memberNames.push(user.fullname)
+                            })
+                            period.period_members = serializedUsers
                         }
+
+
+                        await Project.createPeriod(period)
+                        await Project.save()
+
+                        context.content = "Tạo giai đoạn thành công"
+                        context.success = true
+                        context.status = "0x4501253"
+
+                        for (let i = 0; i < users.length; i++) {
+
+                            const  { username } = users[i]
+
+                            const notify = {
+                                image_url: decodedToken.avatar,
+                                url: `/projects/detail/task/${project.project_id}?period=${period.period_id}`,
+                                content: `[${decodedToken.fullname}] __has_added_you_to_phase [${period.period_name}] __of_project [${project.project_name}]`,
+                                username
+                            }
+                            const Notify = new NotificationRecord(notify)
+                            await Notify.save()
+                        }
+
+                        this.saveLog("info", req.ip, "__createTaskPeriod", `__projectname: ${project.project_name} | __project_code: ${project.project_code} | __periodname: ${period.period_name} | __members: ${memberNames.join(", ")}`, decodedToken.username)
+                        // if (endDate && startDate && endDate - startDate >= 0) {
+
+                        // } else {
+                        //     context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                        //     context.success = true
+                        //     context.status = "0x4501252"
+                        // }
                     } else {
                         context.content = "Tên giai đoạn đã tồn tại"
                         context.success = true
