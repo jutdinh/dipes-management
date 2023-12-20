@@ -534,6 +534,8 @@ class ProjectsRecord extends Projects {
         const { tasks } = data;
         data.tasks = { ...tasks, [`${id}`]: period }
         this.setData(data)
+
+        return period
     }
 
     addTask = async (period_id, task) => {

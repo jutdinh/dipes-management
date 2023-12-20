@@ -941,12 +941,13 @@ class ProjectsController extends Controller {
                         }
 
 
-                        await Project.createPeriod(period)
+                        const newPeriod = await Project.createPeriod(period)
                         await Project.save()
 
                         context.content = "Tạo giai đoạn thành công"
                         context.success = true
                         context.status = "0x4501253"
+                        context.data = newPeriod
 
                         for (let i = 0; i < users.length; i++) {
 
