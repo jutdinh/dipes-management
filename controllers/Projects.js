@@ -830,9 +830,7 @@ class ProjectsController extends Controller {
                 if (period.tasks.length > 0) {
                     const period_calculated = period_progress / period.tasks.length
                     period.progress = period_calculated.toFixed(2)
-                } else {
-                    period.progress = 0
-                }
+                } 
             })
 
             context.data = periods
@@ -882,9 +880,7 @@ class ProjectsController extends Controller {
                 if (period.tasks.length > 0) {
                     const period_calculated = period_progress / period.tasks.length
                     period.progress = period_calculated.toFixed(2)
-                } else {
-                    period.progress = 0
-                }
+                } 
 
                 context.data = period
                 context.status = "0x4501256"
@@ -1036,6 +1032,9 @@ class ProjectsController extends Controller {
                     oldPeriod.progress = progress
                     await Project.__modifyAndSaveChange__(`tasks.${ period_id }`, oldPeriod)
 
+                    context.content = "Cập nhật giai đoạn thành công"
+                    context.success = true
+                    context.status = "0x4501257"
                 }else{  
                     context.content = "Thông tin giai đoạn không hợp lệ hoặc rỗng"
                     context.status = "0x4501249"
