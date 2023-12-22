@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCog, faUndo, faRedo } from '@fortawesome/free-solid-svg-icons'
+import { faCog, faUndo, faRedo, faEye } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -41,6 +41,9 @@ export default () => {
                 </div>
                 <div className="item">
                     <div className="circle-item"> <FontAwesomeIcon icon={ faRedo }/> </div>
+                </div>
+                <div className="item">
+                    <div className="circle-item"> <FontAwesomeIcon icon={ faEye }/> </div>
                 </div>
                 <div className="item" onClick={ saveUI }>
                     <div className="circle-item"> <FontAwesomeIcon icon={ faCog }/></div>

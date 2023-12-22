@@ -15,7 +15,7 @@ import icons from './configs/icons'
 
 import { blockTypes, initialStates } from './configs/blocks';
 import Blocks from './configs/blocks/index'
-import properties from './configs/properties';
+import properties from './configs/properties.js';
 
 
 const initState = {
@@ -63,7 +63,8 @@ const initState = {
     initialStates,
     propertySets: properties,
     Blocks,
-
+    
+    selectedCpns: [],    
     selectedCpn: {
         
     },

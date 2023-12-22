@@ -53,17 +53,15 @@ export default (props) => {
 
     const SwitchingState = () => {
         const { activeComponent } = cache;
-        if (children.length == 0) {
-
-            if (activeComponent != id) {
-                dispatch({
-                    branch: "design-ui",
-                    type: "setActiveComponent",
-                    payload: {
-                        id
-                    }
-                })
-            }
+        
+        if (activeComponent != id) {
+            dispatch({
+                branch: "design-ui",
+                type: "setActiveComponent",
+                payload: {
+                    id
+                }
+            })
         }
     }
 
@@ -224,7 +222,7 @@ export default (props) => {
             {renderFrontLiner(id, parent)}
             <div
                 className={`design-zone form-design  ${isActive() ? "design-zone-active form-design-active" : ""}`}
-                onClick={SwitchingState} onMouseEnter={ComponentHover}
+                onMouseEnter={ComponentHover}
                 style={{ zIndex }}
                 onMouseUp={FormAppendsChild}
             >
@@ -370,7 +368,7 @@ export default (props) => {
 
 
 
-
+                <div className="trigger-bg" onClick={SwitchingState} ></div>
 
             </div>
 

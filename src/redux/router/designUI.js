@@ -478,7 +478,7 @@ const flatteningComponents = (components) => {
     const cpns = []
     for( let i = 0; i < components.length; i++ ){
         const { children }= components[i]
-        cpns.push({...components[i], children: [] }  )
+        cpns.push({...components[i]}  )
         if( children ){
             cpns.push( ...flatteningComponents( children ) )
         }
@@ -498,21 +498,24 @@ const setActiveComponent = (state, action) => {
     const component = target;
 
     const activeSet = [ id ]
+    const activeCpns = [ target ]
 
     while( true && target){
         const nextTargetId = target.parent_id;
         target = flattenComponents.find( c => c.id == nextTargetId )
 
         if( target ){
-            activeSet.push( target.id )            
+            activeSet.push( target.id )     
+            activeCpns.unshift( target )       
         }
     }   
     if( component ){
 
         const { name } = component;
         const propertySet = state.propertySets[name]
-        state.propertySet = propertySet
+        state.propertySet = propertySet ? propertySet : []
         state.selectedCpn = component;
+        state.selectedCpns = activeCpns;
     }
     
 
@@ -544,10 +547,15 @@ const updateChildComponent = (components, target_id, values) => {
 
 const updateComponent = (state, action) => {
     const { id, values } = action.payload;
-    const { page } = state;
+    const { page, selectedCpn } = state;
     const { component } = page
 
     page.component = updateChildComponent(component, id, values)
+
+    if( selectedCpn.id == id ){
+        state.selectedCpn.props = { ...selectedCpn.props, ...values }
+    }
+
     state.page = page;
 
     return { ...state };
@@ -608,6 +616,8 @@ const removeComponent = (state, action) => {
     const { component } = page;
     const newCpn = removeChildComponent(component, id)
     state.page.component = newCpn
+    state.selectedCpn = {}
+    state.propertySet = []
 
     return { ...state }
 }

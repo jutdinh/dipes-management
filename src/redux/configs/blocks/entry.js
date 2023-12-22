@@ -11,6 +11,7 @@ export default (props) => {
         insertComponent, 
         removeComponent, title, value, placeholder, required, variable_name, 
         PropsSwitching, parent, flex,
+        labelStyle,
         renderFrontLiner,
         renderBackLiner, 
     } = props
@@ -86,7 +87,7 @@ export default (props) => {
             >
                 <div className="entry-header-design">
                     <div className="text-entry">
-                        <span className="entry-label">{title.visible && title.content} <span className="required">{required ? " *" : ""}</span></span>
+                        <span className="entry-label" style={labelStyle}>{title.visible && title.content} <span className="required">{required ? " *" : ""}</span></span>
                         <input className="entry-input" value={value} placeholder={placeholder.visible && placeholder.content} onFocus={() => { setDrop(true) }} />
                     </div>
                     {/* {

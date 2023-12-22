@@ -220,12 +220,35 @@
 
             .properties{
 
+                .cpn-chain{
+                    display: flex;
+                    margin: 1em;
+                    flex-wrap: nowrap;
+                    .cpn {
+                        display: flex;
+                        cursor: pointer;
+
+                        
+                        span{
+                            &:nth-child(1){
+                                &:hover{
+
+                                    color: #000;
+                                }
+                            } 
+                            padding: 0.25em;
+                        }
+                    }   
+
+                }
+
 
                 .property{
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
                     margin: 1em;
+                    position: relative;
 
                     .label-box{
                         padding: 0.25em;
@@ -236,6 +259,7 @@
                         display: flex;
                         justify-content: flex-end;
                         flex-grow: 1;
+
                         input{
                             background-color: #fff;
                             border: 1px solid #ccc;
@@ -244,6 +268,115 @@
                             padding: 0.5em 0.25em;
                         }
                     }
+
+                    .color-box{
+                        width: 40px; 
+                        height: 32px;                       
+
+                        .color-input{
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                        }
+                    }
+
+                    .drop-box{                       
+                        
+                        flex-grow: 1;
+                        position: relative;
+                        .content-container{
+                            width: 100%;
+
+                            .content{
+                                width: 100%;
+                                padding: 0.5em 0.25em;
+                                border: 1px solid #ccc;
+                                cursor: pointer;
+                            }
+                        }
+                        .caret{
+                            position: absolute;
+                            top: 0.5em;
+                            right: 0.5em;
+                        }
+
+                        .options-container{
+                            position: relative;
+                            width: 100%;
+        
+                            padding: unset;
+                            
+                            .options{
+                            
+                                background-color: #fff;
+                                border: 1px solid #ccc;
+                                width: 100%;
+                                position: absolute;                        
+                                top: -1px;
+                                left: 0;
+                                max-height: 200px;
+                                overflow-y: scroll;
+        
+                                .option{
+                                    padding: 0.5em;
+                                    cursor: pointer;
+        
+                                    padding: 0.5em;
+                                    cursor: pointer;
+        
+                                    display: block;
+                                    flex-direction: unset;
+                                    
+                                    border: unset;
+                                    border-radius: unset;                            
+                                    
+                                    &:hover{
+                                        background-color: #ccc;
+                                    }
+                                }
+
+                                &::-webkit-scrollbar{
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
+
+                    .iconic-switches{
+                        display: flex;
+                        flex-grow: 1;
+                        justify-content: space-between;
+
+                        .icon-switch-btn{
+                            font-size: 16px;        
+                            cursor: pointer;        
+                            padding: 4px 12px ;                  
+                            border: 1px solid #ccc;            
+                        }
+                    }
+
+                    .iconic-switch{
+                        font-size: 16px;        
+                        cursor: pointer;  
+                        padding: 4px 12px ;                  
+                        border: 1px solid #ccc;
+                    }
+
+                    .icon-trash{
+                        display: flex;                        
+                        justify-content: flex-end;                        
+                        
+                        color: #ff6655;
+                        // border: none;
+                        margin-left: auto;
+                    }
+
+                    .switch-activated{
+                        color: #fff;
+                        background: #000;
+                        border-radius: 8px;
+                    }
+                    
                 }
 
                 

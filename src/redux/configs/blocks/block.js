@@ -77,13 +77,13 @@ export default (props) => {
                         <span className="default-text">BLOCKS</span>
                     </div>
                 }
-                {isActive() && <div className="flex-utilities">
+                {/* {isActive() && <div className="flex-utilities">
                     <div className="style-group">
                         <div className="icon-ne">
                             <FontAwesomeIcon icon={faTrash} onClick={() => { removeComponent(id) }} />
                         </div>
                     </div>
-                </div>}
+                </div>} */}
 
             </div>
             

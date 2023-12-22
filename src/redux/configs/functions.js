@@ -259,7 +259,7 @@ const fillIDToBlockAndChildren = ( block ) => {
     block.id = getFormatedUUID()
     if( children ){
         for( let i = 0; i < children.length; i++ ){
-            children[i] = fillIDToBlockAndChildren( { parent: block.id, ...children[i]} )
+            children[i] = fillIDToBlockAndChildren( { parent_id: block.id, ...children[i]} )
         }
     }
     return block

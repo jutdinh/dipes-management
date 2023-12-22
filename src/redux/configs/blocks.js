@@ -141,12 +141,8 @@ const initialStates = {
         "props": {
             "title": "Sample title",                        
             "api": {
-                "api_type": "project", // ENUM [ "project", "foreign" ]
                 "api": undefined,
                 "url": "",
-                "headers": [
-    
-                ],
                 "body": [
     
                 ]
@@ -179,6 +175,15 @@ const initialStates = {
                 "flexGrow": "1"
             },
 
+            "labelStyle": {
+                fontSize: 16,
+                color: "#000",
+                textAlign: "left",
+                fontStyle: "unset",
+                fontWeight: "unset",
+                textDecoration: "none", 
+            },
+
             "style": {
                 fontSize: 16,
                 color: "#000",
@@ -199,13 +204,13 @@ const initialStates = {
 
                 borderWidth: 1,
                 borderColor: "#ccc",
-                borderStyle: "solid",
+                borderStyle: "solid",                
 
                 backgroundColor: "#777",
 
                 borderRadius: 0,
 
-                color: "#000",
+                color: "#fff",
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
@@ -219,20 +224,20 @@ const initialStates = {
 
 
 
-initialStates.form.children = [
-    { ...initialStates.text, props: { ...initialStates.text.props, content: "FORM" } },        
-    initialStates.entry,
-    initialStates.button
-]
+// initialStates.form.children = [
+//     { ...initialStates.text, props: { ...initialStates.text.props, content: "FORM" } },        
+//     initialStates.entry,
+//     initialStates.button
+// ]
 
-initialStates.flex.children = [
-    initialStates.entry,
-    initialStates.entry
-]
+// initialStates.flex.children = [
+//     initialStates.entry,
+//     initialStates.entry
+// ]
 
-initialStates.block.children = [
-    initialStates.entry,
-    initialStates.entry
-]
+// initialStates.block.children = [
+//     initialStates.entry,
+//     initialStates.entry
+// ]
 
 export {  blockTypes, initialStates }

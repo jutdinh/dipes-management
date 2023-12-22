@@ -11,24 +11,11 @@ export default (props) => {
         children, parent,
         renderFrontLiner,
         renderBackLiner,
+        style
     } = props
 
     const dispatch = useDispatch()
 
-    const [drop, setDrop] = useState(false)
-    const [drops, setDrops] = useState({
-        direction: false,
-    })
-
-    const dropSwitch = (section) => {
-        const sec = drops[section]
-        return setDrops({ ...drops, [section]: !sec })
-    }
-
-    const flexDrs = [
-        { id: 1, name: "Ngang", value: "horizontal" },
-        { id: 2, name: "Dọc", value: "vertical" },
-    ]
 
     const isActive = () => {
         const { activeComponent, hoverComponent } = cache;
@@ -69,13 +56,6 @@ export default (props) => {
         })
     }
 
-    const FrontInsertTrigger = () => {
-        insertComponent(id, "front")
-    }
-
-    const BackInsertTrgger = () => {
-        insertComponent(id, "back")
-    }
 
     const FlexAppendsChild = () => {
         appendChildComponent(id)
@@ -88,7 +68,7 @@ export default (props) => {
             <div
                 className={`design-zone flex2-design ${isActive() ? "design-zone-active " : ""}`}
                 onMouseEnter={ComponentHover}
-                style={{ zIndex }}
+                style={{ zIndex, ...style }}
                 onMouseUp={FlexAppendsChild}
             >
 

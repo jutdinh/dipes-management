@@ -229,12 +229,12 @@ export default (props) => {
                             <FontAwesomeIcon icon={faCog} />
                         </div>
                     }
-                    {
+                    {/* {
                         isActive() &&
                         <div className="edit-icon" onClick={() => { removeComponent(id) }}>
                             <FontAwesomeIcon icon={faTrash} />
                         </div>
-                    }
+                    } */}
                 </div>
                 <div className="configs" style={{ height: `${drops.configs ? "unset" : "0"}`, overflow: `${drops.configs ? "unset" : "hidden"}` }}>
                     <div className="title">
@@ -343,7 +343,7 @@ export default (props) => {
 
 
                     <div className="visibility" >
-                        <div className="group">
+                        <div className="" style={{ display: "flex" }}>
 
                             <div className="api-drop navigation">
                                 <div className="api-drop-checkbox">

@@ -76,9 +76,9 @@ export default (props) => {
             >
                 <div className="entry-header-design">
                     <div className="text-entry">
-                        <button className="entry-button">{title}</button>
+                        <button className="entry-button" style={ style }>{title}</button>
                     </div>
-                    {
+                    {/* {
                         isActive() &&
                         <div className="btns">
                             <div className="edit-icon" onClick={() => { DropSwitch() }}>
@@ -88,7 +88,7 @@ export default (props) => {
                                 <FontAwesomeIcon icon={faTrash} />
                             </div>
                         </div>
-                    }
+                    } */}
                 </div>
 
                 {/* {drop && <div className="configs">
