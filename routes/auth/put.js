@@ -16,6 +16,17 @@ router.put('/user', async (req, res) => {
         res.send({ success: false, status: "0x4501246" })
     }
 })
+
+
+router.put('/user/password', async (req, res) => { 
+    await AuthController.changePassword( req, res, [])         
+    try{         
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
+
 router.put('/avatar', async (req, res) => { 
     try{
          await AuthController.changeAva( req, res, [ permission.uad, permission.ad])         

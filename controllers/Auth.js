@@ -645,6 +645,46 @@ class Auth extends Controller {
         }
         res.status(200).send(context)
     }
+
+
+    changePassword = async (req, res) => {
+
+        const context = await this.generalCheck(req); 
+        const { success, objects } = context;
+        if( success ){            
+            context.success = false;
+            const { account } = req.body;            
+            const { decodedToken } = objects;
+            const nullCheck = this.notNullCheck( account, ["username", "newpassword"] )
+            if( nullCheck.valid ){
+                const { username } = account;
+                const oldAccount = await this.#__accounts.find({ username })
+                if( oldAccount ){
+                    const AccountObject = new AccountsRecord(oldAccount)
+
+                    const Cipher = new Crypto()
+                    const encryptedPassword = Cipher.encrypt(account.newpassword)
+                    
+                    AccountObject.__modifyAndSaveChange__("password", encryptedPassword)
+
+                    context.account = AccountObject.getData()
+                    context.success = true
+                    context.content = "Success"
+                }else{
+                    context.content = "Account khum tồn tại"
+                    context.status = "0x4501013"        
+                }
+            }else{
+                context.content = "Body khum hợp lệ"
+                context.status = "0x4501022"    
+            }
+        }else{
+            context.content = "Token không hợp lệ!"
+            context.status = "0x4501023"
+        }
+        delete context.objects
+        res.status(200).send(context )
+    }
 }
 module.exports = Auth
 
