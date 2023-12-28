@@ -685,7 +685,49 @@ class Auth extends Controller {
         delete context.objects
         res.status(200).send(context )
     }
+
+    retrievePassword = async ( req, res ) => {
+        const context = await this.generalCheck(req); 
+        const { success, objects } = context;
+        if( success ){            
+            context.success = false;
+            const acc = req.body.account;            
+            const { decodedToken } = objects;
+            const nullCheck = this.notNullCheck( acc, ["username"] )
+            if( nullCheck.valid ){
+                const { username } = acc;
+                const account = await this.#__accounts.find({ username })
+                if( account  ){
+                    const Cipher = new Crypto()                    
+
+                    const decryptedPassword = Cipher.decrypt(account.password)                   
+
+                    context.password = decryptedPassword
+                    context.success = true
+                    context.content = "Success"
+
+                }else{
+                    context.content = "Account khum tồn tại"
+                    context.status = "0x4501013"        
+                }
+            }else{
+                context.content = "Body khum hợp lệ"
+                context.status = "0x4501022"    
+            }
+        }else{
+            context.content = "Token không hợp lệ!"
+            context.status = "0x4501023"
+        }
+        delete context.objects
+        res.status(200).send(context )
+    }
+
+
 }
+
+
+
+
 module.exports = Auth
 
     

@@ -80,7 +80,8 @@ class TablesController extends Controller {
                 table.foreign_keys = Object.values( table.foreign_keys )
                 
                 fields.push(...tableFields)
-                delete table.fields;
+                // delete table.fields;
+                table.fields = tableFields
             })
             context.data = { tables, fields }
         }
