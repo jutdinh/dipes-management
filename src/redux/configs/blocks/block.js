@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faBold, faItalic, faStrikethrough, faTextSlash, faTrash, faUnderline } from "@fortawesome/free-solid-svg-icons"
 
 export default (props) => {
-    const { cache, gridState, floating } = useSelector(state => state)
+    const { cache, gridState, floating, preview } = useSelector(state => state)
     const { id, zIndex, 
         insertComponent, appendChildComponent, removeComponent, 
         children, parent,
@@ -24,6 +24,11 @@ export default (props) => {
     }
 
     const atLeastOneChildIsNotUndefined = () => {
+
+        /**
+         *  Ít nhất có một cpn con không phải undefined
+         */
+
         const filtedChildren = children.filter(c => c != undefined)
         return filtedChildren.length
     }
@@ -59,58 +64,75 @@ export default (props) => {
         appendChildComponent(id)
     }
 
+    const renderStyle = () => {
+        let style = { zIndex }
+        // if(  isAChildOfAFlex() ){
+        //     style = { ...style, ...flex }
+        // }        
+        return style
+    }
 
-    return (
-        <div className="design-zone-container" style={{ zIndex }}>
-            { renderFrontLiner(id, parent)}
-            <div
-                className={`design-zone block-design ${isActive() ? "design-zone-active flex2-design-active" : ""}`}
-                onClick={SwitchingState} onMouseEnter={ComponentHover}
-                style={{ zIndex }}
-                onMouseUp={FlexAppendsChild}
-            >
-
-                {atLeastOneChildIsNotUndefined() ?
-                    children
-                    :
-                    <div className={`placeholder ${gridState ? "grid-active" : ""}`}>
-                        <span className="default-text">BLOCKS</span>
-                    </div>
-                }
-                {/* {isActive() && <div className="flex-utilities">
-                    <div className="style-group">
-                        <div className="icon-ne">
-                            <FontAwesomeIcon icon={faTrash} onClick={() => { removeComponent(id) }} />
-                        </div>
-                    </div>
-                </div>} */}
-
+    if( preview ){
+        return(
+            <div style={ renderStyle() }>
+                { children }
             </div>
-            
-            {/* <div className="styling-box">
-                <div className="styling" >
+        )
+    }else{
 
-                    <div className="style-group justify-box">
-                        <div className="icon-ne">
-                            <FontAwesomeIcon icon={faBold} onClick={() => {  }} />
+        return (
+            <div className="design-zone-container" style={{ zIndex }}>
+                { renderFrontLiner(id, parent)}
+                <div
+                    className={`design-zone block-design ${isActive() ? "design-zone-active flex2-design-active" : ""}`}
+                    onClick={SwitchingState} onMouseEnter={ComponentHover}
+                    style={{ zIndex }}
+                    onMouseUp={FlexAppendsChild}
+                >
+    
+                    {atLeastOneChildIsNotUndefined() ?
+                        children
+                        :
+                        <div className={`placeholder ${gridState ? "grid-active" : ""}`}>
+                            <span className="default-text">BLOCKS</span>
                         </div>
-                        <div className="icon-ne">
-                            <FontAwesomeIcon icon={faItalic} onClick={() => {  }} />
+                    }
+                    {/* {isActive() && <div className="flex-utilities">
+                        <div className="style-group">
+                            <div className="icon-ne">
+                                <FontAwesomeIcon icon={faTrash} onClick={() => { removeComponent(id) }} />
+                            </div>
                         </div>
-                        <div className="icon-ne">
-                            <FontAwesomeIcon icon={faUnderline} onClick={() => {  }} />
-                        </div>
-                        <div className="icon-ne">
-                            <FontAwesomeIcon icon={faStrikethrough} onClick={() => {  }} />
-                        </div>
-                    </div>
-
+                    </div>} */}
+    
                 </div>
-            </div> */}
+                
+                {/* <div className="styling-box">
+                    <div className="styling" >
+    
+                        <div className="style-group justify-box">
+                            <div className="icon-ne">
+                                <FontAwesomeIcon icon={faBold} onClick={() => {  }} />
+                            </div>
+                            <div className="icon-ne">
+                                <FontAwesomeIcon icon={faItalic} onClick={() => {  }} />
+                            </div>
+                            <div className="icon-ne">
+                                <FontAwesomeIcon icon={faUnderline} onClick={() => {  }} />
+                            </div>
+                            <div className="icon-ne">
+                                <FontAwesomeIcon icon={faStrikethrough} onClick={() => {  }} />
+                            </div>
+                        </div>
+    
+                    </div>
+                </div> */}
+    
+    
+    
+                { renderBackLiner(id, parent) }
+            </div>
+        )
+    }
 
-
-
-            { renderBackLiner(id, parent) }
-        </div>
-    )
 }

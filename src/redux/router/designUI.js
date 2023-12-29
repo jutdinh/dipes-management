@@ -104,8 +104,20 @@ export default (state, action) => {
 
         case "overideSelectedComp":
             return overideSelectedComp( state, action);
-            break
+            break;
+
+        case "PreviewTrigger":
+            return PreviewTrigger( state, action );
+            break;
         
+        case "setupAddingPage":
+            return setupAddingPage( state, action )
+            break;
+        
+        case "SwitchingStateForPageSavesPreviousStateItself":
+            return SwitchingStateForPageSavesPreviousStateItself( state, action );
+            break;
+
         default:
             return state;
     }
@@ -168,12 +180,29 @@ const HelloWorld = (state, action) => {
 }
 
 const createPage = (state, action) => {
+    /**
+     * desc: Tạo page
+     * 
+     * Tạo trang mới và thêm vào danh sách state.pages
+     * 
+     * Page mới tạo sẽ có một số thuộc tính cơ sở bao gồm:
+     *      - id: Mã tự động tạo từ function getFormatedUUID
+     *      - page_title: Tiêu đề trang
+     *      - is_home: Đây có phải là trang home hay không
+     *      - icon: Icon đại diện của trang, icon này sẽ xuất hiện trước tên trang trên thanh sidebar
+     *      - children: Danh sách trang con, các trang con cũng là những đối tượng page
+     *      - component: Danh sách component cấu thành nên trang
+     * 
+     */
+
+
     const id = state.functions.getFormatedUUID()
 
     const newPage = {
         page_id: id,
         page_title: "Trang mới",
         is_home: false,
+        is_hidden: false,
         icon: DEFAULT_PAGE_ICON,
         children: [],
         component: []
@@ -191,8 +220,7 @@ const removeCurrentPage = (state, action) => {
      */
 
     const { cache, pages } = state;
-    const path = findPage(pages, cache.page.page_id)
-    const page = getDataByPath(pages, path)
+    const path = findPage(pages, cache.page.page_id)    
 
     const newPages = removePageByPath(pages, path)
     state.cache.page = {}
@@ -231,6 +259,7 @@ const createChildPage = (state, action) => {
         page_id: id,
         page_title: "Trang mới",
         is_home: false,
+        is_hidden: false,
         icon: DEFAULT_PAGE_ICON,
         children: [],
         component: []
@@ -294,7 +323,7 @@ const unsetFloatingBlock = (state, action) => {
 
     const { floating } = state
     floating.block = undefined
-    console.log("Block unset")
+    
     return { ...state, floating }
 }
 
@@ -421,10 +450,10 @@ const pageSelect = (state, action) => {
      */
 
     const { page } = action.payload;
-    const { pages } = state
+    const { pages, pageAbleToManipulateItself } = state
     const currentPage = state.page;
 
-    if (currentPage) {
+    if (currentPage && pageAbleToManipulateItself ) {
         const currentPath = findPage(pages, currentPage.page_id)
         state.pages = changeDataByPath(pages, { component: currentPage.component }, currentPath)
     }
@@ -433,6 +462,11 @@ const pageSelect = (state, action) => {
 }
 
 const saveCache = (state, action) => {
+
+    /**
+     * Abandoned
+     */
+
     const { pages, page } = state;
     const stringifiedPages = JSON.stringify(pages)
 
@@ -443,6 +477,11 @@ const saveCache = (state, action) => {
 
 
 const initState = (state, action) => {
+
+    /**
+     * Khởi tạo danh sách trang, và trang được chọn
+     */
+
     const { pages } = action.payload;
 
     state.pages = pages ? pages : [];
@@ -452,11 +491,21 @@ const initState = (state, action) => {
 }
 
 const reverseNavBarState = (state, action) => {
+
+    /**
+     * Abandoned
+     */
+
     state.cache.navbar = !state.cache.navbar
     return { ...state }
 }
 
 const addComponent = (state, action) => {
+
+    /**
+     * Thêm một component mới vào trang hiện tại
+     */
+
     const { block } = action.payload;
 
     if (block) {
@@ -475,6 +524,11 @@ const addComponent = (state, action) => {
 }
 
 const flatteningComponents = (components) => {
+
+    /**
+     * Ép dẹp cây component thành mảng các component cùng cấp
+     */
+
     const cpns = []
     for( let i = 0; i < components.length; i++ ){
         const { children }= components[i]
@@ -488,6 +542,33 @@ const flatteningComponents = (components) => {
 
 
 const setActiveComponent = (state, action) => {
+
+    /**
+     * Đặt lại active component, 
+     * Component này và các component tổ tiên của nó sẽ được đặt
+     * ở trạng thái active và sẽ được tô viền trên UI
+     * 
+     * 
+     * 
+     * Algorithm:
+     *  
+     * - Ép dẹp cây component
+     * - Tìm component có ID trùng với id của component chỉ định ( lấy từ payload )
+     * - Tạo 2 mảng dữ liệu
+     *      + activeSet chứa các chuỗi ID
+     *      + activeCpns chứa dữ liệu của các component
+     * - Triển khai một vòng while để map toàn bộ tía má họ hàng hang hóc phía trên của component được chọn
+     *      + Hễ mà target còn tồn tại, target mới sẽ là cha của target hiện tại
+     *      + Nếu target mới tồn tại thì thêm vào 2 mảng dữ liệu bên trên
+     *      + Nếu target mới không tồn tại thì vòng lặp sẽ từ dừng vì nó cũng là một điều kiện của vòng lặp
+     * 
+     * - Trở lại quá khứ, đặt một hằng component có giá trị bằng target đầu tiên, nếu component tồn tại thì dùng tên (name) của
+     * nó để tìm ra bộ thuộc tính tương ứng rồi đặt vào state
+     * 
+     *
+     * 
+     */ 
+
     const { id } = action.payload;   
     const { page } = state;
     
@@ -498,7 +579,7 @@ const setActiveComponent = (state, action) => {
     const component = target;
 
     const activeSet = [ id ]
-    const activeCpns = [ target ]
+    const activeCpns = [ target ]    
 
     while( true && target){
         const nextTargetId = target.parent_id;
@@ -516,8 +597,7 @@ const setActiveComponent = (state, action) => {
         state.propertySet = propertySet ? propertySet : []
         state.selectedCpn = component;
         state.selectedCpns = activeCpns;
-    }
-    
+    }  
 
     // set property set to state
     state.cache.activeComponent = [ ...activeSet, id ]
@@ -525,12 +605,41 @@ const setActiveComponent = (state, action) => {
 }
 
 const setHoverComponent = (state, action) => {
+
+    /**
+     * Đặt lại hover component, hover component cũng đc tô viền như active component nhưng chỉ thoáng chóc mỗi lần chuột được rê lên chúng
+     */
+
     const { id } = action.payload;
     state.cache.hoverComponent = id;
     return { ...state }
 }
 
 const updateChildComponent = (components, target_id, values) => {
+
+    /**
+     * 
+     * Type: Hàm này đệ quy nhe quí dị
+     * 
+     * Params: 
+     *      components: Mảng các component
+     *      target_id: Id của component cần cập nhật
+     *      
+     *      values: Giá trị mới cần được cập nhập, này là JSON và sẽ ghi đè lên giá trị tương ứng.
+     * 
+     * 
+     * Algorithm:
+     *      - Chiển khai một vòng for từ đầu tới cuối danh sách component
+     *      - Băm id và children từ mỗi component;
+     *      - Nếu id là id của target, đặt lại giá trị 
+     *      - Nếu không phải, và children tồn tại thì đặt children của component thứ i thành kết quả trả về của đệ quy
+     * 
+     *      - Và cuối cùng là trả về danh sách components
+     * 
+     */
+
+
+
     for (let i = 0; i < components.length; i++) {
         const cpn = components[i]
         const { id, children } = cpn;
@@ -546,6 +655,18 @@ const updateChildComponent = (components, target_id, values) => {
 }
 
 const updateComponent = (state, action) => {
+    
+
+    /**
+     * 
+     *      Cập nhật component bằng cách ghi đè trực tiếp kết quả của đệ quy updateChildComponent vào page.component 
+     * sau đó lưu lại state mới.
+     * 
+     *      Ngoài ra, nếu component này đang được chọn thì ghi đè giá trị mới vào selectedCpn.props ngay 
+     * 
+     * 
+     */
+
     const { id, values } = action.payload;
     const { page, selectedCpn } = state;
     const { component } = page
@@ -563,6 +684,29 @@ const updateComponent = (state, action) => {
 
 
 const modifyChildrenRecursive = (components, target_id, newChildren) => {
+
+    
+    /**
+     * 
+     * Type: Hàm này đệ quy nha
+     * 
+     * Params: 
+     *      components: Mảng các component
+     *      target_id: Id của component cần cập nhật
+     *      
+     *      newChildren: Mảng các component con mới, chúng sẽ được ghi đè trực tiếp lên danh sách cũ
+     * 
+     * 
+     * Algorithm:
+     *      - Triển khai một vòng for từ đầu tới cuối danh sách component
+     *      - Băm id và children từ mỗi component;
+     *      - Nếu id là id của target, đặt lại giá trị 
+     *      - Nếu không phải, và children tồn tại thì đặt children của component thứ i thành kết quả trả về của đệ quy
+     * 
+     *      - Và cuối cùng là trả về danh sách components
+     * 
+     */
+
     for (let i = 0; i < components.length; i++) {
         const cpn = components[i]
         const { id, children } = cpn;
@@ -578,6 +722,14 @@ const modifyChildrenRecursive = (components, target_id, newChildren) => {
 }
 
 const modifyComponentChildren = (state, action) => {
+
+    /**
+     * 
+     *      Cập nhật component bằng cách ghi đè trực tiếp kết quả của đệ quy modifyChildrenRecursive vào page.component 
+     * sau đó lưu lại state mới.
+     * 
+     */
+
     const { id, children } = action.payload;
     const { page } = state;
     const { component } = page    
@@ -589,6 +741,32 @@ const modifyComponentChildren = (state, action) => {
 }
 
 const removeChildComponent = (components, target_id) => {
+
+    /**
+     * 
+     * Type: Đệ quy
+     * 
+     * Params: 
+     *      components: Mảng các component
+     *      target_id: Id của component cần bị xóa sổ
+     *      
+     * Algorithm:
+     *      - Đặt một biến found có giá trị false làm pivot
+     *      - Triển khai một vòng for từ đầu tới cuối danh sách component
+     *      - Băm id và children từ mỗi component;
+     * 
+     *      - Nếu id là id của target, found = true
+     * 
+     *      - Nếu không phải
+     *          + Nếu children tồn tại và chưa tìm thấy => đặt children của component thứ i thành kết quả trả về của đệ quy
+     * 
+     *      - Nếu found = true
+     *          => danh sách component mới được đặt lại thành danh sách component sau khi loại bỏ component có id == target_id
+     * 
+     *      - Và cuối cùng là trả về danh sách components
+     * 
+     */
+
     let found = false
     for (let i = 0; i < components.length; i++) {
         const cpn = components[i]
@@ -611,6 +789,11 @@ const removeChildComponent = (components, target_id) => {
 
 const removeComponent = (state, action) => {
 
+    /**
+     * Đặt lại component với kết quả từ đệ quy removeChildComponent,
+     * Đặt lại selectetCpn và propertySet về dạng khởi tạo, vì cpn hiện tại đã bị xóa sổ.
+     */
+
     const { id } = action.payload;
     const { page } = state
     const { component } = page;
@@ -628,7 +811,42 @@ const setGridSystemState = (state, action) => {
     return { ...state, gridState: status }
 }
 
-const insertChildComponent = (components, target_id, position, block) => {
+const insertChildComponent = (components, parent_id, target_id, position, block) => {
+
+    /**
+     * 
+     *    Type: Đệ quy
+     *    Params: 
+     *      components: Mảng các component
+     *      parent_id:  Id của component cha
+     *      target_id: Id của component làm mốc
+     *      position: Vị trí sẽ chèn tương ứng với component mốc
+     *      block: khối sẽ được chèn
+     *      
+     *    Algorithm:
+     * 
+     *      - Tìm component mốc dựa theo target_id
+     *      - Nếu target tồn tại
+     *          + khởi tạo một mảng component rỗng với tên newComponents
+     *          + map qua danh sách component;
+     *          + nếu position là front
+     *              => nếu component ở vòng lập hiện tại có id là target_id
+     *                  => nhét block vào newComponents
+     *              => nhét cpn vào newComponents 
+     *          + nếu position là back
+     *              => nhét cpn vào newComponents 
+     *              => nếu component ở vòng lập hiện tại có id là target_id
+     *                  => nhét block vào newComponents
+     *         
+     * 
+     *      - Nếu target không tồn tại
+     *          + Chạy một vòng for duyệt qua tất cả component
+     *          + Nếu component ở vòng lặp hiện tại có children thì đặt children của nó là kết quả của đệ quy insertChildComponent
+     *      
+     *      - Và cuối cùng là trả về danh sách components
+     * 
+     */ 
+
     const target = components.find(t => t.id == target_id)
     if (target) {
         const newComponents = []
@@ -636,13 +854,13 @@ const insertChildComponent = (components, target_id, position, block) => {
             const cpn = components[i]
             if (position == "front") {
                 if (cpn.id == target_id) {
-                    newComponents.push({parent_id: cpn.id, ...block})
+                    newComponents.push({parent_id: parent_id, ...block})
                 }
                 newComponents.push(cpn)
             } else {
                 newComponents.push(cpn)
                 if (cpn.id == target_id) {
-                    newComponents.push({parent_id: cpn.id, ...block})
+                    newComponents.push({parent_id: parent_id, ...block})
                 }
             }
         }
@@ -650,7 +868,7 @@ const insertChildComponent = (components, target_id, position, block) => {
     } else {
         for (let i = 0; i < components.length; i++) {
             if (components[i].children) {
-                components[i].children = insertChildComponent(components[i].children, target_id, position, block)
+                components[i].children = insertChildComponent(components[i].children, components[i].id ,target_id, position, block)
             }
         }
         return components
@@ -658,25 +876,50 @@ const insertChildComponent = (components, target_id, position, block) => {
 }
 
 const insertComponent = (state, action) => {
+
+    /**
+     * Đơn giản là chèn block vào cây component,     
+     */
+
     const { id, position, block } = action.payload;
 
     if (block) {
 
-        const { initialStates, page, floating, functions } = state;
+        const { initialStates, floating, functions } = state;
 
         // const newBlock = { ...initialStates[block], id: newid }              
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
-
-
+         // => Bước này là fulfill id vào tất cả các con cháu chíc chắt nếu có của newBlock
 
         floating.block = undefined
-        state.page.component = insertChildComponent(state.page.component, id, position, newBlock)
+        state.page.component = insertChildComponent(state.page.component, undefined, id, position, newBlock)
     }
 
     return { ...state }
 }
 
 const addChildToComponent = (components, target_id, block) => {
+
+    /**
+     * Type: Vẫn là đệ quy nha .-.
+     * 
+     * Params:
+     *      - components: Mảng các component
+     *      - target_id: id của component cần nhét cpn con vào
+     *      - block: component mới
+     * 
+     * Algorithm:
+     *      - Duyệt mảng các component
+     *      - Băm id và children từ component hiện tại
+     *      - Nếu id bằng target_id, và, children tồn tại ( cho dù nó là một mảng rỗng ) thì nhét block vào danh sách children
+     *      - Nếu id khác target_id, và, children tồn tại thì đặt lại danh sách children bằng kết quả của đệ quy tiếp theo
+     * 
+     *      - Và cuối cùng là trả về danh sách components
+     * 
+     * 
+     */
+
+
     for (let i = 0; i < components.length; i++) {
         const cpn = components[i]
         const { id, children } = cpn;
@@ -697,18 +940,21 @@ const addChildToComponent = (components, target_id, block) => {
 
 
 const appendChildComponent = (state, action) => {
+
+    /**
+     * Giải thích đơn giản thì là chèn block vào component của trang bằng đệ quy addChildToComponent
+     * rồi ghi đè danh sách component của trang hiện tại
+     * 
+     */
+
     const { id, block } = action.payload;
     if (block) {
 
         const { initialStates, page, pages, floating, functions } = state;
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
 
-
-
         const newComponent = addChildToComponent(page.component, id, newBlock)
         page.component = newComponent;
-
-
 
         const newPages = pages.map(p => {
             if (p.page_id == page.page_id) {
@@ -725,6 +971,11 @@ const appendChildComponent = (state, action) => {
 }
 
 const unboundBlock = (state, action) => {
+
+    /**
+     * Tiêu hủy block hiện tại đang đc floating nắm giữ, mục đích là để tráng event onMouseUp bị fired ngoài mong đợi
+     */
+
     const { floating } = state
     floating.block = undefined;
     return { ...state, floating }
@@ -732,6 +983,27 @@ const unboundBlock = (state, action) => {
 
 
 const overrideComponent = (components, target_id, component ) => {
+
+    /**
+     * Type: Tiếp tục là một chiếc đệ quy zui zẻ
+     * 
+     * Params:
+     *      - components: Mảng các component
+     *      - target_id: id của component cần nhét cpn con vào
+     *      - component: dữ liệu mới sẽ đc ghi đè
+     * 
+     * 
+     * Algorithm
+     *      - Duyệt qua từng component
+     *          + Bâm id & children từ cpn hiện tại
+     *          + Nếu id bằng target_id => ghi đè component lên component hiện tại
+     *          + Nếu không, và, children tồn tại => đặt children của cpn hiện tại bằng kết quả đệ quy tiếp theo
+     *       - Trả về danh sách component
+     * 
+     * 
+     */
+
+
     for (let i = 0; i < components.length; i++) {
         const cpn = components[i]
         const { id, children } = cpn;
@@ -747,11 +1019,93 @@ const overrideComponent = (components, target_id, component ) => {
 }
 
 const overideSelectedComp = ( state, action ) => {
+
+    /**
+     * 
+     *      Ghi đè component
+     * 
+     */
+
+
     const { component } = action.payload
     const { id } = component;
     const { page } = state;
     state.page.component = overrideComponent( page.component, id, component )
     state.selectedCpn = component
+
+    return { ...state }
+}
+
+
+const PreviewTrigger = ( state, action ) => {
+
+    /**
+     * 
+     *      Chuyển đổi qua lại giữa các trạng thái của state.preview
+     *      Nếu payload có preview => đặt preview làm trạng thái mới
+     *      Nếu không thì đảo ngược giá trị hiện tại
+     * 
+     * 
+     */
+
+    const { preview } = state;
+
+    if( action.payload != undefined ){
+        state.preview = action.payload    
+    }else{        
+        state.preview = !preview
+    }
+
+    return { ...state } 
+}
+
+
+
+
+
+const SwitchingStateForPageSavesPreviousStateItself = (state, action) => {    
+    /**
+     * 
+     * Abandoned
+     * 
+     */
+    const posibility = action.payload;
+    if( posibility != undefined ){
+        state.pageAbleToManipulateItself = posibility
+    } else{
+        state.pageAbleToManipulateItself = !state.pageAbleToManipulateItself 
+    }
+
+    return { ...state }
+}
+
+
+
+const setupAddingPage = ( state, action ) => {
+
+    /**
+     * Abandoned
+     */
+
+    const { initialStates } = state;
+    
+    const { fields } = action.payload;
+    const components = []
+
+    for( let i = 0 ; i < fields.length; i++ ){
+        const field = fields[i]
+        const { DATATYPE } = field.props;
+        let block;
+        const id = state.functions.getFormatedUUID()
+        if( ["DATE", "DATETIME"].indexOf(DATATYPE) != -1 ){
+            block = { ...initialStates["datetime"] }
+        }else{
+            block = { ...initialStates["entry"] }
+        }
+        components.push( block )
+    }
+
+    state.page.component = components;    
 
     return { ...state }
 }

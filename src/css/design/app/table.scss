@@ -3,6 +3,7 @@
     .table-name{
         display: flex;
         flex-wrap: nowrap;
+        flex-grow: 1;
 
 
 
@@ -18,7 +19,7 @@
         }
     
         .input-active{
-            border: 1px solid #ccc;
+            // border: 1px solid #ccc;
         }
 
         .edit-icon{

@@ -6,7 +6,7 @@ const { getFormatedUUID } = functions
 const flex =  [        
     { 
         id: getFormatedUUID(), 
-        label: "Border Style",
+        label: "Direction",
         type: "selection",
         path: "props.style.flexDirection",
         options: [
@@ -18,6 +18,23 @@ const flex =  [
                 label: "Veritical",
                 value: "column"
             },
+        ] 
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Wrap",
+        type: "selection",
+        path: "props.style.flexWrap",
+        options: [
+            {
+                label: "Wrap",
+                value: "wrap"
+            },            
+            {
+                label: "No Wrap",
+                value: "no-wrap"
+            }            
         ] 
     },
 
@@ -61,6 +78,36 @@ const flex =  [
                 value: "flex-end"
             }
         ] 
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Margin",
+        type: "text",
+        path: "props.style.margin" 
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Padding",
+        type: "text",
+        path: "props.style.padding" 
+    },
+
+
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Order",
+        type: "number", 
+        path: "props.flex.order",
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Flex Grow",
+        type: "number", 
+        path: "props.flex.flexGrow" ,
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
     
 ]

@@ -188,6 +188,12 @@ export default () => {
                         </div>
                         <span className="block-name">Button</span>
                     </div>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Datetime", blockTypes.datetime ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faStop }/>
+                        </div>
+                        <span className="block-name">Datetime</span>
+                    </div>
 
                 </div>
             </div>

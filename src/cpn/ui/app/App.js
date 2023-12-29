@@ -6,10 +6,10 @@ import Playground from "./cpn/playground"
 
 export default () => {
 
-    const page = useSelector(state => state.page )
+    const { page, preview } = useSelector(state => state )
 
     return(
-        <div className="app">
+        <div className="app" style={ preview ? { width: "100%"  } : {}}>
             <div className="app-container" >
                 
                 <Topbar />

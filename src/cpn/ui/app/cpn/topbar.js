@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons"
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 export default () => {
     const dispatch = useDispatch()
-
+    const { preview } = useSelector(state => state)
     const reverseNavBarState = () => {
         
         dispatch({
@@ -14,7 +14,7 @@ export default () => {
     }
 
     return(
-        <div className="app-topbar">
+        <div className="app-topbar" style={preview ? { display:  "none" }: {}}>
             <span><b>Cấu trúc trang</b></span>          
         </div>
     )

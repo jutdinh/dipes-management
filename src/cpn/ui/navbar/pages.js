@@ -2,14 +2,14 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faCog, faHome, faRocket, faSeedling, faStar } from "@fortawesome/free-solid-svg-icons"
+import { faAdd, faCog, faEye, faEyeSlash, faHome, faRocket, faSeedling, faStar } from "@fortawesome/free-solid-svg-icons"
 
 import Page from './page'
 
 import $ from 'jquery';
 
 export default () => {
-    const { pages, page } = useSelector(state => state)
+    const { pages, page, preview } = useSelector(state => state)
     const dispatch = useDispatch()
     useEffect(() => {
 
@@ -71,6 +71,13 @@ export default () => {
         }
     }
 
+    const PreviewTrigger = () => {
+        dispatch({
+            branch: "design-ui",
+            type: "PreviewTrigger"
+        })
+    }
+
     return (
         <div className="pages">
             <div className="pages-container">
@@ -79,9 +86,17 @@ export default () => {
                 )}
             </div>
 
-            <div className="add-icon" onClick={createPage}>
-                <FontAwesomeIcon icon={faAdd} />
-            </div>
+            { !preview && 
+                <div className="add-icon" onClick={createPage}>
+                    <FontAwesomeIcon icon={faAdd} />
+                </div>
+            }
+
+            { preview && 
+                <div className="add-icon" onClick={ PreviewTrigger }>
+                    <FontAwesomeIcon icon={faEyeSlash} />
+                </div>
+            }
         </div>
     )
 }

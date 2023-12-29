@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import $ from 'jquery';
 
 export default () => {
-    const { floating, cache, page, functions, gridState } = useSelector( state => state )
+    const { floating, cache, page, functions, gridState, preview } = useSelector( state => state )
     
     const dispatch = useDispatch()
     useEffect( () => {
@@ -78,6 +78,7 @@ export default () => {
             }
         })
     }
+    
 
 
     const renderComponents = (components = [], parent = undefined) => {
@@ -141,7 +142,7 @@ export default () => {
     }
 
     return(
-        <div id="playground" style={{ height: 12000, paddingLeft: `${ cache.navbar ? 300 : 36 }px`, position: "relative", zIndex: 1 }} >  
+        <div id="playground" className={`${ preview ? "preview": "" }`} style={{ height: 12000, paddingLeft: `${ cache.navbar ? 300 : 36 }px`, position: "relative", zIndex: 1 }} >  
             {/* { page.component.map( (cpn, index) => {
                 const { props, id, name } = cpn;                
                 const mergedProps = { ...props, id }

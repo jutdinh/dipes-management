@@ -107,5 +107,59 @@ const button =  [
         values: [ "unset", "underline" ],
         icon: faUnderline
     },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Margin",
+        type: "text",
+        path: "props.style.margin" 
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Padding",
+        type: "text",
+        path: "props.style.padding" 
+    },
+
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Record Trigger",
+        type: "apiSelection",                
+        path: "props.recordTrigger.api",
+        url: "/apis/v/[version_id]",
+        params: ["version_id"],
+        api_data: "data.apis",
+        fields: [
+            {
+                from: "api_id",
+                to: "api"
+            },            
+            {
+                from: "api_name",
+                to: "api_name"
+            },
+        ],
+        display_value: "api_name",
+        onlyExistsIn:[
+            { name: "table", type: "cascading" }
+        ]
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Order",
+        type: "number", 
+        path: "props.flex.order",
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Flex Grow",
+        type: "number", 
+        path: "props.flex.flexGrow" ,
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
+    },
+
 ]
 export default button

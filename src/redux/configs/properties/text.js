@@ -79,17 +79,31 @@ const text =  [
 
     { 
         id: getFormatedUUID(), 
+        label: "Margin",
+        type: "text",
+        path: "props.style.margin" 
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Padding",
+        type: "text",
+        path: "props.style.padding" 
+    },
+
+
+    { 
+        id: getFormatedUUID(), 
         label: "Order",
         type: "number", 
         path: "props.flex.order",
-        onlyExistsIn:[ "flex" ]
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
     { 
         id: getFormatedUUID(), 
         label: "Flex Grow",
         type: "number", 
         path: "props.flex.flexGrow" ,
-        onlyExistsIn:[ "flex" ]
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
 ]
 export default text

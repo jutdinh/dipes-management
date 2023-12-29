@@ -2,7 +2,7 @@ import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faItalic, faB
 import functions from '../functions'
 const { getFormatedUUID } = functions
 
-const form =  [      
+const form =  [     
     
     { 
         id: getFormatedUUID(), 
@@ -36,6 +36,19 @@ const form =  [
         display_value: "api_name",
     },
 
+    { 
+        id: getFormatedUUID(), 
+        label: "Margin",
+        type: "text",
+        path: "props.style.margin" 
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Padding",
+        type: "text",
+        path: "props.style.padding" 
+    },
+
     
 
     { 
@@ -51,7 +64,20 @@ const form =  [
             }
         }                    
     },
-   
+    { 
+        id: getFormatedUUID(), 
+        label: "Order",
+        type: "number", 
+        path: "props.flex.order",
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
+    },
+    { 
+        id: getFormatedUUID(), 
+        label: "Flex Grow",
+        type: "number", 
+        path: "props.flex.flexGrow" ,
+        onlyExistsIn:[{ name: "flex",type: "direct" }]
+    },
     
 ]
 export default form

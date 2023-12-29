@@ -3,7 +3,7 @@ import functions from '../functions'
 const { getFormatedUUID } = functions
 
 
-const entry =  [        
+const datetime =  [        
     { 
         id: getFormatedUUID(), 
         label: "Title",
@@ -39,6 +39,24 @@ const entry =  [
             value: false,
             label: "Optional"
         }
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Type",
+        type: "selection",
+        path: "props.inputType",
+        options: [
+            {
+                label: "Date",
+                value: "date"
+            },
+            
+            {
+                label: "Datetime",
+                value: "datetime-local"
+            },           
+        ]
     },
 
     { 
@@ -122,17 +140,9 @@ const entry =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Placeholder",
-        type: "text",
-        path: "props.placeholder.content" 
-    },
-
-    { 
-        id: getFormatedUUID(), 
         label: "Variable",
         type: "text",
-        path: "props.variable_name",
-        onlyExistsIn:[ { name: "form",type: "cascading" } ]
+        path: "props.variable_name" 
     },
 
 
@@ -154,4 +164,4 @@ const entry =  [
 
 
 ]
-export default entry
+export default datetime

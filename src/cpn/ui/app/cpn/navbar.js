@@ -7,7 +7,7 @@ import Pages from '../../navbar/pages'
 
 export default () => {
 
-    const {pages, cache} = useSelector( state => state ) 
+    const {pages, cache, preview } = useSelector( state => state ) 
     
 
     const RenderPagesTree = ( page ) => {
@@ -62,7 +62,7 @@ export default () => {
     //     )
     // }
     return(
-        <div className="app-navbar">            
+        <div className="app-navbar" style={preview ? { top: "0", height: "100%" }: {}}>            
                 <Pages />
             </div>
     )

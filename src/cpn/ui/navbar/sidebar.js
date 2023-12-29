@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Properties from './properties'
 import Design from './design'
@@ -7,7 +7,7 @@ import Themes from './themes'
 
 
 export default () => {
-
+    const { preview } = useSelector( state => state )
     const [ active, setActive ] = useState(0)    
     const widthes = [ 80, 85, 70 ]
     const dispatch = useDispatch()
@@ -33,7 +33,7 @@ export default () => {
     }
 
     return (
-       <div className="sidebar">
+       <div className="sidebar" style={{ display: preview ? "none": "flex" }}>
             <div className="sidebar-container">                
 
                 <div className="tabbed">

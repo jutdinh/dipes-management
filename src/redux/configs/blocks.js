@@ -6,6 +6,13 @@ const blockTypes = {
     entry: "entry",
     block: "block",
     button: "button",
+    datetime: "datetime"
+}
+
+
+const defaultStylesheet = {
+    margin: "0px 0px 0px 0px",
+    padding: "6px 12px 6px 12px"
 }
 
 const initialStates = {
@@ -25,7 +32,9 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",                
+                textDecoration: "none",   
+                
+                ...defaultStylesheet
             }
         }
     },
@@ -37,7 +46,7 @@ const initialStates = {
         "props": {
             "name": "Sample table",
             "style": {
-
+                ...defaultStylesheet
             },
 
             "flex": {
@@ -99,8 +108,13 @@ const initialStates = {
                 "row_per_page": 12,
                 "indexing": true                
             }
-        }
+        },
+
+        "children": [  // adde defaulte buttonz 
+            
+        ]
     },
+
     "flex": {
         "name": "flex",
         "children": [
@@ -110,8 +124,11 @@ const initialStates = {
             "content": "Sample Text",
             "style": {
                 flexDirection: "row",
+                flexWrap: "no-wrap",
                 justifyContent: "unset",
-                alignItems: "unset"                
+                alignItems: "unset",
+
+                ...defaultStylesheet
             }
         }
     },
@@ -124,12 +141,7 @@ const initialStates = {
         "props": {
             "content": "Sample Text",
             "style": {
-                fontSize: 16,
-                color: "#000",
-                textAlign: "left",
-                fontStyle: "normal",
-                fontWeight: "normal",
-                textDecoration: "none",                
+                ...defaultStylesheet         
             }
         }
     },
@@ -148,8 +160,12 @@ const initialStates = {
                 ]
             },
 
-            "submit_trigger": "CEB8FEF0B6E94CCE8D03587136CB40E1"
+            "submit_trigger": "",
+            "style": {
+                ...defaultStylesheet
+            }
         },
+        
         "children": [  // adde defaulte buttonz 
             
         ]
@@ -160,11 +176,11 @@ const initialStates = {
         "props": {
             
             "title": {
-                content: "Sample title",
+                content: "Title",
                 visible: true
             },            
             "placeholder":{
-                content: "Sample placeholder",
+                content: "...",
                 visible: true
             },
             "required": true,            
@@ -182,6 +198,8 @@ const initialStates = {
                 fontStyle: "unset",
                 fontWeight: "unset",
                 textDecoration: "none", 
+
+                ...defaultStylesheet
             },
 
             "style": {
@@ -190,7 +208,42 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",                
+                textDecoration: "none",   
+                
+                ...defaultStylesheet
+            }
+        }
+    },
+
+    "datetime": {
+        "name": "datetime",
+        "props": {            
+            "title": {
+                content: "Sample title",
+                visible: true
+            },            
+            "required": true,            
+            "variable_name": "",
+
+            "inputType": "date", // date  || datetime-local
+
+            "flex": {
+                "order": "1",
+                "flexGrow": "1"
+            },
+
+            "labelStyle": {
+                fontSize: 16,
+                color: "#000",
+                textAlign: "left",
+                fontStyle: "unset",
+                fontWeight: "unset",
+                textDecoration: "none", 
+                ...defaultStylesheet
+            },
+
+            "style": {
+                             
             }
         }
     },
@@ -214,7 +267,15 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",                
+                textDecoration: "none",           
+                
+                ...defaultStylesheet
+            },
+            recordTrigger: {
+                api: {
+                    api_id: "",
+                    api_name: ""                    
+                }
             }
         }
     },

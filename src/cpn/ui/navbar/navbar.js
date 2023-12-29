@@ -8,6 +8,7 @@ export default () => {
 
     const pages = useSelector( state => state.pages )
     const proxy  = useSelector( state => state.proxy )
+    const preview  = useSelector( state => state.preview )
     const { version_id } = useParams()
     const _token = localStorage.getItem("_token")
     const saveUI = () => {       
@@ -28,10 +29,15 @@ export default () => {
 
     const { page }= useSelector( state => state )
 
-    
+    const PreviewTrigger = () => {
+        dispatch({
+            branch: "design-ui",
+            type: "PreviewTrigger"
+        })
+    }
 
     return(
-        <div className="navbar-design">
+        <div className="navbar-design" style={{ display: preview ? "none": "flex" }}>
             <div className="page-name">
                 <span><b>Vùng thiết kế</b></span>
             </div>
@@ -42,7 +48,7 @@ export default () => {
                 <div className="item">
                     <div className="circle-item"> <FontAwesomeIcon icon={ faRedo }/> </div>
                 </div>
-                <div className="item">
+                <div className="item" onClick={ PreviewTrigger }>
                     <div className="circle-item"> <FontAwesomeIcon icon={ faEye }/> </div>
                 </div>
                 <div className="item" onClick={ saveUI }>

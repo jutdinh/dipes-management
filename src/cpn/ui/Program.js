@@ -5,6 +5,7 @@ import { Navbar, Sidebar } from './navbar'
 import { App } from './app/index'
 import { FloatingBoxes } from './floating';
 import { useParams } from 'react-router-dom';
+import $ from 'jquery'
 
 export default () => {
 
@@ -61,6 +62,17 @@ export default () => {
                 payload: { tables, fields }
             })
 
+        })
+
+        $(document).on('keyup', (e) => {
+            const key = e.keyCode;
+            if( key == 27 ){
+                dispatch({
+                    branch: "design-ui",
+                    type: "PreviewTrigger",
+                    payload: false
+                })
+            }
         })
 
     }, [])

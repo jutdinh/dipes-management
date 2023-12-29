@@ -6,17 +6,15 @@ import { faHome, faCog, faTrash } from "@fortawesome/free-solid-svg-icons"
 
 export default (props) => {
     const { cache, gridState, preview } = useSelector(state => state)
-    const {
-        id, zIndex, insertComponent, removeComponent, title, parent,
+    const { id,
+        zIndex,
+        title, value, required,
+        parent, flex,
+        inputType,
+        labelStyle,
         renderFrontLiner,
         renderBackLiner,
-        PropsSwitching,
-
-        style
-
     } = props
-
-    const [drop, setDrop] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -28,7 +26,8 @@ export default (props) => {
         return false
     }
 
-    const SwitchingState = () => {        
+    const SwitchingState = (e) => {
+        e.stopPropagation()
         const { activeComponent } = cache;
         if (activeComponent != id) {
             dispatch({
@@ -41,6 +40,7 @@ export default (props) => {
         }
     }
 
+
     const ComponentHover = () => {
         dispatch({
             branch: "design-ui",
@@ -50,6 +50,8 @@ export default (props) => {
             }
         })
     }
+
+
 
     const isAChildOfAFlex = () => {
         if (parent) {
@@ -61,50 +63,34 @@ export default (props) => {
         return false
     }
 
-    const isAChildOfForm = () => {
-        if (parent) {
-            const { name } = parent
-            if (name == "table") {
-                return true
-            }
-        }
-        return false
-    }
-
-    const isAChildOfAny = () => {
-        if (parent) {            
-            return true
-        }
-        return false
-    }
-
     if (preview) {
         return (
-            <div className="text-design" style={{ zIndex }}>
+            <div className="text-design">
                 <div className="text-entry">
-                    <button className="entry-button" style={style}>{title}</button>
+                    <span className="entry-label" style={labelStyle}>{title.visible && title.content} <span className="required">{required ? " *" : ""}</span></span>
+                    <input type={inputType} className="entry-input" value={value} />
                 </div>
             </div>
         )
     } else {
 
         return (
-            <div className="design-zone-container" style={{ zIndex }} >
+            <div className="design-zone-container" style={{ zIndex, ...flex }}>
                 {renderFrontLiner(id, parent)}
                 <div
-                    className={`design-zone text-design entry-design ${isActive() ? "design-zone-active flex2-design-active" : ""}`}
+                    className={`design-zone text-design entry-design ${isActive() ? "design-zone-active" : ""}`}
                     onClick={SwitchingState} onMouseEnter={ComponentHover}
                     style={{ zIndex }}
                 >
                     <div className="entry-header-design">
                         <div className="text-entry">
-                            <button className="entry-button" style={style}>{title}</button>
+                            <span className="entry-label" style={labelStyle}>{title.visible && title.content} <span className="required">{required ? " *" : ""}</span></span>
+                            <input type={inputType} className="entry-input" value={value} />
                         </div>
                         
-                    </div>                   
+                    </div>
 
                 </div>
-
 
                 {renderBackLiner(id, parent)}
             </div>

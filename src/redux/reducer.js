@@ -63,6 +63,8 @@ const initState = {
     initialStates,
     propertySets: properties,
     Blocks,
+
+    preview: false,
     
     selectedCpns: [],    
     selectedCpn: {
@@ -74,6 +76,9 @@ const initState = {
     pages: [],
     page: undefined,
     functions,
+
+    pageAbleToManipulateItself: true,
+    showAllPages: false,
 
     apis: [],
     tables: []

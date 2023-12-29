@@ -12,7 +12,59 @@ export default () => {
     const [properties, setProperties] = useState(propertySet)
 
     useEffect(() => {
-        setProperties(propertySet)
+        
+        const parent = selectedCpns.find( cpn => cpn.id == selectedCpn.parent_id )
+        if( parent ){
+        
+            const parents = selectedCpns?.slice(0, selectedCpns.length - 1)
+            
+            const parentNameSet = parents.map( p => p.name )
+            const filtedProperties = []
+
+            for( let i = 0 ; i < propertySet.length; i++ ){
+
+                const { onlyExistsIn } = propertySet[i]
+                let valid = false
+                if( onlyExistsIn  ){
+                   
+                    const directParent = onlyExistsIn.find( c => c.type == "direct" && c.name == parent.name )
+                    console.log(directParent)
+                    if( directParent ){
+                        valid = true
+                    }
+
+                    const cascadingParents = onlyExistsIn.filter( c => c.type == "cascading" )
+                    const atleastOneParentIsCascading = parents.filter( par => {
+                        const { name } = par;
+                        const isExisted = cascadingParents.find( cpar => cpar.name == name )
+                        return isExisted
+                    })                    
+                    
+                    if( atleastOneParentIsCascading.length > 0 ){
+                        valid = true;    
+                    }
+
+                    if( valid ){
+                        filtedProperties.push( propertySet[i] )
+                    }
+                }else{
+                    filtedProperties.push( propertySet[i] )
+                }
+
+
+            }
+
+            setProperties(filtedProperties)
+        }else{
+            const filtedProperties = []
+            for( let i = 0 ; i < propertySet.length; i++ ){
+                const { onlyExistsIn } = propertySet[i]
+                if( !onlyExistsIn  ){
+                    filtedProperties.push( propertySet[i] )                    
+                }
+            }
+            setProperties(filtedProperties)
+        }        
     }, [selectedCpn])
 
     const dispatch = useDispatch()
@@ -32,6 +84,22 @@ export default () => {
             object[path[0]] = setPropByPath(object[path[0]], path.slice(1, path.length), value)
         }
         return object
+    }
+
+    const areParentActive = ( childOf ) => {
+        if( childOf != undefined ){
+            const { prop_id, caseIf } = childOf
+            const parent = propertySet.find( p => p.id == prop_id )
+            if( parent ){
+                const { path } = parent;
+                const value = getPropByPath( path.split('.'), selectedCpn )
+                if( value == caseIf ){
+                    return true
+                }
+            }
+            return false
+        }
+        return true
     }
 
     const updateSelectedComponent = (value, path) => {
@@ -82,6 +150,7 @@ export default () => {
                         selectedCpn={selectedCpn}
                         updateSelectedComponent={updateSelectedComponent}
                         getPropByPath={getPropByPath}
+                        areParentActive={ areParentActive }
                     />
                 } else {
                     return null
@@ -431,9 +500,13 @@ const ApiSelection = (props) => {
         fields,
         display_value,
 
+        childOf,
+
         getPropByPath,
         selectedCpn,
-        updateSelectedComponent
+        updateSelectedComponent,
+        areParentActive
+
     } = props
 
     const splittedPath = path.split('.')
@@ -441,6 +514,7 @@ const ApiSelection = (props) => {
 
     const [options, setOptions] = useState([])
     const [drop, setDrop] = useState(false)
+
 
     useEffect(() => {
         let fromatedURL = url;
@@ -481,36 +555,39 @@ const ApiSelection = (props) => {
         return opt[display_value]
     }
 
-    return (
-        <div className="property" style={{ zIndex: index }}>
-            <div className="label-box">
-                <span>{label}</span>
-            </div>
-            <div
-                className={`drop-box`}
-            >
-                <div className="content-container" onClick={() => { setDrop(!drop) }}>
-                    <div className="content">
-                        <span>{ getLabel( getPropByPath( splittedPath, selectedCpn ) ) }</span>
+    if( areParentActive(childOf) ){
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{ getLabel( getPropByPath( splittedPath, selectedCpn ) ) }</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
                     </div>
-                    <div className="caret">
-                        <FontAwesomeIcon icon={faCaretDown} />
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => {
+                                    targetSelectTrigger(opt)
+                                }}>
+                                    <span>{ getLabel(opt) }</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-                <div className="options-container" style={{ display: drop ? "block" : "none" }}>
-                    <div className="options" >
-                        {options.map(opt =>
-                            <div className="option" onClick={() => {
-                                targetSelectTrigger(opt)
-                            }}>
-                                <span>{ getLabel(opt) }</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
             </div>
-        </div>
-    )
+        )
+    }
+
 }
 
 
