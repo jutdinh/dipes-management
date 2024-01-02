@@ -150,9 +150,21 @@ class Projects extends Model {
         this.versions.apis.create_by.__addProperty__("username", Model.types.string)
         this.versions.apis.create_by.__addProperty__("fullname", Model.types.string)
 
-        this.versions.apis.__addProperty__("tables", Model.types.array)
-        this.versions.apis.__addProperty__("params", Model.types.array)
-        this.versions.apis.__addProperty__("body", Model.types.array)
+        this.versions.apis.__addProperty__("tables", Model.types.array) /** INT */
+        this.versions.apis.__addProperty__("params", Model.types.array) /** INT */
+        this.versions.apis.__addProperty__("body", Model.types.array)   /** INT */
+        this.versions.apis.__addProperty__("body_update_method", Model.types.array )
+        /**
+         * body_update_method
+         *      {
+         *          field_id: <Int>,
+         *          method: [ override, calculate ]
+         *          operator: [ sum, minus, divide, multiply ]
+         *      }
+         * 
+         * 
+         */
+
         this.versions.apis.__addProperty__("external_body", Model.types.array, { default: [] })
 
         this.versions.apis.__addProperty__("fields", Model.types.model)

@@ -6,8 +6,8 @@ const ApiControllerClass = require("../../controllers/APIController")
 const ApiController = new ApiControllerClass()
 
 router.post('/api', async (req, res) => { 
+    await ApiController.createApi(req, res) 
     try{
-        await ApiController.createApi(req, res) 
     }catch{
         res.send({ success: false, status: "0x4501246" })
     }

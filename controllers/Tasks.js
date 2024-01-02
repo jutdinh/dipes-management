@@ -111,8 +111,12 @@ class Tasks extends Controller {
 
             const { Project } = objects;
             const project = Project.getData()
-            const primaltasks = Object.values(project.tasks);
-            
+            const periods = Object.values(project.tasks);
+            const primaltasks = []
+
+            periods.map( period => {
+                primaltasks.push( ...Object.values(period.tasks) )
+            })
             const total = primaltasks.length;
             const statis = {
                 completed: {
@@ -131,7 +135,7 @@ class Tasks extends Controller {
             if( total > 0 ){
                 const today = new Date()
                 let tasks = primaltasks
-                const completed = tasks.filter( task => task.task_status == 3 && task.task_approve == true )
+                const completed = tasks.filter( task => task.task_approve == true )
                 statis.completed.amount = completed.length;
                 statis.completed.percentage = Math.ceil( completed.length * 100 / total )
 

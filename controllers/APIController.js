@@ -3,6 +3,19 @@ const { Projects, ProjectsRecord } = require("../models/Projects");
 
 const { intValidate } = require('../functions/validator')
 
+const UPDATE_METHODS = {
+    override: "override",
+    calculate: "calculate"     
+}
+
+const OPERATORS = {
+    sum: "sum",
+    minus: "minus",
+    divide: "divide",
+    multiply: "multiply"
+}
+
+
 class APIController extends Controller {
     constructor(){
         super();
@@ -187,8 +200,7 @@ class APIController extends Controller {
                                     isAMaster = true
                                 }
                             }
-                        }
-    
+                        }    
                         if( !isAMaster && !isASlave ){
                             areTheyAllConnected = false;
                         }
@@ -258,7 +270,31 @@ class APIController extends Controller {
                 }
 
                 if( valid ){
-                    const serializedApi = await Project.createAPI( api, user);
+                    const serializedApi = await Project.createAPI( api, user);                 
+
+                    const { body_update_method } = api;
+                    if( body_update_method != undefined && Array.isArray(body_update_method) ){
+                        const not_include_fields = body.filter( field => !body_update_method.find( f => f.field_id == field ) )
+
+                        if( not_include_fields.length > 0 ){
+                            for( let i = 0 ; i < not_include_fields.length; i++ ){
+                                const update_method = { 
+                                    field_id: not_include_fields[i],
+                                    method: UPDATE_METHODS.override
+                                }
+                                body_update_method.push( update_method )
+                            }
+                        }
+
+                        serializedApi.body_update_method =  body_update_method
+
+                    }else{
+                        const formated_update_methods = body.map( field => {
+                            return { field_id: field, method: UPDATE_METHODS.override }
+                        })
+                        serializedApi.body_update_method = formated_update_methods
+                    }
+
                     const apis = version.apis;
                     apis[`${ serializedApi.id }`] = serializedApi;
 
@@ -324,6 +360,27 @@ class APIController extends Controller {
                 if( valid ){                    
                     const apis = version.apis;
                     apis[`${ api.id }`] = api;
+
+                    const { body_update_method } = api;
+                    if( body_update_method != undefined && Array.isArray(body_update_method) ){
+                        const not_include_fields = body.filter( field => !body_update_method.find( f => f.field_id == field ) )
+
+                        if( not_include_fields.length > 0 ){
+                            for( let i = 0 ; i < not_include_fields.length; i++ ){
+                                const update_method = { 
+                                    field_id: not_include_fields[i],
+                                    method: UPDATE_METHODS.override
+                                }
+                                body_update_method.push( update_method )
+                            }
+                        }
+
+                    }else{
+                        const formated_update_methods = body.map( field => {
+                            return { field_id: field, method: UPDATE_METHODS.override }
+                        })
+                        api.body_update_method = formated_update_methods
+                    }
 
                     version.apis = apis
 
