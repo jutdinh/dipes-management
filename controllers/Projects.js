@@ -829,7 +829,7 @@ class ProjectsController extends Controller {
 
                 if (period.tasks.length > 0) {
                     const period_calculated = period_progress / period.tasks.length
-                    period.progress = period_calculated.toFixed(2)
+                    period.progress = parseFloat(period_calculated.toFixed(2))
                 } 
             })
 
@@ -879,7 +879,7 @@ class ProjectsController extends Controller {
 
                 if (period.tasks.length > 0) {
                     const period_calculated = period_progress / period.tasks.length
-                    period.progress = period_calculated.toFixed(2)
+                    period.progress = parseFloat(period_calculated.toFixed(2))
                 } 
 
                 context.data = period
