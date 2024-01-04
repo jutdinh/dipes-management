@@ -1218,54 +1218,54 @@ class ProjectsController extends Controller {
                 const { start, end } = task
                 const startDate = new Date(start)
                 const endDate = new Date(end)
-                if (startDate && endDate && endDate >= startDate) {
-                    const nullCheck = this.notNullCheck(task, ["task_name", "task_description"])
-                    task.create_by = decodedToken
-                    task.create_at = new Date()
-                    if (nullCheck.valid) {
-                        const members = task.members ? task.members : []
-                        const AccountsModel = new Accounts()
-                        const users = await AccountsModel.findAll({ username: { $in: members } })
-                        const serializedUsers = {}
-                        users.map(user => {
-                            serializedUsers[user.username] = user
-                        })
-                        task.members = serializedUsers;
-                        const newTask = await Project.addTask(period_id, task)
-                        await Project.save()
-                        const project = Project.getData()
+                const nullCheck = this.notNullCheck(task, ["task_name", "task_description"])
+                task.create_by = decodedToken
+                task.create_at = new Date()
+                if (nullCheck.valid) {
+                    const members = task.members ? task.members : []
+                    const AccountsModel = new Accounts()
+                    const users = await AccountsModel.findAll({ username: { $in: members } })
+                    const serializedUsers = {}
+                    users.map(user => {
+                        serializedUsers[user.username] = user
+                    })
+                    task.members = serializedUsers;
+                    const newTask = await Project.addTask(period_id, task)
+                    await Project.save()
+                    const project = Project.getData()
 
-                        this.saveLog("info", req.ip, "__createtask", `__projectname: ${project.project_name}| __period_name: ${period.period_name}| __taskname: ${task.task_name} | __taskdescription: ${task.task_description} | __taskpriority ${task.task_priority} | __taskmembers: ${users.map(u => `${u.username}(${u.fullname})`).join(", ")}`, decodedToken.username)
+                    this.saveLog("info", req.ip, "__createtask", `__projectname: ${project.project_name}| __period_name: ${period.period_name}| __taskname: ${task.task_name} | __taskdescription: ${task.task_description} | __taskpriority ${task.task_priority} | __taskmembers: ${users.map(u => `${u.username}(${u.fullname})`).join(", ")}`, decodedToken.username)
 
-                        context.content = "Thêm thành công"
-                        context.status = "0x4501119"
-                        context.success = true
-                        context.tasks = Object.values(project.tasks)
-                        context.task = newTask
-
-                        for (let i = 0; i < users.length; i++) {
-                            const { username } = users[i]
-
-                            const notify = {
-                                image_url: decodedToken.avatar,
-                                url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${newTask.task_id}`,
-                                content: `[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
-                                username
-                            }
-                            const Notify = new NotificationRecord(notify)
-                            await Notify.save()
-                        }
-
-                    } else {
-                        context.content = "Body khum hợp lệ"
-                        context.status = "0x4501122"
-                        context.success = false
-                    }
-                } else {
-                    context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                    context.content = "Thêm thành công"
+                    context.status = "0x4501119"
                     context.success = true
-                    context.status = "0x4501252"
+                    context.tasks = Object.values(project.tasks)
+                    context.task = newTask
+
+                    for (let i = 0; i < users.length; i++) {
+                        const { username } = users[i]
+
+                        const notify = {
+                            image_url: decodedToken.avatar,
+                            url: `/projects/detail/task/${project.project_id}?period=${period.period_id}&task_id=${newTask.task_id}`,
+                            content: `[${decodedToken.fullname}] __has_added_you_to_a_new_task`,
+                            username
+                        }
+                        const Notify = new NotificationRecord(notify)
+                        await Notify.save()
+                    }
+
+                } else {
+                    context.content = "Body khum hợp lệ"
+                    context.status = "0x4501122"
+                    context.success = false
                 }
+                // if (startDate && endDate && endDate >= startDate) {
+                // } else {
+                //     context.content = "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+                //     context.success = true
+                //     context.status = "0x4501252"
+                // }
             } else {
                 context.content = "Giai đoạn khum tồn tại"
                 context.status = "0x4501255"
