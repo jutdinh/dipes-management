@@ -1051,6 +1051,63 @@ class ProjectsController extends Controller {
         res.status(200).send(context)
     }
 
+    updatePeriodApproval = async ( req, res ) => {
+        this.writeReq(req)
+
+        /**
+         * 
+         * Headers: {
+         *      token: <Token>
+         * }
+         * 
+         * 
+         * Body: {
+            "period": {
+                    "period_approve": BOOL
+                }
+            }
+         */
+        
+        const { project_id, period_id } = req.params
+        const { period } = req.body
+
+        const context = await this.projectGeneralCheck(req, project_id)
+        const { success, objects } = context;
+
+        if (success) {
+            const { Project, decodedToken } = objects;
+            const project = Project.getData()
+
+            const { tasks } = project
+            const oldPeriod = tasks?.[`${period_id}`]
+
+            if (oldPeriod) {
+                const bodyNullCheck = this.notNullCheck(req.body, ["period"])
+                if (bodyNullCheck.valid) {
+                    const { period_approve } = period;
+                    oldPeriod.period_approve = period_approve
+                    await Project.__modifyAndSaveChange__( `tasks.${ period_id }`, oldPeriod )
+
+                    context.content = "Cập nhật giai đoạn thành công"
+                    context.success = true
+                    context.status = "0x4501257"
+                }else{  
+                    context.content = "Thông tin giai đoạn không hợp lệ hoặc rỗng"
+                    context.status = "0x4501249"
+                    context.success = false
+                }
+            }else{
+                context.content = "Giai đoạn khum tồn tại"
+                context.status = "0x4501255"
+                context.success = false
+            }
+        }
+
+        delete context.objects
+        res.status(200).send(context)
+    }
+
+
     updateTaskPeriod = async (req, res) => {
         this.writeReq(req)
 

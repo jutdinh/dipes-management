@@ -27,6 +27,17 @@ router.put("/project/:project_id/period/:period_id/progress",  async (req, res) 
     }
 })
 
+
+router.put("/project/:project_id/period/:period_id/approve",  async (req, res) => {  
+
+    await ProjectsController.updatePeriodApproval(req, res) 
+    try{
+        
+    }catch{
+        res.send({ success: false, status: "0x4501246" })
+    }
+})
+
 router.put("/project/:project_id/period/:period_id",  async (req, res) => {  
     await ProjectsController.updateTaskPeriod(req, res) 
     try{
