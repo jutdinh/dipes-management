@@ -1,59 +1,63 @@
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faItalic, faBold, faUnderline, faStrikethrough } from '@fortawesome/free-solid-svg-icons'
 import functions from '../functions'
+
+import lang from '../property_lang'
+
+
 const { getFormatedUUID } = functions
 
 
 const datetime =  [        
     { 
         id: getFormatedUUID(), 
-        label: "Title",
+        label: lang["props.title"],
         type: "text",
         path: "props.title.content" 
     },
 
     { 
         id: getFormatedUUID(), 
-        label: "Visible",
+        label: lang["props.visible"],
         type: "bool",
         path: "props.title.visible",
         if_true: {
             value: true,
-            label: 'Show'
+            label: lang["props.visible.show"]
         },
         if_false: {
             value: false,
-            label: "Hide"
+            label: lang["props.visible.hide"]
         }
     },
    
     { 
         id: getFormatedUUID(), 
-        label: "Required",
+        label: lang["props.required"],
         type: "bool",
         path: "props.required",
         if_true: {
             value: true,
-            label: 'Required'
+            label: lang["props.required.required"]
         },
         if_false: {
             value: false,
-            label: "Optional"
+            label: lang["props.required.optional"]
         }
     },
 
     { 
         id: getFormatedUUID(), 
-        label: "Type",
+        label: lang["props.datetime.type"],
         type: "selection",
         path: "props.inputType",
         options: [
             {
-                label: "Date",
+                label: lang["props.datetime.date"],
                 value: "date"
             },
             
             {
-                label: "Datetime",
+                label: lang["props.datetime.datetime"],
                 value: "datetime-local"
             },           
         ]
@@ -61,19 +65,19 @@ const datetime =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Font size",
+        label: lang["style.fontsize"],
         type: "number",
         path: "props.labelStyle.fontSize" 
     },
     { 
         id: getFormatedUUID(), 
-        label: "Color",
+        label: lang["style.color"],
         type: "color",
         path: "props.labelStyle.color" 
     },
     { 
         id: getFormatedUUID(), 
-        label: "Alignment",
+        label: lang["style.alignment"],
         type: "iconicSwitchingGroup",
         path: "props.labelStyle.textAlign",
         defaultValue: "left",
@@ -102,7 +106,7 @@ const datetime =  [
     },
     { 
         id: getFormatedUUID(), 
-        label: "Italic",
+        label: lang["style.italic"],
         type: "iconicSwitching",
         path: "props.labelStyle.fontStyle",
         values: [ "unset", "italic" ],
@@ -110,7 +114,7 @@ const datetime =  [
     },
     { 
         id: getFormatedUUID(), 
-        label: "Bold",
+        label: lang["style.bold"],
         type: "iconicSwitching",
         path: "props.labelStyle.fontWeight",
         values: [ "unset", "bold" ],
@@ -118,7 +122,7 @@ const datetime =  [
     },
     { 
         id: getFormatedUUID(), 
-        label: "Underline",
+        label: lang["style.underline"],
         type: "iconicSwitching",
         path: "props.labelStyle.textDecoration",
         values: [ "unset", "underline" ],
@@ -127,35 +131,28 @@ const datetime =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Margin",
+        label: lang["style.margin"],
         type: "text",
         path: "props.labelStyle.margin" 
     },
     { 
         id: getFormatedUUID(), 
-        label: "Padding",
+        label: lang["style.padding"],
         type: "text",
         path: "props.labelStyle.padding" 
     },
 
-    { 
-        id: getFormatedUUID(), 
-        label: "Variable",
-        type: "text",
-        path: "props.variable_name" 
-    },
-
 
     { 
         id: getFormatedUUID(), 
-        label: "Order",
+        label: lang["style.order"],
         type: "number", 
         path: "props.flex.order",
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
     { 
         id: getFormatedUUID(), 
-        label: "Flex Grow",
+        label: lang["style.flexgrow"],
         type: "number", 
         path: "props.flex.flexGrow" ,
         onlyExistsIn:[{ name: "flex",type: "direct" }]

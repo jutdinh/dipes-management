@@ -158,7 +158,7 @@ export default () => {
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={ faTableCellsLarge }/>
                         </div>
-                        <span className="block-name">Flex 2</span>
+                        <span className="block-name">Flex</span>
                     </div>
                 </div>
 
@@ -193,6 +193,13 @@ export default () => {
                             <FontAwesomeIcon icon={ faStop }/>
                         </div>
                         <span className="block-name">Datetime</span>
+                    </div>
+
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Api Data Selection", blockTypes.apiCombo ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faStop }/>
+                        </div>
+                        <span className="block-name">Api Combo</span>
                     </div>
 
                 </div>

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCog, faHome } from "@fortawesome/free-solid-svg-icons"
+import { faCog, faEyeSlash, faHome } from "@fortawesome/free-solid-svg-icons"
 import { useDispatch, useSelector } from 'react-redux'
 
 import $ from 'jquery';
@@ -21,7 +21,7 @@ export default (props) => {
             payload: {
                 status: true,                
             }
-        }) 
+        })
 
         dispatch({
             branch: "design-ui",
@@ -87,16 +87,39 @@ export default (props) => {
         })
     }
 
+    const rerenderPageName = () => {
+        const { parent } = page;
+        const parentPage = pages.find( p => p.page_id == parent )
+        let newTitle = page.page_title
+        const oldTitle = page.page_title
+        if( parentPage ){
+            newTitle = oldTitle.replace("[parent_name]", parentPage.page_title )
+        }else{
+            newTitle = oldTitle.replace("[parent_name]", "")
+        }
+        return newTitle
+    }
+
+    const renderIcon = () => {
+        let icon;
+        if( page.is_hidden ){
+            icon = faEyeSlash
+        }else{
+            icon = page.is_home ? faHome : icons[ page.icon ].icon
+        }
+        return icon        
+    }
+
     if( !page.is_hidden || showAllPages){        
         return (
             <div className={isDragging ? "page-container-active" : "page-container"}>
                 <span className="page-front" onMouseUp={FrontMouseUpTrigger}/>
                 <div className={`page ${ page.page_id == currentPage?.page_id ? "page-active": "" }`} key={page.page_id} onMouseDown={MouseDownTrigger} onClick={ ClickTrigger }>
-                    <div className="icon-ne icon-center"><FontAwesomeIcon icon={ page.is_home ? faHome : icons[ page.icon ].icon } /></div>
+                    <div className="icon-ne icon-center"><FontAwesomeIcon icon={ renderIcon() } /></div>
                     <div className="name">
-                        <span>{page.page_title}</span>
+                        <span>{page.is_hidden ? rerenderPageName() : page.page_title}</span>
                     </div>
-                    { !preview &&
+                    { !preview && !page.is_hidden &&
                         <div className="icon-ne cog" onClick={(e) => { pageSettingTrigger(e, page) }}>
                             <FontAwesomeIcon icon={faCog} />
                         </div>

@@ -105,8 +105,7 @@ export default (props) => {
                 <div 
                     className={`design-zone text-design ${ isActive() ? "design-zone-active" : "" }`} 
                     onClick={ SwitchingState } onMouseEnter={ ComponentHover } 
-                >
-                    
+                >                    
                     <input 
                         className={`main-input ${ isActive() ? "input-active": "" }` } 
                         value={ content } 

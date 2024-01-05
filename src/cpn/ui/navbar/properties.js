@@ -1,4 +1,4 @@
-import { faCaretDown, faCaretRight, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faCaretDown, faCaretRight, faClose, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -12,59 +12,56 @@ export default () => {
     const [properties, setProperties] = useState(propertySet)
 
     useEffect(() => {
-        
-        const parent = selectedCpns.find( cpn => cpn.id == selectedCpn.parent_id )
-        if( parent ){
-        
+
+        const parent = selectedCpns.find(cpn => cpn.id == selectedCpn.parent_id)
+        if (parent) {
             const parents = selectedCpns?.slice(0, selectedCpns.length - 1)
-            
-            const parentNameSet = parents.map( p => p.name )
             const filtedProperties = []
 
-            for( let i = 0 ; i < propertySet.length; i++ ){
+            for (let i = 0; i < propertySet.length; i++) {
 
                 const { onlyExistsIn } = propertySet[i]
                 let valid = false
-                if( onlyExistsIn  ){
-                   
-                    const directParent = onlyExistsIn.find( c => c.type == "direct" && c.name == parent.name )
-                    console.log(directParent)
-                    if( directParent ){
+                if (onlyExistsIn) {
+
+                    const directParent = onlyExistsIn.find(c => c.type == "direct" && c.name == parent.name)
+
+                    if (directParent) {
                         valid = true
                     }
 
-                    const cascadingParents = onlyExistsIn.filter( c => c.type == "cascading" )
-                    const atleastOneParentIsCascading = parents.filter( par => {
+                    const cascadingParents = onlyExistsIn.filter(c => c.type == "cascading")
+                    const atleastOneParentIsCascading = parents.filter(par => {
                         const { name } = par;
-                        const isExisted = cascadingParents.find( cpar => cpar.name == name )
+                        const isExisted = cascadingParents.find(cpar => cpar.name == name)
                         return isExisted
-                    })                    
-                    
-                    if( atleastOneParentIsCascading.length > 0 ){
-                        valid = true;    
+                    })
+
+                    if (atleastOneParentIsCascading.length > 0) {
+                        valid = true;
                     }
 
-                    if( valid ){
-                        filtedProperties.push( propertySet[i] )
+                    if (valid) {
+                        filtedProperties.push(propertySet[i])
                     }
-                }else{
-                    filtedProperties.push( propertySet[i] )
+                } else {
+                    filtedProperties.push(propertySet[i])
                 }
 
 
             }
 
             setProperties(filtedProperties)
-        }else{
+        } else {
             const filtedProperties = []
-            for( let i = 0 ; i < propertySet.length; i++ ){
+            for (let i = 0; i < propertySet.length; i++) {
                 const { onlyExistsIn } = propertySet[i]
-                if( !onlyExistsIn  ){
-                    filtedProperties.push( propertySet[i] )                    
+                if (!onlyExistsIn) {
+                    filtedProperties.push(propertySet[i])
                 }
             }
             setProperties(filtedProperties)
-        }        
+        }
     }, [selectedCpn])
 
     const dispatch = useDispatch()
@@ -86,14 +83,14 @@ export default () => {
         return object
     }
 
-    const areParentActive = ( childOf ) => {
-        if( childOf != undefined ){
+    const areParentActive = (childOf) => {
+        if (childOf != undefined) {
             const { prop_id, caseIf } = childOf
-            const parent = propertySet.find( p => p.id == prop_id )
-            if( parent ){
+            const parent = propertySet.find(p => p.id == prop_id)
+            if (parent) {
                 const { path } = parent;
-                const value = getPropByPath( path.split('.'), selectedCpn )
-                if( value == caseIf ){
+                const value = getPropByPath(path.split('.'), selectedCpn)
+                if (value == caseIf) {
                     return true
                 }
             }
@@ -115,7 +112,7 @@ export default () => {
         })
     }
 
-    const setActiveComponent = (cpn)  => {
+    const setActiveComponent = (cpn) => {
         dispatch({
             branch: "design-ui",
             type: "setActiveComponent",
@@ -128,16 +125,16 @@ export default () => {
     return (
         <div className="properties">
             <div className="cpn-chain">
-                { selectedCpns.slice(0, selectedCpns.length - 1).map( c =>
-                    <div className="cpn" onClick={ () => {setActiveComponent( c ) }}>
-                        <span>{ c.name?.toUpperCase() }</span>
-                        <span><FontAwesomeIcon icon={ faCaretRight }/></span>
-                    </div>    
-                ) }
+                {selectedCpns.slice(0, selectedCpns.length - 1).map(c =>
+                    <div className="cpn" onClick={() => { setActiveComponent(c) }}>
+                        <span>{c.name?.toUpperCase()}</span>
+                        <span><FontAwesomeIcon icon={faCaretRight} /></span>
+                    </div>
+                )}
 
-                    <div className="cpn">
-                        <span>{ selectedCpn.name?.toUpperCase() }</span>                        
-                    </div>    
+                <div className="cpn">
+                    <span>{selectedCpn.name?.toUpperCase()}</span>
+                </div>
             </div>
 
             {properties.map((prop, index) => {
@@ -150,7 +147,7 @@ export default () => {
                         selectedCpn={selectedCpn}
                         updateSelectedComponent={updateSelectedComponent}
                         getPropByPath={getPropByPath}
-                        areParentActive={ areParentActive }
+                        areParentActive={areParentActive}
                     />
                 } else {
                     return null
@@ -214,7 +211,8 @@ const EntryBox = (props) => {
         getPropByPath,
         updateSelectedComponent,
         selectedCpn,
-        index
+        index,
+        read_only
     } = props
     const splittedPath = path.split('.')
 
@@ -226,7 +224,7 @@ const EntryBox = (props) => {
             <div className="input-box">
                 <input type="text" value={getPropByPath(splittedPath, selectedCpn)}
                     onChange={(e) => { updateSelectedComponent(e.target.value, splittedPath) }}
-                />
+                disabled={ read_only } />
             </div>
         </div>
     )
@@ -487,10 +485,10 @@ const ChildSelection = (props) => {
 
 
 const ApiSelection = (props) => {
-    const proxy = useSelector( state => state.proxy )
+    const proxy = useSelector(state => state.proxy)
     const token = localStorage.getItem('_token')
     const {
-        index, 
+        index,
         label,
         type,
         path,
@@ -499,18 +497,20 @@ const ApiSelection = (props) => {
         api_data,
         fields,
         display_value,
-
-        childOf,
-
+        
         getPropByPath,
         selectedCpn,
         updateSelectedComponent,
-        areParentActive
+        
+        childOf,
+        areParentActive,
+        sideFunction
 
     } = props
 
     const splittedPath = path.split('.')
     const PARAMS = useParams()
+    const dispatch = useDispatch()
 
     const [options, setOptions] = useState([])
     const [drop, setDrop] = useState(false)
@@ -522,40 +522,63 @@ const ApiSelection = (props) => {
             fromatedURL = fromatedURL.replaceAll(`[${params[i]}]`, PARAMS[params[i]])
         }
 
-        fetch(`${proxy}${ fromatedURL }`, {
+        fetch(`${proxy}${fromatedURL}`, {
             method: "GET",
             headers: {
                 Authorization: token
             }
-        }).then( res => res.json() ).then( res => {
+        }).then(res => res.json()).then(res => {
             const data = getPropByPath(api_data.split('.'), res)
-            if( data ){
-                const formatedOptions = data.map( record => {
+            if (data) {
+                const formatedOptions = data.map(record => {
                     const object = {}
 
-                    for( let i = 0 ; i < fields.length; i++ ){
+                    for (let i = 0; i < fields.length; i++) {
                         const { from, to } = fields[i]
                         object[to] = record[from]
                     }
                     return object
                 })
                 setOptions(formatedOptions)
-                
-            }else{
+
+            } else {
                 setOptions([])
             }
         })
-    },[])
+    }, [])
 
     const targetSelectTrigger = (opt) => {
-        updateSelectedComponent( opt, splittedPath )
+        updateSelectedComponent(opt, splittedPath)
+
+        if (sideFunction) {
+
+            const payload = {}
+            const { params } = sideFunction;
+
+            for (let i = 0; i < params.length; i++) {
+                const { from, param, translateTo } = params[i]
+
+                if (from == "target") {
+                    payload[translateTo] = getPropByPath(param.split('.'), opt)
+                } else {
+                    payload[translateTo] = getPropByPath(param.split('.'), selectedCpn)
+                }
+            }
+
+            dispatch({
+                branch: "side-funcs",
+                type: sideFunction.name,
+                payload
+            })
+        }
+
         setDrop(false)
     }
-    const getLabel = ( opt ) => {
+    const getLabel = (opt) => {
         return opt[display_value]
     }
 
-    if( areParentActive(childOf) ){
+    if (areParentActive(childOf)) {
         return (
             <div className="property" style={{ zIndex: index }}>
                 <div className="label-box">
@@ -566,7 +589,7 @@ const ApiSelection = (props) => {
                 >
                     <div className="content-container" onClick={() => { setDrop(!drop) }}>
                         <div className="content">
-                            <span>{ getLabel( getPropByPath( splittedPath, selectedCpn ) ) }</span>
+                            <span>{getLabel(getPropByPath(splittedPath, selectedCpn))}</span>
                         </div>
                         <div className="caret">
                             <FontAwesomeIcon icon={faCaretDown} />
@@ -578,7 +601,7 @@ const ApiSelection = (props) => {
                                 <div className="option" onClick={() => {
                                     targetSelectTrigger(opt)
                                 }}>
-                                    <span>{ getLabel(opt) }</span>
+                                    <span>{getLabel(opt)}</span>
                                 </div>
                             )}
                         </div>
@@ -608,7 +631,7 @@ const ListSelection = (props) => {
 
     const [drop, setDrop] = useState(false)
 
-    let value = options.find( vl => vl.value == currentValue )
+    let value = options.find(vl => vl.value == currentValue)
 
     return (
         <div className="property" style={{ zIndex: index }}>
@@ -629,12 +652,249 @@ const ListSelection = (props) => {
                 <div className="options-container" style={{ display: drop ? "block" : "none" }}>
                     <div className="options" >
                         {options.map(opt =>
-                            <div className="option" onClick={() => {  updateSelectedComponent(opt.value, splittedPath ); setDrop(false) }}>
+                            <div className="option" onClick={() => { updateSelectedComponent(opt.value, splittedPath); setDrop(false) }}>
                                 <span>{opt.label}</span>
                             </div>
                         )}
                     </div>
                 </div>
+            </div>
+        </div>
+    )
+}
+
+
+const SelfSelection = (props) => {
+    const {
+        label,
+        path,
+        data,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index,
+        fields,
+        display_value,
+
+        childOf,
+        areParentActive,
+    } = props
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const [drop, setDrop] = useState(false)
+
+    const options = getPropByPath(data.split('.'), selectedCpn)
+
+    const formatObjectByFields = (opt) => {
+        const clone = {}
+        for (let i = 0; i < fields.length; i++) {
+            const { from, to } = fields[i]
+            clone[to] = opt[from]
+        }
+        return clone
+    }
+    if( areParentActive(childOf) ){
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_value]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => { updateSelectedComponent(formatObjectByFields(opt), splittedPath); setDrop(false) }}>
+                                    <span>{opt[display_value]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+const SelectTables = (props) => {
+    const {
+        label,
+        path,
+        fieldsPath,
+
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const localTables = useSelector(state => state.tables)
+    const [tables, setTables] = useState(localTables)
+    const [drop, setDrop] = useState(false)
+    const splittedPath = path.split('.')
+    const selectedTables = getPropByPath(splittedPath, selectedCpn);
+
+
+
+    const tableSelect = (table) => {
+        setDrop(false)
+
+        const newTables = [...selectedTables, table]
+        if (newTables.length > 0) {
+
+            const foreignKeys = []
+            for (let i = 0; i < newTables.length; i++) {
+                foreignKeys.push(...newTables[i].foreign_keys)
+            }
+            const validTablesId = foreignKeys.map(key => key.table_id)
+            const validTables = localTables.filter(tb => validTablesId.indexOf(tb.id) != -1)
+            const finalTables = validTables.filter(tb => newTables.indexOf(tb) == -1)
+
+            setTables(finalTables)
+        } else {
+            setTables(localTables)
+        }
+
+        updateSelectedComponent([...selectedTables, table], splittedPath)
+    }
+
+    const removeLastTable = () => {
+        const removedTable = selectedTables[ selectedTables.length - 1 ]
+        const newTables = selectedTables.slice(0, selectedTables.length - 1)
+
+        if (newTables.length > 0) {
+
+            const foreignKeys = []
+            for (let i = 0; i < newTables.length; i++) {
+                foreignKeys.push(...newTables[i].foreign_keys)
+            }
+            const validTablesId = foreignKeys.map(key => key.table_id)
+            const validTables = localTables.filter(tb => validTablesId.indexOf(tb.id) != -1)
+            const finalTables = validTables.filter(tb => newTables.indexOf(tb) == -1)
+
+            setTables(finalTables)
+            
+        } else {
+            setTables(localTables)
+        }
+        const currentFields = getPropByPath( fieldsPath.split('.'), selectedCpn )
+
+        const leftFields = currentFields.filter( f => f.table_id != removedTable.id )
+        updateSelectedComponent( leftFields, fieldsPath.split('.') )
+        updateSelectedComponent(newTables, splittedPath)
+    }   
+
+    return (
+        <div>
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span></span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {tables.map(table =>
+                                <div className="option" onClick={() => { tableSelect(table) }}>
+                                    <span>{table.table_name}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="property table-tag-list">
+                {selectedTables.map((table, index) =>
+                    <div className="table-tag">
+                        <span>{table.table_name}</span>
+                        {index == selectedTables.length - 1 &&
+                            <span className="close" onClick={removeLastTable}>
+                                <FontAwesomeIcon icon={faClose} />
+                            </span>
+                        }
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
+
+const TableFieldsPicker = (props) => {
+    const {
+        label,
+        path,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        tablespath,
+        index
+    } = props
+    const splittedPath = path.split('.')
+
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const fomularAliases = currentValue.map(f => f.fomular_alias)
+
+    const tables = getPropByPath(tablespath.split('.'), selectedCpn)
+
+    const fieldSelectOrNot = ( field ) => {
+        const isFieldSelected = currentValue.find( f => f.fomular_alias == field.fomular_alias )
+        
+        let newValues = currentValue
+        if( isFieldSelected ){
+            newValues = currentValue.filter( f => f.fomular_alias != field.fomular_alias )
+        }else{
+            newValues.push( field )
+        }
+        updateSelectedComponent( newValues, splittedPath )
+    }
+
+    return (
+        <div className="property" style={{ zIndex: index }}>
+            <div
+                className={'fields-picker'}
+            >
+                {tables.map(tb => <div className="table-fields-picker">
+                    <div className="fields-picker-header">
+                        <span>{tb.table_name}</span>
+                    </div>
+                    <div className="picker-field-list">
+                        {tb.fields.map(field =>
+                            <div className="field-picker">
+                                <div className="picker-checkbox">
+                                    <input
+                                        type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1} 
+                                        onClick={ () => { fieldSelectOrNot( field ) } }
+                                        />
+                                </div>
+                                <div className="picker-label">
+                                    <span>{field.field_name}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>)}
             </div>
         </div>
     )
@@ -651,4 +911,9 @@ const Components = {
     "selection": ListSelection,
     "childSelection": ChildSelection,
     "apiSelection": ApiSelection,
+    "selfSelection": SelfSelection,
+
+    "selectTables": SelectTables, // onetimeuse
+    "tablefieldspicker": TableFieldsPicker, // onetimeuse
 }
+

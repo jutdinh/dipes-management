@@ -1,7 +1,7 @@
-import { defaultBranch, LangsBranch } from './router';
+import { defaultBranch, LangsBranch, sideFuncs } from './router';
 import proxy from '../proxy'
 import Langs from '../langs';
-import { config, functions } from './configs';
+import { config, functions, propertyLang } from './configs';
 import { socket } from './configs/socket';
 
 import DatabaseBranch from './router/db';
@@ -81,7 +81,8 @@ const initState = {
     showAllPages: false,
 
     apis: [],
-    tables: []
+    tables: [],
+    propertyLang
 }
 
 export default (state = initState, action) => {
@@ -111,6 +112,10 @@ export default (state = initState, action) => {
             return floatingBoxes(state, action);
             break
 
+        case "side-funcs":
+            return sideFuncs(state, action);
+            break;
+            
         default:
             return defaultBranch(state, action);
             break;

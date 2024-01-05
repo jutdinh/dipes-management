@@ -1,50 +1,61 @@
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faItalic, faBold, faUnderline, faStrikethrough } from '@fortawesome/free-solid-svg-icons'
 import functions from '../functions'
+import lang from '../property_lang'
+
+
 const { getFormatedUUID } = functions
 
 const form =  [     
     
+    // { 
+    //     id: getFormatedUUID(), 
+    //     label: "Api",
+    //     type: "apiSelection",                
+    //     path: "props.api",
+    //     url: "/apis/v/[version_id]",
+    //     params: ["version_id"],
+    //     api_data: "data.apis",
+    //     fields: [
+    //         {
+    //             from: "api_id",
+    //             to: "api"
+    //         },
+            
+    //         {
+    //             from: "api_name",
+    //             to: "api_name"
+    //         },
+
+    //         {
+    //             from: "body_detail",
+    //             to: "body"
+    //         },
+
+    //         {
+    //             from: "url",
+    //             to: "url"
+    //         },
+    //     ],
+    //     display_value: "api_name",
+    // },
+
+
     { 
         id: getFormatedUUID(), 
-        label: "Api",
-        type: "apiSelection",                
-        path: "props.api",
-        url: "/apis/v/[version_id]",
-        params: ["version_id"],
-        api_data: "data.apis",
-        fields: [
-            {
-                from: "api_id",
-                to: "api"
-            },
-            
-            {
-                from: "api_name",
-                to: "api_name"
-            },
-
-            {
-                from: "body_detail",
-                to: "body"
-            },
-
-            {
-                from: "url",
-                to: "url"
-            },
-        ],
-        display_value: "api_name",
+        label: lang["style.width"],
+        type: "text",
+        path: "props.style.width" 
     },
 
     { 
         id: getFormatedUUID(), 
-        label: "Margin",
+        label: lang["style.margin"],
         type: "text",
         path: "props.style.margin" 
     },
     { 
         id: getFormatedUUID(), 
-        label: "Padding",
+        label: lang["style.padding"],
         type: "text",
         path: "props.style.padding" 
     },
@@ -64,6 +75,9 @@ const form =  [
             }
         }                    
     },
+
+
+
     { 
         id: getFormatedUUID(), 
         label: "Order",

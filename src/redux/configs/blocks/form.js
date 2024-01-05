@@ -8,7 +8,7 @@ export default (props) => {
         children, parent,
         renderFrontLiner,
         renderBackLiner,
-      
+        style
     } = props
 
     const dispatch = useDispatch()
@@ -97,12 +97,12 @@ export default (props) => {
     }
 
 
-
+    
 
 
     if( preview ){
         return(
-            <div className="design-zone-container" style={{ zIndex }}>
+            <div className="design-zone-container" style={{ ...style, zIndex }}>
                            
                 { children }
 
@@ -111,7 +111,7 @@ export default (props) => {
     }else{
 
         return (
-            <div className="design-zone-container" style={{ zIndex }}>
+            <div className="design-zone-container" style={{ ...style, zIndex }}>
                 {renderFrontLiner(id, parent)}
                 <div
                     className={`design-zone form-design  ${isActive() ? "design-zone-active form-design-active" : ""}`}

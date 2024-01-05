@@ -1,21 +1,24 @@
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faItalic, faBold, faUnderline, faStrikethrough } from '@fortawesome/free-solid-svg-icons'
 import functions from '../functions'
+import lang from '../property_lang'
+
+
 const { getFormatedUUID } = functions
 
 
 const flex =  [        
     { 
         id: getFormatedUUID(), 
-        label: "Direction",
+        label: lang["style.direction"],
         type: "selection",
         path: "props.style.flexDirection",
         options: [
             {
-                label: "Horizontal",
+                label: lang["style.direction.horizontal"],
                 value: "row"
             },            
             {
-                label: "Veritical",
+                label: lang["style.direction.vertical"],
                 value: "column"
             },
         ] 
@@ -23,16 +26,16 @@ const flex =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Wrap",
+        label: lang["style.wrap"],
         type: "selection",
         path: "props.style.flexWrap",
         options: [
             {
-                label: "Wrap",
+                label: lang["style.wrap.wrap"],
                 value: "wrap"
             },            
             {
-                label: "No Wrap",
+                label: lang["style.wrap.nowrap"],
                 value: "no-wrap"
             }            
         ] 
@@ -40,20 +43,20 @@ const flex =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Justify content",
+        label: lang["style.justifycontent"],
         type: "selection",
         path: "props.style.justifyContent",
         options: [
             {
-                label: "Left",
+                label: lang["style.justifycontent.left"],
                 value: "flex-start"
             },            
             {
-                label: "Center",
+                label: lang["style.justifycontent.center"],
                 value: "center"
             },
             {
-                label: "Right",
+                label: lang["style.justifycontent.right"],
                 value: "flex-end"
             }
         ] 
@@ -61,20 +64,20 @@ const flex =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Align items",
+        label: lang["style.alignitems"],
         type: "selection",
         path: "props.style.alignItems",
         options: [
             {
-                label: "Top",
+                label: lang["style.alignitems.flexstart"],
                 value: "flex-start"
             },            
             {
-                label: "Center",
+                label: lang["style.alignitems.center"],
                 value: "center"
             },
             {
-                label: "Bottom",
+                label: lang["style.alignitems.flexend"],                
                 value: "flex-end"
             }
         ] 
@@ -82,13 +85,13 @@ const flex =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Margin",
+        label: lang["style.margin"],
         type: "text",
         path: "props.style.margin" 
     },
     { 
         id: getFormatedUUID(), 
-        label: "Padding",
+        label: lang["style.padding"],
         type: "text",
         path: "props.style.padding" 
     },
@@ -97,14 +100,14 @@ const flex =  [
 
     { 
         id: getFormatedUUID(), 
-        label: "Order",
+        label: lang["style.order"],
         type: "number", 
         path: "props.flex.order",
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
     { 
         id: getFormatedUUID(), 
-        label: "Flex Grow",
+        label: lang["style.flexgrow"],
         type: "number", 
         path: "props.flex.flexGrow" ,
         onlyExistsIn:[{ name: "flex",type: "direct" }]

@@ -1,93 +1,63 @@
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faItalic, faBold, faUnderline, faStrikethrough } from '@fortawesome/free-solid-svg-icons'
 import functions from '../functions'
-import lang from '../property_lang'
-
 const { getFormatedUUID } = functions
 
-const button =  [        
+
+const apiCombo =  [        
     { 
         id: getFormatedUUID(), 
-        label: lang["props.title"],
+        label: "Tiêu đề",
         type: "text",
-        path: "props.title" 
+        path: "props.title.content" 
     },
 
     { 
         id: getFormatedUUID(), 
-        label: lang["style.fontsize"],
-        type: "number",
-        path: "props.style.fontSize" 
-    },
-
-    { 
-        id: getFormatedUUID(), 
-        label: lang["style.borderwidth"],
-        type: "number",
-        path: "props.style.borderWidth" 
-    },
-
-    { 
-        id: getFormatedUUID(), 
-        label: lang["style.boldercolor"],
-        type: "color",
-        path: "props.style.borderColor" 
+        label: "Hiển thị",
+        type: "bool",
+        path: "props.title.visible",
+        if_true: {
+            value: true,
+            label: 'Hiển thị'
+        },
+        if_false: {
+            value: false,
+            label: "Ẩn đi"
+        }
     },
    
     { 
         id: getFormatedUUID(), 
-        label: lang["style.borderstyle"],
-        type: "selection",
-        path: "props.style.borderStyle",
-        options: [
-            {
-                label: lang["style.borderstyle.solid"],
-                value: "solid"
-            },
-            
-            {
-                label: lang["style.borderstyle.dashed"],
-                value: "dashed"
-            },
-
-            {
-                label: lang["style.borderstyle.dotted"],
-                value: "dotted"
-            },
-
-            {
-                label: lang["general.none"],
-                value: "none"
-            },
-
-        ] 
+        label: "Bắt buộc",
+        type: "bool",
+        path: "props.required",
+        if_true: {
+            value: true,
+            label: 'Bắt buộc'
+        },
+        if_false: {
+            value: false,
+            label: "Tùy chọn"
+        }
     },
 
     { 
         id: getFormatedUUID(), 
-        label: lang["style.borderradius"],
+        label: "Cở chữ",
         type: "number",
-        path: "props.style.borderRadius" 
+        path: "props.labelStyle.fontSize" 
     },
-
     { 
         id: getFormatedUUID(), 
-        label: lang["style.color"],
+        label: "Màu sắc",
         type: "color",
-        path: "props.style.color" 
+        path: "props.labelStyle.color" 
     },
-
     { 
         id: getFormatedUUID(), 
-        label: lang["style.background"],
-        type: "color",
-        path: "props.style.backgroundColor" 
-    },
-
-    { 
-        id: getFormatedUUID(), 
-        label: "Alignment",
+        label: "Căn lề",
         type: "iconicSwitchingGroup",
-        path: "props.style.textAlign",
+        path: "props.labelStyle.textAlign",
         defaultValue: "left",
         buttons: [
             { 
@@ -112,58 +82,58 @@ const button =  [
             }
         ]
     },
-
     { 
         id: getFormatedUUID(), 
-        label: lang["style.italic"],
+        label: "Chữ nghiêng",
         type: "iconicSwitching",
-        path: "props.style.fontStyle",
+        path: "props.labelStyle.fontStyle",
         values: [ "unset", "italic" ],
         icon: faItalic 
     },
     { 
         id: getFormatedUUID(), 
-        label: lang["style.bold"],
+        label: "In đậm",
         type: "iconicSwitching",
-        path: "props.style.fontWeight",
+        path: "props.labelStyle.fontWeight",
         values: [ "unset", "bold" ],
         icon: faBold 
     },
     { 
         id: getFormatedUUID(), 
-        label: lang["style.underline"],
+        label: "Gạch chân",
         type: "iconicSwitching",
-        path: "props.style.textDecoration",
+        path: "props.labelStyle.textDecoration",
         values: [ "unset", "underline" ],
         icon: faUnderline
     },
 
     { 
         id: getFormatedUUID(), 
-        label: lang["style.width"],
+        label: "Lề trong",
         type: "text",
-        path: "props.style.width" 
+        path: "props.labelStyle.padding" 
     },
 
     { 
         id: getFormatedUUID(), 
-        label: lang["style.margin"],
+        label: "Lề ngoài",
         type: "text",
-        path: "props.style.margin" 
+        path: "props.labelStyle.margin" 
     },
-    { 
-        id: getFormatedUUID(), 
-        label: lang["style.padding"],
-        type: "text",
-        path: "props.style.padding" 
-    },
-
 
     { 
         id: getFormatedUUID(), 
-        label: lang["func.recordtrigger"],
+        label: "Biến số",
+        type: "text",
+        path: "props.variable_name",
+        onlyExistsIn:[ { name: "form",type: "cascading" } ]
+    },
+
+    { 
+        id: "api-selection", 
+        label: "Api",
         type: "apiSelection",                
-        path: "props.recordTrigger.api",
+        path: "props.api.api",
         url: "/apis/v/[version_id]",
         params: ["version_id"],
         api_data: "data.apis",
@@ -176,27 +146,53 @@ const button =  [
                 from: "api_name",
                 to: "api_name"
             },
+            {
+                from: "fields",
+                to: "fields"
+            }
         ],
         display_value: "api_name",
-        onlyExistsIn:[
-            { name: "table", type: "cascading" }
-        ]
     },
 
     { 
         id: getFormatedUUID(), 
-        label: lang["style.order"],
+        label: "Trường",
+        type: "selfSelection", 
+        path: "props.api.field",
+        data: "props.api.api.fields",
+        fields: [
+            {
+                from: "id",
+                to: "id"
+            },            
+            {
+                from: "field_name",
+                to: "field_name"
+            },
+            {
+                from: "fomular_alias",
+                to: "fomular_alias"
+            }
+        ],
+        display_value: "field_name"
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: "Thứ tự",
         type: "number", 
         path: "props.flex.order",
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
     { 
         id: getFormatedUUID(), 
-        label: lang["style.flexgrow"],
+        label: "Độ mở",
         type: "number", 
         path: "props.flex.flexGrow" ,
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
 
+
+
 ]
-export default button
+export default apiCombo

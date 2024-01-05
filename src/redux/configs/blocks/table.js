@@ -2,11 +2,11 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCog, faEdit, faHome, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCheckCircle, faCircleXmark, faCog, faEdit, faHome, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { useEffect } from "react"
 
 export default (props) => {
-    const { cache, apis, gridState, tables, preview, floating } = useSelector(state => state)
+    const { cache, preview, floating, pages, page } = useSelector(state => state)
     const { id, zIndex,
         name,
         style,
@@ -30,15 +30,22 @@ export default (props) => {
         { type: "api", name: "API" }
     ]
 
+    const fakeDataAmount = 500;
+    const [fakeData, setFakeData] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
 
+    const { fields } = source
     const [drops, setDrops] = useState({
         configs: true
     })
 
 
     useEffect(() => {
+        const initialFakeData = createFakeData()
 
-    }, [])
+        setFakeData(initialFakeData)
+
+    }, [fields])
 
 
 
@@ -73,31 +80,7 @@ export default (props) => {
         })
     }
 
-    const FrontInsertTrigger = () => {
-        insertComponent(id, "front")
-    }
 
-    const BackInsertTrgger = () => {
-
-        insertComponent(id, "back")
-    }
-
-    const getSourceName = () => {
-        const type = source.type
-
-        let result = "Vô định"
-        for (let i = 0; i < sourceTypes.length; i++) {
-            if (type == sourceTypes[i].type) {
-                result = sourceTypes[i].name
-            }
-        }
-        return `${result}`;
-    }
-
-    const DropSwitch = (name) => {
-        drops[name] = !drops[name]
-        setDrops({ ...drops })
-    }
 
     const changeTableName = (e) => {
         const newName = e.target.value;
@@ -113,7 +96,178 @@ export default (props) => {
     }
 
     const moveToAddPage = () => {
-        
+        const hiddenPage = pages.find(page => page.block == id)
+
+        if (hiddenPage) {
+
+            dispatch({
+                branch: "side-funcs",
+                type: "UpdateHiddenPageButDeHellOnTable",
+                payload: {
+                    block_id: id
+                }
+            })
+
+            dispatch({
+                branch: "design-ui",
+                type: "pageSelected",
+                payload: {
+                    page: hiddenPage
+                }
+            })
+        }
+    }
+
+    const parseFormatToValue = (pattern, value) => {
+
+        const number = value
+        let result = pattern
+        if (!pattern) {
+            result = "[N]"
+        }
+        const today = new Date();
+        const date = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        result = result.replaceAll("[DD]", date);
+        result = result.replaceAll("[MM]", month);
+        result = result.replaceAll("[YYYY]", year);
+        const numberPlaces = [];
+        for (let i = 0; i < result.length; i++) {
+            if (result[i] === '[') {
+                var temp = ""
+                for (let j = i + 1; j < result.length; j++) {
+                    if (result[j] === 'N' && result[j] !== ']') {
+                        temp += result[j];
+                    } else {
+                        if (result[j] === ']') {
+                            numberPlaces.push(temp);
+                            i = j;
+                            temp = ""
+                        }
+                    }
+                }
+            }
+        }
+
+        if (numberPlaces.length == 0) {
+            result += "[N]"
+            numberPlaces.push("N")
+        }
+        const places = numberPlaces.map(place => {
+            const placeLength = place.length;
+            let numberLength = number.toString().length;
+            let header = "";
+            for (let i = 0; i < placeLength; i++) {
+                header += "0";
+            }
+            const result = header.slice(0, placeLength - numberLength) + number.toString();
+            return { place, value: result };
+        })
+        for (let i = 0; i < places.length; i++) {
+            const { place, value } = places[i];
+            result = result.replace(`[${place}]`, value)
+        }
+        return result;
+    }
+
+    const parseDateToFormatedValue = (format) => {
+        const date = new Date()
+        let result = format;
+        result = result.replaceAll('dd', date.getDate())
+        result = result.replaceAll('MM', date.getMonth() + 1)
+        result = result.replaceAll('yyyy', date.getFullYear())
+
+        result = result.replaceAll('ss', date.getSeconds())
+        result = result.replaceAll('mm', date.getMinutes())
+        result = result.replaceAll('hh', date.getHours())
+
+        return result;
+    }
+
+    const makeSampleDataBaseOnDataType = (field, currentIndex) => {
+        const { props } = field;
+        const { DATATYPE, NULL, AUTO_INCREMENT, FORMAT, PATTERN, DEFAULT_TRUE, DEFAULT_FALSE, DECIMAL_PLACE } = props;
+        let value
+        switch (DATATYPE) {
+            case "INT":
+            case "INT UNSIGNED":
+            case "BIGINT":
+            case "BIGINT UNSIGNED":
+                if (AUTO_INCREMENT) {
+                    value = parseFormatToValue(PATTERN, currentIndex)
+                } else {
+                    value = Math.floor(Math.random() * 1000) + 100;
+                }
+                break;
+            case "BOOL":
+                value = DEFAULT_TRUE
+                if (currentIndex % 4 == 0) {
+                    value = DEFAULT_FALSE
+                }
+                break;
+
+            case "DECIMAL":
+            case "DECIMAL UNSIGNED":
+                const decimalPlace = parseInt(DECIMAL_PLACE)
+                const postfix = "0".repeat(decimalPlace)
+                value = `${Math.floor(Math.random() * 10) + 1},${postfix}`
+                break;
+
+            case "DATE":
+            case "DATETIME":
+                value = parseDateToFormatedValue(FORMAT)
+                break;
+
+            case "TEXT":
+                value = `${field.fomular_alias}-${Math.floor(Math.random() * 1000) + 100}`
+                break;
+        }
+
+        if (NULL) {
+            value = `${value} | NULL`
+        }
+        return value
+    }
+
+
+    const createFakeData = () => {
+        const { fields } = source;
+        const data = []
+        for (let i = 0; i < fakeDataAmount; i++) {
+            const record = {
+                __indexing__: i + 1
+            }
+
+            for (let j = 0; j < fields.length; j++) {
+                const field = fields[j]
+
+                record[field.fomular_alias] = makeSampleDataBaseOnDataType(field, i)
+            }
+            data.push(record)
+        }
+        return data;
+    }
+
+    const calculateMaxPages = () => {
+        const { row_per_page } = visibility
+        let totalPages = 0
+        if (row_per_page > 0) {
+            totalPages = Math.ceil(fakeDataAmount / row_per_page)            
+        } else {
+            totalPages = 1
+        }
+        return totalPages
+    }
+
+    const getDataInSpecificPeriod = (data) => {
+
+        console.log(calculateMaxPages())
+        return data.slice(currentPage * visibility.row_per_page, (currentPage + 1) * visibility.row_per_page)
+    }
+
+    const movePageTo = (pageIndex) => {        
+        setCurrentPage(pageIndex)
     }
 
 
@@ -125,97 +279,6 @@ export default (props) => {
                     className={`design-zone table-design`}
                     style={{ zIndex }}
                 >
-
-
-                    {source.type == "api" && source.api.api_id &&
-                        <div className="preview">
-
-                            <div className="top-utils">
-                                <div className="table-name">
-                                    <input
-                                        className={`main-input ${isActive() ? "input-active" : ""}`}
-                                        value={name}
-                                        onChange={changeTableName}
-                                        style={style}
-                                    />
-                                </div>
-                                {
-                                    buttons.add.state &&
-                                    <div className="util" onClick={ moveToAddPage }>
-                                        <FontAwesomeIcon icon={faSquarePlus} />
-                                    </div>
-                                }
-                            </div>
-                            <table className="preview-table">
-                                <thead>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <th>#</th>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <th>{field.display_name}</th>
-                                        }
-                                        )}
-                                        {source.api.calculates.map(field => {
-                                            return <th>{field.display_name}</th>
-                                        }
-                                        )}
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <td>1</td>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <td>{field.fomular_alias}</td>
-                                        }
-                                        )}
-                                        {source.api.calculates.map(field => {
-                                            return <td>{field.fomular_alias}</td>
-                                        }
-
-                                        )}
-                                        <td>
-                                            <div className="icons">
-                                                {buttons.detail.state && <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                {buttons.update.state && <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                {buttons.delete.state && <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                {children}
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <td>2</td>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <td>{field.fomular ? `=${field.fomular}` : ""}</td>
-                                        }
-
-
-                                        )}
-                                        {source.api.calculates.map(field => {
-                                            return <td>{field.fomular ? `=${field.fomular}` : ""}</td>
-                                        }
-
-                                        )}
-                                        <td>
-                                            <div className="icons">
-                                                {buttons.detail.state && <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                {buttons.update.state && <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                {buttons.delete.state && <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                {children}
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    }
                     {source.type == "database" &&
                         <div className="preview">
 
@@ -230,7 +293,7 @@ export default (props) => {
                                 </div>
                                 {
                                     buttons.add.state &&
-                                    <div className="util" onClick={ moveToAddPage }>
+                                    <div className="util" onClick={moveToAddPage}>
                                         <FontAwesomeIcon icon={faSquarePlus} />
                                     </div>
                                 }
@@ -241,35 +304,46 @@ export default (props) => {
                                         {
                                             visibility.indexing && <th>#</th>
                                         }
-                                        {source.table.fields?.map(field => {
-                                            return <th>{field.field_name}</th>
+                                        {source.fields?.map(field => {
+                                            return <td>{field.field_name}</td>
                                         }
 
                                         )}
-                                        <th>Thao tác</th>
+
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                            &&
+                                            <th>Thao tác</th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <td>1</td>
-                                        }
-                                        {source.table.fields?.map(field => {
-                                            return <td>{field.fomular_alias}</td>
-                                        }
+                                    {
+                                        getDataInSpecificPeriod(fakeData).map((record, index) => <tr>
+                                            {
+                                                visibility.indexing && <td>{record.__indexing__}</td>
+                                            }
 
+                                            {source.fields?.map(field => {
+                                                return <td>{record[field.fomular_alias]}</td>
+                                            }
+
+                                            )}
+                                            {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                                &&
+                                                <td className="table-icons">
+                                                    <div className="icons" onMouseUp={AddButton}>
+                                                        {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                        {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
+                                                        {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
+                                                        {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
+                                                        {buttons.unapprove.state && <div className="table-icon"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
+                                                        {children}
+                                                    </div>
+
+                                                </td>
+                                            }
+                                        </tr>
                                         )}
-
-                                        <td>
-                                            <div className="icons">
-                                                <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>
-                                                <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>
-                                                <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>
-                                                {children}
-                                            </div>
-
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -278,25 +352,36 @@ export default (props) => {
                     <nav aria-label="Page navigation example" style={{ marginTop: "2em", display: "flex", justifyContent: "flex-end" }}>
                         <ul className="pagination mb-0">
                             {/* Nút đến trang đầu */}
-                            <li className={`page-item`}>
+                            <li className={`page-item`} onClick={() => { movePageTo(0) }}>
                                 <button className="page-link">
                                     &#8810;
                                 </button>
                             </li>
-                            <li className={`page-item`}>
+                            <li className={`page-item`} onClick={() => { currentPage >= 1 && movePageTo(currentPage - 1) }}>
                                 <button className="page-link">
                                     &laquo;
                                 </button>
-                            </li>                       
-                            
-                            
-                            <li className={`page-item`}>
+                            </li>
+                            {
+                                [...Array(buttons.navigator.visible).keys()].map(pos => {
+                                const current = 1 + currentPage + pos - Math.floor(buttons.navigator.visible / 2)
+                                if( current > 0 && current < (calculateMaxPages() ) ){
+                                    return (<li className={`page-item`} onClick={() => { movePageTo(currentPage + pos - Math.floor(buttons.navigator.visible / 2)) }} >
+                                        <button className="page-link">
+                                            { current }
+                                        </button>
+                                    </li>) 
+                                    }
+                                })
+                            }
+
+                            <li className={`page-item`} onClick={() => { currentPage < calculateMaxPages() && movePageTo(currentPage + 1) }}>
                                 <button className="page-link">
                                     &raquo;
                                 </button>
                             </li>
-                        
-                            <li className={`page-item`}>
+
+                            <li className={`page-item`} onClick={() => { movePageTo(calculateMaxPages() - 1 ) }}> {/** MAY CAUSE BUG HERE */}
                                 <button className="page-link" >
                                     &#8811;
                                 </button>
@@ -317,260 +402,7 @@ export default (props) => {
                     style={{ zIndex }}
                 >
 
-                    {/* {
-                            isActive() &&
-                            <div className="edit-icon" onClick={() => { DropSwitch("configs") }}>
-                                <FontAwesomeIcon icon={faCog} />
-                            </div>
-                        } */}
-                    {/* {
-                            isActive() &&
-                            <div className="edit-icon" onClick={() => { removeComponent(id) }}>
-                                <FontAwesomeIcon icon={faTrash} />
-                            </div>
-                        } */}
-                    {/* <div className="configs" style={{ height: `${drops.configs ? "unset" : "0"}`, overflow: `${drops.configs ? "unset" : "hidden"}` }}>
-                        <div className="title">
-                            <span>Cấu hình</span>
-                        </div>
-                        <div className="source-config">
-    
-                            <div className="source">
-                                <div className="source-title">
-                                    <span>Nguồn dữ liệu </span>
-                                </div>
-                                <div className="type-selection">
-                                    <div className="type">
-                                        <div className="type-name">
-                                            <span>{getSourceName()}</span>
-                                        </div>
-                                        <div className="type-icon" onClick={() => { DropSwitch("source") }}>
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </div>
-                                    </div>
-                                    <div className="options-container" style={{ display: `${drops.source ? "block" : "none"}`, zIndex: 100 }}>
-                                        <div className="options">
-                                            {
-                                                sourceTypes.map(src =>
-                                                    <div className="option" key={src.type} onClick={() => { changeSourceType(src) }}>
-                                                        <span>{src.name}</span>
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-    
-    
-                            {source.type == 'api' ?
-    
-                                <div className="api-drop">
-                                    <div className="api-drop-title">
-                                        <span>API</span>
-                                    </div>
-                                    <div className="selection">
-                                        <div className="select">
-                                            <div className="select-name">
-                                                <span>{source.api.api_name ? source.api.api_name : "Chọn API"}</span>
-                                            </div>
-                                            <div className="drop-icon" onClick={() => { DropSwitch("apiSource") }}>
-                                                <FontAwesomeIcon icon={faCaretDown} />
-                                            </div>
-                                        </div>
-                                        <div className="options-container" style={{ display: `${drops.apiSource ? "block" : "none"}`, zIndex: 99 }}>
-                                            <div className="options">
-                                                {
-                                                    apis.map(api =>
-                                                        <div className="option" key={api.api_id} onClick={() => { changeSourceApi(api) }}>
-                                                            <span>{api.api_name}</span>
-                                                        </div>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                :
-                                <div className="api-drop">
-                                    <div className="api-drop-title">
-                                        <span>API</span>
-                                    </div>
-                                    <div className="selection">
-                                        <div className="select">
-                                            <div className="select-name">
-                                                <span>{source.table.table_name ? source.table.table_name : "Chọn bảng"}</span>
-                                            </div>
-                                            <div className="drop-icon" onClick={() => { DropSwitch("apiSource") }}>
-                                                <FontAwesomeIcon icon={faCaretDown} />
-                                            </div>
-                                        </div>
-                                        <div className="options-container" style={{ display: `${drops.apiSource ? "block" : "none"}`, zIndex: 99 }}>
-                                            <div className="options">
-                                                {
-                                                    tables.map(table =>
-                                                        <div className="option" key={table.id} onClick={() => { changeSourceTable(table) }}>
-                                                            <span>{table.table_name}</span>
-                                                        </div>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-    
-    
-    
-                        </div>
-                        <hr className="devider" />
-                        {source.type == "api" ?
-                            <div className="buttons">
-                                <Button title={"Nút thêm"} drops={drops} api_type={"add"} DropSwitch={DropSwitch} changeButtonState={changeButtonState} buttons={buttons} apis={apis} zIndex={98} ApiSelection={ApiSelection} />
-                                <Button title={"Nút xóa"} drops={drops} api_type={"delete"} DropSwitch={DropSwitch} changeButtonState={changeButtonState} buttons={buttons} apis={apis} zIndex={97} ApiSelection={ApiSelection} />
-                                <Button title={"Nút sửa"} drops={drops} api_type={"update"} DropSwitch={DropSwitch} changeButtonState={changeButtonState} buttons={buttons} apis={apis} zIndex={96} ApiSelection={ApiSelection} />
-                                <Button title={"Nút chi tiết"} drops={drops} api_type={"detail"} DropSwitch={DropSwitch} changeButtonState={changeButtonState} buttons={buttons} apis={apis} zIndex={95} ApiSelection={ApiSelection} />
-                                <hr className="devider" />
-                            </div> : null
-                        }
-    
-    
-                        <div className="visibility" >
-                            <div className="" style={{ display: "flex" }}>
-    
-                                <div className="api-drop navigation">
-                                    <div className="api-drop-checkbox">
-                                        <input type="checkbox" checked={buttons["navigator"]?.state ? "checked" : ""} onChange={() => { changeButtonState("navigator") }} />
-                                    </div>
-                                    <div className="api-drop-title" style={{ width: "max-content" }}>
-                                        <span>Thanh điều hướng</span>
-                                    </div>
-    
-                                    <div className={`selection ${buttons["navigator"]?.state ? "" : "selection-deactive"}`}>
-    
-                                        <div className="input-box">
-                                            <input type="number" value={buttons["navigator"]?.visible} onChange={(e) => { changeNavigation(e) }} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="api-drop navigation">
-                                    <div className="api-drop-title" style={{ width: "max-content" }}>
-                                        <span>Số dòng tối đa</span>
-                                    </div>
-    
-                                    <div className={`selection`}>
-    
-                                        <div className="input-box">
-                                            <input type="number" value={visibility.row_per_page} onChange={(e) => { changeMaxRow(e) }} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="api-drop navigation">
-                                <div className="api-drop-checkbox">
-                                    <input type="checkbox" checked={visibility.indexing ? "checked" : ""} onChange={() => { changeIndexingState("") }} />
-                                </div>
-                                <div className="api-drop-title" style={{ width: "max-content" }}>
-                                    <span>Cột số thứ tự</span>
-                                </div>
-                            </div>
-    
-                        </div>
-                        <hr className="devider" />
-                    </div> */}
 
-                    {source.type == "api" && source.api.api_id &&
-                        <div className="preview" style={{ zIndex: 2, position: "relative" }}>
-
-                            <div className="top-utils">
-                                <div className="table-name">
-                                    <input
-                                        className={`main-input ${isActive() ? "input-active" : ""}`}
-                                        value={name}
-                                        onChange={changeTableName}
-                                        style={style}
-                                    />
-                                </div>
-                                {
-                                    buttons.add.state &&
-                                    <div className="util" onClick={ moveToAddPage }>
-                                        <FontAwesomeIcon icon={faSquarePlus} />
-                                    </div>
-                                }
-                            </div>
-                            <table className="preview-table">
-                                <thead>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <th>#</th>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <th>{field.display_name}</th>
-
-                                        }
-                                        )}
-                                        {source.api.calculates.map(field => {
-                                            return <th>{field.display_name}</th>
-
-                                        }
-                                        )}
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <td>1</td>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <td>{field.fomular_alias}</td>
-                                        }
-                                        )}
-                                        {source.api.calculates.map(field => {
-
-                                            return <td>{field.fomular_alias}</td>
-                                        }
-
-                                        )}
-                                        <td>
-                                            <div className="icons" onMouseUp={AddButton}>
-                                                {buttons.detail.state && <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                {buttons.update.state && <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                {buttons.delete.state && <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                {children}
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        {
-                                            visibility.indexing && <td>2</td>
-                                        }
-                                        {source.api.fields.map(field => {
-                                            return <td>{field.fomular ? `=${field.fomular}` : ""}</td>
-                                        }
-
-
-                                        )}
-                                        {source.api.calculates.map(field => {
-                                            return <td>{field.fomular ? `=${field.fomular}` : ""}</td>
-                                        }
-
-                                        )}
-                                        <td>
-                                            <div className="icons" onMouseUp={AddButton}>
-                                                {buttons.detail.state && <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                {buttons.update.state && <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                {buttons.delete.state && <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                {children}
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    }
                     {source.type == "database" &&
                         <div className="preview" style={{ zIndex: 2, position: "relative" }}>
 
@@ -585,7 +417,7 @@ export default (props) => {
                                 </div>
                                 {
                                     buttons.add.state &&
-                                    <div className="util" onClick={ moveToAddPage }>
+                                    <div className="util" onClick={moveToAddPage}>
                                         <FontAwesomeIcon icon={faSquarePlus} />
                                     </div>
                                 }
@@ -596,13 +428,16 @@ export default (props) => {
                                         {
                                             visibility.indexing && <th>#</th>
                                         }
-                                        {source.table.fields?.map(field => {
-                                            return <th>{field.field_name}</th>
-
+                                        {source.fields?.map(field => {
+                                            return <td>{field.field_name}</td>
                                         }
 
                                         )}
-                                        <th>Thao tác</th>
+
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                            &&
+                                            <th>Thao tác</th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -610,26 +445,66 @@ export default (props) => {
                                         {
                                             visibility.indexing && <td>1</td>
                                         }
-                                        {source.table.fields?.map(field => {
+
+                                        {source.fields?.map(field => {
                                             return <td>{field.fomular_alias}</td>
                                         }
 
                                         )}
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                            &&
+                                            <td className="table-icons">
+                                                <div className="icons" onMouseUp={AddButton}>
+                                                    {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                    {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
+                                                    {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
+                                                    {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
+                                                    {buttons.unapprove.state && <div className="table-icon"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
+                                                    {children}
+                                                </div>
 
-                                        <td>
-                                            <div className="icons" onMouseUp={AddButton}>
-                                                <div className="icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>
-                                                <div className="icon"><FontAwesomeIcon icon={faEdit} /> </div>
-                                                <div className="icon"><FontAwesomeIcon icon={faTrash} /> </div>
-                                                {children}
-                                            </div>
-
-                                        </td>
+                                            </td>
+                                        }
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     }
+
+                    <nav aria-label="Page navigation example" style={{ marginTop: "2em", display: "flex", justifyContent: "flex-end" }}>
+                        <ul className="pagination mb-0">
+                            {/* Nút đến trang đầu */}
+                            <li className={`page-item`} >
+                                <button className="page-link">
+                                    &#8810;
+                                </button>
+                            </li>
+                            <li className={`page-item`}>
+                                <button className="page-link">
+                                    &laquo;
+                                </button>
+                            </li>
+                            {
+                                [...Array(buttons.navigator.visible).keys()].map(pos => <li className={`page-item`} >
+                                    <button className="page-link">
+                                        {currentPage + pos - Math.floor(buttons.navigator.visible / 2)}
+                                    </button>
+                                </li>)
+                            }
+
+                            <li className={`page-item`} >
+                                <button className="page-link">
+                                    &raquo;
+                                </button>
+                            </li>
+
+                            <li className={`page-item`}> {/** MAY CAUSE BUG HERE */}
+                                <button className="page-link" >
+                                    &#8811;
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
 
                     <div className="trigger-bg" onClick={SwitchingState} ></div>
                 </div>
@@ -637,42 +512,4 @@ export default (props) => {
             </div>
         )
     }
-}
-
-
-const Button = (props) => {
-
-    const { title, drops, api_type, DropSwitch, apis, zIndex, ApiSelection, buttons, changeButtonState } = props
-
-    return (
-        <div className="api-drop">
-            <div className="api-drop-checkbox">
-                <input type="checkbox" checked={buttons[api_type]?.state ? "checked" : ""} onChange={() => { changeButtonState(api_type) }} />
-            </div>
-            <div className="api-drop-title">
-                <span>{title}</span>
-            </div>
-            <div className={`selection ${buttons[api_type]?.state ? "" : "selection-deactive"}`}>
-                <div className="select">
-                    <div className="select-name">
-                        <span>{buttons[api_type].api.api_name ? buttons[api_type].api.api_name : "Chọn API"}</span>
-                    </div>
-                    <div className="drop-icon" onClick={() => { DropSwitch(api_type) }}>
-                        <FontAwesomeIcon icon={faCaretDown} />
-                    </div>
-                </div>
-                <div className="options-container" style={{ display: `${drops[api_type] ? "block" : "none"}`, zIndex }}>
-                    <div className="options">
-                        {
-                            apis.map(api =>
-                                <div className="option" key={api.api_id} onClick={() => { ApiSelection(api, api_type) }}>
-                                    <span>{api.api_name}</span>
-                                </div>
-                            )
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
 }

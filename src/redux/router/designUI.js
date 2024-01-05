@@ -59,8 +59,8 @@ export default (state, action) => {
             return initState(state, action);
             break;
 
-        case "reverseNavBarState":
-            return reverseNavBarState(state, action);
+        case "SwitchingPageShowAllOrNot":
+            return SwitchingPageShowAllOrNot(state, action);
             break;
 
         case "addComponent":
@@ -490,13 +490,9 @@ const initState = (state, action) => {
     return { ...state }
 }
 
-const reverseNavBarState = (state, action) => {
+const SwitchingPageShowAllOrNot = (state, action) => {
 
-    /**
-     * Abandoned
-     */
-
-    state.cache.navbar = !state.cache.navbar
+    state.showAllPages = !state.showAllPages
     return { ...state }
 }
 
@@ -513,7 +509,30 @@ const addComponent = (state, action) => {
         const { initialStates, page, floating, functions } = state;
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
 
-        floating.block = undefined
+        floating.block = undefined        
+
+
+        if( block =="table" ){
+
+            const hidden_page_id = state.functions.getFormatedUUID()
+
+            const hiddenPage = {
+                page_id: hidden_page_id,                
+                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
+
+                parent: page.page_id,
+                block: newBlock.id,
+
+
+                is_home: false,
+                is_hidden: true,
+                icon: DEFAULT_PAGE_ICON,
+                children: [],
+                component: []
+            }       
+            state.pages.push( hiddenPage )     
+        }
+
 
         // console.log(initialStates)
         // console.log(newBlock)
@@ -792,15 +811,23 @@ const removeComponent = (state, action) => {
     /**
      * Đặt lại component với kết quả từ đệ quy removeChildComponent,
      * Đặt lại selectetCpn và propertySet về dạng khởi tạo, vì cpn hiện tại đã bị xóa sổ.
+     * 
+     * 
+     * Xóa luôn các trang con nếu có => Trường hợp này đặt biệt hiệu quả với đối tượng table.
+     * 
      */
 
     const { id } = action.payload;
-    const { page } = state
+    const { page, pages } = state
     const { component } = page;
     const newCpn = removeChildComponent(component, id)
     state.page.component = newCpn
-    state.selectedCpn = {}
+    state.selectedCpn = []
     state.propertySet = []
+
+
+    const newPages = pages.filter( p => p.block != id )
+    state.pages = newPages;
 
     return { ...state }
 }
@@ -885,11 +912,34 @@ const insertComponent = (state, action) => {
 
     if (block) {
 
-        const { initialStates, floating, functions } = state;
+        const { initialStates, floating, functions, page } = state;
 
         // const newBlock = { ...initialStates[block], id: newid }              
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
          // => Bước này là fulfill id vào tất cả các con cháu chíc chắt nếu có của newBlock
+
+
+         if( block =="table" ){
+
+            const hidden_page_id = state.functions.getFormatedUUID()
+
+            const hiddenPage = {
+                page_id: hidden_page_id,                
+                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
+                
+                parent: page.page_id,
+                block: newBlock.id,
+
+
+                is_home: false,
+                is_hidden: true,
+                icon: DEFAULT_PAGE_ICON,
+                children: [],
+                component: []
+            }       
+            state.pages.push( hiddenPage )     
+        }
+
 
         floating.block = undefined
         state.page.component = insertChildComponent(state.page.component, undefined, id, position, newBlock)
@@ -962,6 +1012,27 @@ const appendChildComponent = (state, action) => {
             }
             return p
         })
+
+        if( block =="table" ){
+
+            const hidden_page_id = state.functions.getFormatedUUID()
+
+            const hiddenPage = {
+                page_id: hidden_page_id,                
+                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
+                
+                parent: page.page_id,
+                block: newBlock.id,
+
+
+                is_home: false,
+                is_hidden: true,
+                icon: DEFAULT_PAGE_ICON,
+                children: [],
+                component: []
+            }       
+            newPages.push( hiddenPage )     
+        }
 
         floating.block = undefined
         return { ...state, pages: newPages, page, floating }

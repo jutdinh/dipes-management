@@ -272,13 +272,29 @@
                 border: 1px solid #ccc;
             }
 
+            .table-icons{
+                width: 0;
+            }
+
             .icons{
                 display: flex;
                 
-                .icon{
-                    display: inline-block;
+                .table-icon{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
                     padding: 0.25em;
                     font-size: 16px;
+                    width: 32px;
+                    height: 32px;
+                    cursor: pointer;
+                    border-radius: 50%;
+
+                    &:hover{
+                        background-color: #000;
+                        color: #fff;
+                    }
                 }
             }
         }

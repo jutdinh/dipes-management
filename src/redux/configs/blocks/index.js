@@ -6,6 +6,9 @@ import Form from './form';
 import Button from './button'
 import Block from './block'
 import Datetime from './datetime';
+import ApiCombo from './apiCombobox';
+
+
 
 const exporter = {
     "text": Text,
@@ -15,7 +18,8 @@ const exporter = {
     "block": Block,
     "form": Form,
     "button": Button,
-    "datetime": Datetime
+    "datetime": Datetime,
+    "apiCombo": ApiCombo
 }
 
 export default exporter

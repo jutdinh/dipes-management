@@ -6,13 +6,15 @@ const blockTypes = {
     entry: "entry",
     block: "block",
     button: "button",
-    datetime: "datetime"
+    datetime: "datetime",
+    apiCombo: "apiCombo",
 }
 
 
 const defaultStylesheet = {
     margin: "0px 0px 0px 0px",
-    padding: "6px 12px 6px 12px"
+    padding: "6px 12px 6px 12px",
+    width: "100%",
 }
 
 const initialStates = {
@@ -55,18 +57,10 @@ const initialStates = {
             },
 
             "source": {
-                "type": "api", // api || database
-                "api": {
-                    "api": undefined,
-                    "api_name": "",
-                    "fields": [],
-                    "calculates": []
-                },
-                "table": {
-                    "table_id": undefined,
-                    "table_name": "",
-                    "fields": [],
-                }
+                "type": "database", // api || database
+                
+                "tables": [],
+                "fields": [],
             },
             "buttons": {
                 "add": {
@@ -97,6 +91,24 @@ const initialStates = {
                         "api_name": ""
                     }
                 },
+
+                "approve": {
+                    "state": false,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+
+                "unapprove": {
+                    "state": false,                    
+                    "field": {
+                        id: "",
+                        fomular_alias: "",
+                        display_name: ""
+                    }
+                },
+
                 "navigator": {
                     "state": true,
                     "visible": 3,
@@ -279,7 +291,62 @@ const initialStates = {
             }
         }
     },
+     "apiCombo":{
+        "name": "apiCombo",
+        "props": {
+            
+            "title": {
+                content: "Title",
+                visible: true
+            },            
+            "placeholder":{
+                content: "...",
+                visible: true
+            },
+            "required": true,            
+            "variable_name": "",
 
+            "api": {
+                api: {
+                    api_id: "",
+                    api_name: "",
+                    fields: []
+                },
+                field: {
+                    id: "",
+                    display_name: "",
+                    fomular_alias: ""
+                }
+            },
+
+            "flex": {
+                "order": "1",
+                "flexGrow": "1"
+            },
+
+            "labelStyle": {
+                fontSize: 16,
+                color: "#000",
+                textAlign: "left",
+                fontStyle: "unset",
+                fontWeight: "unset",
+                textDecoration: "none", 
+
+                ...defaultStylesheet
+            },
+
+            "style": {
+                fontSize: 16,
+                color: "#000",
+                textAlign: "left",
+                fontStyle: "normal",
+                fontWeight: "normal",
+                textDecoration: "none",   
+                
+                ...defaultStylesheet
+            }
+        }
+     }
 
 }
 
