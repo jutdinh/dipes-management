@@ -937,11 +937,16 @@ class ProjectsController extends Controller {
 
                     const newPeriod = await Project.createPeriod(period)
                     await Project.save()
-
+                    const newProject = Project.getData()
                     context.content = "Tạo giai đoạn thành công"
                     context.success = true
                     context.status = "0x4501253"
-                    context.data = newPeriod
+                    context.data = newProject.tasks[newPeriod.period_id]
+
+                    /** Serialize data to array format */
+
+                    context.data.period_members = Object.values( context.data.period_members )
+                    context.data.tasks = Object.values(context.data.tasks)
 
                     for (let i = 0; i < users.length; i++) {
 

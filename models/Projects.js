@@ -232,6 +232,7 @@ class Projects extends Model {
         this.tasks.__addProperty__("period_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.__addProperty__("period_priority", Model.types.int, { default: 1 })
         this.tasks.__addProperty__("period_approve", Model.types.bool, { default: false })
+        this.tasks.__addProperty__("is_new", Model.types.bool, { default: true })
 
         this.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.__addProperty__("end", Model.types.datetime)
@@ -250,6 +251,7 @@ class Projects extends Model {
         this.tasks.tasks.__addProperty__("task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.tasks.__addProperty__("task_priority", Model.types.int, { default: 1 })
         this.tasks.tasks.__addProperty__("task_approve", Model.types.bool, { default: false })
+        this.tasks.tasks.__addProperty__("is_new", Model.types.bool, { default: true })
         this.tasks.tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.__addProperty__("timeline", Model.types.datetime)
         this.tasks.tasks.__addProperty__("end", Model.types.datetime)
@@ -261,6 +263,7 @@ class Projects extends Model {
         this.tasks.tasks.child_tasks.__addProperty__("child_task_description", Model.types.string, { maxLength: Number.MAX_SAFE_INTEGER })
         this.tasks.tasks.child_tasks.__addProperty__("child_task_status", Model.types.enum, { values: Projects.validTaskStatus, default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("approve", Model.types.bool, { default: false })
+        this.tasks.tasks.child_tasks.__addProperty__("is_new", Model.types.bool, { default: true })
         this.tasks.tasks.child_tasks.__addProperty__("priority", Model.types.int, { default: 1 })
         this.tasks.tasks.child_tasks.__addProperty__("start", Model.types.datetime)
         this.tasks.tasks.child_tasks.__addProperty__("timeline", Model.types.datetime)
