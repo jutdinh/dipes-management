@@ -104,6 +104,7 @@ class Projects extends Model {
         this.versions.tables.create_by.__addProperty__("username", Model.types.string, { required: true })
         this.versions.tables.create_by.__addProperty__("fullname", Model.types.string)
 
+        this.versions.tables.__addProperty__("show", Model.types.string, { default: "" } )
 
 
         this.versions.tables.__addProperty__("fields", Model.types.model)
