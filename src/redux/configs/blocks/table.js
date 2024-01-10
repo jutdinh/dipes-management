@@ -253,7 +253,7 @@ export default (props) => {
         const { row_per_page } = visibility
         let totalPages = 0
         if (row_per_page > 0) {
-            totalPages = Math.ceil(fakeDataAmount / row_per_page)            
+            totalPages = Math.ceil(fakeDataAmount / row_per_page)
         } else {
             totalPages = 1
         }
@@ -266,7 +266,7 @@ export default (props) => {
         return data.slice(currentPage * visibility.row_per_page, (currentPage + 1) * visibility.row_per_page)
     }
 
-    const movePageTo = (pageIndex) => {        
+    const movePageTo = (pageIndex) => {
         setCurrentPage(pageIndex)
     }
 
@@ -306,9 +306,11 @@ export default (props) => {
                                         }
                                         {source.fields?.map(field => {
                                             return <td>{field.field_name}</td>
-                                        }
+                                        })}
 
-                                        )}
+                                        {source.calculates?.map(field => {
+                                            return <td>{field.display_name}</td>
+                                        })}
 
                                         {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
                                             &&
@@ -325,9 +327,10 @@ export default (props) => {
 
                                             {source.fields?.map(field => {
                                                 return <td>{record[field.fomular_alias]}</td>
-                                            }
-
-                                            )}
+                                            })}
+                                             {source.calculates?.map(field => {
+                                                return <td>{field.fomular}</td>
+                                            })}
                                             {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
                                                 &&
                                                 <td className="table-icons">
@@ -364,13 +367,13 @@ export default (props) => {
                             </li>
                             {
                                 [...Array(buttons.navigator.visible).keys()].map(pos => {
-                                const current = 1 + currentPage + pos - Math.floor(buttons.navigator.visible / 2)
-                                if( current > 0 && current < (calculateMaxPages() ) ){
-                                    return (<li className={`page-item`} onClick={() => { movePageTo(currentPage + pos - Math.floor(buttons.navigator.visible / 2)) }} >
-                                        <button className="page-link">
-                                            { current }
-                                        </button>
-                                    </li>) 
+                                    const current = 1 + currentPage + pos - Math.floor(buttons.navigator.visible / 2)
+                                    if (current > 0 && current < (calculateMaxPages())) {
+                                        return (<li className={`page-item`} onClick={() => { movePageTo(currentPage + pos - Math.floor(buttons.navigator.visible / 2)) }} >
+                                            <button className="page-link">
+                                                {current}
+                                            </button>
+                                        </li>)
                                     }
                                 })
                             }
@@ -381,7 +384,7 @@ export default (props) => {
                                 </button>
                             </li>
 
-                            <li className={`page-item`} onClick={() => { movePageTo(calculateMaxPages() - 1 ) }}> {/** MAY CAUSE BUG HERE */}
+                            <li className={`page-item`} onClick={() => { movePageTo(calculateMaxPages() - 1) }}> {/** MAY CAUSE BUG HERE */}
                                 <button className="page-link" >
                                     &#8811;
                                 </button>
@@ -430,10 +433,10 @@ export default (props) => {
                                         }
                                         {source.fields?.map(field => {
                                             return <td>{field.field_name}</td>
-                                        }
-
-                                        )}
-
+                                        })}
+                                        {source.calculates?.map(field => {
+                                            return <td>{field.display_name}</td>
+                                        })}
                                         {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
                                             &&
                                             <th>Thao tác</th>
@@ -448,9 +451,10 @@ export default (props) => {
 
                                         {source.fields?.map(field => {
                                             return <td>{field.fomular_alias}</td>
-                                        }
-
-                                        )}
+                                        })}
+                                        {source.calculates?.map(field => {
+                                            return <td>{field.fomular_alias} = {field.fomular}</td>
+                                        })}
                                         {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
                                             &&
                                             <td className="table-icons">

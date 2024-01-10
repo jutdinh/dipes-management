@@ -443,6 +443,70 @@
                         border-bottom: 1px solid #ccc;
                         font-weight: bold;
                         text-align: left;
+                        display: flex;
+
+                        .add-icon{
+                            margin-left: auto;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .dynamic-field-list{
+                        table{
+                            width: 100%;
+                            font-size: 12px;  
+                            
+                            thead{
+                                th{
+                                    padding: 4px;
+                                }
+                            }
+                        }
+
+                        .field-record{
+                            display: flex;
+                            border: 1px solid transparent !important;                              
+                            
+
+                            .record-prop{
+                                input{
+                                    padding: 4px;
+                                    border: none;
+                                    outline: none;
+                                    display: block;
+                                    width: 100%;
+                                }
+                            }
+
+                            .display-name{
+                                width: 40%;
+                            }
+                            .fomular-alias{
+                                width: 20%;
+
+                                span{
+                                    padding: 4px;
+                                    font-weight: bold;
+                                }
+                            }
+
+                            .fomular{
+                                width: 40%;
+                            }
+
+                            .trash{
+                                width: 5%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                cursor: pointer;
+                            }
+                        }
+
+                        .field-focus{
+                            border-top: 1px solid #ccc !important;                            
+                            border-bottom: 1px solid #ccc !important;
+                        }
                     }
 
                     .picker-field-list{

@@ -100,14 +100,13 @@ const vi = {
             "style.alignitems.center": "Giữa",
             "style.alignitems.flexend": "Dưới",
 
-
-
     /**
      * TABBLE PROPS
      */
 
         "props.tables": "Chọn bảng",
         "props.fields": "(Các) trường",
+        "props.fields.calculate": "Trường tính toán",
         
         "props.table.show": "Hiện",
         "props.table.hide": "Ẩn",

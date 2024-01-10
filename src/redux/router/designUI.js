@@ -826,7 +826,7 @@ const removeComponent = (state, action) => {
     state.propertySet = []
 
 
-    const newPages = pages.filter( p => p.block != id )
+    const newPages = pages.filter( p => !p.block || p.block != id )
     state.pages = newPages;
 
     return { ...state }

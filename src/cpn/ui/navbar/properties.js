@@ -1,4 +1,4 @@
-import { faCaretDown, faCaretRight, faClose, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faCaretDown, faCaretRight, faClose, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -154,7 +154,7 @@ export default () => {
                 }
             })}
             {
-                selectedCpn && <UnlinkComponent selectedCpn={selectedCpn} />
+                selectedCpn.id && <UnlinkComponent selectedCpn={selectedCpn} />
             }
         </div>
     )
@@ -224,7 +224,7 @@ const EntryBox = (props) => {
             <div className="input-box">
                 <input type="text" value={getPropByPath(splittedPath, selectedCpn)}
                     onChange={(e) => { updateSelectedComponent(e.target.value, splittedPath) }}
-                disabled={ read_only } />
+                    disabled={read_only} />
             </div>
         </div>
     )
@@ -497,11 +497,11 @@ const ApiSelection = (props) => {
         api_data,
         fields,
         display_value,
-        
+
         getPropByPath,
         selectedCpn,
         updateSelectedComponent,
-        
+
         childOf,
         areParentActive,
         sideFunction
@@ -694,7 +694,7 @@ const SelfSelection = (props) => {
         }
         return clone
     }
-    if( areParentActive(childOf) ){
+    if (areParentActive(childOf)) {
         return (
             <div className="property" style={{ zIndex: index }}>
                 <div className="label-box">
@@ -770,7 +770,7 @@ const SelectTables = (props) => {
     }
 
     const removeLastTable = () => {
-        const removedTable = selectedTables[ selectedTables.length - 1 ]
+        const removedTable = selectedTables[selectedTables.length - 1]
         const newTables = selectedTables.slice(0, selectedTables.length - 1)
 
         if (newTables.length > 0) {
@@ -784,16 +784,16 @@ const SelectTables = (props) => {
             const finalTables = validTables.filter(tb => newTables.indexOf(tb) == -1)
 
             setTables(finalTables)
-            
+
         } else {
             setTables(localTables)
         }
-        const currentFields = getPropByPath( fieldsPath.split('.'), selectedCpn )
+        const currentFields = getPropByPath(fieldsPath.split('.'), selectedCpn)
 
-        const leftFields = currentFields.filter( f => f.table_id != removedTable.id )
-        updateSelectedComponent( leftFields, fieldsPath.split('.') )
+        const leftFields = currentFields.filter(f => f.table_id != removedTable.id)
+        updateSelectedComponent(leftFields, fieldsPath.split('.'))
         updateSelectedComponent(newTables, splittedPath)
-    }   
+    }
 
     return (
         <div>
@@ -842,7 +842,6 @@ const SelectTables = (props) => {
 
 const TableFieldsPicker = (props) => {
     const {
-        label,
         path,
 
         getPropByPath,
@@ -858,16 +857,16 @@ const TableFieldsPicker = (props) => {
 
     const tables = getPropByPath(tablespath.split('.'), selectedCpn)
 
-    const fieldSelectOrNot = ( field ) => {
-        const isFieldSelected = currentValue.find( f => f.fomular_alias == field.fomular_alias )
-        
+    const fieldSelectOrNot = (field) => {
+        const isFieldSelected = currentValue.find(f => f.fomular_alias == field.fomular_alias)
+
         let newValues = currentValue
-        if( isFieldSelected ){
-            newValues = currentValue.filter( f => f.fomular_alias != field.fomular_alias )
-        }else{
-            newValues.push( field )
+        if (isFieldSelected) {
+            newValues = currentValue.filter(f => f.fomular_alias != field.fomular_alias)
+        } else {
+            newValues.push(field)
         }
-        updateSelectedComponent( newValues, splittedPath )
+        updateSelectedComponent(newValues, splittedPath)
     }
 
     return (
@@ -884,10 +883,11 @@ const TableFieldsPicker = (props) => {
                             <div className="field-picker">
                                 <div className="picker-checkbox">
                                     <input
-                                        type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1} 
-                                        onClick={ () => { fieldSelectOrNot( field ) } }
-                                        />
+                                        type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1}
+                                        onClick={() => { fieldSelectOrNot(field) }}
+                                    />
                                 </div>
+                                                                
                                 <div className="picker-label">
                                     <span>{field.field_name}</span>
                                 </div>
@@ -895,6 +895,139 @@ const TableFieldsPicker = (props) => {
                         )}
                     </div>
                 </div>)}
+            </div>
+        </div>
+    )
+}
+
+const TableCalculateFields = (props) => {
+    const {
+        path,
+        label,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        tablespath,
+        index
+    } = props
+
+    const { functions, proxy } = useSelector(state => state)
+    const token = localStorage.getItem('_token')
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+
+    const [focusFieldId, setFocusField] = useState("")
+    const { version_id } = useParams()
+
+    const makeCloneField = () => {
+        const newCalculate = {
+            id: functions.getFormatedUUID(),
+            display_name: "",
+            fomular_alias: "",
+            fomula: ""
+        }
+        updateSelectedComponent([...currentValue, newCalculate], splittedPath)
+    }
+
+    const fieldChangeName = (field, newName) => {
+        const fields = currentValue;
+        const newFields = fields.map( f => {
+            if( f.id == field.id ){
+                f.display_name = newName                
+            }
+            return f 
+        } )
+
+        updateSelectedComponent(newFields, splittedPath)
+    }
+
+    const fieldChangeFomular = (field, fomular ) => {
+        const fields = currentValue;
+        const newFields = fields.map( f => {
+            if( f.id == field.id ){
+                f.fomular = fomular                
+            }
+            return f 
+        } )
+
+        updateSelectedComponent(newFields, splittedPath)
+    }
+
+    const isFieldFocused = (id) => {
+        return id == focusFieldId
+    }
+
+    const recordFocusing = (field) => {
+        const { id } = field;
+        setFocusField(id)
+    }
+
+    const regenerateAlias = async ( field ) => {
+        let display_name = field.display_name;
+
+        if( !display_name || display_name.length == 0 ){
+            display_name = "Trường mới"
+            fieldChangeName( field, display_name )
+        }
+
+        const response = await fetch(`${proxy}/apis/make/alias`, {
+            method: "POST",
+            headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ version_id, field_name: display_name })
+        })
+        const data = await response.json()
+        const alias = data.alias;
+
+        const newFields = currentValue.map( f => {
+            if( f.id == field.id ){
+                f.fomular_alias = alias
+            }
+            return f 
+        } )
+        updateSelectedComponent( newFields, splittedPath )
+    }
+
+    return (
+        <div className="property" style={{ zIndex: index }}>
+            <div
+                className={'fields-picker'}
+            >
+
+                <div className="table-fields-picker">
+                    <div className="fields-picker-header">
+                        <span>{label}</span>
+                        <div className="add-icon" onClick={makeCloneField}>
+                            <FontAwesomeIcon icon={faPlusCircle} />
+                        </div>
+                    </div>
+                    <div className="dynamic-field-list">
+                        <table>
+                            <thead className="field-record">
+                                <th className="record-prop display-name">Tên hiển thị</th>
+                                <th className="record-prop fomular-alias">Bí danh</th>
+                                <th className="record-prop fomular">Công thức tính</th>
+                                <th className="trash"></th>
+                            </thead>
+                            <tbody>
+                                {
+                                    currentValue.map(field =>
+                                        <tr className={`field-record ${isFieldFocused(field.id) && "field-focus"}`} onClick={() => { recordFocusing(field) }}>
+                                            <td className="record-prop display-name"><input type="text" onBlur={ () => { regenerateAlias(field) } } onChange={(e) => { fieldChangeName(field, e.target.value) }} value={field.display_name} /></td>
+                                            <td className="record-prop fomular-alias"><span>{field.fomular_alias}</span></td>
+                                            <td className="record-prop fomular"><input type="text" onChange={(e) => { fieldChangeFomular(field, e.target.value) }} value={field.fomular} /></td>
+                                            <td className="trash">
+                                                {isFieldFocused(field.id) && <FontAwesomeIcon icon={faTrash} />}
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     )
@@ -915,5 +1048,6 @@ const Components = {
 
     "selectTables": SelectTables, // onetimeuse
     "tablefieldspicker": TableFieldsPicker, // onetimeuse
+    "tablecalculatefields": TableCalculateFields, // onetimeuse
 }
 

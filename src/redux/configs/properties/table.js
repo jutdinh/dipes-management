@@ -209,6 +209,14 @@ const table =  [
         tablespath: "props.source.tables"      
     },
 
+    {
+        id: getFormatedUUID(),
+        label: lang["props.fields.calculate"],
+        type: "tablecalculatefields",        
+        path: "props.source.calculates"        
+    },
+
+
 
     
     { 
@@ -293,7 +301,7 @@ const table =  [
         path: "props.buttons.approve.field",
         childOf: {
             prop_id: "approve-btn",
-            caseIf: false
+            caseIf: true
         },
         data: "props.source.fields",
         fields: [
@@ -304,6 +312,10 @@ const table =  [
             {
                 from: "field_name",
                 to: "field_name"
+            },
+            {
+                from: "table_id",
+                to: "table_id"
             },
             {
                 from: "fomular_alias",
@@ -335,7 +347,7 @@ const table =  [
         path: "props.buttons.unapprove.field",
         childOf: {
             prop_id: "unapprove-btn",
-            caseIf: false
+            caseIf: true
         },
         data: "props.source.fields",
         fields: [
@@ -346,6 +358,10 @@ const table =  [
             {
                 from: "field_name",
                 to: "field_name"
+            },
+            {
+                from: "table_id",
+                to: "table_id"
             },
             {
                 from: "fomular_alias",

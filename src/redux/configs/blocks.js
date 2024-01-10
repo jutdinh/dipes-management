@@ -61,9 +61,32 @@ const initialStates = {
                 
                 "tables": [],
                 "fields": [],
+                "calculates": [],
+                "get": {
+                    "api": "",
+                    "api_name": ""                    
+                },
+                "search": {
+                    "api": "",
+                    "api_name": ""
+                }
             },
             "buttons": {
                 "add": {
+                    "state": true,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "import": {
+                    "state": true,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "export": {
                     "state": true,                    
                     "api": {
                         "api": "",
@@ -93,7 +116,12 @@ const initialStates = {
                 },
 
                 "approve": {
-                    "state": false,                    
+                    "state": false,    
+                    "field": {
+                        id: "",
+                        fomular_alias: "",
+                        display_name: ""
+                    },              
                     "api": {
                         "api": "",
                         "api_name": ""
@@ -101,11 +129,15 @@ const initialStates = {
                 },
 
                 "unapprove": {
-                    "state": false,                    
+                    "state": false,
                     "field": {
                         id: "",
                         fomular_alias: "",
                         display_name: ""
+                    },
+                    "api": {
+                        "api": "",
+                        "api_name": ""
                     }
                 },
 

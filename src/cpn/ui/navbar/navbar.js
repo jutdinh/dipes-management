@@ -12,7 +12,7 @@ export default () => {
     const { version_id } = useParams()
     const _token = localStorage.getItem("_token")
     const saveUI = () => {       
-
+        
         fetch( `${ proxy }/uis/saveui`, {
             method: "POST",
             headers: {
@@ -21,13 +21,13 @@ export default () => {
             },
             body: JSON.stringify({ version_id, ui: pages })
         })
-        // dispatch({
-        //     branch: "design-ui",
-        //     type: "saveCache"
-        // })
+        dispatch({
+            branch: "design-ui",
+            type: "saveCache"
+        })
     }
 
-    const { page }= useSelector( state => state )
+    // const { page }= useSelector( state => state )
 
     const PreviewTrigger = () => {
         dispatch({
