@@ -71,7 +71,13 @@ export default () => {
         if (path.length > 0 && value != undefined) {
             return getPropByPath(path.slice(1, path.length), value)
         } else {
-            return object
+            if( path.length == 0 ){
+                return object
+            }else{
+                if( value == undefined ){
+                    return []
+                }
+            }            
         }
     }
     const setPropByPath = (object, path, value) => {
@@ -900,6 +906,106 @@ const TableFieldsPicker = (props) => {
     )
 }
 
+
+
+const SingularTableFieldsPicker = (props) => {
+    const {
+        path,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        tablepath,
+        index
+    } = props
+    const splittedPath = path.split('.')
+
+    const dispatch = useDispatch()
+
+    const [tables, setTables] = useState([])
+
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const fomularAliases = currentValue.map(f => f.fomular_alias)
+    const table = getPropByPath(tablepath.split('.'), selectedCpn)
+    
+    useEffect(() => {        
+        if( table ){
+            setTables([table])
+        }        
+    }, [table])
+    
+
+    const fieldSelectOrNot = (field) => {
+        const isFieldSelected = currentValue.find(f => f.fomular_alias == field.fomular_alias)
+        
+        let newValues = currentValue
+        if (isFieldSelected) {
+            newValues = currentValue.filter(f => f.fomular_alias != field.fomular_alias)
+            /**
+             *  Remove coresponding component
+             */
+            
+            const componentAboutToBeRemoved = selectedCpn.children.find( cpn => cpn.field_id == field.id )
+            dispatch({
+                branch: "design-ui",
+                type: "removeComponent",
+                payload: {
+                    id: componentAboutToBeRemoved.id
+                }
+            })
+            
+        } else {
+            /**
+             *  Add component
+            */
+           
+           dispatch({
+               branch: "design-ui",
+               type: "addFormField",
+               payload: {
+                   form_id: selectedCpn.id,
+                   field
+               }
+           })
+            newValues.push(field)
+        }
+        updateSelectedComponent(newValues, splittedPath)
+    }
+
+    
+
+    return (
+        <div className="property" style={{ zIndex: index }}>
+            <div
+                className={'fields-picker'}
+            >
+                {tables.map(tb => tb.fields && <div className="table-fields-picker">
+                    <div className="fields-picker-header">
+                        <span>{tb.table_name}</span>
+                    </div>
+                    <div className="picker-field-list">
+                        {tb.fields?.map(field =>
+                            <div className="field-picker">
+                                <div className="picker-checkbox">
+                                    <input
+                                        type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1}
+                                        onClick={() => { fieldSelectOrNot(field) }}
+                                    />
+                                </div>
+                                                                
+                                <div className="picker-label">
+                                    <span>{field.field_name}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>)}
+            </div>
+        </div>
+    )
+}
+
+
 const TableCalculateFields = (props) => {
     const {
         path,
@@ -1034,6 +1140,91 @@ const TableCalculateFields = (props) => {
 }
 
 
+
+const PrimaryTableOnlyBool = (props) => {
+    const {
+        label,
+        path,
+        tablesPath,
+        data,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index,
+        fields,
+        display_value,
+        childOf,
+        areParentActive,
+    } = props
+
+    const splittedPath = path.split('.')
+    const splittedTablesPath = tablesPath.split('.')
+    const splittedFieldsPath = data.split('.')
+
+    const currentTables = getPropByPath(splittedTablesPath, selectedCpn)
+    const currentFields = getPropByPath(splittedFieldsPath, selectedCpn)
+
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+
+    const [drop, setDrop] = useState(false)
+    const [ options, setOptions ] = useState([])
+
+    useEffect(() =>{       
+
+        const options = getPropByPath(data.split('.'), selectedCpn)
+
+        const firstTable = currentTables[0]
+        if( firstTable ){
+            const filtedOptions  = options.filter( opt => opt.table_id == firstTable.id )            
+            const boolFields = filtedOptions.filter( opt => opt.props.DATATYPE == "BOOL" )
+            setOptions(boolFields)
+        }
+    }, [ JSON.stringify(currentTables), JSON.stringify(currentFields) ])
+
+
+    const formatObjectByFields = (opt) => {
+        const clone = {}
+        for (let i = 0; i < fields.length; i++) {
+            const { from, to } = fields[i]
+            clone[to] = opt[from]
+        }
+        return clone
+    }
+    if (areParentActive(childOf)) {
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_value]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => { updateSelectedComponent(formatObjectByFields(opt), splittedPath); setDrop(false) }}>
+                                    <span>{opt[display_value]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+
+
+
 const Components = {
     "text": EntryBox,
     "number": NumberBox,
@@ -1048,6 +1239,8 @@ const Components = {
 
     "selectTables": SelectTables, // onetimeuse
     "tablefieldspicker": TableFieldsPicker, // onetimeuse
+    "singulartablefieldspicker": SingularTableFieldsPicker, // onetimeuse
     "tablecalculatefields": TableCalculateFields, // onetimeuse
+    "primaryTableOnlyBool": PrimaryTableOnlyBool, // onetimeuse
 }
 

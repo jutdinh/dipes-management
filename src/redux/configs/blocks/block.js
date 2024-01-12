@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faBold, faItalic, faStrikethrough, faTextSlash, faTrash, faUnderline } from "@fortawesome/free-solid-svg-icons"
+import $ from 'jquery';
 
 export default (props) => {
     const { cache, gridState, floating, preview } = useSelector(state => state)
@@ -45,7 +46,9 @@ export default (props) => {
                         id
                     }
                 })
+                $('#property-trigger').click()
             }
+
         }
     }
 

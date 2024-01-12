@@ -67,6 +67,7 @@ const initialStates = {
                     "api_name": ""                    
                 },
                 "search": {
+                    state: true,
                     "api": "",
                     "api_name": ""
                 }
@@ -195,7 +196,11 @@ const initialStates = {
     "form": {
         "name": "form",
         "props": {
-            "title": "Sample title",                        
+            "title": "Sample title",        
+            "table": undefined,        
+            
+            "fields": [],
+
             "api": {
                 "api": undefined,
                 "url": "",

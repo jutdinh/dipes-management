@@ -183,4 +183,98 @@
         }
 
     }
+
+    .ui-config {
+        width: 512px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 256px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                text-align: center;
+                font-weight: bold;
+                padding: 1em;
+            }
+        }
+
+        .configs-container {
+            flex-grow: 1;
+            
+            border: 1px solid #ccc;
+            border-radius: 12px;            
+            
+            display: flex;
+            flex-wrap: nowrap;
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .sections{                
+                width: 150px;                
+                border-right: 1px solid #ccc;
+                padding-top: 12px;
+                font-size: 12px;
+
+                .section{
+                    padding: 8px 4px;
+                    cursor: pointer;
+
+                    &:hover{
+                        background: #fafafa;
+                        color: #000
+                    }
+                }
+
+                .section-active{
+                    background: #000;
+                    color: #fff;
+                }
+            }
+
+            .config-container{                
+                flex-grow: 1;
+                
+                
+                .scrollable-box{
+                    display: block;
+                    height: 100%;
+                    overflow: auto;
+                    padding: 12px;
+
+                    
+                    .config-title{
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #000;
+                    }
+
+
+                    .config-content{
+                        margin-top: 12px;
+                    }
+
+                    .buttons{
+                        display: flex;
+
+                        .primary{
+                            border: none;
+                            outline: none;
+                            border-radius: 6px;
+                            background: #0051ff;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 6px 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

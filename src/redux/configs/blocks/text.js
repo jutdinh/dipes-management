@@ -40,7 +40,7 @@ export default (props) => {
                     id
                 }
             })
-
+            $('#property-trigger').click()
         }  
     }
 

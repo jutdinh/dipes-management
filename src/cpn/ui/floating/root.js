@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux"
 import PageModify from './page-modify'
 import PageChangeIcon from './page-change-icon';
 import DesignBlock from "./design-block";
+import UiConifg from "./ui-conifg";
 
 export default () => {
     const { floating } = useSelector( state => state )
@@ -31,6 +32,10 @@ export default () => {
 
             case "designBlock":
                 return <DesignBlock />
+            
+            case "uiConfig":
+                return <UiConifg />
+            
             default:
                 return <></>
         }

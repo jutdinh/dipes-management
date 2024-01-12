@@ -236,6 +236,21 @@ const table =  [
 
     { 
         id: getFormatedUUID(), 
+        label: lang["props.table.buttons.search"],
+        type: "bool",
+        path: "props.source.search.state",
+        if_true: {
+            value: true,
+            label: lang["props.table.show"]
+        },
+        if_false: {
+            value: false,
+            label: lang["props.table.hide"]
+        }
+    },
+
+    { 
+        id: getFormatedUUID(), 
         label: lang["props.table.buttons.update"],
         type: "bool",
         path: "props.buttons.update.state",
@@ -297,13 +312,14 @@ const table =  [
     { 
         id: getFormatedUUID(), 
         label: lang["props.table.buttons.approvefield"],
-        type: "selfSelection",                
+        type: "primaryTableOnlyBool",                
         path: "props.buttons.approve.field",
+        tablesPath: "props.source.tables",
+        data: "props.source.fields",        
         childOf: {
             prop_id: "approve-btn",
             caseIf: true
         },
-        data: "props.source.fields",
         fields: [
             {
                 from: "id",
@@ -342,14 +358,16 @@ const table =  [
 
     { 
         id: getFormatedUUID(), 
-        label:lang["props.table.buttons.unapprovefield"],
-        type: "selfSelection",                
+        label:lang["props.table.buttons.unapprovefield"],             
+        type: "primaryTableOnlyBool",    
         path: "props.buttons.unapprove.field",
+        tablesPath: "props.source.tables",
+        data: "props.source.fields",
+        
         childOf: {
             prop_id: "unapprove-btn",
             caseIf: true
         },
-        data: "props.source.fields",
         fields: [
             {
                 from: "id",

@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faCog, faTrash } from "@fortawesome/free-solid-svg-icons"
 
+import $ from 'jquery'
+
 export default (props) => {
     const { cache, gridState, preview } = useSelector(state => state)
     const { id,
@@ -36,6 +38,7 @@ export default (props) => {
                     id
                 }
             })
+            $('#property-trigger').click()
         }
     }
 

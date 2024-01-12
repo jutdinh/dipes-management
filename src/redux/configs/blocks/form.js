@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-
+import $ from 'jquery'
 
 export default (props) => {
     const { cache, gridState, preview } = useSelector(state => state)
@@ -39,6 +39,8 @@ export default (props) => {
                     id
                 }
             })
+
+            $('#property-trigger').click()
         }
     }
 

@@ -7,37 +7,51 @@ const { getFormatedUUID } = functions
 
 const form =  [     
     
-    // { 
-    //     id: getFormatedUUID(), 
-    //     label: "Api",
-    //     type: "apiSelection",                
-    //     path: "props.api",
-    //     url: "/apis/v/[version_id]",
-    //     params: ["version_id"],
-    //     api_data: "data.apis",
-    //     fields: [
-    //         {
-    //             from: "api_id",
-    //             to: "api"
-    //         },
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.tables"],
+        type: "apiSelection",                
+        path: "props.table",
+        url: "/db/tables/v/[version_id]/tables/fields",
+        params: ["version_id"],
+        api_data: "data.tables",
+        fields: [
+            {
+                from: "id",
+                to: "id"
+            },
             
-    //         {
-    //             from: "api_name",
-    //             to: "api_name"
-    //         },
+            {
+                from: "table_name",
+                to: "table_name"
+            },
 
-    //         {
-    //             from: "body_detail",
-    //             to: "body"
-    //         },
+            {
+                from: "primary_key",
+                to: "primary_key"
+            },
 
-    //         {
-    //             from: "url",
-    //             to: "url"
-    //         },
-    //     ],
-    //     display_value: "api_name",
-    // },
+            {
+                from: "foreign_keys",
+                to: "foreign_keys"
+            },
+
+            {
+                from: "fields",
+                to: "fields"
+            }
+        ],
+
+        display_value: "table_name",
+    },
+
+    {
+        id: getFormatedUUID(),
+        label: lang["props.fields"],
+        type: "singulartablefieldspicker",
+        path: "props.fields",
+        tablepath: "props.table",       
+    },
 
 
     { 
@@ -60,8 +74,6 @@ const form =  [
         path: "props.style.padding" 
     },
 
-    
-
     { 
         id: getFormatedUUID(), 
         label: "Trigger",
@@ -76,8 +88,6 @@ const form =  [
         }                    
     },
 
-
-
     { 
         id: getFormatedUUID(), 
         label: "Order",
@@ -85,6 +95,7 @@ const form =  [
         path: "props.flex.order",
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
+
     { 
         id: getFormatedUUID(), 
         label: "Flex Grow",

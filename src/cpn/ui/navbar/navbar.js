@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faUndo, faRedo, faEye } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import $ from 'jquery';
 
 export default () => {
     const dispatch = useDispatch()
@@ -24,6 +25,24 @@ export default () => {
         dispatch({
             branch: "design-ui",
             type: "saveCache"
+        })
+    }
+
+    const settingTrigger = (e) => {
+        dispatch({
+            branch: "floating-boxes",
+            type: "floatingTrigger",
+            payload: {
+                offset: $(e.target).offset()
+            }
+        })
+
+        dispatch({
+            branch: "floating-boxes",
+            type: "setBoxType",
+            payload: {
+                type: "uiConfig"
+            }
         })
     }
 
@@ -51,7 +70,7 @@ export default () => {
                 <div className="item" onClick={ PreviewTrigger }>
                     <div className="circle-item"> <FontAwesomeIcon icon={ faEye }/> </div>
                 </div>
-                <div className="item" onClick={ saveUI }>
+                <div className="item" onClick={ settingTrigger }>
                     <div className="circle-item"> <FontAwesomeIcon icon={ faCog }/></div>
                 </div>                
             </div>

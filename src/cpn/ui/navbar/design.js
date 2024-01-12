@@ -164,7 +164,7 @@ export default () => {
 
                 <span className="block-type">KHỐI BIỂU MẪU</span>
                 <div className="blocks">                   
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faRectangleList, "Entry", blockTypes.form ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faRectangleList, "Form", blockTypes.form ) } }>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={ faRectangleList }/>
                         </div>
@@ -195,12 +195,12 @@ export default () => {
                         <span className="block-name">Datetime</span>
                     </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Api Data Selection", blockTypes.apiCombo ) } }>
+                    {/* <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Api Data Selection", blockTypes.apiCombo ) } }>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={ faStop }/>
                         </div>
                         <span className="block-name">Api Combo</span>
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

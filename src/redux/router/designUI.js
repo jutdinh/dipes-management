@@ -1,3 +1,5 @@
+
+
 const DEFAULT_PAGE_ICON = "6"
 
 export default (state, action) => {
@@ -103,19 +105,27 @@ export default (state, action) => {
             break;
 
         case "overideSelectedComp":
-            return overideSelectedComp( state, action);
+            return overideSelectedComp(state, action);
             break;
 
         case "PreviewTrigger":
-            return PreviewTrigger( state, action );
+            return PreviewTrigger(state, action);
             break;
-        
+
         case "setupAddingPage":
-            return setupAddingPage( state, action )
+            return setupAddingPage(state, action)
             break;
-        
+
         case "SwitchingStateForPageSavesPreviousStateItself":
-            return SwitchingStateForPageSavesPreviousStateItself( state, action );
+            return SwitchingStateForPageSavesPreviousStateItself(state, action);
+            break;
+
+        case "addFormField":
+            return AddFormField(state, action)
+            break;
+
+        case "resetFormFieldsWhenSelectedTableIsChanged":
+            return ResetFormFieldsWhenSelectedTableIsChanged( state, action )
             break;
 
         default:
@@ -220,7 +230,7 @@ const removeCurrentPage = (state, action) => {
      */
 
     const { cache, pages } = state;
-    const path = findPage(pages, cache.page.page_id)    
+    const path = findPage(pages, cache.page.page_id)
 
     const newPages = removePageByPath(pages, path)
     state.cache.page = {}
@@ -323,7 +333,7 @@ const unsetFloatingBlock = (state, action) => {
 
     const { floating } = state
     floating.block = undefined
-    
+
     return { ...state, floating }
 }
 
@@ -453,7 +463,7 @@ const pageSelect = (state, action) => {
     const { pages, pageAbleToManipulateItself } = state
     const currentPage = state.page;
 
-    if (currentPage && pageAbleToManipulateItself ) {
+    if (currentPage && pageAbleToManipulateItself) {
         const currentPath = findPage(pages, currentPage.page_id)
         state.pages = changeDataByPath(pages, { component: currentPage.component }, currentPath)
     }
@@ -485,7 +495,7 @@ const initState = (state, action) => {
     const { pages } = action.payload;
 
     state.pages = pages ? pages : [];
-    state.page = pages ? pages[0]: undefined
+    state.page = pages ? pages[0] : undefined
 
     return { ...state }
 }
@@ -509,16 +519,16 @@ const addComponent = (state, action) => {
         const { initialStates, page, floating, functions } = state;
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
 
-        floating.block = undefined        
+        floating.block = undefined
 
 
-        if( block =="table" ){
+        if (block == "table") {
 
             const hidden_page_id = state.functions.getFormatedUUID()
 
             const hiddenPage = {
-                page_id: hidden_page_id,                
-                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
+                page_id: hidden_page_id,
+                page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
 
                 parent: page.page_id,
                 block: newBlock.id,
@@ -529,8 +539,8 @@ const addComponent = (state, action) => {
                 icon: DEFAULT_PAGE_ICON,
                 children: [],
                 component: []
-            }       
-            state.pages.push( hiddenPage )     
+            }
+            state.pages.push(hiddenPage)
         }
 
 
@@ -549,11 +559,11 @@ const flatteningComponents = (components) => {
      */
 
     const cpns = []
-    for( let i = 0; i < components.length; i++ ){
-        const { children }= components[i]
-        cpns.push({...components[i]}  )
-        if( children ){
-            cpns.push( ...flatteningComponents( children ) )
+    for (let i = 0; i < components.length; i++) {
+        const { children } = components[i]
+        cpns.push({ ...components[i] })
+        if (children) {
+            cpns.push(...flatteningComponents(children))
         }
     }
     return cpns
@@ -586,40 +596,41 @@ const setActiveComponent = (state, action) => {
      * 
      *
      * 
-     */ 
+     */
 
-    const { id } = action.payload;   
+    const { id } = action.payload;
     const { page } = state;
-    
-    const flattenComponents = flatteningComponents( page.component )
 
-    let target = flattenComponents.find( c => c.id == id )
-    
+    const flattenComponents = flatteningComponents(page.component)
+
+    let target = flattenComponents.find(c => c.id == id)
+
     const component = target;
 
-    const activeSet = [ id ]
-    const activeCpns = [ target ]    
+    const activeSet = [id]
+    const activeCpns = [target]
 
-    while( true && target){
+    while (true && target) {
         const nextTargetId = target.parent_id;
-        target = flattenComponents.find( c => c.id == nextTargetId )
+        target = flattenComponents.find(c => c.id == nextTargetId)
 
-        if( target ){
-            activeSet.push( target.id )     
-            activeCpns.unshift( target )       
+        if (target) {
+            activeSet.push(target.id)
+            activeCpns.unshift(target)
         }
-    }   
-    if( component ){
+    }
+    if (component) {
 
         const { name } = component;
         const propertySet = state.propertySets[name]
         state.propertySet = propertySet ? propertySet : []
         state.selectedCpn = component;
         state.selectedCpns = activeCpns;
-    }  
+    }
 
     // set property set to state
-    state.cache.activeComponent = [ ...activeSet, id ]
+    state.cache.activeComponent = [...activeSet, id]
+
     return { ...state }
 }
 
@@ -674,7 +685,7 @@ const updateChildComponent = (components, target_id, values) => {
 }
 
 const updateComponent = (state, action) => {
-    
+
 
     /**
      * 
@@ -692,7 +703,7 @@ const updateComponent = (state, action) => {
 
     page.component = updateChildComponent(component, id, values)
 
-    if( selectedCpn.id == id ){
+    if (selectedCpn.id == id) {
         state.selectedCpn.props = { ...selectedCpn.props, ...values }
     }
 
@@ -704,7 +715,7 @@ const updateComponent = (state, action) => {
 
 const modifyChildrenRecursive = (components, target_id, newChildren) => {
 
-    
+
     /**
      * 
      * Type: Hàm này đệ quy nha
@@ -751,7 +762,7 @@ const modifyComponentChildren = (state, action) => {
 
     const { id, children } = action.payload;
     const { page } = state;
-    const { component } = page    
+    const { component } = page
 
     page.component = modifyChildrenRecursive(component, id, children)
     state.page = page;
@@ -826,7 +837,7 @@ const removeComponent = (state, action) => {
     state.propertySet = []
 
 
-    const newPages = pages.filter( p => !p.block || p.block != id )
+    const newPages = pages.filter(p => !p.block || p.block != id)
     state.pages = newPages;
 
     return { ...state }
@@ -872,7 +883,7 @@ const insertChildComponent = (components, parent_id, target_id, position, block)
      *      
      *      - Và cuối cùng là trả về danh sách components
      * 
-     */ 
+     */
 
     const target = components.find(t => t.id == target_id)
     if (target) {
@@ -881,13 +892,13 @@ const insertChildComponent = (components, parent_id, target_id, position, block)
             const cpn = components[i]
             if (position == "front") {
                 if (cpn.id == target_id) {
-                    newComponents.push({parent_id: parent_id, ...block})
+                    newComponents.push({ parent_id: parent_id, ...block })
                 }
                 newComponents.push(cpn)
             } else {
                 newComponents.push(cpn)
                 if (cpn.id == target_id) {
-                    newComponents.push({parent_id: parent_id, ...block})
+                    newComponents.push({ parent_id: parent_id, ...block })
                 }
             }
         }
@@ -895,7 +906,7 @@ const insertChildComponent = (components, parent_id, target_id, position, block)
     } else {
         for (let i = 0; i < components.length; i++) {
             if (components[i].children) {
-                components[i].children = insertChildComponent(components[i].children, components[i].id ,target_id, position, block)
+                components[i].children = insertChildComponent(components[i].children, components[i].id, target_id, position, block)
             }
         }
         return components
@@ -916,17 +927,17 @@ const insertComponent = (state, action) => {
 
         // const newBlock = { ...initialStates[block], id: newid }              
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
-         // => Bước này là fulfill id vào tất cả các con cháu chíc chắt nếu có của newBlock
+        // => Bước này là fulfill id vào tất cả các con cháu chíc chắt nếu có của newBlock
 
 
-         if( block =="table" ){
+        if (block == "table") {
 
             const hidden_page_id = state.functions.getFormatedUUID()
 
             const hiddenPage = {
-                page_id: hidden_page_id,                
-                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
-                
+                page_id: hidden_page_id,
+                page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+
                 parent: page.page_id,
                 block: newBlock.id,
 
@@ -936,8 +947,8 @@ const insertComponent = (state, action) => {
                 icon: DEFAULT_PAGE_ICON,
                 children: [],
                 component: []
-            }       
-            state.pages.push( hiddenPage )     
+            }
+            state.pages.push(hiddenPage)
         }
 
 
@@ -975,7 +986,7 @@ const addChildToComponent = (components, target_id, block) => {
         const { id, children } = cpn;
         if (id == target_id) {
             if (children != undefined) {
-                components[i].children.push({ parent_id: id , ...block })
+                components[i].children.push({ parent_id: id, ...block })
             }
         } else {
             if (children) {
@@ -1013,14 +1024,14 @@ const appendChildComponent = (state, action) => {
             return p
         })
 
-        if( block =="table" ){
+        if (block == "table") {
 
             const hidden_page_id = state.functions.getFormatedUUID()
 
             const hiddenPage = {
-                page_id: hidden_page_id,                
-                page_title:`[parent_name] - Trang phụ thêm dữ liệu`,
-                
+                page_id: hidden_page_id,
+                page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+
                 parent: page.page_id,
                 block: newBlock.id,
 
@@ -1030,8 +1041,8 @@ const appendChildComponent = (state, action) => {
                 icon: DEFAULT_PAGE_ICON,
                 children: [],
                 component: []
-            }       
-            newPages.push( hiddenPage )     
+            }
+            newPages.push(hiddenPage)
         }
 
         floating.block = undefined
@@ -1053,7 +1064,7 @@ const unboundBlock = (state, action) => {
 }
 
 
-const overrideComponent = (components, target_id, component ) => {
+const overrideComponent = (components, target_id, component) => {
 
     /**
      * Type: Tiếp tục là một chiếc đệ quy zui zẻ
@@ -1089,7 +1100,7 @@ const overrideComponent = (components, target_id, component ) => {
     return components
 }
 
-const overideSelectedComp = ( state, action ) => {
+const overideSelectedComp = (state, action) => {
 
     /**
      * 
@@ -1101,14 +1112,14 @@ const overideSelectedComp = ( state, action ) => {
     const { component } = action.payload
     const { id } = component;
     const { page } = state;
-    state.page.component = overrideComponent( page.component, id, component )
+    state.page.component = overrideComponent(page.component, id, component)
     state.selectedCpn = component
 
     return { ...state }
 }
 
 
-const PreviewTrigger = ( state, action ) => {
+const PreviewTrigger = (state, action) => {
 
     /**
      * 
@@ -1121,30 +1132,30 @@ const PreviewTrigger = ( state, action ) => {
 
     const { preview } = state;
 
-    if( action.payload != undefined ){
-        state.preview = action.payload    
-    }else{        
+    if (action.payload != undefined) {
+        state.preview = action.payload
+    } else {
         state.preview = !preview
     }
 
-    return { ...state } 
+    return { ...state }
 }
 
 
 
 
 
-const SwitchingStateForPageSavesPreviousStateItself = (state, action) => {    
+const SwitchingStateForPageSavesPreviousStateItself = (state, action) => {
     /**
      * 
      * Abandoned
      * 
      */
     const posibility = action.payload;
-    if( posibility != undefined ){
+    if (posibility != undefined) {
         state.pageAbleToManipulateItself = posibility
-    } else{
-        state.pageAbleToManipulateItself = !state.pageAbleToManipulateItself 
+    } else {
+        state.pageAbleToManipulateItself = !state.pageAbleToManipulateItself
     }
 
     return { ...state }
@@ -1152,31 +1163,69 @@ const SwitchingStateForPageSavesPreviousStateItself = (state, action) => {
 
 
 
-const setupAddingPage = ( state, action ) => {
+const setupAddingPage = (state, action) => {
 
     /**
      * Abandoned
      */
 
     const { initialStates } = state;
-    
+
     const { fields } = action.payload;
     const components = []
 
-    for( let i = 0 ; i < fields.length; i++ ){
+    for (let i = 0; i < fields.length; i++) {
         const field = fields[i]
         const { DATATYPE } = field.props;
         let block;
         const id = state.functions.getFormatedUUID()
-        if( ["DATE", "DATETIME"].indexOf(DATATYPE) != -1 ){
+        if (["DATE", "DATETIME"].indexOf(DATATYPE) != -1) {
             block = { ...initialStates["datetime"] }
-        }else{
+        } else {
             block = { ...initialStates["entry"] }
         }
-        components.push( block )
+        components.push(block)
     }
 
-    state.page.component = components;    
+    state.page.component = components;
 
     return { ...state }
+}
+
+
+const AddFormField = (state, action) => {
+    /**
+     * 
+     *  PROCESSING
+     * 
+     */
+
+    const { initialStates, page } = state
+    const { form_id, field } = action.payload;
+
+
+    const { DATATYPE } = field.props;
+
+    let block;
+    const id = state.functions.getFormatedUUID()
+    if (["DATE", "DATETIME"].indexOf(DATATYPE) != -1) {
+        block = JSON.parse(JSON.stringify({ ...initialStates["datetime"], id }))
+    } else {
+        block = JSON.parse(JSON.stringify({ ...initialStates["entry"], id }))
+    }
+    block.props.title.content   = field.field_name;
+    block.required              = field.props.NULLABLE
+    block.parent_id             = form_id;
+    block.props.variable_name   = field.fomular_alias;
+    block.field_id              = field.id;
+
+    page.component = addChildToComponent( page.component, form_id, block )
+    state.page = page
+
+    return state
+}
+
+const ResetFormFieldsWhenSelectedTableIsChanged = ( state, action ) => {
+
+    return state
 }

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome } from "@fortawesome/free-solid-svg-icons"
+import $ from 'jquery';
 
 export default (props) => {
     const { cache, gridState, preview } = useSelector(state => state)
@@ -42,7 +43,9 @@ export default (props) => {
                     id
                 }
             })
+            $('#property-trigger').click()
         }
+
     }
 
     const ComponentHover = () => {

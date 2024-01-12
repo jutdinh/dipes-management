@@ -132,17 +132,25 @@ const entry =  [
 
     { 
         id: getFormatedUUID(), 
+        label: lang["props.variable_name"],
+        type: "text", 
+        path: "props.variable_name" ,
+        onlyExistsIn:[{ name: "form", type: "cascading" }]
+    },
+
+    { 
+        id: getFormatedUUID(), 
         label: lang["style.order"],
         type: "number", 
         path: "props.flex.order",
-        onlyExistsIn:[{ name: "flex",type: "direct" }]
+        onlyExistsIn:[{ name: "flex", type: "direct" }]
     },
     { 
         id: getFormatedUUID(), 
         label: lang["style.flexgrow"],
-        type: "number", 
+        type: "text", 
         path: "props.flex.flexGrow" ,
-        onlyExistsIn:[{ name: "flex",type: "direct" }]
+        onlyExistsIn:[{ name: "flex", type: "direct" }]
     },
 
 

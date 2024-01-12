@@ -2,8 +2,10 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCheckCircle, faCircleXmark, faCog, faEdit, faHome, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCheckCircle, faCircleXmark, faCog, faEdit, faHome, faMagnifyingGlass, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { useEffect } from "react"
+import $ from "jquery"
+
 
 export default (props) => {
     const { cache, preview, floating, pages, page } = useSelector(state => state)
@@ -67,6 +69,7 @@ export default (props) => {
                     id
                 }
             })
+            $('#property-trigger').click()
         }
     }
 
@@ -312,13 +315,32 @@ export default (props) => {
                                             return <td>{field.display_name}</td>
                                         })}
 
-                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                             &&
                                             <th>Thao tác</th>
                                         }
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    { source.search.state && <tr>
+                                        {
+                                            visibility.indexing && <th></th>
+                                        }
+                                        {source.fields?.map(field => {
+                                            return <td className="search-cell"><input type="text" /></td>
+                                        })}
+                                        {source.calculates?.map(field => {
+                                            return <td className="search-cell"><input type="text" /></td>
+                                        })}
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
+                                            &&
+                                            <td className="table-icons">
+                                                <div className="icons">
+                                                    <div className="table-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>}
                                     {
                                         getDataInSpecificPeriod(fakeData).map((record, index) => <tr>
                                             {
@@ -328,10 +350,10 @@ export default (props) => {
                                             {source.fields?.map(field => {
                                                 return <td>{record[field.fomular_alias]}</td>
                                             })}
-                                             {source.calculates?.map(field => {
+                                            {source.calculates?.map(field => {
                                                 return <td>{field.fomular}</td>
                                             })}
-                                            {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                            {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                                 &&
                                                 <td className="table-icons">
                                                     <div className="icons" onMouseUp={AddButton}>
@@ -437,13 +459,32 @@ export default (props) => {
                                         {source.calculates?.map(field => {
                                             return <td>{field.display_name}</td>
                                         })}
-                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                             &&
                                             <th>Thao tác</th>
                                         }
                                     </tr>
                                 </thead>
                                 <tbody>
+                                { source.search.state && <tr>
+                                        {
+                                            visibility.indexing && <th></th>
+                                        }
+                                        {source.fields?.map(field => {
+                                            return <td className="search-cell"><input type="text" /></td>
+                                        })}
+                                        {source.calculates?.map(field => {
+                                            return <td className="search-cell"><input type="text" /></td>
+                                        })}
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
+                                            &&
+                                            <td className="table-icons">
+                                                <div className="icons">
+                                                    <div className="table-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr> }
                                     <tr>
                                         {
                                             visibility.indexing && <td>1</td>
@@ -455,7 +496,7 @@ export default (props) => {
                                         {source.calculates?.map(field => {
                                             return <td>{field.fomular_alias} = {field.fomular}</td>
                                         })}
-                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state)
+                                        {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                             &&
                                             <td className="table-icons">
                                                 <div className="icons" onMouseUp={AddButton}>

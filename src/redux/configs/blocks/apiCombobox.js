@@ -35,7 +35,7 @@ export default (props) => {
                 payload: {
                     id
                 }
-            })
+            })            
         }
     }
 

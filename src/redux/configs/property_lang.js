@@ -113,6 +113,7 @@ const vi = {
 
 
         "props.table.buttons.add": "Nút thêm",
+        "props.table.buttons.search": "Tìm kiếm",
         "props.table.buttons.update": "Nút cập nhật",                
         "props.table.buttons.delete": "Nút xóa",                
         "props.table.buttons.detail": "Chuyển đến chi tiết",                
@@ -122,6 +123,15 @@ const vi = {
         "props.table.buttons.unapprovefield": "Trường hoàn duyệt",
         "props.table.navigator": "Nút điều hướng",
         "props.table.recordsperpage": "Số dòng mỗi trang",
+
+    /**
+     *  Entry
+     * 
+     */
+
+        "props.variable_name": "Tên biến",
+
+
 
     /**
      * FUNNZIONOL SECZION 
