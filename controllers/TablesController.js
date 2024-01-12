@@ -74,16 +74,21 @@ class TablesController extends Controller {
                 if( tableFields && tableFields.length > 0 ){
                     tableFields.map( field => {
                         field.field_alias = field.fomular_alias;
-                        field.table_id = table.id
+                        field.table_id = table.id                       
                     })
                 }
                 table.foreign_keys = Object.values( table.foreign_keys )
                 
                 fields.push(...tableFields)
                 // delete table.fields;
-                table.fields = tableFields
+                table.fields = tableFields.map( field => {
+                    return { ...field, ...field.props }
+                })
             })
-            context.data = { tables, fields }
+            const formatedFields = fields.map( field => {
+                return { ...field, ...field.props }
+            })
+            context.data = { tables, fields: formatedFields }
         }
         delete context.objects;
         res.status(200).send( context )

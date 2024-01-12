@@ -704,9 +704,9 @@ class UIController extends Controller {
 
         const { tables } = version
         const mainTableId = source.tables[0].id
-        const mainTable = tables[`${ mainTableId }`]
-        const mainTableFields = Object.values( mainTable.fields )
-        
+        const mainTable = tables[`${mainTableId}`]
+        const mainTableFields = Object.values(mainTable.fields)
+
 
         const GET = {
             api_name: "GET API for table " + name,
@@ -725,8 +725,8 @@ class UIController extends Controller {
         }
 
 
-        
-        const bodyId = mainTableFields.map(f  => f.id)
+
+        const bodyId = mainTableFields.map(f => f.id)
         const POST = {
             api_name: "POST API for table " + name,
             status: true,
@@ -736,7 +736,7 @@ class UIController extends Controller {
             }),
             body: bodyId,
             params: [],
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             calculates: source.calculates,
             statistic: [],
             api_method: "post",
@@ -758,7 +758,7 @@ class UIController extends Controller {
             }),
             body: normalFields.map(f => f.id),
             params: paramsId,
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             calculates: source.calculates,
             statistic: [],
             api_method: "put",
@@ -774,7 +774,7 @@ class UIController extends Controller {
             }),
             body: normalFields.map(f => f.id),
             params: paramsId,
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             calculates: source.calculates,
             statistic: [],
             api_method: "delete",
@@ -790,7 +790,7 @@ class UIController extends Controller {
             params: [],
             calculates: source.calculates,
             statistic: [],
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             api_method: "post",
             api_scope: "private"
         }
@@ -806,7 +806,7 @@ class UIController extends Controller {
             params: [],
             calculates: source.calculates,
             statistic: [],
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             api_method: "post",
             api_scope: "private"
         }
@@ -818,7 +818,7 @@ class UIController extends Controller {
             body: bodyId,
             fields: [],
             params: [],
-            tables: [source.tables[0].id  ],
+            tables: [source.tables[0].id],
             calculates: source.calculates,
             statistic: [],
             api_method: "post",
@@ -841,13 +841,13 @@ class UIController extends Controller {
             { name: "IMPORT", type: "import", api: IMPORT },
             { name: "DETAIL", type: "d", api: DETAIL },
         ]
-        
-        
 
-        if( buttons.approve.status ){
 
-            const approveTable = source.tables.find( tb => tb.id == buttons.approve.field.table_id )
-    
+
+        if (buttons.approve.status) {
+
+            const approveTable = source.tables.find(tb => tb.id == buttons.approve.field.table_id)
+
             const APPROVE = {
                 api_name: "APPROVE API for table " + name,
                 status: true,
@@ -857,20 +857,20 @@ class UIController extends Controller {
                 }),
                 body: buttons.approve.field,
                 params: paramsId,
-                tables: [ approveTable.id ],
+                tables: [approveTable.id],
                 calculates: [],
                 statistic: [],
                 api_method: "put",
                 api_scope: "private"
             }
 
-            rawApis.push( { name: "APPROVE", type: "ui", api: APPROVE } )
+            rawApis.push({ name: "APPROVE", type: "ui", api: APPROVE })
         }
 
-        if( buttons.unapprove.status ){
+        if (buttons.unapprove.status) {
 
-            const unapproveTable = source.tables.find( tb => tb.id == buttons.unapprove.field.table_id )
-    
+            const unapproveTable = source.tables.find(tb => tb.id == buttons.unapprove.field.table_id)
+
             const UNAPPROVE = {
                 api_name: "UNAPPROVE API for table " + name,
                 status: true,
@@ -880,75 +880,75 @@ class UIController extends Controller {
                 }),
                 body: buttons.unapprove.field,
                 params: paramsId,
-                tables: [ unapproveTable.id ],
+                tables: [unapproveTable.id],
                 calculates: [],
                 statistic: [],
                 api_method: "put",
                 api_scope: "private"
             }
 
-            rawApis( { name: "UNAPPROVE", type: "ui", api: UNAPPROVE } )
+            rawApis({ name: "UNAPPROVE", type: "ui", api: UNAPPROVE })
         }
         return rawApis;
     }
 
 
-    mapApiToUIRecursive = ( pages, target_id, page ) => {
-        for( let i = 0; i < pages.length; i++ ){
+    mapApiToUIRecursive = (pages, target_id, page) => {
+        for (let i = 0; i < pages.length; i++) {
             const { page_id, children } = pages[i]
-            if( page_id == target_id ){                
-                pages[i] = { ...pages[i], page, children }
-            }else{
-                if(children){
-                    pages[i].children = this.mapApiToUIRecursive( pages[i].children, target_id, page )
+            if (page_id == target_id) {
+                pages[i] = { ...pages[i], ...page, children }
+                delete pages[i].page
+            } else {
+                if (children) {
+                    pages[i].children = this.mapApiToUIRecursive(pages[i].children, target_id, page)
                 }
             }
         }
         return pages
-    }    
+    }
 
 
     saveUI = async (req, res) => {
         const { version_id } = req.body;
         let ui = req.body.ui;
 
+
         const context = await this.generalCheck(req, version_id)
 
         const { success, objects } = context;
 
-        
+
         if (success) {
             const { Project, user, version } = objects;
-            
-            const flattenPages = this.flatteningComponents( ui )
+
+            const flattenPages = this.flatteningComponents(ui)
 
             for (let i = 0; i < flattenPages.length; i++) {
                 const page = flattenPages[i]
                 const flattenComponents = this.flatteningComponents(page.component)
-                console.log(page.page_title)
-                console.log( flattenComponents.length )
 
                 for (let j = 0; j < flattenComponents.length; j++) {
                     const cpn = flattenComponents[j]
-                    const { name } = cpn;
+                    const { name, props } = cpn;
 
-                    if (name == "table") {
+                    if (name == "table" && props && props.source.tables.length > 0) {
                         const apiSet = this.createApiSetOnTable(cpn, version)
                         const APIS = {}
 
-                        const { props } = cpn
+
 
                         for (let k = 0; k < apiSet.length; k++) {
-                            APIS[ apiSet[k].name ] = await Project.createUIAPI(apiSet[k])
+                            APIS[apiSet[k].name] = await Project.createUIAPI(apiSet[k])
                         }
 
-                       
+
                         delete version.apis[`${props?.source?.get?.id}`]
                         delete version.apis[`${props?.source?.search?.id}`]
-                        
+
                         delete version.apis[`${props?.buttons?.add?.api?.id}`]
                         delete version.apis[`${props?.buttons?.import?.api?.id}`]
-                        
+
                         delete version.apis[`${props?.buttons?.export?.api?.id}`]
                         delete version.apis[`${props?.buttons?.update?.api?.id}`]
                         delete version.apis[`${props?.buttons?.delete?.api?.id}`]
@@ -956,10 +956,10 @@ class UIController extends Controller {
 
                         delete version.apis[`${props?.buttons?.approve?.api?.id}`]
                         delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
-      
-                        props.source.get    = APIS["GET"]
-                        props.source.search = APIS["SEARCH"]
-                        
+
+                        props.source.get = APIS["GET"]
+                        props.source.search = { ...props.source.search, ...APIS["SEARCH"] }
+
                         props.buttons.add.api = APIS["POST"]
                         props.buttons.import.api = APIS["IMPORT"]
                         props.buttons.export.api = APIS["EXPORT"]
@@ -971,19 +971,50 @@ class UIController extends Controller {
                         props.buttons.approve.api = APIS["APPROVE"]
                         props.buttons.unapprove.api = APIS["UNAPPROVE"]
 
-                        page.component = this.updateChildComponent( page.component, cpn.id, props ) 
-                        
-                        const serializedApis = Object.values( APIS )  
-                        console.log(serializedApis.length)                                                  
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)
+
+                        const serializedApis = Object.values(APIS)
+
                         serializedApis.map(api => {
                             version.apis[`${api.id}`] = api
-                        })                        
+                        })
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
                     }
+
+                    if (name == "form") {
+                        const { table, fields, ti } = cpn
+                        let valid = true;
+                        for (let i = 0; i < fields.length; i++) {
+                            const { table_id } = fields[i]
+                            if (table_id != table.id) {
+                                valid = false;
+                            }
+                        }
+                        if (valid) {
+                            const FORM_API = {
+                                api_name: "POST API for FORM ",
+                                status: true,
+                                description: "Hidden API for UI only, do not modify for any reason",
+                                fields: source.fields.map(field => {
+                                    return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                                }),
+                                body: fields.map( f => f.id ),
+                                params: [],
+                                tables: [ table.id ],
+                                calculates: [],
+                                statistic: [],
+                                api_method: "post",
+                                api_scope: "private"
+                            }
+
+                            /** CONTINUE TO CREATE API */
+                        }
+                    }
+
                 }
-                flattenPages[i] = page    
-                ui = this.mapApiToUIRecursive(ui, page.page_id, page )
-            }           
+                flattenPages[i] = page
+                ui = this.mapApiToUIRecursive(ui, page.page_id, page)
+            }
 
             const UI = {
                 pages: ui,
