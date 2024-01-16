@@ -384,8 +384,8 @@ class ProjectsRecord extends Projects {
         const project = this.getData()
         const { tasks } = project
 
-        const periods = Object.values(tasks)
-
+        const primal_periods = Object.values(tasks)
+        const periods = primal_periods.slice( 0, primal_periods.length - 1 )
         periods.map(period => {            
             period.tasks = Object.values(period.tasks)
             period.period_members = Object.values(period.period_members)

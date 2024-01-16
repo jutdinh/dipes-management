@@ -981,35 +981,35 @@ class UIController extends Controller {
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
                     }
 
-                    if (name == "form") {
-                        const { table, fields, ti } = cpn
-                        let valid = true;
-                        for (let i = 0; i < fields.length; i++) {
-                            const { table_id } = fields[i]
-                            if (table_id != table.id) {
-                                valid = false;
-                            }
-                        }
-                        if (valid) {
-                            const FORM_API = {
-                                api_name: "POST API for FORM ",
-                                status: true,
-                                description: "Hidden API for UI only, do not modify for any reason",
-                                fields: source.fields.map(field => {
-                                    return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
-                                }),
-                                body: fields.map( f => f.id ),
-                                params: [],
-                                tables: [ table.id ],
-                                calculates: [],
-                                statistic: [],
-                                api_method: "post",
-                                api_scope: "private"
-                            }
+                    // if (name == "form") {
+                    //     const { table, fields, ti } = cpn
+                    //     let valid = true;
+                    //     for (let i = 0; i < fields.length; i++) {
+                    //         const { table_id } = fields[i]
+                    //         if (table_id != table.id) {
+                    //             valid = false;
+                    //         }
+                    //     }
+                    //     if (valid) {
+                    //         const FORM_API = {
+                    //             api_name: "POST API for FORM ",
+                    //             status: true,
+                    //             description: "Hidden API for UI only, do not modify for any reason",
+                    //             fields: source.fields.map(field => {
+                    //                 return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                    //             }),
+                    //             body: fields.map( f => f.id ),
+                    //             params: [],
+                    //             tables: [ table.id ],
+                    //             calculates: [],
+                    //             statistic: [],
+                    //             api_method: "post",
+                    //             api_scope: "private"
+                    //         }
 
-                            /** CONTINUE TO CREATE API */
-                        }
-                    }
+                    //         /** CONTINUE TO CREATE API */
+                    //     }
+                    // }
 
                 }
                 flattenPages[i] = page
