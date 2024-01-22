@@ -86,7 +86,8 @@ export default () => {
             const { props, id, name, children } = cpn;                            
             const mergedProps = { ...props, id }
             
-            const Component = functions.getComponentByName(name)            
+            const Component = functions.getComponentByName(name)                   
+
             if( Component ){
                 return <Component { ...mergedProps} key={cpn.id} zIndex={ components.length - index + 1 } 
                     removeComponent= { removeComponent } 

@@ -7,6 +7,7 @@ import Button from './button'
 import Block from './block'
 import Datetime from './datetime';
 import ApiCombo from './apiCombobox';
+import Chart_1 from './chart_1';
 
 
 
@@ -19,7 +20,8 @@ const exporter = {
     "form": Form,
     "button": Button,
     "datetime": Datetime,
-    "apiCombo": ApiCombo
+    "apiCombo": ApiCombo,
+    "chart_1": Chart_1
 }
 
 export default exporter

@@ -71,13 +71,13 @@ export default () => {
         if (path.length > 0 && value != undefined) {
             return getPropByPath(path.slice(1, path.length), value)
         } else {
-            if( path.length == 0 ){
+            if (path.length == 0) {
                 return object
-            }else{
-                if( value == undefined ){
+            } else {
+                if (value == undefined) {
                     return []
                 }
-            }            
+            }
         }
     }
     const setPropByPath = (object, path, value) => {
@@ -390,7 +390,7 @@ const Bool = (props) => {
                 className={`drop-box`}
             >
                 <div className="content-container" onClick={() => { setDrop(!drop) }}>
-                    <div className="content">
+                    <div className={`content ${currentValue ? "true" : "false"}`}>
                         <span>{value.label}</span>
                     </div>
                     <div className="caret">
@@ -849,7 +849,7 @@ const SelectTables = (props) => {
 const TableFieldsPicker = (props) => {
     const {
         path,
-
+        label,
         getPropByPath,
         updateSelectedComponent,
         selectedCpn,
@@ -876,31 +876,40 @@ const TableFieldsPicker = (props) => {
     }
 
     return (
-        <div className="property" style={{ zIndex: index }}>
-            <div
-                className={'fields-picker'}
-            >
-                {tables.map(tb => <div className="table-fields-picker">
-                    <div className="fields-picker-header">
-                        <span>{tb.table_name}</span>
-                    </div>
-                    <div className="picker-field-list">
-                        {tb.fields.map(field =>
-                            <div className="field-picker">
-                                <div className="picker-checkbox">
-                                    <input
-                                        type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1}
-                                        onClick={() => { fieldSelectOrNot(field) }}
-                                    />
+        <div>
+            <div className="property">
+                    { tables.length > 0 &&
+                        <div className="">
+                            <span>{label}</span>
+                        </div>
+                    }
+                </div>
+            <div className="property" style={{ zIndex: index }}>
+                <div
+                    className={'fields-picker'}
+                >
+                    {tables.map(tb => <div className="table-fields-picker">
+                        <div className="fields-picker-header">
+                            <span>{tb.table_name}</span>
+                        </div>
+                        <div className="picker-field-list">
+                            {tb.fields.map(field =>
+                                <div className="field-picker">
+                                    <div className="picker-checkbox">
+                                        <input
+                                            type="checkbox" checked={fomularAliases.indexOf(field.fomular_alias) != -1}
+                                            onClick={() => { fieldSelectOrNot(field) }}
+                                        />
+                                    </div>
+
+                                    <div className="picker-label">
+                                        <span>{field.field_name} - {field.fomular_alias}</span>
+                                    </div>
                                 </div>
-                                                                
-                                <div className="picker-label">
-                                    <span>{field.field_name}</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>)}
+                            )}
+                        </div>
+                    </div>)}
+                </div>
             </div>
         </div>
     )
@@ -927,25 +936,25 @@ const SingularTableFieldsPicker = (props) => {
     const currentValue = getPropByPath(splittedPath, selectedCpn)
     const fomularAliases = currentValue.map(f => f.fomular_alias)
     const table = getPropByPath(tablepath.split('.'), selectedCpn)
-    
-    useEffect(() => {        
-        if( table ){
+
+    useEffect(() => {
+        if (table) {
             setTables([table])
-        }        
+        }
     }, [table])
-    
+
 
     const fieldSelectOrNot = (field) => {
         const isFieldSelected = currentValue.find(f => f.fomular_alias == field.fomular_alias)
-        
+
         let newValues = currentValue
         if (isFieldSelected) {
             newValues = currentValue.filter(f => f.fomular_alias != field.fomular_alias)
             /**
              *  Remove coresponding component
              */
-            
-            const componentAboutToBeRemoved = selectedCpn.children.find( cpn => cpn.field_id == field.id )
+
+            const componentAboutToBeRemoved = selectedCpn.children.find(cpn => cpn.field_id == field.id)
             dispatch({
                 branch: "design-ui",
                 type: "removeComponent",
@@ -953,26 +962,26 @@ const SingularTableFieldsPicker = (props) => {
                     id: componentAboutToBeRemoved.id
                 }
             })
-            
+
         } else {
             /**
              *  Add component
             */
-           
-           dispatch({
-               branch: "design-ui",
-               type: "addFormField",
-               payload: {
-                   form_id: selectedCpn.id,
-                   field
-               }
-           })
+
+            dispatch({
+                branch: "design-ui",
+                type: "addFormField",
+                payload: {
+                    form_id: selectedCpn.id,
+                    field
+                }
+            })
             newValues.push(field)
         }
         updateSelectedComponent(newValues, splittedPath)
     }
 
-    
+
 
     return (
         <div className="property" style={{ zIndex: index }}>
@@ -992,9 +1001,9 @@ const SingularTableFieldsPicker = (props) => {
                                         onClick={() => { fieldSelectOrNot(field) }}
                                     />
                                 </div>
-                                                                
+
                                 <div className="picker-label">
-                                    <span>{field.field_name}</span>
+                                    <span>{field.field_name} - {field.fomular_alias}</span>
                                 </div>
                             </div>
                         )}
@@ -1037,24 +1046,24 @@ const TableCalculateFields = (props) => {
 
     const fieldChangeName = (field, newName) => {
         const fields = currentValue;
-        const newFields = fields.map( f => {
-            if( f.id == field.id ){
-                f.display_name = newName                
+        const newFields = fields.map(f => {
+            if (f.id == field.id) {
+                f.display_name = newName
             }
-            return f 
-        } )
+            return f
+        })
 
         updateSelectedComponent(newFields, splittedPath)
     }
 
-    const fieldChangeFomular = (field, fomular ) => {
+    const fieldChangeFomular = (field, fomular) => {
         const fields = currentValue;
-        const newFields = fields.map( f => {
-            if( f.id == field.id ){
-                f.fomular = fomular                
+        const newFields = fields.map(f => {
+            if (f.id == field.id) {
+                f.fomular = fomular
             }
-            return f 
-        } )
+            return f
+        })
 
         updateSelectedComponent(newFields, splittedPath)
     }
@@ -1068,12 +1077,12 @@ const TableCalculateFields = (props) => {
         setFocusField(id)
     }
 
-    const regenerateAlias = async ( field ) => {
+    const regenerateAlias = async (field) => {
         let display_name = field.display_name;
 
-        if( !display_name || display_name.length == 0 ){
+        if (!display_name || display_name.length == 0) {
             display_name = "Trường mới"
-            fieldChangeName( field, display_name )
+            fieldChangeName(field, display_name)
         }
 
         const response = await fetch(`${proxy}/apis/make/alias`, {
@@ -1087,13 +1096,13 @@ const TableCalculateFields = (props) => {
         const data = await response.json()
         const alias = data.alias;
 
-        const newFields = currentValue.map( f => {
-            if( f.id == field.id ){
+        const newFields = currentValue.map(f => {
+            if (f.id == field.id) {
                 f.fomular_alias = alias
             }
-            return f 
-        } )
-        updateSelectedComponent( newFields, splittedPath )
+            return f
+        })
+        updateSelectedComponent(newFields, splittedPath)
     }
 
     return (
@@ -1121,7 +1130,7 @@ const TableCalculateFields = (props) => {
                                 {
                                     currentValue.map(field =>
                                         <tr className={`field-record ${isFieldFocused(field.id) && "field-focus"}`} onClick={() => { recordFocusing(field) }}>
-                                            <td className="record-prop display-name"><input type="text" onBlur={ () => { regenerateAlias(field) } } onChange={(e) => { fieldChangeName(field, e.target.value) }} value={field.display_name} /></td>
+                                            <td className="record-prop display-name"><input type="text" onBlur={() => { regenerateAlias(field) }} onChange={(e) => { fieldChangeName(field, e.target.value) }} value={field.display_name} /></td>
                                             <td className="record-prop fomular-alias"><span>{field.fomular_alias}</span></td>
                                             <td className="record-prop fomular"><input type="text" onChange={(e) => { fieldChangeFomular(field, e.target.value) }} value={field.fomular} /></td>
                                             <td className="trash">
@@ -1167,19 +1176,19 @@ const PrimaryTableOnlyBool = (props) => {
     const currentValue = getPropByPath(splittedPath, selectedCpn)
 
     const [drop, setDrop] = useState(false)
-    const [ options, setOptions ] = useState([])
+    const [options, setOptions] = useState([])
 
-    useEffect(() =>{       
+    useEffect(() => {
 
         const options = getPropByPath(data.split('.'), selectedCpn)
 
         const firstTable = currentTables[0]
-        if( firstTable ){
-            const filtedOptions  = options.filter( opt => opt.table_id == firstTable.id )            
-            const boolFields = filtedOptions.filter( opt => opt.props.DATATYPE == "BOOL" )
+        if (firstTable) {
+            const filtedOptions = options.filter(opt => opt.table_id == firstTable.id)
+            const boolFields = filtedOptions.filter(opt => opt.props.DATATYPE == "BOOL")
             setOptions(boolFields)
         }
-    }, [ JSON.stringify(currentTables), JSON.stringify(currentFields) ])
+    }, [JSON.stringify(currentTables), JSON.stringify(currentFields)])
 
 
     const formatObjectByFields = (opt) => {
@@ -1222,8 +1231,69 @@ const PrimaryTableOnlyBool = (props) => {
     }
 }
 
+const SingleFieldSelection = (props) => {
+    const {
+        path,
+        data,
 
+        label,
 
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const tablespath = data;
+
+    const splittedPath = path.split('.')
+
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const tables = getPropByPath(tablespath.split('.'), selectedCpn)
+
+    const fieldSelectOrNot = (field) => {
+        updateSelectedComponent(field, splittedPath)
+    }
+
+    return (
+        <div>
+            <div className="property">
+                { tables.length > 0 &&
+                    <div className="">
+                        <span>{label}</span>
+                    </div>
+                }
+            </div>
+            <div className="property" style={{ zIndex: index }}>
+                <div
+                    className={'fields-picker'}
+                >
+                    {tables.map(tb => <div className="table-fields-picker">
+                        <div className="fields-picker-header">
+                            <span>{tb.table_name}</span>
+                        </div>
+                        <div className="picker-field-list">
+                            {tb.fields.map(field =>
+                                <div className="field-picker">
+                                    <div className="picker-checkbox">
+                                        <input
+                                            type="checkbox" checked={currentValue.fomular_alias == field.fomular_alias}
+                                            onClick={() => { fieldSelectOrNot(field) }}
+                                        />
+                                    </div>
+
+                                    <div className="picker-label">
+                                        <span>{field.field_name} - {field.fomular_alias}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>)}
+                </div>
+            </div>
+        </div>
+    )
+}
 
 const Components = {
     "text": EntryBox,
@@ -1242,5 +1312,6 @@ const Components = {
     "singulartablefieldspicker": SingularTableFieldsPicker, // onetimeuse
     "tablecalculatefields": TableCalculateFields, // onetimeuse
     "primaryTableOnlyBool": PrimaryTableOnlyBool, // onetimeuse
+    "singleFieldSelection": SingleFieldSelection,
 }
 

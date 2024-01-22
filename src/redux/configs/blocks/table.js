@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCheckCircle, faCircleXmark, faCog, faEdit, faHome, faMagnifyingGlass, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faAdd, faArrowDown, faArrowUpRightFromSquare, faCaretDown, faCheckCircle, faCircleXmark, faCog, faDownload, faEdit, faHome, faMagnifyingGlass, faSquarePlus, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons"
 import { useEffect } from "react"
 import $ from "jquery"
 
@@ -264,8 +264,6 @@ export default (props) => {
     }
 
     const getDataInSpecificPeriod = (data) => {
-
-        console.log(calculateMaxPages())
         return data.slice(currentPage * visibility.row_per_page, (currentPage + 1) * visibility.row_per_page)
     }
 
@@ -273,13 +271,31 @@ export default (props) => {
         setCurrentPage(pageIndex)
     }
 
+    const getClassNameBasedOnRole = ( field ) => {
+        const { approve, unapprove } = buttons;
+        let className = []
+
+        const approveFieldId = approve.field.id;
+        const unapproveFieldId = unapprove.field.id;
+
+        if( approve.state && approveFieldId == field.id ){
+            className.push("approve-field")
+        }
+        if( unapprove.state && unapproveFieldId == field.id ){
+            className.push("unapprove-field")
+        }
+        return className.join('-')
+    }
+
+
+
 
     if (preview) {
         return (
-            <div className="design-zone-container" style={{ zIndex }}>
+            <div className="design-zone-container " style={{ zIndex }}>
                 {renderFrontLiner(id, parent)}
                 <div
-                    className={`design-zone table-design`}
+                    className={`design-zone table-design table-preview-state`}
                     style={{ zIndex }}
                 >
                     {source.type == "database" &&
@@ -287,25 +303,33 @@ export default (props) => {
 
                             <div className="top-utils">
                                 <div className="table-name">
-                                    <input
-                                        className={`main-input ${isActive() ? "input-active" : ""}`}
-                                        value={name}
-                                        onChange={changeTableName}
-                                        style={style}
-                                    />
+                                    <span>{name}</span>
                                 </div>
                                 {
                                     buttons.add.state &&
-                                    <div className="util" onClick={moveToAddPage}>
+                                    <div className="util icon-blue" onClick={moveToAddPage}>
                                         <FontAwesomeIcon icon={faSquarePlus} />
                                     </div>
                                 }
+                                {
+                                    buttons.export.state &&
+                                    <div className="util icon-green">
+                                        <FontAwesomeIcon icon={faDownload} />
+                                    </div>
+                                }
+                                {
+                                    buttons.import.state &&
+                                    <div className="util icon-flammel">
+                                        <FontAwesomeIcon icon={faUpload} />
+                                    </div>
+                                }
                             </div>
+                            <hr className="devider"/>
                             <table className="preview-table">
                                 <thead>
                                     <tr>
                                         {
-                                            visibility.indexing && <th>#</th>
+                                            visibility.indexing && <td>No.</td>
                                         }
                                         {source.fields?.map(field => {
                                             return <td>{field.field_name}</td>
@@ -317,12 +341,12 @@ export default (props) => {
 
                                         {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                             &&
-                                            <th>Thao tác</th>
+                                            <td>Thao tác</td>
                                         }
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    { source.search.state && <tr>
+                                    {source.search.state && <tr>
                                         {
                                             visibility.indexing && <th></th>
                                         }
@@ -357,11 +381,11 @@ export default (props) => {
                                                 &&
                                                 <td className="table-icons">
                                                     <div className="icons" onMouseUp={AddButton}>
-                                                        {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                        {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                        {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                        {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
-                                                        {buttons.unapprove.state && <div className="table-icon"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
+                                                        {buttons.detail.state && <div className="table-icon icon-1"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                        {buttons.update.state && <div className="table-icon icon-2"><FontAwesomeIcon icon={faEdit} /> </div>}
+                                                        {buttons.delete.state && <div className="table-icon icon-3"><FontAwesomeIcon icon={faTrash} /> </div>}
+                                                        {buttons.approve.state && <div className="table-icon icon-4"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
+                                                        {buttons.unapprove.state && <div className="table-icon icon-5"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
                                                         {children}
                                                     </div>
 
@@ -374,8 +398,9 @@ export default (props) => {
                         </div>
                     }
 
-                    <nav aria-label="Page navigation example" style={{ marginTop: "2em", display: "flex", justifyContent: "flex-end" }}>
-                        <ul className="pagination mb-0">
+                    <nav aria-label="Page navigation example" style={{ display: "flex", padding: 12 }}>
+                        <span className="period-display">Hiển thị {visibility.row_per_page} của {fakeData.length} kết quả. </span>
+                        <ul className="pagination ml-auto">
                             {/* Nút đến trang đầu */}
                             <li className={`page-item`} onClick={() => { movePageTo(0) }}>
                                 <button className="page-link">
@@ -391,7 +416,7 @@ export default (props) => {
                                 [...Array(buttons.navigator.visible).keys()].map(pos => {
                                     const current = 1 + currentPage + pos - Math.floor(buttons.navigator.visible / 2)
                                     if (current > 0 && current < (calculateMaxPages())) {
-                                        return (<li className={`page-item`} onClick={() => { movePageTo(currentPage + pos - Math.floor(buttons.navigator.visible / 2)) }} >
+                                        return (<li className={`page-item ${ (currentPage + 1) == current ? "navigator-active": "" }`} onClick={() => { movePageTo(currentPage + pos - Math.floor(buttons.navigator.visible / 2)) }} >
                                             <button className="page-link">
                                                 {current}
                                             </button>
@@ -442,8 +467,20 @@ export default (props) => {
                                 </div>
                                 {
                                     buttons.add.state &&
-                                    <div className="util" onClick={moveToAddPage}>
+                                    <div className="util icon-blue" onClick={moveToAddPage}>
                                         <FontAwesomeIcon icon={faSquarePlus} />
+                                    </div>
+                                }
+                                {
+                                    buttons.export.state &&
+                                    <div className="util icon-green">
+                                        <FontAwesomeIcon icon={faDownload} />
+                                    </div>
+                                }
+                                {
+                                    buttons.import.state &&
+                                    <div className="util icon-flammel">
+                                        <FontAwesomeIcon icon={faUpload} />
                                     </div>
                                 }
                             </div>
@@ -451,22 +488,22 @@ export default (props) => {
                                 <thead>
                                     <tr>
                                         {
-                                            visibility.indexing && <th>#</th>
+                                            visibility.indexing && <td>No.</td>
                                         }
                                         {source.fields?.map(field => {
-                                            return <td>{field.field_name}</td>
+                                            return <td  className={ getClassNameBasedOnRole( field ) }>{field.field_name}</td>
                                         })}
                                         {source.calculates?.map(field => {
                                             return <td>{field.display_name}</td>
                                         })}
                                         {(buttons.detail.state || buttons.update.state || buttons.delete.state || buttons.approve.state || buttons.unapprove.state || source.search.state)
                                             &&
-                                            <th>Thao tác</th>
+                                            <td>Thao tác</td>
                                         }
                                     </tr>
                                 </thead>
                                 <tbody>
-                                { source.search.state && <tr>
+                                    {source.search.state && <tr>
                                         {
                                             visibility.indexing && <th></th>
                                         }
@@ -484,7 +521,7 @@ export default (props) => {
                                                 </div>
                                             </td>
                                         }
-                                    </tr> }
+                                    </tr>}
                                     <tr>
                                         {
                                             visibility.indexing && <td>1</td>
@@ -500,11 +537,11 @@ export default (props) => {
                                             &&
                                             <td className="table-icons">
                                                 <div className="icons" onMouseUp={AddButton}>
-                                                    {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                    {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                    {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                    {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
-                                                    {buttons.unapprove.state && <div className="table-icon"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
+                                                    {buttons.detail.state && <div className="table-icon icon-1"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                    {buttons.update.state && <div className="table-icon icon-2"><FontAwesomeIcon icon={faEdit} /> </div>}
+                                                    {buttons.delete.state && <div className="table-icon icon-3"><FontAwesomeIcon icon={faTrash} /> </div>}
+                                                    {buttons.approve.state && <div className="table-icon icon-4"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
+                                                    {buttons.unapprove.state && <div className="table-icon icon-5"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
                                                     {children}
                                                 </div>
 
@@ -516,8 +553,9 @@ export default (props) => {
                         </div>
                     }
 
-                    <nav aria-label="Page navigation example" style={{ marginTop: "2em", display: "flex", justifyContent: "flex-end" }}>
-                        <ul className="pagination mb-0">
+                    <nav aria-label="Page navigation example" style={{ display: "flex" , padding: 12}}>
+                        <span className="period-display">Hiển thị {visibility.row_per_page} của {fakeData.length} kết quả. </span>
+                        <ul className="pagination ml-auto">
                             {/* Nút đến trang đầu */}
                             <li className={`page-item`} >
                                 <button className="page-link">

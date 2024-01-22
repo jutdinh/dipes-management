@@ -236,6 +236,36 @@ const table =  [
 
     { 
         id: getFormatedUUID(), 
+        label: lang["props.table.buttons.import"],
+        type: "bool",
+        path: "props.buttons.import.state",
+        if_true: {
+            value: true,
+            label: lang["props.table.show"]
+        },
+        if_false: {
+            value: false,
+            label: lang["props.table.hide"]
+        }
+    },
+
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.table.buttons.export"],
+        type: "bool",
+        path: "props.buttons.export.state",
+        if_true: {
+            value: true,
+            label: lang["props.table.show"]
+        },
+        if_false: {
+            value: false,
+            label: lang["props.table.hide"]
+        }
+    },
+
+    { 
+        id: getFormatedUUID(), 
         label: lang["props.table.buttons.search"],
         type: "bool",
         path: "props.source.search.state",

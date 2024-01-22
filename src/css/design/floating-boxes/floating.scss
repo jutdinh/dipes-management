@@ -145,6 +145,7 @@
                     font-size: 1.5em;
                     border-radius: inherit;
                     cursor: pointer;
+                    color: #000 !important;
 
                     &:hover {
                         transform: scale(1.2);
@@ -240,6 +241,7 @@
 
             .config-container{                
                 flex-grow: 1;
+                width: calc(100% - 150px);
                 
                 
                 .scrollable-box{

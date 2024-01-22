@@ -518,7 +518,7 @@ const addComponent = (state, action) => {
 
         const { initialStates, page, floating, functions } = state;
         const newBlock = functions.fillIDToBlockAndChildren(JSON.parse(JSON.stringify(initialStates[block])))
-
+        
         floating.block = undefined
 
 

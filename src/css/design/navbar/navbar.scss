@@ -264,6 +264,7 @@
                     .label-box {
                         padding: 0.25em;
                         width: 40%;
+                        color: #333;
                     }
 
                     .input-box {
@@ -301,7 +302,17 @@
                     .drop-box {
 
                         flex-grow: 1;
-                        position: relative;                        
+                        position: relative;
+                        
+                        .true{
+                            background: #00b548;
+                            color: #fff;
+                        }
+
+                        .false{
+                            background: #ff310c;
+                            color: #fff;
+                        }
 
                         .content-container {
                             width: 100%;
@@ -318,6 +329,7 @@
                             position: absolute;
                             top: 0.5em;
                             right: 0.5em;
+                            color: white;
                         }
 
                         .options-container {
@@ -706,6 +718,72 @@
 
                     &:hover {
                         background-color: #ccc;
+                    }
+                }
+
+                .page {
+                    &:hover {
+                        box-shadow: unset
+                    }
+                }
+            }
+        }
+    }
+}
+
+.nav-preview{
+
+    background-color: #274452;
+    
+    
+    .pages {
+
+        .add-icon{
+            box-shadow: none;
+        }
+
+
+        .pages-container {
+        
+            color: #fff;
+            margin-top: 1em;
+            padding-bottom: 56px;
+
+            .page-active {
+                color: #fff;
+                background: #000;
+            }
+
+            .page {
+                display: flex;
+                flex-wrap: nowrap;
+
+                width: 100%;
+                position: relative;
+                // margin-top: 1em;
+                padding: 0em 0.5em;
+            }
+
+            .child-pages {
+                width: 100%;
+                padding-left: 2em;
+
+            }
+
+            .page-front,
+            .page-behind {
+                pointer-events: none;
+                background-color: #274452;
+            }
+
+            .page-container-active {
+
+                .page-front,
+                .page-behind {
+                    background-color: #274452;
+
+                    &:hover {
+                        background-color: #274452;
                     }
                 }
 

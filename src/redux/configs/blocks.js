@@ -8,6 +8,7 @@ const blockTypes = {
     button: "button",
     datetime: "datetime",
     apiCombo: "apiCombo",
+    chart_1: "chart_1",
 }
 
 
@@ -184,6 +185,41 @@ const initialStates = {
 
         ],
         "props": {
+            "content": "Sample Text",
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
+
+    "chart_1": {
+        "name": "chart_1",
+        "children": [
+
+        ],
+        "props": {
+            
+            tables: [],
+            field: {
+                id: "",
+                fomular_alias: "",                
+            },           
+
+            api: {
+                api_id: "",
+                api_name: "",
+                url: "" 
+            },
+
+            fomular: "",
+            
+            criterias: "",
+
+            group_by: [
+                
+            ],
+
             "content": "Sample Text",
             "style": {
                 ...defaultStylesheet         

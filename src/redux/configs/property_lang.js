@@ -113,6 +113,8 @@ const vi = {
 
 
         "props.table.buttons.add": "Nút thêm",
+        "props.table.buttons.import": "Nút import",
+        "props.table.buttons.export": "Nút export",
         "props.table.buttons.search": "Tìm kiếm",
         "props.table.buttons.update": "Nút cập nhật",                
         "props.table.buttons.delete": "Nút xóa",                
@@ -131,8 +133,14 @@ const vi = {
 
         "props.variable_name": "Tên biến",
 
+    /**
+     * Char
+     */
 
-
+        "props.fomular": "Phép toán",
+        "props.groupby": "Nhóm bởi (các) trường",
+        "props.choosestatisfield": "Chọn trường thống kê",
+        "props.criterias": "Điều kiện lọc",
     /**
      * FUNNZIONOL SECZION 
      */

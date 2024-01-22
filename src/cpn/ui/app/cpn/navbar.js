@@ -62,7 +62,7 @@ export default () => {
     //     )
     // }
     return(
-        <div className="app-navbar" style={preview ? { top: "0", height: "100%" }: {}}>            
+        <div className={`app-navbar ${ preview ? "nav-preview": "" }`} style={preview ? { top: "64px", height: "100%" }: {}}>            
                 <Pages />
             </div>
     )

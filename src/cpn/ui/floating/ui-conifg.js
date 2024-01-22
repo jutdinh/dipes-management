@@ -4,13 +4,16 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 
-export default () => {
+export default (props) => {
+
+    const { pageSettingTrigger } = props
 
     const { pages, proxy } = useSelector(state => state)
     const dispatch = useDispatch()
 
     const { version_id } = useParams()
-    const _token = localStorage.getItem("_token")
+    const token = localStorage.getItem("_token")
+    
     const saveUI = () => {    
         
         const validPages = pages.filter( p => !p.is_hidden )
@@ -19,14 +22,65 @@ export default () => {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                "Authorization": _token
+                "Authorization": token
             },
-            body: JSON.stringify({ version_id, ui: pages })
+            body: JSON.stringify({ version_id, ui: validPages })
+        }).then(res => res.json()).then((res) => {
+            pageSettingTrigger()
         })
         dispatch({
             branch: "design-ui",
             type: "saveCache"
         })
+    }
+
+    const syncData = () => {
+        fetch(`${ proxy }/uis/${ version_id }/savedui`, {
+            headers: {
+                "Authorization": token
+            },            
+        }).then((res) => res.json()).then(res => {
+            const { ui } = res.data;
+            const { last_modified_by, last_modified_at, pages } = ui
+            
+            dispatch({
+                branch: "design-ui",
+                type: "initState",
+                payload: {
+                    pages
+                }
+            })
+        })
+
+
+        fetch(`${ proxy }/apis/v/${ version_id }`, {
+            headers: {
+                "Authorization": token
+            }
+        }).then( res => res.json() ).then( res => {
+            const { apis } = res.data;
+            dispatch({
+                branch: "default",
+                type: "setAPIList",
+                payload: { apis }
+            })
+        })
+
+        fetch(`${ proxy }/db/tables/v/${ version_id }/tables/fields`, {
+            headers: {
+                "Authorization": token
+            }
+        }).then( res => res.json() ).then( res => {
+            const { tables, fields } = res.data;            
+            
+            dispatch({
+                branch: "default",
+                type: "setDatabase",
+                payload: { tables, fields }
+            })
+
+        })
+        pageSettingTrigger()
     }
 
     const sectionSaveUi = () => {
@@ -47,7 +101,17 @@ export default () => {
 
     const sectionSyncDatabaseAndAPI = () => {
         return (
-            <>Sync Data</>
+            <div className="sync-data">
+                <div className="config-title">
+                    <span>Đồng bộ dữ liệu</span>
+                </div>
+                <div>
+                    <p>Đồng bộ dữ liệu từ các config mới vừa được thay đổi ở module khác có liên quan như API, Database ... </p>
+                </div>
+                <div className="buttons">
+                    <button className="primary" onClick={ syncData }>Đồng bộ</button>
+                </div>
+            </div>
         )
     }
 

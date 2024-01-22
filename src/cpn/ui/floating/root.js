@@ -34,7 +34,7 @@ export default () => {
                 return <DesignBlock />
             
             case "uiConfig":
-                return <UiConifg />
+                return <UiConifg pageSettingTrigger={ pageSettingTrigger }/>
             
             default:
                 return <></>
