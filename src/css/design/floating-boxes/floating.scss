@@ -279,4 +279,222 @@
             }
         }
     }
+
+    .page-config {
+        width: 720px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 360px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                // text-align: center;
+                // font-weight: bold;
+                padding: 1em 0;
+                color: #000;
+                font-size: 24px;
+            }
+        }
+
+        .configs-container {
+            flex-grow: 1;
+            
+            border: 1px solid #ccc;
+            border-radius: 12px;            
+            
+            display: flex;
+            flex-wrap: nowrap;
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .sections{                
+                width: 150px;                
+                border-right: 1px solid #ccc;
+                padding-top: 12px;
+                font-size: 12px;
+
+                .section{
+                    padding: 8px 4px;
+                    cursor: pointer;
+
+                    &:hover{
+                        background: #fafafa;
+                        color: #000
+                    }
+                }
+
+                .section-active{
+                    background: #000;
+                    color: #fff;
+                }
+            }
+
+            .config-container{                
+                flex-grow: 1;
+                width: calc(100% - 150px);
+                max-height: 418px;               
+                
+                .scrollable-box{
+                    display: block;
+                    height: 100%;
+                    overflow: auto;
+                    padding: 12px;
+
+                  
+
+                    
+                    .config-title{
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #000;
+                    }
+
+                    .property{
+                        display: block;
+                        margin-top: 1em;
+                    }
+
+                    .text-property{
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        
+
+                        .label{                            
+                            width: 30%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+                            padding-right: 2em;                            
+                        }
+
+                        .input-text {
+                            width: 70%;
+                            input{
+                                border: none;
+                                border-bottom: 1px solid #ccc;
+                                color: #000;
+                                padding: 0.5em 0;
+                                display: block;
+                                width: 100%;
+                            }
+                        }
+                    }
+
+                    .checkbox-property{
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        
+
+                        .label{                            
+                            width: 30%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+                            padding-right: 2em;                            
+                        }
+
+                        .checkboxes{
+                            display: flex;
+                            flex-wrap: nowrap;
+                            width: 70%;                            
+
+                            .checkbox-contain{
+                                display: flex;
+                                
+                                width: 50%;
+                                .checkbox{
+                                    margin-right: 12px;
+                                }
+                                .checkbox-label{
+                                    
+                                }
+                            }
+                        }
+                    }
+
+
+                    .fields-picker {
+                        width: 100%;
+                        display: flex;
+                        flex-wrap: wrap;                        
+                        
+                        .table-fields-picker {
+                            width: 250px;                        
+                            border: 1px solid #ccc;                       
+                            margin: 12px 6px;
+
+                            border-radius: 4px;
+
+                            &:nth-child(2n + 1){
+                                margin-left: 0;
+                            }
+                        }
+    
+                        .fields-picker-header {
+                            padding: 8px 6px;
+                            border-bottom: 1px solid #ccc;
+                            font-weight: bold;
+                            text-align: left;
+                            display: flex;
+    
+                            .add-icon{
+                                margin-left: auto;
+                                cursor: pointer;
+                            }
+                        }
+    
+                        .picker-field-list{
+                            padding: 8px 6px;
+                        }
+    
+                        .field-picker {
+                            display: flex;
+                            flex-wrap: nowrap;
+    
+                            .picker-checkbox{
+                                width: 32px;
+                                input{
+                                    transform: scale(1.1);
+                                }
+                            }
+                            .picker-label{
+                                margin-left: 2em;
+                            }
+                        }
+                    }
+
+
+
+
+
+                    .config-content{
+                        margin-top: 12px;
+                    }
+
+                    .buttons{
+                        display: flex;
+
+                        .primary{
+                            border: none;
+                            outline: none;
+                            border-radius: 6px;
+                            background: #0051ff;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 6px 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

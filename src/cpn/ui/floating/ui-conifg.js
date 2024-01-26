@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { useParams } from 'react-router-dom'
 
@@ -105,7 +105,7 @@ export default (props) => {
                 <div className="config-title">
                     <span>Đồng bộ dữ liệu</span>
                 </div>
-                <div>
+                <div className="config-content">
                     <p>Đồng bộ dữ liệu từ các config mới vừa được thay đổi ở module khác có liên quan như API, Database ... </p>
                 </div>
                 <div className="buttons">

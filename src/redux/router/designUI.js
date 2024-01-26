@@ -19,6 +19,14 @@ export default (state, action) => {
         case "updatePageName":
             return updatePageName(state, action);
             break;
+        
+        case "updatePageParams":
+            return updatePageParams(state, action);
+            break;
+
+        case "updatePageVisibility":
+            return updatePageVisibility( state, action )
+            break;
 
         case "createChildPage":
             return createChildPage(state, action);
@@ -202,6 +210,8 @@ const createPage = (state, action) => {
      *      - icon: Icon đại diện của trang, icon này sẽ xuất hiện trước tên trang trên thanh sidebar
      *      - children: Danh sách trang con, các trang con cũng là những đối tượng page
      *      - component: Danh sách component cấu thành nên trang
+     *      - hasParams: Trang này có các đối số trên URL hay không
+     *      - params: Danh sách đối số, kiểu dữ liệu bth của trường và là những trường có dữ liệu không phải tệp
      * 
      */
 
@@ -215,11 +225,14 @@ const createPage = (state, action) => {
         is_hidden: false,
         icon: DEFAULT_PAGE_ICON,
         children: [],
-        component: []
+        component: [],                
+        hasParam: false,
+        params: []
     }
 
-
+    
     state.pages.push(newPage)
+    state.page = newPage
 
     return { ...state }
 }
@@ -255,6 +268,39 @@ const updatePageName = (state, action) => {
 }
 
 
+const updatePageParams = (state, action) => {
+
+    /**
+     * desc: Cập nhật trang đang được chọn với danh sách params mới
+     */
+
+    const { pages, cache } = state;
+    const path = findPage(pages, cache.page.page_id)
+    const page = getDataByPath(pages, path)
+
+    page.params = action.payload.params
+    const newPages = changeDataByPath(pages, page, path)
+
+    return { ...state, pages: newPages }
+}
+
+
+const updatePageVisibility = ( state, action ) => {
+    /**
+     * desc: Ẩn / hiện trang đang được chọn 
+     */
+
+    const { pages, cache } = state;
+    const path = findPage(pages, cache.page.page_id)
+    const page = getDataByPath(pages, path)
+
+    page.is_hidden = action.payload.is_hidden
+    const newPages = changeDataByPath(pages, page, path)
+
+    return { ...state, pages: newPages }
+}
+
+
 const createChildPage = (state, action) => {
 
     /**
@@ -272,7 +318,9 @@ const createChildPage = (state, action) => {
         is_hidden: false,
         icon: DEFAULT_PAGE_ICON,
         children: [],
-        component: []
+        component: [],
+        hasParam: false,
+        params: []
     }
 
     const path = findPage(pages, cache.page.page_id)
@@ -280,7 +328,7 @@ const createChildPage = (state, action) => {
 
     page.children.push(newChildPage)
     const newPages = changeDataByPath(pages, page, path)
-
+    state.page = newChildPage
     return { ...state, pages: newPages }
 }
 
@@ -457,6 +505,8 @@ const pageChangeIcon = (state, action) => {
 const pageSelect = (state, action) => {
     /**
      * DESC: Đặt page thành page đang được edit và lưu thay đổi của page cũ vào danh sách đợi
+     * 
+     *      Và, đặt selectedCpn về [] để tránh trường hợp trang đã đi rồi mà cồm-pô-nần vẫn còn ở lại
      */
 
     const { page } = action.payload;
@@ -468,6 +518,11 @@ const pageSelect = (state, action) => {
         state.pages = changeDataByPath(pages, { component: currentPage.component }, currentPath)
     }
     state.page = page;
+    state.selectedCpn = []
+    state.propertySet = []
+    
+    state.cache.activeComponent = ""
+
     return { ...state }
 }
 
@@ -513,6 +568,7 @@ const addComponent = (state, action) => {
      */
 
     const { block } = action.payload;
+    console.log(block)
 
     if (block) {
 
@@ -626,6 +682,9 @@ const setActiveComponent = (state, action) => {
         state.propertySet = propertySet ? propertySet : []
         state.selectedCpn = component;
         state.selectedCpns = activeCpns;
+    }else{
+        state.selectedCpn = []
+        state.propertySet = []
     }
 
     // set property set to state

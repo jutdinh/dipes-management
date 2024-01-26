@@ -48,6 +48,17 @@ export default () => {
                 value: page
             }
         })
+
+
+        if( page.children.length == 0 ){
+            dispatch({
+                branch: "design-ui",
+                type: "pageSelect",
+                payload: {
+                    page                    
+                }
+            })
+        }
     }
 
     

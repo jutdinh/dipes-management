@@ -99,8 +99,8 @@ const chart_1 =  [
             },
             
             {
-                label: "AVG",
-                value: "AVG"
+                label: "AVERAGE",
+                value: "AVERAGE"
             },    
             
             {

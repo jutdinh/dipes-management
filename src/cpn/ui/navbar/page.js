@@ -12,6 +12,7 @@ export default (props) => {
     const { page, pageSettingTrigger } = props
 
     const currentPage = useSelector( state => state.page )
+    const currentConfigPage = useSelector( state => state.cache.page )
 
     const MouseDownTrigger = () => {
         
@@ -44,6 +45,14 @@ export default (props) => {
         })
     }
 
+    const findNearestBlanChild = ( pages ) => {
+        if( pages && pages[0] && pages[0].children.length > 0 ){
+            return findNearestBlanChild( pages[0].children )
+        }else{
+            return pages[0]
+        }
+    }
+
     const ClickTrigger = () => {
 
         const { children } = page 
@@ -51,13 +60,16 @@ export default (props) => {
 
         if( children && children.length > 0 ){
 
+
+
             dispatch({
                 branch: "design-ui",
                 type: "pageSelected",
                 payload: {
-                    page: children[0]
+                    page: findNearestBlanChild(children)
                 }
             })
+            
         }else{
 
             dispatch({
@@ -65,6 +77,15 @@ export default (props) => {
                 type: "pageSelected",
                 payload: {
                     page
+                }
+            })
+
+            dispatch({
+                branch: "floating-boxes",
+                type: "setCache",
+                payload: {
+                    name: "page",
+                    value: page
                 }
             })
         }
@@ -114,7 +135,7 @@ export default (props) => {
         return (
             <div className={isDragging ? "page-container-active" : "page-container"}>
                 <span className="page-front" onMouseUp={FrontMouseUpTrigger}/>
-                <div className={`page ${ page.page_id == currentPage?.page_id ? "page-active": "" }`} key={page.page_id} onMouseDown={MouseDownTrigger} onClick={ ClickTrigger }>
+                <div className={`page ${ page.page_id == currentConfigPage?.page_id ? "page-in-config": "" }  ${ page.page_id == currentPage?.page_id ? "page-active": "" }`} key={page.page_id} onMouseDown={MouseDownTrigger} onClick={ ClickTrigger }>
                     <div className="icon-ne icon-center"><FontAwesomeIcon icon={ renderIcon() } /></div>
                     <div className="name">
                         <span>{page.is_hidden ? rerenderPageName() : page.page_title}</span>

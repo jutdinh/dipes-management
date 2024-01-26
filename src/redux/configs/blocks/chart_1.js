@@ -69,7 +69,9 @@ export default (props) => {
     options: {
       chart: {
         height: 350,
-        type: 'bar',
+        type: "bar",
+        fontFamily: "UTM Avo",
+        
         toolbar: {
           show: false
         },
@@ -82,20 +84,31 @@ export default (props) => {
       colors: [],
       plotOptions: {
         bar: {
-          columnWidth: '32px',
+          horizontal: true,
+          columnWidth: '12px',
+          barHeight: "24px",
           distributed: true,
+          
         }
       },
       dataLabels: {
-        enabled: false
+        enabled: false,        
       },
+
+      title: {
+        style: {
+          fontSize: "32px",
+        }
+      },
+
       legend: {
         show: true
       },
+     
       xaxis: {
         categories: [
-          ['Tiêu chí 1', ''],
-          ['Tiếu chí 2', ''],
+          'Tiêu chí 1',
+          'Tiếu chí 2',
 
         ],
         labels: {
@@ -104,27 +117,36 @@ export default (props) => {
             fontSize: '12px'
           }
         }
-      }
+      },      
     },
   };
 
-
-  return (
-    <div className="design-zone-container" style={{ zIndex }}>
-      {renderFrontLiner(id, parent)}
-      <div
-        className={`design-zone text-design ${isActive() ? "design-zone-active" : ""}`}
-        onClick={SwitchingState} onMouseEnter={ComponentHover}
-        style={{ zIndex }}
-      >
-
-        <div id="chart">
-          <Chart options={state.options} series={state.series} type="bar" height={350} />
-        </div>
-        <div id="html-dist"></div>
-
+  if( preview ){
+    return (
+      <div>
+        <Chart options={state.options} series={state.series} type="bar" height={350} />
       </div>
-      {renderBackLiner(id, parent)}
-    </div>
-  )
+      
+    )
+  }else{
+
+    return (
+      <div className="design-zone-container" style={{ zIndex }}>
+        {renderFrontLiner(id, parent)}
+        <div
+          className={`design-zone chart-design ${isActive() ? "design-zone-active" : ""}`}
+          onClick={SwitchingState} onMouseEnter={ComponentHover}
+          style={{ zIndex }}
+        >
+  
+          <div id="chart">
+            <Chart options={state.options} series={state.series} type="bar" height={350} />
+          </div>
+          <div id="html-dist"></div>
+  
+        </div>
+        {renderBackLiner(id, parent)}
+      </div>
+    )
+  }
 }

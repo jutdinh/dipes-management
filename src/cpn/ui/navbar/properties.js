@@ -159,43 +159,13 @@ export default () => {
                     return null
                 }
             })}
-            {
+            {/* {
                 selectedCpn.id && <UnlinkComponent selectedCpn={selectedCpn} />
-            }
+            } */}
         </div>
     )
 }
 
-const UnlinkComponent = (props) => {
-
-    const dispatch = useDispatch()
-
-    const {
-        selectedCpn,
-    } = props
-
-    const removeComponent = (id) => {
-        dispatch({
-            branch: "design-ui",
-            type: "removeComponent",
-            payload: {
-                id: selectedCpn.id
-            }
-        })
-    }
-
-
-    return (
-        <div className="property">
-            <div
-                className={`iconic-switch icon-trash`}
-                onClick={() => { removeComponent() }}
-            >
-                <FontAwesomeIcon icon={faTrash} />
-            </div>
-        </div>
-    )
-}
 
 const flatteningComponents = (components) => {
     const cpns = []
@@ -732,13 +702,16 @@ const SelfSelection = (props) => {
     }
 }
 
+
+
+
 const SelectTables = (props) => {
     const {
         label,
         path,
         fieldsPath,
 
-
+        namePath,
         getPropByPath,
         updateSelectedComponent,
         selectedCpn,
@@ -746,11 +719,31 @@ const SelectTables = (props) => {
     } = props
 
     const localTables = useSelector(state => state.tables)
-    const [tables, setTables] = useState(localTables)
+    const [tables, setTables] = useState(localTables) // ủa gì dị
     const [drop, setDrop] = useState(false)
     const splittedPath = path.split('.')
     const selectedTables = getPropByPath(splittedPath, selectedCpn);
 
+    useEffect(() => {
+
+        if (selectedTables.length > 0) {
+            const foreignKeys = []
+            for (let i = 0; i < selectedTables.length; i++) {
+                foreignKeys.push(...selectedTables[i].foreign_keys)
+            }
+            const validTablesId = foreignKeys.map(key => key.table_id)
+            const validTables = localTables.filter(tb => validTablesId.indexOf(tb.id) != -1)
+            const selectedTablesId = selectedTables.map(tb => tb.id)
+
+            const finalTables = validTables.filter(tb => {
+                return selectedTablesId.indexOf(tb.id) == -1
+            })
+
+            setTables(finalTables)
+        } else {
+            setTables(localTables)
+        }
+    }, [selectedTables])
 
 
     const tableSelect = (table) => {
@@ -770,6 +763,13 @@ const SelectTables = (props) => {
             setTables(finalTables)
         } else {
             setTables(localTables)
+        }
+
+        if (newTables.length == 1) {
+            const { table_name } = newTables[0]
+            if (namePath) {
+                updateSelectedComponent(table_name, namePath.split('.'))
+            }
         }
 
         updateSelectedComponent([...selectedTables, table], splittedPath)
@@ -878,12 +878,12 @@ const TableFieldsPicker = (props) => {
     return (
         <div>
             <div className="property">
-                    { tables.length > 0 &&
-                        <div className="">
-                            <span>{label}</span>
-                        </div>
-                    }
-                </div>
+                {tables.length > 0 &&
+                    <div className="">
+                        <span>{label}</span>
+                    </div>
+                }
+            </div>
             <div className="property" style={{ zIndex: index }}>
                 <div
                     className={'fields-picker'}
@@ -1041,6 +1041,7 @@ const TableCalculateFields = (props) => {
             fomular_alias: "",
             fomula: ""
         }
+
         updateSelectedComponent([...currentValue, newCalculate], splittedPath)
     }
 
@@ -1105,6 +1106,16 @@ const TableCalculateFields = (props) => {
         updateSelectedComponent(newFields, splittedPath)
     }
 
+    const removeField = (field) => {
+
+        const fields = currentValue;
+        const newFields = fields.filter(f => {
+            return f.id != field.id
+        })
+
+        updateSelectedComponent(newFields, splittedPath)
+    }
+
     return (
         <div className="property" style={{ zIndex: index }}>
             <div
@@ -1133,7 +1144,7 @@ const TableCalculateFields = (props) => {
                                             <td className="record-prop display-name"><input type="text" onBlur={() => { regenerateAlias(field) }} onChange={(e) => { fieldChangeName(field, e.target.value) }} value={field.display_name} /></td>
                                             <td className="record-prop fomular-alias"><span>{field.fomular_alias}</span></td>
                                             <td className="record-prop fomular"><input type="text" onChange={(e) => { fieldChangeFomular(field, e.target.value) }} value={field.fomular} /></td>
-                                            <td className="trash">
+                                            <td className="trash" onClick={() => { removeField(field) }}>
                                                 {isFieldFocused(field.id) && <FontAwesomeIcon icon={faTrash} />}
                                             </td>
                                         </tr>
@@ -1258,7 +1269,7 @@ const SingleFieldSelection = (props) => {
     return (
         <div>
             <div className="property">
-                { tables.length > 0 &&
+                {tables.length > 0 &&
                     <div className="">
                         <span>{label}</span>
                     </div>
@@ -1295,6 +1306,225 @@ const SingleFieldSelection = (props) => {
     )
 }
 
+const SelectParams = (props) => {
+    const { page } = useSelector(state => state)
+    const { params } = page
+
+    const {
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index,
+
+        label,
+        type,
+        path,
+        tablespath,
+
+    } = props
+
+
+    const tables = getPropByPath(tablespath.split('.'), selectedCpn)
+    const fields = []
+    tables.map(tb => {
+        fields.push(...tb.fields)
+    })
+
+    const validParams = params.filter(param => {
+        const isParamSelected = fields.find(f => f.fomular_alias == param.fomular_alias)
+        return isParamSelected
+    })
+
+    const currentValue = getPropByPath(path.split('.'), selectedCpn)
+
+    const isFieldPicked = (field) => {
+        const selected = currentValue.find(f => f.fomular_alias == field.fomular_alias)
+        return selected ? true : false
+    }
+
+
+    const fieldSelectOrNot = (field) => {
+        const isPicked = isFieldPicked(field)
+
+        if (isPicked) {
+            const newParamsSet = currentValue.filter(p => p.fomular_alias != field.fomular_alias)
+            updateSelectedComponent(newParamsSet, path.split('.'))
+        } else {
+            updateSelectedComponent([...currentValue, field], path.split('.'))
+        }
+    }
+
+    return (
+        <div>
+            <div className="property">
+                <div className="">
+                    <span>{label}</span>
+                </div>
+
+            </div>
+            <div className="property" style={{ zIndex: index }}>
+                <div
+                    className={'fields-picker'}
+                >
+                    <div className="table-fields-picker">
+                        <div className="picker-field-list">
+                            {validParams.map(field =>
+                                <div className="field-picker">
+                                    <div className="picker-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={isFieldPicked(field)}
+                                            onClick={() => { fieldSelectOrNot(field) }}
+                                        />
+                                    </div>
+
+                                    <div className="picker-label">
+                                        <span>{field.field_name} - {field.fomular_alias}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
+
+
+const SelectPage = (props) => {
+    const {
+        index,
+        label,
+        path,
+        fields,
+        childOf,
+        areParentActive,
+        display_value,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn
+    } = props
+
+    const { pages } = useSelector(state => state)
+
+
+    const flatteningPages = (pages) => {
+
+        /**
+         * Ép dẹp cây component thành mảng các component cùng cấp
+         */
+
+        const cpns = []
+        for (let i = 0; i < pages.length; i++) {
+            const { children } = pages[i]
+            cpns.push({ ...pages[i] })
+            if (children) {
+                cpns.push(...flatteningPages(children))
+            }
+        }
+        return cpns
+    }
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const [drop, setDrop] = useState(false)
+
+    const options = flatteningPages(pages)
+
+    const formatObjectByFields = (opt) => {
+        const clone = {}
+        for (let i = 0; i < fields.length; i++) {
+            const { from, to } = fields[i]
+            clone[to] = opt[from]
+        }
+        console.log(clone)
+        return clone
+    }
+    if (areParentActive(childOf)) {
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_value]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => { updateSelectedComponent(formatObjectByFields(opt), splittedPath); setDrop(false) }}>
+                                    <span>{opt[display_value]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+
+const ShowParams = (props) => {
+    const {
+        path,
+        label,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+
+    const params = getPropByPath( path.split('.'), selectedCpn )
+
+    return (
+        <div className="property" style={{ zIndex: index }}>
+            <div className="label-box">
+                <span>{label}</span>
+            </div>
+
+            <div className="params-list">
+                { params.map((p, index) => <div className="param-record">
+                    <span>{ index + 1 }. { p.field_name } - { p.fomular_alias }</span>
+                </div> ) }
+            </div>
+            
+        </div>
+    )
+
+}
+
+const ChooseSlave = ( props ) => {
+    const {
+        type,
+        path,
+        master,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+
+    console.log(selectedCpn.parent_id)
+    return
+}
+
+
 const Components = {
     "text": EntryBox,
     "number": NumberBox,
@@ -1313,5 +1543,9 @@ const Components = {
     "tablecalculatefields": TableCalculateFields, // onetimeuse
     "primaryTableOnlyBool": PrimaryTableOnlyBool, // onetimeuse
     "singleFieldSelection": SingleFieldSelection,
+    "selectParams": SelectParams,
+    "selectPage": SelectPage,
+    "showParams": ShowParams, // onetimeuse
+    "chooseSlave": ChooseSlave,
 }
 

@@ -8,7 +8,9 @@ import Block from './block'
 import Datetime from './datetime';
 import ApiCombo from './apiCombobox';
 import Chart_1 from './chart_1';
-
+import TableParam from './table_param'
+import ReDirectButton from './redirect_button';
+import TableExportButton from './table_export_button';
 
 
 const exporter = {
@@ -21,7 +23,10 @@ const exporter = {
     "button": Button,
     "datetime": Datetime,
     "apiCombo": ApiCombo,
-    "chart_1": Chart_1
+    "chart_1": Chart_1,
+    "table_param": TableParam,
+    "redirect_button": ReDirectButton,
+    "table_export_button": TableExportButton
 }
 
 export default exporter

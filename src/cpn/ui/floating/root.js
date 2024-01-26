@@ -6,6 +6,7 @@ import PageModify from './page-modify'
 import PageChangeIcon from './page-change-icon';
 import DesignBlock from "./design-block";
 import UiConifg from "./ui-conifg";
+import PageConfig from "./page-config";
 
 export default () => {
     const { floating } = useSelector( state => state )
@@ -36,6 +37,9 @@ export default () => {
             case "uiConfig":
                 return <UiConifg pageSettingTrigger={ pageSettingTrigger }/>
             
+            case "pageConfig":
+                return <PageConfig pageSettingTrigger={ pageSettingTrigger }/>
+
             default:
                 return <></>
         }

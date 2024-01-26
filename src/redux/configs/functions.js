@@ -265,6 +265,20 @@ const fillIDToBlockAndChildren = ( block ) => {
     return block
 }
 
+const makePageURL = (page) => {
+    const { page_id, params } = page;
+
+    if( params ){
+        const names = params.map( p => removeVietnameseTones(p.field_name) )
+    
+        return `/page/${ page_id }/:${ names.join('/:') }`
+
+    }else{
+        return `/page/${ page_id }`
+    }
+   
+}
+
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
     showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate, toggleFullScreen,
@@ -273,5 +287,7 @@ export default {
     minimizeFloatingBG,
     restoreFloatingBG,
     getComponentByName,
-    fillIDToBlockAndChildren
+    fillIDToBlockAndChildren,
+
+    makePageURL
 }

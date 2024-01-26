@@ -47,6 +47,8 @@
                 display: flex;
                 justify-items: center;
                 align-items: center;
+                font-size: 16px;
+                transform: scale(1.2);
 
                 &:hover {
                     background-color: #ccc;
@@ -304,14 +306,15 @@
                         flex-grow: 1;
                         position: relative;
                         
+                        
                         .true{
-                            background: #00b548;
-                            color: #fff;
+                            background: #ddffeb;
+                            color: #000;
                         }
 
                         .false{
-                            background: #ff310c;
-                            color: #fff;
+                            background: #ffd6cf;
+                            color: #000;
                         }
 
                         .content-container {
@@ -337,9 +340,8 @@
                             width: 100%;
 
                             padding: unset;
-
+                            
                             .options {
-
                                 background-color: #fff;
                                 border: 1px solid #ccc;
                                 width: 100%;
@@ -348,6 +350,8 @@
                                 left: 0;
                                 max-height: 200px;
                                 overflow-y: scroll;
+                                
+                                box-shadow: 2px 2px 6px 0px #ccc;
 
                                 .option {
                                     padding: 0.5em;
@@ -363,7 +367,7 @@
                                     border-radius: unset;
 
                                     &:hover {
-                                        background-color: #ccc;
+                                        background-color: #ddd;
                                     }
                                 }
 
@@ -406,7 +410,7 @@
                     .switch-activated {
                         color: #fff;
                         background: #000;
-                        border-radius: 8px;
+                        // border-radius: 8px;
                     }
 
                 }
@@ -434,7 +438,7 @@
                             width: 15px;
                             height: 15px;
                             border: 1px solid #ccc;
-                            background-color: #000;
+                            background-color: #f00;
                             color: #fff;
                         }
                     }
@@ -570,12 +574,17 @@
                             justify-content: center;
                             align-items: center;
                             padding: 8px;
-                            border: 1px solid #ccc;
+                            border: 1px solid #274452;
                             margin: 8px;
                             cursor: pointer;
 
                             .block-icon {
                                 font-size: 2em;
+                                color: #274452;
+                            }
+
+                            .block-name{
+                                
                             }
 
 
@@ -636,7 +645,11 @@
 
             .page-active {
                 color: #fff;
-                background: #000;
+                background: #000 !important;
+            }
+            .page-in-config{
+                color: #fff;
+                background: #1900ff;
             }
 
             .page {

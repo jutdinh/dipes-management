@@ -9,6 +9,9 @@ const blockTypes = {
     datetime: "datetime",
     apiCombo: "apiCombo",
     chart_1: "chart_1",
+    table_param: "table_param",
+    redirect_button: "redirect_button",
+    table_export_button: "table_export_button"
 }
 
 
@@ -51,6 +54,125 @@ const initialStates = {
             "style": {
                 ...defaultStylesheet
             },
+
+            "flex": {
+                "order": "1",
+                "flexGrow": "1"
+            },
+
+            "source": {
+                "type": "database", // api || database
+                
+                "tables": [],
+                "fields": [],
+                "calculates": [],
+                "get": {
+                    "api": "",
+                    "api_name": ""                    
+                },
+                "search": {
+                    state: true,
+                    "api": "",
+                    "api_name": ""
+                }
+            },
+            "buttons": {
+                "add": {
+                    "state": true,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "import": {
+                    "state": true,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "export": {
+                    "state": true,                    
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "update": {
+                    "state": true,
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "delete": {
+                    "state": true,
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+                "detail": {
+                    "state": true,
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+
+                "approve": {
+                    "state": false,    
+                    "field": {
+                        id: "",
+                        fomular_alias: "",
+                        display_name: ""
+                    },              
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+
+                "unapprove": {
+                    "state": false,
+                    "field": {
+                        id: "",
+                        fomular_alias: "",
+                        display_name: ""
+                    },
+                    "api": {
+                        "api": "",
+                        "api_name": ""
+                    }
+                },
+
+                "navigator": {
+                    "state": true,
+                    "visible": 3,
+                }
+            },
+            "fields": [], // empty field set means all fields will be display
+
+            "visibility": {
+                "row_per_page": 12,
+                "indexing": true                
+            }
+        },
+
+        "children": [  // adde defaulte buttonz 
+            
+        ]
+    },
+
+    "table_param": {
+        "name": "table_param",
+        "props": {
+            "name": "Sample table",
+            "style": {
+                ...defaultStylesheet
+            },
+
+            "params": [],
 
             "flex": {
                 "order": "1",
@@ -364,6 +486,39 @@ const initialStates = {
             }
         }
     },
+
+    "redirect_button": {
+        "name": "redirect_button",
+        "props": {    
+            "to": {
+                "page_id": "",
+                "page_tile": "",
+                "params": [],
+            },
+            "icon": {
+
+            },     
+            "style": {
+                color: "",          
+                backgroundColor: ""
+            },            
+        }
+    },
+
+    "table_export_button": {
+        "name": "table_export_button",
+        "props": {        
+            "slave": {
+                
+            },
+            "style": {
+                color: "",          
+                backgroundColor: ""
+            },            
+        }
+    },
+
+
      "apiCombo":{
         "name": "apiCombo",
         "props": {

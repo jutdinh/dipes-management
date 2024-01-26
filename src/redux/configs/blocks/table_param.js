@@ -447,15 +447,15 @@ export default (props) => {
 
         return (
             <div className="design-zone-container" style={{ zIndex }} 
-                // onClick={SwitchingState}
-            >
+                    // onClick={SwitchingState}
+                >
                 {renderFrontLiner(id, parent)}
                 <div
                     className={`design-zone table-design ${isActive() ? "design-zone-active" : ""}`}
                     onMouseEnter={ComponentHover}
                     style={{ zIndex }}
                 >
-
+                    
                     {source.type == "database" &&
                         <div className="preview" style={{ zIndex: 2, position: "relative" }}>
 

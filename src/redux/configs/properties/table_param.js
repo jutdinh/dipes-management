@@ -5,7 +5,7 @@ import lang from '../property_lang'
 const { getFormatedUUID } = functions
 
 
-const table =  [        
+const table_param =  [        
     { 
         id: getFormatedUUID(), 
         label: lang["props.title"],
@@ -217,7 +217,17 @@ const table =  [
         path: "props.source.calculates"        
     },
 
-
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.params"],
+        type: "selectParams",                
+        path: "props.params",
+        tablespath: "props.source.tables"        
+        // childOf: {
+        //     prop_id: "prop_1",
+        //     caseIf: "database"
+        // }
+    },
 
     
     { 
@@ -464,4 +474,8 @@ const table =  [
         onlyExistsIn:[{ name: "flex",type: "direct" }]
     },
 ]
-export default table
+
+
+
+
+export default table_param

@@ -3,12 +3,12 @@ import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faArrowsUpDownLeftRight, faCog, faEdit, faHome, faIcons, faRocket, faStar, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faAdd, faArrowsUpDownLeftRight, faCog, faCopy, faEdit, faHome, faIcons, faRocket, faStar, faTrash } from "@fortawesome/free-solid-svg-icons"
 
 
 export default () => {    
     const dispatch = useDispatch()
-    const { floating, cache } = useSelector(state => state)
+    const { floating, cache, functions } = useSelector(state => state)
     const { offset } = floating
     
     const ref = useRef()
@@ -115,6 +115,34 @@ export default () => {
         })
     }
 
+    const pageHasChildren = () => {        
+        const { page } = cache 
+        if( page && page.children?.length > 0 ){
+            return true
+        }
+        return false
+    }
+    const pageConfig = () => {
+        dispatch({
+            branch: "floating-boxes",
+            type: "setBoxType",
+            payload: {
+                type: "pageConfig"
+            }
+        })
+    }
+    const copyLink = () => {
+        const { page } = cache;
+        if( page ){
+            const { page_id, page_title } = page;
+            navigator.clipboard.writeText(functions.makePageURL( page ));
+            dispatch({
+                branch: "floating-boxes",
+                type: "floatingTrigger"            
+            })
+        }
+    }
+
     return (
         <div ref={ref} className="floating-box page-modify" style={{ top, left: `${ 312 }px` }}>
             { floating.type == "pageModify" ?
@@ -149,6 +177,26 @@ export default () => {
                             </div>
                             <span className="content">Đổi icon</span>
                         </div>
+                        { !pageHasChildren() ?
+                            <div className="util" onClick={ pageConfig }>
+                                <div className="icon-container">
+                                    <FontAwesomeIcon icon={ faCog } />
+                                </div>
+                                <span className="content">Cấu hình trang</span>
+                            </div>
+                        : null
+                        }
+                        
+
+                        { !pageHasChildren() ?
+                            <div className="util" onClick={ copyLink }>
+                                <div className="icon-container">
+                                    <FontAwesomeIcon icon={ faCopy } />
+                                </div>
+                                <span className="content">Sao chép đường dẫn</span>
+                            </div>
+                            : null
+                        }
 
                         <div className="util" onClick={ remove }  style={{ color: "#ff6655" }}>
                             <div className="icon-container">

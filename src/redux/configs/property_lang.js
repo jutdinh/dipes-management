@@ -7,9 +7,13 @@ const vi = {
 
 
 
+
     /**
      * PROPERTIEZ SECZION
      */
+
+    "props.params": "Tham số",
+    "props.page": "Trang",
 
 
     "props.title": "Tiêu đề",

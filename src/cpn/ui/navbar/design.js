@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartColumn, faFont, faRectangleAd, faRectangleList, faSquare, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faCalendarDays, faChartBar, faChartColumn, faFont, faLink, faList, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -132,12 +132,17 @@ export default () => {
                 <span className="block-type">NỘI DUNG</span>
                 <div className="blocks">
 
-                    <div className="block text" onMouseDown={ (e) => { FloatingBoxTrigger(e, faFont, "Văn bản", blockTypes.text) } }>
+                    <div className="block" onMouseDown={ (e) => { FloatingBoxTrigger(e, faFont, "Văn bản", blockTypes.text) } }>
                         <div className="block-icon">
                             <FontAwesomeIcon icon={ faFont }/>
                         </div>
                         <span className="block-name">Văn bản</span>
-                    </div>
+                    </div>                   
+                </div>
+
+
+                <span className="block-type">HIỂN THỊ DỮ LIỆU</span>
+                <div className="blocks">                   
 
                     <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faTable, "Bảng", blockTypes.table ) } }>
                         <div className="block-icon" >
@@ -146,8 +151,28 @@ export default () => {
                         <span className="block-name">Bảng</span>
                     </div>
 
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSpoon, "Bảng 1", blockTypes.table_param ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faSpoon }/>
+                        </div>
+                        <span className="block-name">Bảng 1</span>
+                    </div>
 
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faLink, "Nút chuyển", blockTypes.redirect_button ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faLink }/>
+                        </div>
+                        <span className="block-name">Nút chuyển</span>
+                    </div>
+
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faList, "Xuất khóa ngoại", blockTypes.table_export_button ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faList }/>
+                        </div>
+                        <span className="block-name">Xuất khóa ngoại</span>
+                    </div>
                 </div>
+
                 {/* <span className="block-type">KHỐI LAYOUT</span>
                 <div className="blocks">                   
                     <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faTableCellsLarge, "Block", blockTypes.block ) } }>
@@ -177,9 +202,9 @@ export default () => {
                 <span className="block-type">KHỐI NHẬP DỮ LIỆU</span>
                 <div className="blocks">   
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSquare, "Entry", blockTypes.entry ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSquarePen, "Entry", blockTypes.entry ) } }>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faSquare }/>
+                            <FontAwesomeIcon icon={ faSquarePen }/>
                         </div>
                         <span className="block-name">Entry</span>
                     </div>
@@ -190,9 +215,9 @@ export default () => {
                         </div>
                         <span className="block-name">Button</span>
                     </div>
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSquare, "Datetime", blockTypes.datetime ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faCalendarDays, "Datetime", blockTypes.datetime ) } }>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faSquare }/>
+                            <FontAwesomeIcon icon={ faCalendarDays }/>
                         </div>
                         <span className="block-name">Datetime</span>
                     </div>
@@ -210,11 +235,11 @@ export default () => {
 
                 <div className="blocks">   
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faChartColumn, "Chart 1", blockTypes.chart_1 ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faChartBar, "Chart bar", blockTypes.chart_1 ) } }>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faChartColumn }/>
+                            <FontAwesomeIcon icon={ faChartBar }/>
                         </div>
-                        <span className="block-name">Chart 1</span>
+                        <span className="block-name">Chart bar</span>
                     </div>               
 
                 </div>
