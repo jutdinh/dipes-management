@@ -748,6 +748,8 @@ class UIController extends Controller {
         const params = source.fields.filter(f => primary_key.indexOf(f.id) != -1)
         const paramsId = params.map(p => p.id)
         const normalFields = source.fields.filter(f => paramsId.indexOf(f.id) == -1)
+        
+        const fieldsWithoutParams = bodyId.filter( field => paramsId.indexOf( field ) == -1 )
 
         const PUT = {
             api_name: "PUT API for table " + name,
@@ -756,7 +758,7 @@ class UIController extends Controller {
             fields: source.fields.map(field => {
                 return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
             }),
-            body: normalFields.map(f => f.id),
+            body: fieldsWithoutParams,
             params: paramsId,
             tables: [source.tables[0].id],
             calculates: source.calculates,
@@ -843,55 +845,57 @@ class UIController extends Controller {
         ]
 
 
-
-        if (buttons.approve.status) {
+        if (buttons.approve.state) {
 
             const approveTable = source.tables.find(tb => tb.id == buttons.approve.field.table_id)
+            if( approveTable ){
 
-            const APPROVE = {
-                api_name: "APPROVE API for table " + name,
-                status: true,
-                description: "Hidden API for UI only, do not modify for any reason",
-                fields: source.fields.map(field => {
-                    return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
-                }),
-                body: buttons.approve.field,
-                params: paramsId,
-                tables: [approveTable.id],
-                calculates: [],
-                statistic: [],
-                api_method: "put",
-                api_scope: "private"
+                const APPROVE = {
+                    api_name: "APPROVE API for table " + name,
+                    status: true,
+                    description: "Hidden API for UI only, do not modify for any reason",
+                    fields: source.fields.map(field => {
+                        return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                    }),
+                    body: [buttons.approve.field],
+                    params: paramsId,
+                    tables: [approveTable.id],
+                    calculates: [],
+                    statistic: [],
+                    api_method: "put",
+                    api_scope: "private"
+                }
+    
+                rawApis.push({ name: "APPROVE", type: "ui", api: APPROVE })
             }
-
-            rawApis.push({ name: "APPROVE", type: "ui", api: APPROVE })
         }
 
-        if (buttons.unapprove.status) {
+        if (buttons.unapprove.state) {
 
             const unapproveTable = source.tables.find(tb => tb.id == buttons.unapprove.field.table_id)
+            if( unapproveTable ){
 
-            const UNAPPROVE = {
-                api_name: "UNAPPROVE API for table " + name,
-                status: true,
-                description: "Hidden API for UI only, do not modify for any reason",
-                fields: source.fields.map(field => {
-                    return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
-                }),
-                body: buttons.unapprove.field,
-                params: paramsId,
-                tables: [unapproveTable.id],
-                calculates: [],
-                statistic: [],
-                api_method: "put",
-                api_scope: "private"
+                const UNAPPROVE = {
+                    api_name: "UNAPPROVE API for table " + name,
+                    status: true,
+                    description: "Hidden API for UI only, do not modify for any reason",
+                    fields: source.fields.map(field => {
+                        return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                    }),
+                    body: [buttons.unapprove.field],
+                    params: paramsId,
+                    tables: [unapproveTable.id],
+                    calculates: [],
+                    statistic: [],
+                    api_method: "put",
+                    api_scope: "private"
+                }
+    
+                rawApis.push({ name: "UNAPPROVE", type: "ui", api: UNAPPROVE })
             }
-
-            rawApis({ name: "UNAPPROVE", type: "ui", api: UNAPPROVE })
         }
         return rawApis;
     }
-
 
     mapApiToUIRecursive = (pages, target_id, page) => {
         for (let i = 0; i < pages.length; i++) {
@@ -920,8 +924,8 @@ class UIController extends Controller {
 
 
         if (success) {
-            const { Project, user, version } = objects;
-
+            const { Project, user } = objects;
+            
             const flattenPages = this.flatteningComponents(ui)
 
             for (let i = 0; i < flattenPages.length; i++) {
@@ -931,31 +935,34 @@ class UIController extends Controller {
                 for (let j = 0; j < flattenComponents.length; j++) {
                     const cpn = flattenComponents[j]
                     const { name, props } = cpn;
+                    const currentProjectData = Project.getData()
+                    const version = currentProjectData.versions[`${ version_id }`]
 
-                    if (name == "table" && props && props.source.tables.length > 0) {
+                    // console.log("\nBefore", Object.values(version.apis).length)
+
+                    if (name == "table" && props && props.source.tables.length > 0 ) {
                         const apiSet = this.createApiSetOnTable(cpn, version)
-                        const APIS = {}
-
-
+                        const APIS = {}                        
 
                         for (let k = 0; k < apiSet.length; k++) {
                             APIS[apiSet[k].name] = await Project.createUIAPI(apiSet[k])
                         }
+                        delete version.apis[`${props?.source?.get?.id}`]; delete version.apis[`${props?.source?.search?.id}`]; delete version.apis[`${props?.buttons?.add?.api?.id}`]; delete version.apis[`${props?.buttons?.import?.api?.id}`]; delete version.apis[`${props?.buttons?.export?.api?.id}`]; delete version.apis[`${props?.buttons?.update?.api?.id}`]; delete version.apis[`${props?.buttons?.delete?.api?.id}`]; delete version.apis[`${props?.buttons?.detail?.api?.id}`]; delete version.apis[`${props?.buttons?.approve?.api?.id}`]; delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
 
+                        // console.log( `${props?.source?.get?.id}`,
+                        // `${props?.source?.search?.id}`,
+                        // `${props?.buttons?.add?.api?.id}`,
+                        // `${props?.buttons?.import?.api?.id}`,
+                        // `${props?.buttons?.export?.api?.id}`,
+                        // `${props?.buttons?.update?.api?.id}`,
+                        // `${props?.buttons?.delete?.api?.id}`,
+                        // `${props?.buttons?.detail?.api?.id}`,
+                        // `${props?.buttons?.approve?.api?.id}`,
+                        // `${props?.buttons?.unapprove?.api?.id}`, )
 
-                        delete version.apis[`${props?.source?.get?.id}`]
-                        delete version.apis[`${props?.source?.search?.id}`]
-
-                        delete version.apis[`${props?.buttons?.add?.api?.id}`]
-                        delete version.apis[`${props?.buttons?.import?.api?.id}`]
-
-                        delete version.apis[`${props?.buttons?.export?.api?.id}`]
-                        delete version.apis[`${props?.buttons?.update?.api?.id}`]
-                        delete version.apis[`${props?.buttons?.delete?.api?.id}`]
-                        delete version.apis[`${props?.buttons?.detail?.api?.id}`]
-
-                        delete version.apis[`${props?.buttons?.approve?.api?.id}`]
-                        delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
+                        /**
+                         * Con bug qq mãi k fix đc nên thôi dẹp mẹ luôn đi
+                         */
 
                         props.source.get = APIS["GET"]
                         props.source.search = { ...props.source.search, ...APIS["SEARCH"] }
@@ -977,39 +984,155 @@ class UIController extends Controller {
 
                         serializedApis.map(api => {
                             version.apis[`${api.id}`] = api
-                        })
-                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
+                        })      
+                        
+                        
+
+                        // console.log("Afetre", Object.values(version.apis).length)
+
+                        const data = Project.getData()
+                        data.versions[`${ version_id }`] = version
+                        Project.setData( data )
+                        // console.log(Object.keys(data.versions[`${version_id}`].apis))                        
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)                        
                     }
 
-                    // if (name == "form") {
-                    //     const { table, fields, ti } = cpn
-                    //     let valid = true;
-                    //     for (let i = 0; i < fields.length; i++) {
-                    //         const { table_id } = fields[i]
-                    //         if (table_id != table.id) {
-                    //             valid = false;
-                    //         }
-                    //     }
-                    //     if (valid) {
-                    //         const FORM_API = {
-                    //             api_name: "POST API for FORM ",
-                    //             status: true,
-                    //             description: "Hidden API for UI only, do not modify for any reason",
-                    //             fields: source.fields.map(field => {
-                    //                 return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
-                    //             }),
-                    //             body: fields.map( f => f.id ),
-                    //             params: [],
-                    //             tables: [ table.id ],
-                    //             calculates: [],
-                    //             statistic: [],
-                    //             api_method: "post",
-                    //             api_scope: "private"
-                    //         }
+                    if (name == "table_param" && props && props.source.tables.length > 0 ) {
+                        const { params } = props
+                        const apiSet = this.createApiSetOnTable( cpn, version, params )
+                        const APIS = {}                        
 
-                    //         /** CONTINUE TO CREATE API */
-                    //     }
-                    // }
+                        for (let k = 0; k < apiSet.length; k++) {
+                            APIS[apiSet[k].name] = await Project.createUIAPI(apiSet[k])
+                        }
+                        delete version.apis[`${props?.source?.get?.id}`]; delete version.apis[`${props?.source?.search?.id}`]; delete version.apis[`${props?.buttons?.add?.api?.id}`]; delete version.apis[`${props?.buttons?.import?.api?.id}`]; delete version.apis[`${props?.buttons?.export?.api?.id}`]; delete version.apis[`${props?.buttons?.update?.api?.id}`]; delete version.apis[`${props?.buttons?.delete?.api?.id}`]; delete version.apis[`${props?.buttons?.detail?.api?.id}`]; delete version.apis[`${props?.buttons?.approve?.api?.id}`]; delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
+
+                        // console.log( `${props?.source?.get?.id}`,
+                        // `${props?.source?.search?.id}`,
+                        // `${props?.buttons?.add?.api?.id}`,
+                        // `${props?.buttons?.import?.api?.id}`,
+                        // `${props?.buttons?.export?.api?.id}`,
+                        // `${props?.buttons?.update?.api?.id}`,
+                        // `${props?.buttons?.delete?.api?.id}`,
+                        // `${props?.buttons?.detail?.api?.id}`,
+                        // `${props?.buttons?.approve?.api?.id}`,
+                        // `${props?.buttons?.unapprove?.api?.id}`, )
+
+                        /**
+                         * Con bug qq mãi k fix đc nên thôi dẹp mẹ luôn đi
+                         */
+
+                        props.source.get = APIS["GET"]
+                        props.source.search = { ...props.source.search, ...APIS["SEARCH"] }
+
+                        props.buttons.add.api = APIS["POST"]
+                        props.buttons.import.api = APIS["IMPORT"]
+                        props.buttons.export.api = APIS["EXPORT"]
+
+                        props.buttons.update.api = APIS["PUT"]
+                        props.buttons.delete.api = APIS["DELETE"]
+                        props.buttons.detail.api = APIS["DETAIL"]
+
+                        props.buttons.approve.api = APIS["APPROVE"]
+                        props.buttons.unapprove.api = APIS["UNAPPROVE"]
+
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)
+
+                        const serializedApis = Object.values(APIS)
+
+                        serializedApis.map(api => {
+                            version.apis[`${api.id}`] = api
+                        })      
+                        
+                        
+
+                        // console.log("Afetre", Object.values(version.apis).length)
+
+                        const data = Project.getData()
+                        data.versions[`${ version_id }`] = version
+                        Project.setData( data )
+                        // console.log(Object.keys(data.versions[`${version_id}`].apis))                        
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)                        
+                    }
+
+                    if (name == "form") {
+                        const {  id, props } = cpn
+                        const { table, fields } = props;                        
+
+                        let valid = true;
+
+                        if( table && fields ){
+                            for (let i = 0; i < fields.length; i++) {
+                                const { table_id } = fields[i]
+                                if (table_id != table.id) {
+                                    valid = false;
+                                }
+                            }
+                        }else{                            
+                            valid = false
+                        }
+
+                        if (valid) {
+                            const FORM_API = {
+                                api_name: "POST API for FORM ",
+                                status: true,
+                                description: "Hidden API for UI only, do not modify for any reason",
+                                fields: fields.map(field => {
+                                    return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                                }),
+                                body: fields.map( f => f.id ),
+                                params: [],
+                                tables: [ table.id ],
+                                calculates: [],
+                                statistic: [],
+                                api_method: "post",
+                                api_scope: "private"
+                            }
+                            
+                            const api = await Project.createAPI( FORM_API )
+                            version.apis[`${ api.api_id }`] = api 
+                            /** CONTINUE TO CREATE API */
+                            await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)               
+
+
+                            props.api = api;
+                            page.component = this.updateChildComponent( page.component, cpn.id, props )
+                        }
+                    }
+
+                    if( name == "chart_1" ){
+                        const { tables, field, fomular, criterias, fields, group_by } = props
+                        
+                        const STATIS_API = {
+                            api_name: "STATIS API for " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [],
+                            field,                            
+                            body: [],
+                            params: [],
+                            tables: tables.map( table => table.id ),
+                            fomular,
+                            group_by,
+                            criterias,
+                            calculates: [],
+                            statistic: [],
+                            api_method: "post",
+                            api_scope: "private"
+                        }
+
+                        
+                        const apiObject = { api: STATIS_API, type: "statis" }
+
+                        const api = await Project.createUIAPI(apiObject)
+                        // console.log(api)
+
+                        version.apis[`${ api.id }`] = api 
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)      
+                        
+                        props.api = api 
+                        page.component = this.updateChildComponent( page.component, cpn.id, props )
+                    }
 
                 }
                 flattenPages[i] = page

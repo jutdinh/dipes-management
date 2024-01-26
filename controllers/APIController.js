@@ -109,8 +109,12 @@ class APIController extends Controller {
                 api.statistic = Object.values( api.statistic )
                 api.calculates = Object.values( api.calculates )
                 api.proxy_server =  project.proxy_server;
+                try{
+                    api.cai_gi_cung_dc_het_tron_a = api.proxy_server + api.url + '/' + this.stringifyParams( tables, api.params )
 
-                api.cai_gi_cung_dc_het_tron_a = api.proxy_server + api.url + '/' + this.stringifyParams( tables, api.params )
+                }catch{
+                    console.log(api)
+                }
             })            
 
             if( viewMode == "public-only" ){                

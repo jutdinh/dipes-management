@@ -10,11 +10,14 @@ class Projects extends Model {
 
     static validStatus = [1, 2, 3, 4, 5];
     static validTaskStatus = [1, 2, 3, 4]
+
     static validTypes = [
         "INT", "INT UNSIGNED",
         "BIGINT", "BIGINT UNSIGNED",
         "BOOL",
         "DECIMAL", "DECIMAL UNSIGNED",
+        "FILE",
+        "PASSWORD",
         "DATE", "DATETIME",
         "TEXT", "CHAR",
         "EMAIL", "PHONE"
@@ -134,6 +137,11 @@ class Projects extends Model {
         this.versions.tables.fields.props.__addProperty__("DEFAULT_TRUE", Model.types.string, { default: "TRUE" })
         this.versions.tables.fields.props.__addProperty__("DEFAULT_FALSE", Model.types.string, { default: "FALSE" })
 
+        this.versions.tables.fields.props.__addProperty__("FILE_MULTIPLE", Model.types.bool, { default: false })
+        this.versions.tables.fields.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a comma
+        this.versions.tables.fields.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a comma
+
+
 
         this.versions.__addProperty__("apis", Model.types.model)
         this.versions.apis.__addProperty__("id", Model.types.int, { auto: true })
@@ -147,6 +155,36 @@ class Projects extends Model {
         this.versions.apis.__addProperty__("api_scope", Model.types.enum, { values: ["private", "public"] })
         this.versions.apis.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
         this.versions.apis.__addProperty__("create_by", Model.types.json)
+        
+        
+
+
+
+        this.versions.apis.__addProperty__("criterias", Model.types.string) 
+        this.versions.apis.__addProperty__("fomular", Model.types.enum, { values: ["SUM", "AVERAGE", "COUNT"] }) 
+        this.versions.apis.__addProperty__("group_by", Model.types.array) // actually they are fields but for flexibility, no structure was declared
+        this.versions.apis.__addProperty__("field", Model.types.json) 
+
+        this.versions.apis.field.__addProperty__("id", Model.types.int, { required: true })
+        this.versions.apis.field.__addProperty__("field_name", Model.types.string, { required: true })
+        this.versions.apis.field.__addProperty__("fomular_alias", Model.types.string, { required: true })
+        this.versions.apis.field.__addProperty__("props", Model.types.json)
+        this.versions.apis.field.props.__addProperty__("DATATYPE", Model.types.enum, { required: true, values: Projects.validTypes })
+        this.versions.apis.field.props.__addProperty__("NULL", Model.types.bool, { default: false })
+        this.versions.apis.field.props.__addProperty__("LENGTH", Model.types.int, { default: Number.MAX_SAFE_INTEGER })
+        this.versions.apis.field.props.__addProperty__("AUTO_INCREMENT", Model.types.bool, { default: false })
+        this.versions.apis.field.props.__addProperty__("MIN", Model.types.number)
+        this.versions.apis.field.props.__addProperty__("MAX", Model.types.number)
+        this.versions.apis.field.props.__addProperty__("FORMAT", Model.types.string)
+        this.versions.apis.field.props.__addProperty__("PATTERN", Model.types.string)
+        this.versions.apis.field.props.__addProperty__("DECIMAL_PLACE", Model.types.int)
+        this.versions.apis.field.props.__addProperty__("DEFAULT", Model.types.string)
+        this.versions.apis.field.props.__addProperty__("DEFAULT_TRUE", Model.types.string, { default: "TRUE" })
+        this.versions.apis.field.props.__addProperty__("DEFAULT_FALSE", Model.types.string, { default: "FALSE" })
+        this.versions.apis.field.props.__addProperty__("FILE_MULTIPLE", Model.types.bool, { default: false })
+        this.versions.apis.field.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a comma
+        this.versions.apis.field.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a comma
+
 
         this.versions.apis.create_by.__addProperty__("username", Model.types.string)
         this.versions.apis.create_by.__addProperty__("fullname", Model.types.string)
@@ -637,12 +675,32 @@ class ProjectsRecord extends Projects {
         return newTable
     }
 
+    extensionFormatter = (ext="") => {
+        if( ext.length > 0 ){
+            const splittedExtension = ext.split('.')
+            const trueExt = splittedExtension.pop()
+            if( trueExt && trueExt.length > 0 ){
+                return trueExt
+            }
+        }
+        return false
+    }
+
     createField = async (field, creator) => {
         const { field_name } = field
         const model = this.getModel()
         const field_id = await model.__getNewId__()
         const field_alias = await this.makeAlias(field_name, "")
         const newField = {}
+
+        if(field.props?.DATATYPE == "FILE"){
+            const { 
+                FILE_ACCEPT_TYPES,
+                FILE_FORBID_TYPES 
+            } = field.props;
+            // field.props.FILE_ACCEPT_TYPES = FILE_ACCEPT_TYPES.map()
+        }
+
         newField[`${field_id}`] = {
             ...field,
             id: field_id,

@@ -271,7 +271,13 @@ class TablesController extends Controller {
                         }
                     }
                 }
-
+                /**
+                 * 
+                 * Khúc này sau khi xong design tool sẽ xóa tại nó bị thừa, 
+                 * 
+                 * note: Khúc này hỏi xong cái bị chửi ngang luôn má ơi, 6 / 11 vote quit
+                 * 
+                 */
                 const uis  = Object.values(version.uis)
                 const changedAPIs = []
 

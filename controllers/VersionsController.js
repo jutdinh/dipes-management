@@ -202,7 +202,13 @@ class VersionsController extends Controller {
                 api.fields = Object.values( api.fields )
                 api.statistic = Object.values( api.statistic )
                 api.calculates = Object.values( api.calculates )
+                api.group_by = api.group_by ? Object.values( api.group_by ) : []
             })            
+            
+            const statis = apis.filter( a => a.api_id == "2C31BCECBB4C4DE680B26DB8A0C8D735" )
+            console.log(statis)
+
+            
             const Cipher = new Crypto()
             const primalData = { apis }
             const stringifiedData = JSON.stringify(primalData)
