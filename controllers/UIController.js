@@ -801,10 +801,8 @@ class UIController extends Controller {
             api_name: "EXPORT API for UI " + name,
             status: true,
             description: "Hidden API for UI only, do not modify for any reason",
-            body: bodyId,
-            fields: source.fields.map(field => {
-                return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
-            }),
+            body: [],
+            fields: [],
             params: [],
             calculates: source.calculates,
             statistic: [],
@@ -1121,6 +1119,7 @@ class UIController extends Controller {
                             api_scope: "private"
                         }
 
+
                         
                         const apiObject = { api: STATIS_API, type: "statis" }
 
@@ -1131,6 +1130,89 @@ class UIController extends Controller {
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)      
                         
                         props.api = api 
+                        page.component = this.updateChildComponent( page.component, cpn.id, props )
+                    }
+
+                    if( name == "c_chart" ){
+                        const { tables, field, fomular, criterias, fields, group_by } = props
+                        
+                        const STATIS_API = {
+                            api_name: "CRITERIA STATIS API for " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [],
+                            field,                            
+                            body: [],
+                            params: [],
+                            tables: tables.map( table => table.id ),
+                            fomular,
+                            group_by,
+                            criterias,
+                            calculates: [],
+                            statistic: [],
+                            api_method: "post",
+                            api_scope: "private"
+                        }
+                        
+
+                        
+                        const apiObject = { api: STATIS_API, type: "statis" }
+
+                        const api = await Project.createUIAPI(apiObject)
+                        // console.log(api)
+
+                        version.apis[`${ api.id }`] = api 
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)      
+                        
+                        props.api = api 
+                        page.component = this.updateChildComponent( page.component, cpn.id, props )
+                    }
+
+                    if( name == "table_export_button" ){
+                        const { slave, fields } = props 
+
+
+                        const EXPORT_API = {
+                            api_name: "Export API for " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [],                            
+                            body: [],
+                            params: [],
+                            tables: [ slave.id ],                            
+                            
+                            calculates: [],
+                            statistic: [],
+                            api_method: "post",
+                            api_scope: "private"
+                        }
+
+                        const PREVIEW_API = {
+                            api_name: "PREVIEW DATA API for UI " + name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            body: fields.map( field => field.id ),
+                            fields: [],
+                            params: [],
+                            calculates: [],
+                            statistic: [],
+                            tables: [slave.id],
+                            api_method: "post",
+                            api_scope: "private"
+                        }
+
+                        const apiObject = { api: EXPORT_API, type: "export" }
+                        const apiSearchObject = { api: PREVIEW_API, type: "search" }
+
+                        const api = await Project.createUIAPI(apiObject)
+                        const searchApi = await Project.createUIAPI(apiSearchObject)
+
+                        version.apis[`${ api.id }`] = api 
+                        version.apis[`${ searchApi.id }`] = searchApi 
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)      
+                        
+                        props.api = api 
+                        props.preview_api = searchApi
                         page.component = this.updateChildComponent( page.component, cpn.id, props )
                     }
 

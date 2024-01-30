@@ -598,13 +598,16 @@ class TablesController extends Controller {
 
     updateTable = async ( req, res ) => {
         this.writeReq(req)
-        const { version_id, table_id, table_name } = req.body
+        const { version_id, table_id, table_name, pre_import } = req.body
         const context = await this.generalCheck(req, version_id);        
         const { success, objects } = context 
 
         if( success ){
             const { Project, version, user } = objects;
             version.tables[`${ table_id }`].table_name = table_name
+            if( typeof(pre_import) == "boolean" ){
+                version.tables[`${ table_id }`].pre_import = pre_import
+            }
             Project.__modifyAndSaveChange__( `versions.${ version_id }`, version )
         }
 

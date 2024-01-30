@@ -96,10 +96,13 @@ class Projects extends Model {
         this.versions.tables.__addProperty__("table_name", Model.types.string)
         this.versions.tables.__addProperty__("primary_key", Model.types.array)
         this.versions.tables.__addProperty__("foreign_keys", Model.types.model)
+        
         this.versions.tables.foreign_keys.__addProperty__("field_id", Model.types.int)
         this.versions.tables.foreign_keys.__addProperty__("table_id", Model.types.int)
         this.versions.tables.foreign_keys.__addProperty__("ref_field_id", Model.types.int)
         this.versions.tables.foreign_keys.__addProperty__("cascade", Model.types.bool, { default: false })
+
+        this.versions.tables.__addProperty__("pre_import", Model.types.bool, { default: false })
 
         this.versions.tables.__addProperty__("create_at", Model.types.datetime, { default: new Date(), })
         this.versions.tables.__addProperty__("create_by", Model.types.json)
@@ -161,7 +164,7 @@ class Projects extends Model {
 
 
         this.versions.apis.__addProperty__("criterias", Model.types.string) 
-        this.versions.apis.__addProperty__("fomular", Model.types.enum, { values: ["SUM", "AVERAGE", "COUNT"] }) 
+        this.versions.apis.__addProperty__("fomular", Model.types.string) 
         this.versions.apis.__addProperty__("group_by", Model.types.array) // actually they are fields but for flexibility, no structure was declared
         this.versions.apis.__addProperty__("field", Model.types.json) 
 
@@ -659,7 +662,7 @@ class ProjectsRecord extends Projects {
     }
 
     createTable = async (table, creator) => {
-        const { table_name } = table;
+        const { table_name, pre_import } = table;
         const model = this.getModel()
 
         const table_id = await model.__getNewId__()
@@ -670,6 +673,7 @@ class ProjectsRecord extends Projects {
             table_name,
             primary_key: [],
             table_alias,
+            pre_import,
             create_by: creator,
         }
         return newTable
