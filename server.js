@@ -44,7 +44,8 @@ const {
   UI,
   Activation,
   Notify,
-  socketController
+  PreImport,
+  socketController,
    } = require('./routes');
 
 // const ConsumeApi = require('./controllers/ConsumeApi');
@@ -61,6 +62,7 @@ app.use('/versions', Versions );
 app.use('/logs', Log );
 app.use('/db/tables', Database );
 app.use('/db/fields', Fields );
+app.use('/db/preimport', PreImport)
 app.use('/apis', Api );
 app.use('/uis', UI );
 app.use('/activation', Activation )

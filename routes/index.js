@@ -12,6 +12,8 @@ const Activation = require('./activation')
 const Log = require('./Logs')
 const Notify = require('./notify')
 
+const PreImport = require('./preimport')
+
 const socketController = require('./socket')
 
 module.exports = {
@@ -26,5 +28,6 @@ module.exports = {
     Activation,
     Log,
     Notify,
+    PreImport,
     socketController
 }
