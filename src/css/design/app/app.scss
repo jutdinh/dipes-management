@@ -44,25 +44,28 @@ b{
 
     .front-line{
         display: block;
-        height: 10px;
+        height: 0px;
         width: 100%;        
         border-radius: 12px;   
         background-color: transparent;     
         pointer-events: none;
+        // display: none;
     }
     
     .back-line{
         display: block;
-        height: 10px;
+        height: 0px;
         width: 100%;                
         border-radius: 12px;
         background-color: transparent;
         pointer-events: none;
+        // display: none;
     }
     
     .line-active{
         background-color: #ccc;
         pointer-events: initial;
+        height: 10px;
         &:hover{
             background-color: #aaa;
             cursor: pointer;

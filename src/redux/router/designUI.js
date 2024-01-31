@@ -1,6 +1,6 @@
 
 
-const DEFAULT_PAGE_ICON = "6"
+const DEFAULT_PAGE_ICON = "1463"
 
 export default (state, action) => {
     switch (action.type) {

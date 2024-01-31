@@ -11,7 +11,10 @@ const blockTypes = {
     chart_1: "chart_1",
     table_param: "table_param",
     redirect_button: "redirect_button",
-    table_export_button: "table_export_button"
+    table_export_button: "table_export_button",
+    c_chart: "c_chart",
+
+    custom_button: "custom_button"
 }
 
 
@@ -349,6 +352,41 @@ const initialStates = {
         }
     },
 
+    "c_chart": {
+        "name": "c_chart",
+        "children": [
+
+        ],
+        "props": {
+            
+            tables: [],
+            params: [], // fields đcm 
+            field: {
+                id: "",
+                fomular_alias: "",                
+            },
+
+            api: {
+                api_id: "",
+                api_name: "",
+                url: "" 
+            },
+
+            fomular: "",
+            
+            criterias: "",
+
+            group_by: [
+                
+            ],
+
+            "content": "Sample Text",
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
     // CRAETE DEFAULTE BLOCKT
 
     "form": {
@@ -511,6 +549,22 @@ const initialStates = {
             "slave": {
                 
             },
+            "fields": [],
+            "style": {
+                color: "",          
+                backgroundColor: ""
+            },            
+        }
+    },
+
+    "custom_button": {
+        "name": "custom_button",
+        "props": {        
+            "icon": "201",
+            "field": {
+                id: "",                
+            },
+            value: "",
             "style": {
                 color: "",          
                 backgroundColor: ""

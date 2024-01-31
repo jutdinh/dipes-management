@@ -11,7 +11,9 @@ import Chart_1 from './chart_1';
 import TableParam from './table_param'
 import ReDirectButton from './redirect_button';
 import TableExportButton from './table_export_button';
+import CChart from './c_chart';
 
+import CustomButton from './custom_button';
 
 const exporter = {
     "text": Text,
@@ -26,7 +28,9 @@ const exporter = {
     "chart_1": Chart_1,
     "table_param": TableParam,
     "redirect_button": ReDirectButton,
-    "table_export_button": TableExportButton
+    "table_export_button": TableExportButton,
+    "c_chart": CChart,
+    "custom_button": CustomButton
 }
 
 export default exporter

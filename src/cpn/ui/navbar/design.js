@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faCalendarDays, faChartBar, faChartColumn, faFont, faLink, faList, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faBolt, faCalendarDays, faChartBar, faChartColumn, faFont, faHand, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -171,6 +171,14 @@ export default () => {
                         </div>
                         <span className="block-name">Xuất khóa ngoại</span>
                     </div>
+
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faBolt, "Thao tác tùy chọn", blockTypes.custom_button ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faBolt }/>
+                        </div>
+                        <span className="block-name">Thao tác tùy chọn</span>
+                    </div>
+
                 </div>
 
                 {/* <span className="block-type">KHỐI LAYOUT</span>
@@ -241,6 +249,13 @@ export default () => {
                         </div>
                         <span className="block-name">Chart bar</span>
                     </div>               
+
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faMagnifyingGlassChart, "Chart bar", blockTypes.c_chart ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faMagnifyingGlassChart }/>
+                        </div>
+                        <span className="block-name">C - Chart</span>
+                    </div>
 
                 </div>
 

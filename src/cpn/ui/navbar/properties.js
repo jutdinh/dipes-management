@@ -128,6 +128,10 @@ export default () => {
         })
     }
 
+    const getCpnById = () => {
+
+    }
+
     return (
         <div className="properties">
             <div className="cpn-chain">
@@ -151,6 +155,7 @@ export default () => {
                         {...prop}
                         index={properties.length - index + 2}
                         selectedCpn={selectedCpn}
+
                         updateSelectedComponent={updateSelectedComponent}
                         getPropByPath={getPropByPath}
                         areParentActive={areParentActive}
@@ -954,14 +959,16 @@ const SingularTableFieldsPicker = (props) => {
              *  Remove coresponding component
              */
 
-            const componentAboutToBeRemoved = selectedCpn.children.find(cpn => cpn.field_id == field.id)
-            dispatch({
-                branch: "design-ui",
-                type: "removeComponent",
-                payload: {
-                    id: componentAboutToBeRemoved.id
-                }
-            })
+            const componentAboutToBeRemoved = selectedCpn.children?.find(cpn => cpn.field_id == field.id)
+            if (componentAboutToBeRemoved) {
+                dispatch({
+                    branch: "design-ui",
+                    type: "removeComponent",
+                    payload: {
+                        id: componentAboutToBeRemoved.id
+                    }
+                })
+            }
 
         } else {
             /**
@@ -1488,7 +1495,7 @@ const ShowParams = (props) => {
     } = props
 
 
-    const params = getPropByPath( path.split('.'), selectedCpn )
+    const params = getPropByPath(path.split('.'), selectedCpn)
 
     return (
         <div className="property" style={{ zIndex: index }}>
@@ -1497,21 +1504,126 @@ const ShowParams = (props) => {
             </div>
 
             <div className="params-list">
-                { params.map((p, index) => <div className="param-record">
-                    <span>{ index + 1 }. { p.field_name } - { p.fomular_alias }</span>
-                </div> ) }
+                {params.map((p, index) => <div className="param-record">
+                    <span>{index + 1}. {p.field_name} - {p.fomular_alias}</span>
+                </div>)}
             </div>
-            
+
         </div>
     )
 
 }
 
-const ChooseSlave = ( props ) => {
+const ChooseSlave = (props) => {
     const {
         type,
         path,
         master,
+        primary_key,
+        display_value,
+        fields,
+
+        label,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const primaryKey = primary_key;
+
+    const { tables, selectedCpns } = useSelector(state => state)
+
+    const parent = selectedCpns.find(cpn => cpn.id == selectedCpn.parent_id)
+    const [drop, setDrop] = useState(false)
+    if (parent) {
+
+        const parentTables = getPropByPath(master.split('.'), parent)
+
+        const primalTable = parentTables[0]
+
+        const slaveTables = tables.filter(tb => {
+            const { foreign_keys } = tb;
+            const existedForeignKey = foreign_keys.find(key => {
+                const { table_id } = key;
+                return table_id == primalTable.id
+            })
+            return existedForeignKey
+        })
+
+
+        const splittedPath = path.split('.')
+        const currentValue = getPropByPath(splittedPath, selectedCpn)
+
+        const formatObjectByFields = (opt) => {
+            const clone = {}
+            for (let i = 0; i < fields.length; i++) {
+                const { from, to } = fields[i]
+                clone[to] = opt[from]
+            }
+            return clone
+        }
+
+        /**
+         * 
+         * tìm tất cả bản phụ thuộc r chọn nó ở đây
+         * 
+         */
+
+        const clickTrigger = (opt) => {
+
+            const { primary_key, fields } = primalTable
+
+
+            const pKey = primary_key[0]
+
+            const primaryField = fields.find(f => f.id == pKey)
+
+
+            updateSelectedComponent(primaryField, primaryKey.split('.'));
+            setDrop(false)
+            updateSelectedComponent(formatObjectByFields(opt), splittedPath);
+        }
+
+
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_value]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {slaveTables.map(opt =>
+                                <div className="option" onClick={() => { clickTrigger(opt) }}>
+                                    <span>{opt[display_value]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    return
+}
+
+
+const ButtonChangeIcon = (props) => {
+    const {
+        label,
+        path,
 
         getPropByPath,
         updateSelectedComponent,
@@ -1519,9 +1631,47 @@ const ChooseSlave = ( props ) => {
         index
     } = props
 
+    const dispatch = useDispatch()
 
-    console.log(selectedCpn.parent_id)
-    return
+    const { icons } = useSelector( state => state )
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath( splittedPath, selectedCpn )
+
+    const renderIcon = ( icon ) => {
+        return icons[icon]?.icon
+    }
+
+    const changeIconTrigger = () => {
+        
+        dispatch({
+            branch: "floating-boxes",
+            type: "floatingTrigger"            
+        })
+
+        dispatch({
+            branch: "floating-boxes",
+            type: "setBoxType",
+            payload: {
+                type: "customButtonChangeIcon"
+            }
+        })
+    }
+
+    return (
+        <div className="property" style={{ zIndex: index }}>
+            <div className="label-box">
+                <span>{label}</span>
+            </div>
+            <div
+                className={`drop-box`}
+            >
+               <div className="icon-preview" onClick={ changeIconTrigger }>
+                    <FontAwesomeIcon icon={ renderIcon(currentValue) }/>
+               </div>
+            </div>
+        </div>
+    )
 }
 
 
@@ -1536,6 +1686,8 @@ const Components = {
     "childSelection": ChildSelection,
     "apiSelection": ApiSelection,
     "selfSelection": SelfSelection,
+    "icon": ButtonChangeIcon,
+
 
     "selectTables": SelectTables, // onetimeuse
     "tablefieldspicker": TableFieldsPicker, // onetimeuse
@@ -1547,5 +1699,6 @@ const Components = {
     "selectPage": SelectPage,
     "showParams": ShowParams, // onetimeuse
     "chooseSlave": ChooseSlave,
+
 }
 

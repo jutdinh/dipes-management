@@ -8,6 +8,8 @@ import DesignBlock from "./design-block";
 import UiConifg from "./ui-conifg";
 import PageConfig from "./page-config";
 
+import CustomButtonChangeIcon from './custombutton-change-icon';
+
 export default () => {
     const { floating } = useSelector( state => state )
     const dispatch = useDispatch()
@@ -22,7 +24,7 @@ export default () => {
     const renderBox = () => {
 
         const { type, offset } = floating
-
+        
         switch( type ){
             case "pageModify":
             case "pageChangeName":
@@ -40,6 +42,8 @@ export default () => {
             case "pageConfig":
                 return <PageConfig pageSettingTrigger={ pageSettingTrigger }/>
 
+            case "customButtonChangeIcon": 
+                return <CustomButtonChangeIcon />                
             default:
                 return <></>
         }

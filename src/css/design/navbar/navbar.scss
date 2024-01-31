@@ -378,6 +378,22 @@
                         }
                     }
 
+
+                    .icon-preview{
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border: 1px solid #ccc;
+                        cursor: pointer;
+
+                        &:hover{
+                            background: #000;
+                            color: #fff;
+                        }
+                    }
+
                     .iconic-switches {
                         display: flex;
                         flex-grow: 1;

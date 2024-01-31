@@ -13,7 +13,9 @@ const vi = {
      */
 
     "props.params": "Tham số",
+    "props.icon": "Icon",
     "props.page": "Trang",
+    "props.chooseslaves": "Bảng phụ thuộc khóa",
 
 
     "props.title": "Tiêu đề",

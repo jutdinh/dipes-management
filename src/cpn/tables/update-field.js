@@ -1061,11 +1061,26 @@ export default () => {
                                         // readOnly
                                         />
                                     </div>
+
+                                    <div class="col-md-12 col-lg-12" style={{ display: "flex", alignItems: "center" }}>
+                                        <input
+                                            type="checkbox"
+                                        // readOnly
+                                        />
+                                        <label class="font-weight-bold" style={{display: "block", marginLeft: "1em" }}>Pre Import</label>
+                                    </div>
+
                                     {/* Field */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list fields"]}</p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addField">
+                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" 
+                                                style={{ marginRight: "1em" }}
+                                            
+                                            data-toggle="modal" data-target="#addField">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>

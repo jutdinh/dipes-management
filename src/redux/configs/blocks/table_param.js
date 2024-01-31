@@ -93,7 +93,7 @@ export default (props) => {
 
     const AddButton = (e) => {
         const { block } = floating
-        const buttons = ["button", "redirect_button", "table_export_button" ]
+        const buttons = ["button", "redirect_button", "table_export_button", "custom_button"]
 
         if (buttons.indexOf(block) != -1) {
             appendChildComponent(id)
