@@ -396,7 +396,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                opacity: 0.65;
+                opacity: 1;
 
                 padding: 0.25em;
                 font-size: 16px;
@@ -430,5 +430,11 @@
     button{
         color: #ffffff;
         background-color: #007bff;
+    }
+}
+
+.navigation-disabled {
+    .page-link{
+        color: #888787;
     }
 }

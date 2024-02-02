@@ -126,7 +126,7 @@ export default (props) => {
         if( page.is_hidden ){
             icon = faEyeSlash
         }else{
-            icon = page.is_home ? faHome : icons[ page.icon ].icon
+            icon = page.is_home ? faHome : icons[ page.icon ]?.icon
         }
         return icon        
     }
@@ -136,11 +136,11 @@ export default (props) => {
             <div className={isDragging ? "page-container-active" : "page-container"}>
                 <span className="page-front" onMouseUp={FrontMouseUpTrigger}/>
                 <div className={`page ${ page.page_id == currentConfigPage?.page_id ? "page-in-config": "" }  ${ page.page_id == currentPage?.page_id ? "page-active": "" }`} key={page.page_id} onMouseDown={MouseDownTrigger} onClick={ ClickTrigger }>
-                    <div className="icon-ne icon-center"><FontAwesomeIcon icon={ renderIcon() } /></div>
+                    <div className={`icon-ne icon-center ${  page.is_hidden ? "icon-hidden-ne": "" }` } ><FontAwesomeIcon icon={ renderIcon() } /></div>
                     <div className="name">
-                        <span>{page.is_hidden ? rerenderPageName() : page.page_title}</span>
+                        <span>{ page.is_hidden ? rerenderPageName() : page.page_title}</span>
                     </div>
-                    { !preview && !page.is_hidden &&
+                    { !preview  &&
                         <div className="icon-ne cog" onClick={(e) => { pageSettingTrigger(e, page) }}>
                             <FontAwesomeIcon icon={faCog} />
                         </div>

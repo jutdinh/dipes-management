@@ -5,11 +5,13 @@
     border: 1px solid #ccc;
     border-top: none;
     border-right: none;
-    background: #fff;
+    background: #274452;
+    color: #fff;
     position: relative;
     z-index: 3;
-    height: 3em;
+    height: 56px;
     left: 299px;
+    font-size: 16px;
 
     width: calc(100% - 300px - 355px);
 
@@ -37,6 +39,8 @@
 
         .item {
             padding: 0.25em;
+            display: flex;
+            align-items: center;
 
             .circle-item {
                 cursor: pointer;
@@ -88,15 +92,24 @@
             justify-content: space-between;
             width: 100%;
             border-bottom: 1px solid #ccc;
-            background: #fff;
+            background: #274452;
             z-index: 10;
-            height: 3em;
+            height: 56px;
 
             .tab {
                 display: block;
                 width: 33.33%;
                 text-align: center;
                 padding: 1em 0.25em;
+                font-size: 16px;
+                color: #fff;
+                transition: none;
+                cursor: pointer;
+            }
+
+            .tab-active{
+                background: #fff;
+                color: #274452 ;
             }
 
             .pivot {
@@ -106,7 +119,7 @@
                 width: 40px;
                 height: 4px;
                 display: block;
-                background-color: #ccc;
+                background-color: #274452;
                 border-radius: 16px 16px 0 0;
             }
         }
@@ -302,6 +315,7 @@
                     }
 
                     .drop-box {
+                        width: 60%;
 
                         flex-grow: 1;
                         position: relative;
@@ -325,6 +339,12 @@
                                 padding: 0.5em 0.25em;
                                 border: 1px solid #ccc;
                                 cursor: pointer;
+
+                                display: inline-block;
+                                // width: 180px;
+                                white-space: nowrap;
+                                overflow: hidden !important;
+                                text-overflow: ellipsis;
                             }
                         }
 
@@ -365,6 +385,13 @@
 
                                     border: unset;
                                     border-radius: unset;
+
+                                    display: inline-block;
+                                    // width: 180px;
+                                    width: 100%;
+                                    white-space: nowrap;
+                                    overflow: hidden !important;
+                                    text-overflow: ellipsis;
 
                                     &:hover {
                                         background-color: #ddd;
@@ -575,6 +602,7 @@
                     .block-type {
                         display: block;
                         padding: 8px;
+                        font-weight: bold;
                     }
 
                     .blocks {
@@ -593,6 +621,7 @@
                             border: 1px solid #274452;
                             margin: 8px;
                             cursor: pointer;
+                            background: #e3e7e942;
 
                             .block-icon {
                                 font-size: 2em;
@@ -600,7 +629,8 @@
                             }
 
                             .block-name{
-                                
+                                color: #070707;
+                                text-align: center;
                             }
 
 
@@ -615,7 +645,7 @@
 
 .app-navbar {
     position: sticky;
-    top: 42px;
+    top: 56px;
     left: 0;
     width: 300px;
     height: calc(100% - 48px);
@@ -624,6 +654,8 @@
     z-index: 2;
     overflow: auto;
     overflow-x: hidden;
+    color: #070707;
+    
 
 
     .pages {
@@ -637,13 +669,16 @@
             bottom: 10px;
             left: 10px;
             z-index: 10;
-            background-color: #fff;
+            // background-color: #0a232f;
+
+            background-color: rgb(76, 175, 80);
+            color: #fff;
 
             display: flex;
             justify-content: center;
             align-items: center;
 
-            font-size: 1.25em;
+            font-size: 1.75em;
 
             cursor: pointer;
 
@@ -686,6 +721,10 @@
                     width: 2em;
                     height: 2em;
                     font-size: 16px;
+                }
+
+                .icon-hidden-ne{
+                    color: red;
                 }
 
                 .name {
@@ -746,7 +785,7 @@
                     background-color: #fafafa;
 
                     &:hover {
-                        background-color: #ccc;
+                        background-color: #015ab2;
                     }
                 }
 
@@ -831,13 +870,18 @@
     top: 0;
     left: 0;
     z-index: 2;
-    min-height: 3em;
+    min-height: 56px;
     width: 100%;
-    background: #fff;
+    
     border-bottom: 1px solid #ccc;
     width: 300px;
     // position: relative;
     transition: ease-in-out 0.1s;
+    background: #274452;
+    color: #fff;
+    font-size: 16px;
+    padding: 0.25em;
+
 
     .toggle {
         position: absolute;
@@ -850,12 +894,19 @@
     }
 
     .hide-or-show {
-        margin-left: auto;
+        // margin-left: 0.25em;
+        font-size: 20px;
         padding: 0.25em;
+        border-radius: 50%;
+        width: 2em;
+        height: 2em;
         cursor: pointer;
-
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        // display: none;
         &:hover {
-            color: #000
+            background-color: #ccc;            
         }
     }
 }

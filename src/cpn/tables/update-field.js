@@ -25,7 +25,9 @@ const types = [
     ValidTypeEnum.DECIMAL_UNSIGNED,
     ValidTypeEnum.EMAIL,
     ValidTypeEnum.PHONE,
-    ValidTypeEnum.TEXT
+    ValidTypeEnum.TEXT,
+    // ValidTypeEnum.FILE,
+    // ValidTypeEnum.PASSWORD
 ]
 const typenull = [
     { value: false, label: "Not null" },
@@ -92,7 +94,7 @@ export default () => {
         setShowModal(false);
         setErrors({})
     };
-    // console.log(tables)
+    // //console.log(tables)
     const handleDelete = () => {
         dispatch({
             branch: "db",
@@ -128,8 +130,8 @@ export default () => {
         //     ...defaultValues,
         // }));
 
-        // console.log(tempFields)
-        // console.log(primaryKey)
+        // //console.log(tempFields)
+        // //console.log(primaryKey)
 
     };
     const [errors, setErrors] = useState({});
@@ -202,7 +204,7 @@ export default () => {
                 // const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
                 const updatedForeignKeys = foreignKeys
                 updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
-                // console.log(updatedForeignKeys)
+                // //console.log(updatedForeignKeys)
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             } else {
@@ -322,7 +324,7 @@ export default () => {
     };
 
 
-    // console.log(tempFields)
+    // //console.log(tempFields)
 
 
 
@@ -460,9 +462,16 @@ export default () => {
         });
     }
 
-    // console.log(fieldTempUpdate)
+
+    const importDataPre = () => {
+        window.location.href = `/projects/${version_id}/table/${table_id}/pre_import`;
+    }
+
+
+
+    // //console.log(fieldTempUpdate)
     const getIdField = (fieldId) => {
-        // console.log(fieldId)
+        // //console.log(fieldId)
         const updatedField = {
             ...fieldId,
             ...fieldId.props
@@ -491,7 +500,7 @@ export default () => {
         }
     }
     const [fieldNew, setFieldNew] = useState([]);
-    // console.log(fieldNew)
+    // //console.log(fieldNew)
     const [fieldNewTemp, setFieldNewTemp] = useState([]);
     const getIdFieldTempNew = (fieldId) => {
 
@@ -536,7 +545,7 @@ export default () => {
             field_ids: [fieldId.id],
             version_id
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -560,7 +569,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        // console.log(resp)
+                        // //console.log(resp)
                         if (data.failFields?.length > 0) {
                             Swal.fire({
                                 title: lang["alarm.alarm"],
@@ -650,6 +659,7 @@ export default () => {
     }
 
     const [getTableFields, setTableFields] = useState({});
+    const [data_pre_import, setDataPreImport] = useState({});
 
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}/table/${table_id}`, {
@@ -660,10 +670,11 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log("data", data)
+                // //console.log("data", data)
                 if (success) {
                     if (data) {
                         setTableFields(data);
+                        setDataPreImport(data.pre_import)
                         setPrimaryKey(data.primary_key)
                         setForeignKeys(data.foreign_keys)
                     }
@@ -673,7 +684,7 @@ export default () => {
             })
     }, [])
 
-    // console.log(getTableFields)
+    // //console.log(getTableFields)
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
@@ -683,7 +694,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log("data", data)
+                // //console.log("data", data)
                 if (success) {
                     if (data) {
                         const filteredData = data.tables.filter(table => table.id !== parseInt(table_id));
@@ -713,14 +724,14 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    // console.log(data)
+                    // //console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
                 }
             });
     };
-    // console.log(selectedTableId)
+    // //console.log(selectedTableId)
     const selectDefaultTable = (tableId) => {
         setSelectedTableId(tableId);
         fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}/fields`, {
@@ -733,7 +744,7 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    // console.log(data)
+                    // //console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
@@ -757,7 +768,7 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // console.log(field)
+            // //console.log(field)
             setFieldTempupdate({
                 ...fieldTempUpdate, ...field.props
             });
@@ -770,11 +781,11 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // console.log(field)
+            // //console.log(field)
             setModalTemp({
                 ...modalTemp, ...field.props
             });
-            // console.log(modalTemp)
+            // //console.log(modalTemp)
 
         }
 
@@ -782,15 +793,16 @@ export default () => {
     }
     const [tableUpdate, setUpdateTable] = useState([]);
 
-    // console.log(fieldTempUpdate)
+    // //console.log(fieldTempUpdate)
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
             version_id,
             table_id: getTableFields.id,
             table_name: getTableFields.table_name,
+            pre_import: getTableFields.pre_import
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -822,7 +834,7 @@ export default () => {
             table_id: getTableFields.id,
             fields: hashedFields,
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/db/tables/table/fields`, {
             method: "PUT",
             headers: {
@@ -835,7 +847,7 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    // console.log(data)
+                    // //console.log(data)
                     updateKey(data);
                 } else {
                     functions.showApiResponseMessage(status);
@@ -860,7 +872,7 @@ export default () => {
             primary_key: primaryKey,
             foreign_keys: foreignKeys
         };
-        // console.log("KLey", KeyRequestBody)
+        // //console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -880,7 +892,7 @@ export default () => {
 
 
     const addField = (tableId) => {
-        // console.log("Call AddField")
+        // //console.log("Call AddField")
         const fieldRequestBody = {
             version_id,
             table_id: getTableFields.id,
@@ -888,7 +900,7 @@ export default () => {
                 ...tempFields
             ],
         };
-        // console.log("field", fieldRequestBody)
+        // //console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -901,7 +913,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // console.log(data)
+                // //console.log(data)
                 if (success) {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
@@ -912,12 +924,12 @@ export default () => {
     };
 
     const addKey = ({ tableId, data }) => {
-        // console.log("Call add Key")
+        // //console.log("Call add Key")
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
         const newPrimaryKey = [...getTableFields.primary_key, ...primaryKeyid]
 
-        // console.log( foreignKeys )
+        // //console.log( foreignKeys )
 
         for (let i = 0; i < foreignKeys.length; i++) {
             for (let j = 0; j < data.length; j++) {
@@ -935,7 +947,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: foreignKeys
         };
-        // console.log("KLey", KeyRequestBody)
+        // //console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -948,7 +960,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // console.log(resp)
+                // //console.log(resp)
                 functions.showApiResponseMessage(status);
             });
     };
@@ -958,7 +970,7 @@ export default () => {
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
     const currentTable = getTableFields.fields?.slice(indexOfFirstTable, indexOfLastTable);
-    // console.log(currentTable)
+    // //console.log(currentTable)
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(getTableFields.fields?.length / rowsPerPageTable);
     /// Add field
@@ -980,23 +992,23 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    // console.log("p key", primaryKey)
-    // console.log("f key", foreignKeys)
-    // console.log(foreignKey)
-    // console.log(tempFields)
-    // console.log(primaryKey)
-    // console.log(foreignKeys)
-    // console.log("FK", getTableFields.foreign_keys)
+    // //console.log("p key", primaryKey)
+    // //console.log("f key", foreignKeys)
+    // //console.log(foreignKey)
+    // //console.log(tempFields)
+    // //console.log(primaryKey)
+    // //console.log(foreignKeys)
+    // //console.log("FK", getTableFields.foreign_keys)
 
-    // console.log(getTableFields.fields)
-    // console.log(getTableFields.primary_key)
-    // console.log(tempFields)
-    // console.log(fieldNew)
-    // console.log(getTableFields)
-    // console.log(isOnforenkey)
+    // //console.log(getTableFields.fields)
+    // //console.log(getTableFields.primary_key)
+    // //console.log(tempFields)
+    // //console.log(fieldNew)
+    // //console.log(getTableFields)
+    // //console.log(isOnforenkey)
 
     const moveField = (index, direction) => {
-        const newFields = [...getTableFields.fields]; 
+        const newFields = [...getTableFields.fields];
 
         const realIndex = indexOfFirstTable + index;
 
@@ -1011,7 +1023,7 @@ export default () => {
         }
 
         setTableFields({ ...getTableFields, fields: newFields });
-        
+
         localStorage.setItem('fieldsData', JSON.stringify(newFields));
     };
 
@@ -1026,7 +1038,7 @@ export default () => {
             }
         }
     }, []);  // [] để đảm bảo rằng hiệu ứng này chỉ chạy một lần khi component được gắn kết.
-    
+
 
     return (
         <div class="midde_cont">
@@ -1061,26 +1073,31 @@ export default () => {
                                         // readOnly
                                         />
                                     </div>
-
-                                    <div class="col-md-12 col-lg-12" style={{ display: "flex", alignItems: "center" }}>
-                                        <input
-                                            type="checkbox"
-                                        // readOnly
-                                        />
-                                        <label class="font-weight-bold" style={{display: "block", marginLeft: "1em" }}>Pre Import</label>
+                                    <div class="form-group col-lg-12">
+                                        <div className="checkbox-with-label" onChange={(e) => setTableFields({ ...getTableFields, pre_import: e.target.checked })}>
+                                            <input
+                                                type="checkbox"
+                                                id="preImport"
+                                                name="preImport"
+                                                class="pointer"
+                                                checked={getTableFields.pre_import ? 1 : 0}
+                                                onChange={(e) => setTableFields({ ...getTableFields, pre_import: e.target.checked })}
+                                            />
+                                            <label htmlFor="preImport" className="font-weight-bold pointer">Pre Import</label>
+                                        </div>
                                     </div>
-
                                     {/* Field */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list fields"]}</p>
-                                            <button type="button" class="btn btn-primary custom-buttonadd ml-auto" 
-                                                style={{ marginRight: "1em" }}
-                                            
-                                            data-toggle="modal" data-target="#addField">
-                                                <i class="fa fa-download"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-primary custom-buttonadd" data-toggle="modal" data-target="#addField">
+                                            {
+                                               data_pre_import &&
+                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto mr-2"onClick={importDataPre}>
+                                                    <i class="fa fa-upload" aria-hidden="true"></i>
+                                                </button>
+                                            }
+
+                                            <button type="button" class={`btn btn-primary custom-buttonadd  ${ !data_pre_import && "ml-auto"}`} data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1088,7 +1105,7 @@ export default () => {
                                             {
                                                 currentTable && currentTable.length > 0 ? (
                                                     <>
-                                                        <table class="table table-striped">
+                                                        <table class="table table-striped table-hover">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
@@ -1099,9 +1116,6 @@ export default () => {
                                                                     <th class="font-weight-bold" scope="col">{lang["creator"]}</th>
                                                                     <th class="font-weight-bold " scope="col">{lang["create-at"]}</th>
                                                                     <th class="font-weight-bold align-center" scope="col" >{lang["log.action"]}</th>
-
-
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -1275,7 +1289,7 @@ export default () => {
                                                 value={foreignKey.ref_field_id}
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
-                                                    // console.log(e.target.value);
+                                                    // //console.log(e.target.value);
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
@@ -1553,7 +1567,7 @@ export default () => {
                                         {/* <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
                                             <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
-                                                console.log(e.target.value);
+                                                //console.log(e.target.value);
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                 autoType(e.target.value) // ? type
                                             }}

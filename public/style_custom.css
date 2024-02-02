@@ -1,57 +1,87 @@
 .element {
     background-color: lightyellow;
-  }
-  
-  .element:fullscreen {
+}
+
+.element:fullscreen {
     background-color: lightpink;
-  }
+}
 
 
-  .fake-model-bg{
+.fake-model-bg {}
 
-  }
-
-  .modal-content{
+.modal-content {
     position: relative;
     z-index: 10;
-  }
+}
 
-  .fake-model-bg::after{
+.fake-model-bg::after {
     position: fixed;
     z-index: 0;
     content: "";
     width: 200vw;
     height: 200vh;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     top: -100vh;
     left: -100vw;
-  }
+}
 
 
-  .custom-backdrop {
-    position: fixed; /* Stay in place */
-    z-index: 1040; /* Sit on top of everything (make sure this is higher than your modal's z-index) */
+.custom-backdrop {
+    position: fixed;
+    /* Stay in place */
+    z-index: 1040;
+    /* Sit on top of everything (make sure this is higher than your modal's z-index) */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: hidden; /* Ensure no scrolling on the backdrop */
-    background-color: rgba(0,0,0,0.5); /* Black with opacity */
-    display: none; /* Hidden by default */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: hidden;
+    /* Ensure no scrolling on the backdrop */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black with opacity */
+    display: none;
+    /* Hidden by default */
 }
 
 /* Style for animating the fade in of the backdrop */
 .fadeIn {
     animation-name: fadeIn;
-    animation-duration: 0.5s; /* Adjust time as necessary */
-    animation-fill-mode: forwards; /* Keep the element visible after the animation */
+    animation-duration: 0.5s;
+    /* Adjust time as necessary */
+    animation-fill-mode: forwards;
+    /* Keep the element visible after the animation */
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-} 
+    from {
+        opacity: 0;
+    }
 
+    to {
+        opacity: 1;
+    }
+}
+
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-menu div {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
 
 
 
@@ -60,15 +90,17 @@
 .table th .fix-layout {
     padding-bottom: 4.7px !important;
     padding-top: 4.7px !important;
-    /* padding-left: 7px !important; */
+
     padding-right: 7px !important;
     vertical-align: middle;
     min-height: 37px;
 }
+
 .fix-layout {
-   
+
     height: 38px;
 }
+
 /* Layout Active */
 .step-list {
     padding: 0;
@@ -197,7 +229,7 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
 
 .upload-button:hover {
@@ -219,19 +251,20 @@
     width: 23px;
     height: 21px;
 }
+
 .icon {
     font-size: 50px;
     margin-right: 20px;
     color: #ccc;
     margin-bottom: 10px;
-    align-self: center; 
+    align-self: center;
 }
 
 .instructions {
     color: #888;
     margin-top: 10px;
     text-align: center;
-    align-self: center; 
+    align-self: center;
 }
 
 .input-file {
@@ -257,9 +290,11 @@
     border: 2px solid #e7f1f8;
     border-radius: 5px;
     padding: 20px;
-    display: flex; /* Sử dụng Flexbox */
-    justify-content: center; /* Căn giữa chữ theo chiều ngang */
-padding: 0;
+    display: flex;
+    /* Sử dụng Flexbox */
+    justify-content: center;
+    /* Căn giữa chữ theo chiều ngang */
+    padding: 0;
 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out;
@@ -271,15 +306,15 @@ padding: 0;
 
 .my-box span {
     margin-top: 50px;
-    font-size: 48px; 
-    color: #ffc107; 
-    font-weight: bold; 
+    font-size: 48px;
+    color: #ffc107;
+    font-weight: bold;
 }
 
 .no-select-modal {
     pointer-events: none;
-  }
-  
+}
+
 .my-box-half {
     height: 150px;
     background-color: #d9dfe4;
@@ -287,9 +322,12 @@ padding: 0;
     border: 2px solid #e7f1f8;
     border-radius: 5px;
     padding: 0px;
-    display: flex; /* Sử dụng Flexbox */
-    justify-content: center; /* Căn giữa chữ theo chiều ngang */
-    align-items: center; /* Căn giữa chữ theo chiều dọc */
+    display: flex;
+    /* Sử dụng Flexbox */
+    justify-content: center;
+    /* Căn giữa chữ theo chiều ngang */
+    align-items: center;
+    /* Căn giữa chữ theo chiều dọc */
 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out;
@@ -300,18 +338,20 @@ padding: 0;
 }
 
 .my-box-half span {
-    font-size: 48px; 
-    color: #ffc107; 
-    font-weight: bold; 
+    font-size: 48px;
+    color: #ffc107;
+    font-weight: bold;
 }
 
 
 .italic {
     font-style: italic;
 }
+
 .italic-non {
     font-style: normal;
 }
+
 .icon-hidden {
     visibility: hidden;
 
@@ -326,41 +366,45 @@ padding: 0;
     /* padding-right: 7px !important;  */
     vertical-align: middle;
 }
+
 .disabled_action {
     pointer-events: none;
-    opacity: 0.6; 
-  }
+    opacity: 0.6;
+}
 
 .scrollable-container {
-    width: 100%; 
+    width: 100%;
     height: 400px;
-    overflow-x: auto; 
-    white-space: nowrap; 
+    overflow-x: auto;
+    white-space: nowrap;
     overflow-y: hidden;
 }
+
 .graph_head_project_detail {
     padding: 18px 25px 15px;
     float: left;
     width: 100%;
     border-bottom: solid #f3f3f3 2px;
 }
-.heading1_project_detail  {
+
+.heading1_project_detail {
     float: left;
     padding: 0 0 10px 0;
     width: 100%;
     margin-top: 50px;
 }
-.selected-row{
+
+.selected-row {
     position: relative;
 }
 
-.selected-row *{
+.selected-row * {
     position: relative;
     z-index: 1;
 }
 
 .selected-row::after {
-    border: 2px solid #5bcfce !important;
+    border: 1px solid #5bcfce !important;
     content: "";
     position: absolute;
     top: 0;
@@ -368,14 +412,15 @@ padding: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
-  }
-  
+}
+
 
 
 .content {
-    width: 600px; 
+    width: 600px;
 
 }
+
 .table-container {
     display: flex;
     flex-direction: column;
@@ -384,42 +429,43 @@ padding: 0;
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
-  }
-  
-  .table-header, .table-row {
+}
+
+.table-header,
+.table-row {
     display: flex;
-  }
-  
-  .table-header {
+}
+
+.table-header {
     background-color: lightgray;
-  }
-  
-  .table-cell {
+}
+
+.table-cell {
     padding: 5px;
     border-right: 1px solid black;
     flex: 1;
     text-align: center;
-  }
+}
 
-  
-  
-  .table-body {
+
+
+.table-body {
     overflow-y: auto;
     flex-grow: 1;
-  }
-  
-  .table-row:nth-child(even) {
+}
+
+.table-row:nth-child(even) {
     background-color: #f9f9f9;
-  }
-  
-  .table-row .table-cell {
+}
+
+.table-row .table-cell {
     border-bottom: 1px solid black;
-  }
-  
-  .table-row .table-cell:last-child {
+}
+
+.table-row .table-cell:last-child {
     border-right: none;
-  }
-  
+}
+
 /* .gantt-container svg {
     margin-bottom: -115px;
 } */
@@ -435,28 +481,31 @@ padding: 0;
 
 .grab {
     cursor: grab;
-  }
-  
-  .grabbing {
+}
+
+.grabbing {
     cursor: grabbing;
-  }
-  
+}
+
 
 .gantt {
-   min-height: 100px !important;
+    min-height: 100px !important;
 }
 
 
 .gantt .bar-progress {
     fill: #5bcfce !important;
 }
-.gantt .bar-wrapper.bar-milestone  .bar-progress {
+
+.gantt .bar-wrapper.bar-milestone .bar-progress {
     fill: rgb(255, 0, 0) !important;
-} 
+}
+
 .gantt .today-highlight {
     fill: #ffda39 !important;
     opacity: 0.5;
 }
+
 .gantt .bar-label {
     fill: #fff;
     /* dominant-baseline: central; */
@@ -465,7 +514,9 @@ padding: 0;
     font-weight: lighter;
     display: none;
 }
-.bar-wrapper .bar-group .bar, .bar-wrapper .bar-group .bar-progress {
+
+.bar-wrapper .bar-group .bar,
+.bar-wrapper .bar-group .bar-progress {
     height: 23px !important;
     margin-bottom: 5px
 }
@@ -488,14 +539,15 @@ padding: 0;
 }
 
 .gantt .grid-row {
-   fill: #f8f4f4 !important;
+    fill: #f8f4f4 !important;
 }
+
 .gantt .bar-wrapper.bar-milestone .bar-group rect.bar {
     stroke: #ee2222 !important;
     stroke-width: 3 !important;
     stroke-dasharray: 3 !important;
     paint-order: stroke fill markers !important;
-    
+
 }
 
 .gantt .grid-row {
@@ -537,12 +589,14 @@ padding: 0;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
+
 #sidebar ul.components {
     padding: 0px 0;
     margin: 0;
     float: left;
     width: 100%;
 }
+
 #sidebar ul li a {
     padding: 19.5px 25px;
     display: block;
@@ -550,7 +604,8 @@ padding: 0;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 300;
 }
-.icon-download{
+
+.icon-download {
     color: #007afd
 }
 
@@ -560,23 +615,25 @@ padding: 0;
     z-index: 10; 
 } */
 .icon-fullscreen {
-   color: #2b51f2
+    color: #2b51f2
 }
+
 .icon-showgantt {
     color: #6a35c0
- }
+}
 
-.height-960{
-    max-height: 960px !important;
+.height-960 {
+    max-height: 100vh !important;
 }
 
 .fix-layout-header-table thead th {
     vertical-align: middle !important;
     border-bottom: 0.5px solid #dee2e6;
 }
+
 .circle-image-cus-gantt {
     border-radius: 100%;
-    width:30.5px;
+    width: 30.5px;
     padding: 0px 2px;
 
 }
@@ -598,7 +655,7 @@ padding: 0;
     margin: 0;
     padding: 0;
     font-size: 24px;
-    
+
     display: inline-block;
 }
 
@@ -741,6 +798,7 @@ padding: 0;
     min-height: 125px;
     display: flex;
 }
+
 .counter_section_website {
     min-height: auto;
     display: block;
@@ -752,6 +810,7 @@ padding: 0;
     min-height: 108px;
     display: flex;
 }
+
 .graph_head_about {
     padding: 0px 25px 5px;
     float: left;
@@ -948,13 +1007,21 @@ padding: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .truncate {
-    white-space: nowrap;     
-    overflow: hidden;         
-    text-overflow: ellipsis;  
-    max-width: 150px;         
-  }
-  
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+.truncate-taskname {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 385px;
+}
+
 .view-more-link {
     min-width: 85px;
     padding-top: -15px;
@@ -1092,8 +1159,23 @@ padding: 0;
 
     border: 1px solid #dee2e6;
 }
+.checkbox-with-label {
+    display: flex;
+    align-items: center;
+    
+  }
 
-.app1 .rt-timebar__cell {
+  .checkbox-with-label input[type="checkbox"] {
+    margin-right: 8px; 
+  
+  }
+  .checkbox-with-label label {
+      font-weight: bold;
+    margin-top: 2px;
+  }
+
+
+.app1 .rt-timebar__cell {  
     position: absolute;
     text-align: center;
     background-color: #fff;
@@ -1646,7 +1728,7 @@ img[class="scaled-hover-target"] {
 }
 
 .icon-close {
-    
+
     color: #ec840c
 }
 
@@ -1752,6 +1834,25 @@ img[class="scaled-hover-target"] {
     flex-direction: column;
 }
 
+.user-popup5 {
+    position: fixed;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 350px;
+    width: 90%;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
 
 .user-popup-content {
 
@@ -1849,7 +1950,7 @@ img[class="scaled-hover-target"] {
     top: 50%;
     transform: translateY(-50%);
     color: #999;
-  
+
 }
 
 /* Ẩn nhãn khi input có giá trị hoặc được focus */
@@ -2025,6 +2126,7 @@ input[type="date"]:valid+.date-label {
     min-height: 220px;
 
 }
+
 .padding_infor_info_statis {
     padding: 7px 35px;
     float: left;
@@ -2066,6 +2168,7 @@ input[type="date"]:valid+.date-label {
     min-height: 500px;
 
 }
+
 .padding_infor_info_detail_task {
     padding: 5px 35px;
     float: left;
@@ -2124,12 +2227,13 @@ input[type="date"]:valid+.date-label {
 }
 
 .padding_infor_info_list_task {
-    padding: 5px 15px;
+    padding: 1px 10px;
     float: left;
     width: 100%;
     min-height: 350px;
 
-    max-height: 680px;
+    /* max-height: 680px; */
+    max-height: 77vh;
     margin-bottom: 1rem;
 
 }
@@ -2263,21 +2367,25 @@ input[type="date"]:valid+.date-label {
     border-radius: 5px;
     cursor: pointer;
 }
-.padding_infor_info_layout1{
+
+.padding_infor_info_layout1 {
     padding: 10px 35px;
     float: left;
     width: 100%;
 }
+
 .icon-add {
     color: #007bff;
     font-size: 24px;
     width: 24px;
     height: 27px;
 }
+
 .icon-add-task {
     color: #007bff;
-  
+
 }
+
 .color-tr {
     background-color: #f0eaea;
 }
@@ -2346,7 +2454,12 @@ input[type="date"]:valid+.date-label {
     width: 100%;
     border-bottom: solid #f3f3f3 2px;
 }
-
+.row_cus  .col-md-12 {
+    position: relative;
+    width: 100%;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
 .option-header {
     display: flex;
     justify-content: space-between;
@@ -2415,7 +2528,7 @@ input[type="date"]:valid+.date-label {
 }
 
 
-.size-28{
+.size-28 {
     font-size: 28px;
 }
 
@@ -2627,6 +2740,19 @@ input[type="date"]:valid+.date-label {
     /* Thay đổi màu nút gốc thành màu đỏ */
 }
 
+
+
+.note-task {
+    
+    font-size: 12px;
+    color: gold; 
+    padding-left: 2px;
+
+}
+
+
+
+
 .no-border-table {
     border-collapse: none;
 }
@@ -2831,6 +2957,170 @@ table tr {
 
 
 
-#gantt-container-grab .gantt-container{
+#gantt-container-grab .gantt-container {
     /* flex-grow: 1; */
+}
+
+.table-td-product-pl-5 {
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.table-td-product-pl-6 {
+    padding-left: 6px;
+}
+
+.table-td-product-height {
+    height: 49px;
+}
+
+.table-task td,
+th {
+    padding: 0rem;
+    height: 25px;
+    vertical-align: middle;
+
+}
+
+.table-task table td {
+    padding: 0rem;
+    height: 26px;
+    vertical-align: middle;
+
+}
+
+.table-task .table td,
+.table th {
+    padding-bottom: 2px !important;
+    padding-top: 2px !important;
+    /* padding-left: 7px !important; */
+    padding-right: 7px !important;
+    vertical-align: middle;
+    min-height: 37px;
+}
+
+
+.custom-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.timeline-body {
+    font-size: 12px !important;
+}
+
+
+
+
+
+.dropdown-menu-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+
+
+.timeline-body .form-control {
+    display: block;
+    width: 100%;
+    padding: .2rem .75rem !important;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.timeline-body select.form-control:not([size]):not([multiple]) {
+    height: 26px;
+}
+
+.timeline-body .table td,
+.table th {
+    padding: 5px 0px 5px 0px !important;
+    vertical-align: middle;
+}
+
+.timeline-body .table td,
+.table th .fix-layout {
+    padding-bottom: 4.7px !important;
+    padding-top: 1px !important;
+    padding-right: 7px !important;
+    vertical-align: middle;
+    min-height: 37px;
+}
+
+
+.graph_head_cus {
+    padding: 5px 25px 5px !important;
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
+
+
+
+.graph_head_cus .heading1 {
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.dropdown-btn {
+    padding: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 2px;
+    width: 150px;
+}
+
+.fixed-height {
+    height: 15px;
+    display: block;
+}
+
+.dropdown-menu-container {
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.icon_info ul.user_profile_dd>li {
+    width: 100%;
+    border-radius: 0;
+    background: #0066cc;
+    margin: 0;
+    padding: 12px 0 12px 20px;
+    height: auto;
+}
+
+.dropdown-menu-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-item-label {
+    cursor: pointer;
+}
+
+.checkbox-style {
+    margin-right: 10px;
+}
+
+/* Add other styles such as hover effects for dropdown items, etc. */
+.dropdown-menu-item:hover {
+    background-color: #f1f1f1;
 }

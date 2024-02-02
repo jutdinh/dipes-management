@@ -13,6 +13,17 @@ const button =  [
         path: "props.icon" 
     },
 
+
+    {
+        id: getFormatedUUID(), 
+        label: lang["props.field"],
+        optionslabel: lang["props.option"],
+        type: "choosePreImportTable",
+        masterTables: "props.source.tables",
+        fieldPath: "props.field",
+        valuePath: "props.value" 
+    },
+
     { 
         id: getFormatedUUID(), 
         label: lang["style.color"],

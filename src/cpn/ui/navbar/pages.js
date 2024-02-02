@@ -89,6 +89,8 @@ export default () => {
         })
     }
 
+    
+
     return (
         <div className="pages">
             <div className="pages-container">
@@ -98,13 +100,13 @@ export default () => {
             </div>
 
             { !preview && 
-                <div className="add-icon" onClick={createPage}>
-                    <FontAwesomeIcon icon={faAdd} />
+                <div className="add-icon" style={{ background: "#007bff" }} onClick={  PreviewTrigger  }>
+                    <FontAwesomeIcon icon={ faEye } />
                 </div>
             }
 
             { preview && 
-                <div className="add-icon" onClick={ PreviewTrigger }>
+                <div className="add-icon" style={{ backgroundColor: "red" }} onClick={ PreviewTrigger }>
                     <FontAwesomeIcon icon={faEyeSlash} />
                 </div>
             }

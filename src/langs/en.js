@@ -100,7 +100,7 @@ export default {
     "tasklist": "Tasks",
     "detailtask": "Task Detail",
     "addtask": "Add Task",
-    "addtaskchild": "Add Task Child",
+    "addtaskchild": "Add Subtask",
     "taskname": "Task name",
     "p.taskname": "Enter task name",
     "taskstatus": "Status",
@@ -489,9 +489,22 @@ export default {
     "read": "Read",
     "not notification":"Not notifications yet",
     "view all notificaton": "View all Notifications",
-    "not found notification": "No notifications found."
-
-
+    "not found notification": "No notifications found.",
+    "changepassword": "Change password",
+    "validPassword": "The password re-entered does not match",
+    "new password": "New password",
+    "p.new password": "Enter the new password",
+    "old password": "Old password",
+    "p.old password": "Enter the old password",
+    "re password": "Re-enter password",
+    "p.re password": "Re-enter the new password",
+    "change": "Change",
+    "wrong password": "Incorrect old password",
+    "success.password": "Your password has been updated. Please log in again to continue using the service with the new security details",
+    "failed.password": "Password change failed",
+    "The date must be within the date range of the period": "The date must be within the date range of the period",
+    "The date must be within the date range of the task": "The date must be within the date range of the task",
+    "add data": "Add Data",
+    "update data": "Update Data"
 }
-
 

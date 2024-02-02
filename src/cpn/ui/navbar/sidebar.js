@@ -37,15 +37,15 @@ export default () => {
             <div className="sidebar-container">                
 
                 <div className="tabbed">
-                    <div className="tab" onClick={() => { setActive(0) }}>
+                    <div className={`tab ${ active == 0 ? "tab-active": "" }`} onClick={() => { setActive(0) }}>
                         <span><b>Thiết kế</b></span>
                     </div>
 
-                    <div className="tab" id="property-trigger" onClick={() => { setActive(1) }}>
+                    <div className={`tab ${ active == 1 ? "tab-active": "" }`} id="property-trigger" onClick={() => { setActive(1) }}>
                         <span><b>Thuộc tính</b></span>
                     </div>
 
-                    <div className="tab" onClick={() => { setActive(2) }}>
+                    <div className={`tab ${ active == 2 ? "tab-active": "" }`} onClick={() => { setActive(2) }}>
                         <span><b>Chủ đề</b></span>
                     </div>
                     

@@ -24,7 +24,9 @@ const types = [
     ValidTypeEnum.DECIMAL_UNSIGNED,
     ValidTypeEnum.EMAIL,
     ValidTypeEnum.PHONE,
-    ValidTypeEnum.TEXT
+    ValidTypeEnum.TEXT,
+    // ValidTypeEnum.FILE,
+    // ValidTypeEnum.PASSWORD
 ]
 const typenull = [
     { value: false, label: "Not null" },
@@ -37,7 +39,7 @@ export default () => {
     const stringifiedUser = localStorage.getItem("user");
     const users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
 
-    
+
     let navigate = useNavigate();
     const back = () => {
         navigate(`/projects/${version_id}/tables`);
@@ -64,11 +66,11 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
-    // console.log(modalTemp)
+    // //console.log(modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
-
+    console.log(table)
     const dispatch = useDispatch();
 
     const handleCloseModal = () => {
@@ -93,7 +95,7 @@ export default () => {
     };
 
     const [errors, setErrors] = useState({});
-    // console.log(modalTemp)
+    // //console.log(modalTemp)
     const validate = () => {
         let temp = {};
 
@@ -234,7 +236,7 @@ export default () => {
 
     };
 
-    // console.log(modalTemp)
+    // //console.log(modalTemp)
 
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
     useEffect(() => {
@@ -257,7 +259,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    // console.log(fieldTempUpdate)
+    // //console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -268,7 +270,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        // console.log(fieldId)
+        // //console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -355,8 +357,8 @@ export default () => {
             });
     };
 
-    // console.log(tempFields)
-    // console.log(table)
+    // //console.log(tempFields)
+    // //console.log(table)
     const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
         e.preventDefault();
@@ -372,11 +374,12 @@ export default () => {
             //     return;
             // }
             if (validateTablename()) {
-                // console.log( table )
+                // //console.log( table )
                 const tableRequestBody = {
                     version_id: version_id,
                     table: {
-                        table_name: table.table_name
+                        table_name: table.table_name,
+                        pre_import: table.pre_import
                     }
                 };
                 //console.log("body",tableRequestBody)
@@ -391,8 +394,9 @@ export default () => {
                     .then((res) => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
+                        //console.log(resp)
                         if (success) {
-                            if (tempFields.length > 0) {
+                            if (tempFields && tempFields.length > 0) {
                                 const tableId = data.table.id; // Lấy id bảng vừa tạo
                                 addField(tableId, status);
                             } else {
@@ -412,41 +416,41 @@ export default () => {
 
 
     };
-    // console.log(tempFields)
+    // //console.log(tempFields)
 
     const addField = (tableId, prevStatus = undefined) => {
-        if (primaryKey.length !== 0) {
-            const fieldRequestBody = {
-                version_id,
-                table_id: tableId,
-                fields: [
-                    ...tempFields
-                ],
-            };
-            // console.log("field", fieldRequestBody)
+        // if (primaryKey.length !== 0) {                          
+        const fieldRequestBody = {
+            version_id,
+            table_id: tableId,
+            fields: [
+                ...tempFields
+            ],
+        };
+        //console.log("field", fieldRequestBody)
 
-            fetch(`${proxy}/db/fields/fields`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `${_token}`,
-                },
-                body: JSON.stringify(fieldRequestBody),
-            })
-                .then((res) => res.json())
-                .then((resp) => {
-                    const { success, content, data, status } = resp;
-                    // console.log(data)
-                    if (success) {
+        fetch(`${proxy}/db/fields/fields`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(fieldRequestBody),
+        })
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                //console.log(resp)
+                if (success) {
 
-                        addKey({ tableId, data }, prevStatus);
-                        // handleClickPrimary(fieldId);
-                    } else {
-                        functions.showApiResponseMessage(status);
+                    addKey({ tableId, data }, prevStatus);
+                    // handleClickPrimary(fieldId);
+                } else {
+                    functions.showApiResponseMessage(status);
 
-                    }
-                });
-        }
+                }
+            });
+        // }
 
     };
 
@@ -468,7 +472,7 @@ export default () => {
             primary_key: primaryKeyid,
             foreign_keys: foreignKeys
         };
-        // console.log("KLey", KeyRequestBody)
+        // //console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -523,11 +527,11 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // console.log(field)
+            // //console.log(field)
             setModalTemp({
                 ...modalTemp, ...field.props
             });
-            // console.log(modalTemp)
+            // //console.log(modalTemp)
 
         }
 
@@ -542,7 +546,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "POST",
             headers: {
@@ -562,7 +566,7 @@ export default () => {
     };
 
     // useEffect(() => {
-    //     // console.log(tableUpdate);
+    //     // //console.log(tableUpdate);
     // }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -571,9 +575,10 @@ export default () => {
             version_id,
             table_id: tableUpdate.id,
             table_name: tableUpdate.table_name,
+            pre_import: tableUpdate.pre_import
 
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -638,11 +643,11 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    // console.log("p key", primaryKey)
-    // console.log("f key", foreignKeys)
-    // // console.log(modalTemp)
+    // //console.log("p key", primaryKey)
+    // //console.log("f key", foreignKeys)
+    // // //console.log(modalTemp)
 
-    // console.log(tempFields)
+    // //console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -678,6 +683,20 @@ export default () => {
                                         />
                                         {errorTable.table_name && <p className="text-danger">{errorTable.table_name}</p>}
                                     </div>
+                                    <div class="form-group col-lg-12">
+                                        <div className="checkbox-with-label"  onChange={(e) => setTable({ ...table, pre_import: e.target.checked })}>
+                                            <input
+                                                type="checkbox"
+                                                id="preImport"
+                                                name="preImport"
+                                                class="pointer"
+                                                onChange={(e) => setTable({ ...table, pre_import: e.target.checked })}
+                                            />
+                                            <label htmlFor="preImport" className="font-weight-bold pointer">Pre Import</label>
+                                        </div>
+
+
+                                    </div>
 
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
@@ -692,7 +711,7 @@ export default () => {
                                             {
                                                 currentTable && currentTable.length > 0 ? (
                                                     <>
-                                                        <table class="table table-striped">
+                                                        <table class="table table-striped table-hover">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="font-weight-bold" scope="col">{lang["log.no"]}</th>
@@ -902,7 +921,7 @@ export default () => {
                                                 value={foreignKey.ref_field_id}
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
-                                                    // console.log(e.target.value);
+                                                    // //console.log(e.target.value);
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi

@@ -13,6 +13,8 @@ const vi = {
      */
 
     "props.params": "Tham số",
+    "props.field": "Trường",
+    "props.option": "Giá trị",
     "props.icon": "Icon",
     "props.page": "Trang",
     "props.chooseslaves": "Bảng phụ thuộc khóa",

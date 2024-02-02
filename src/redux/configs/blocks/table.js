@@ -470,19 +470,19 @@ export default (props) => {
                                 </div>
                                 {
                                     buttons.add.state &&
-                                    <div className="util icon-blue" onClick={moveToAddPage}>
+                                    <div className="util " onClick={moveToAddPage}>
                                         <FontAwesomeIcon icon={faSquarePlus} />
                                     </div>
                                 }
                                 {
                                     buttons.export.state &&
-                                    <div className="util icon-green">
+                                    <div className="util ">
                                         <FontAwesomeIcon icon={faDownload} />
                                     </div>
                                 }
                                 {
                                     buttons.import.state &&
-                                    <div className="util icon-flammel">
+                                    <div className="util ">
                                         <FontAwesomeIcon icon={faUpload} />
                                     </div>
                                 }
@@ -541,11 +541,11 @@ export default (props) => {
                                             &&
                                             <td className="table-icons">
                                                 <div className="icons" onMouseUp={AddButton}>
-                                                    {buttons.detail.state && <div className="table-icon icon-1"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
-                                                    {buttons.update.state && <div className="table-icon icon-2"><FontAwesomeIcon icon={faEdit} /> </div>}
-                                                    {buttons.delete.state && <div className="table-icon icon-3"><FontAwesomeIcon icon={faTrash} /> </div>}
-                                                    {buttons.approve.state && <div className="table-icon icon-4"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
-                                                    {buttons.unapprove.state && <div className="table-icon icon-5"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
+                                                    {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                    {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
+                                                    {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
+                                                    {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}
+                                                    {buttons.unapprove.state && <div className="table-icon"><FontAwesomeIcon icon={faCircleXmark} /> </div>}
                                                     {children}
                                                 </div>
 
@@ -557,7 +557,7 @@ export default (props) => {
                         </div>
                     }
 
-                    <nav aria-label="Page navigation example" style={{ display: "flex" , padding: 12}}>
+                    <nav aria-label="Page navigation example" className="navigation-disabled" style={{ display: "flex" , padding: 12}}>
                         <span className="period-display">Hiển thị {visibility.row_per_page} của {fakeData.length} kết quả. </span>
                         <ul className="pagination ml-auto">
                             {/* Nút đến trang đầu */}

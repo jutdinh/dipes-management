@@ -370,7 +370,7 @@ export default {
     "error.delete.pramry": "Không được xóa trường khóa chính.",
     "delete.ui": "Bạn có chắc chắn muốn xóa UI này?",
     "delete.user": "Bạn có chắc chắn muốn xóa người dùng này?",
-
+    "validPassword": "Mật khẩu nhập lại không khớp",
 
     "empty.member": "Chưa có thành viên",
 
@@ -466,7 +466,7 @@ export default {
     "p.stagename": "Nhập tên giai đoạn",
     "error.stagename": "Vui lòng nhập tên giai đoạn",
     "delete.stage": "Bạn có chắc chắn muốn xóa giai đoạn này?",
-    "edittaskchild": " Chỉnh sửa công việc con",
+    "edittaskchild": "Chỉnh sửa công việc con",
     "collapse": "Thu gọn",
     "expand": "Mở rộng",
     "no history yet": "Chưa có lịch sử",
@@ -494,7 +494,30 @@ export default {
     "read": "Đã đọc",
     "not notification":"Chưa có thông báo",
     "view all notificaton": "Xem tất cả thông báo",
-    "not found notification": "Không tìm thấy thông báo"
+    "not found notification": "Không tìm thấy thông báo",
+    "changepassword": "Đổi mật khẩu",
+    
+
+
+
+   "change password": "Thay đổi mật khẩu",
+    "p.new password": "Nhập mật khẩu mới",
+    "new password": "Mật khẩu mới",
+    "p.old password": "Nhập mật khẩu cũ",
+    "old password": "Mật khẩu cũ",
+    "p.re password": "Nhập lại mật khẩu mới",
+    "re password": "Nhập lại mật khẩu",
+    "change": "Thay đổi",
+
+    "wrong password": "Mật khẩu cũ không chính xác",
+    "success.password": "Mật khẩu của bạn đã được cập nhật. Xin hãy đăng nhập lại để tiếp tục sử dụng dịch vụ với thông tin bảo mật mới ",
+    "failed.password": "Thay đổi mật khẩu thất bại",
+    "The date must be within the date range of the period": "Ngày phải nằm trong phạm vi ngày của Giai đoạn",
+
+    "The date must be within the date range of the task": "Ngày phải nằm trong phạm vi ngày của công việc",
+
+    "add data": "Thêm dữ liệu",
+    "update data": "Cập nhật dữ liệu"
 
 
 
@@ -502,11 +525,4 @@ export default {
 
 
 
-
-
-
-
-
-
-
-} 
+}

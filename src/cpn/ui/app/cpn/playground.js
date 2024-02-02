@@ -143,7 +143,7 @@ export default () => {
     }
 
     return(
-        <div id="playground" className={`${ preview ? "preview": "" }`} style={{ height: 12000, paddingLeft: `${ cache.navbar ? 300 : 36 }px`, position: "relative", zIndex: 1 }} >  
+        <div id="playground" className={`${ preview ? "preview": "" }`} style={{ height: 12000, paddingLeft: `${ cache.navbar ? 310 : 36 }px`, paddingRight: 10, position: "relative", zIndex: 1 }} >  
             {/* { page.component.map( (cpn, index) => {
                 const { props, id, name } = cpn;                
                 const mergedProps = { ...props, id }

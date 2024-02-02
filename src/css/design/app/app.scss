@@ -14,11 +14,13 @@ b{
     padding-bottom: 0;
     // padding-top: 4em;
     
+    
 
     .app-container{
         display: block;
         flex-grow: 1;
-        background-color: #f8f8f8;  
+        // background-color: #f8f8f8;  
+        background-color:whitesmoke; //#27445221;
         // border: 1px solid #ccc;              
         overflow-y: scroll;
         position: relative;
@@ -39,35 +41,36 @@ b{
 .design-zone-container{
     width: 100%;
     // margin-top: 10px;
-    padding: 0.25em;
+    // padding: 0.25em;
     position: relative;
 
     .front-line{
         display: block;
-        height: 0px;
+        height: 8px;
         width: 100%;        
         border-radius: 12px;   
         background-color: transparent;     
         pointer-events: none;
-        // display: none;
+        // display: none;    
     }
     
     .back-line{
         display: block;
-        height: 0px;
+        height: 5px;
+        
         width: 100%;                
         border-radius: 12px;
         background-color: transparent;
         pointer-events: none;
-        // display: none;
+        display: none;
     }
     
     .line-active{
         background-color: #ccc;
         pointer-events: initial;
-        height: 10px;
+        height: 8px;
         &:hover{
-            background-color: #aaa;
+            background-color: #015ab2;
             cursor: pointer;
         }
     }
@@ -75,11 +78,13 @@ b{
 
 .design-zone{    
     width: 100%;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     padding: 0.5em;
     position: relative;
     // border: 1px solid #ccc;
     transition: none !important;
+    background-color: #fff;
+    border-radius: 6px;
     
     
     .trigger-bg{
@@ -90,17 +95,39 @@ b{
         width: 100%;
         height: 100%;
         background: transparent;
+        // background-color: #fff;
     }
 }
 
 .design-zone-active{
-    border: 10px solid #b0d7ff;
-    border-image-slice: 1;
-    border-width: 1px;
-
+    
+    // border: 2px dashed #ff0000;    
+    border-radius: 6px;
     box-shadow: 2px 2px 6px 0px #ccc;
+    .trigger-bg{
+
+    }
 
     // border-image-source: linear-gradient(to left, #1639ff, #11bd2d);    
+
+    *{
+        position: relative;
+        z-index: 1;
+    }
+
+    &::after{
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 0;
+        top: -2px;
+        left: -2px;
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        border: 2px solid  #ffc107;
+        border-radius: 6px;
+        opacity: 0.5;
+    }
 }
 
 #playground-bg{
@@ -114,5 +141,5 @@ b{
 }
 
 .main-page * {
-    transition: ease-in-out 0.1s;
+    // transition: ease-in-out 0.1s;
 }

@@ -9,10 +9,12 @@ const blockTypes = {
     datetime: "datetime",
     apiCombo: "apiCombo",
     chart_1: "chart_1",
+    chart_2: "chart_2",
+    c_chart: "c_chart",
+    inline_statis: "inline_statis",
     table_param: "table_param",
     redirect_button: "redirect_button",
     table_export_button: "table_export_button",
-    c_chart: "c_chart",
 
     custom_button: "custom_button"
 }
@@ -352,6 +354,31 @@ const initialStates = {
         }
     },
 
+    "chart_2": {
+        "name": "chart_2",
+        "children": [
+
+        ],
+        "props": {           
+            children: [],           
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
+    "inline_statis": {
+        "name": "inline_statis",
+        "children": [
+
+        ],
+        "props": {                       
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
     "c_chart": {
         "name": "c_chart",
         "children": [
@@ -562,7 +589,9 @@ const initialStates = {
         "props": {        
             "icon": "201",
             "field": {
-                id: "",                
+                id: "",
+                field_name: "",
+                fomular_alias: ""
             },
             value: "",
             "style": {

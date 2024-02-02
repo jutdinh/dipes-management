@@ -11,7 +11,7 @@ import { Projects, ProjectsCard, ProjectDetail, TaskDetail, EditProject } from '
 import { ListUser, Profile } from './users';
 import { Tasks } from './tasks';
 import { Logs } from './logs';
-import { Tables, Field, UpdateField } from './tables';
+import { Tables, Field, UpdateField, Pre_import  } from './tables';
 import { Apis, CreateApi, UpdateAi, StatisticalField } from './api';
 // import { UI, CreateUi, Detail } from './ui'
 import UI from './ui/Program'
@@ -93,6 +93,8 @@ function App() {
         <Route path="/projects/:version_id/tables" element={<Navigation Child={Tables} />} />
         <Route path="/projects/:version_id/tables/field" element={<Navigation Child={Field} />} />
         <Route path="/projects/:version_id/table/:table_id" element={<Navigation Child={UpdateField} />} />
+        <Route path="/projects/:version_id/table/:table_id/pre_import" element={<Navigation Child={Pre_import} />} />
+        
         <Route path="/projects/:project_id/:version_id/apis" element={<Navigation Child={Apis} />} />
         <Route path="/projects/:project_id/:version_id/apis/create" element={<Navigation Child={CreateApi} />} />
         <Route path="/projects/:project_id/:version_id/apis/update/:api_id" element={<Navigation Child={updateApi} />} />

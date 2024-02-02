@@ -82,7 +82,8 @@ const initState = {
 
     apis: [],
     tables: [],
-    propertyLang
+    propertyLang, 
+        
 }
 
 export default (state = initState, action) => {

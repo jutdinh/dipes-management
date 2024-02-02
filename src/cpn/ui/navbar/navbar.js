@@ -51,18 +51,13 @@ export default () => {
 
     // const { page }= useSelector( state => state )
 
-    const PreviewTrigger = () => {
-        dispatch({
-            branch: "design-ui",
-            type: "PreviewTrigger"
-        })
-    }
+   
 
     const colors = {
-        undo: "blue",
-        redo: "blue",
-        eyes: "black",
-        cog: "brown",
+        undo: "#FFEB3B",
+        redo: "#FFEB3B",
+        eyes: "rgb(255, 87, 34)",
+        cog: "rgb(82, 166, 231)",
         trash: "red"
     }
 
@@ -78,9 +73,7 @@ export default () => {
                 <div className="item">
                     <div className="circle-item" style={{ color: colors.redo }}> <FontAwesomeIcon icon={faRedo} /> </div>
                 </div>
-                <div className="item" onClick={PreviewTrigger}>
-                    <div className="circle-item" style={{ color: colors.eyes }}> <FontAwesomeIcon icon={faEye} /> </div>
-                </div>
+                
                 <div className="item" onClick={settingTrigger}>
                     <div className="circle-item" style={{ color: colors.cog }}> <FontAwesomeIcon icon={faCog} /></div>
                 </div>

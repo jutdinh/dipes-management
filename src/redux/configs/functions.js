@@ -5,6 +5,8 @@ import { format, parseISO } from 'date-fns';
 
 import $ from 'jquery';
 
+import CryptoJS from 'crypto-js';
+
 import Blocks from './blocks/index'
 
 
@@ -243,23 +245,23 @@ const restoreFloatingBG = () => {
 }
 
 
-const getComponentByName = ( name ) => {
+const getComponentByName = (name) => {
 
     const Compoennt = Blocks[name]
-    
-    if( Compoennt ){
+
+    if (Compoennt) {
         return Compoennt
     }
     return undefined
 }
 
-const fillIDToBlockAndChildren = ( block ) => {
+const fillIDToBlockAndChildren = (block) => {
 
     const { children } = block;
     block.id = getFormatedUUID()
-    if( children ){
-        for( let i = 0; i < children.length; i++ ){
-            children[i] = fillIDToBlockAndChildren( { parent_id: block.id, ...children[i]} )
+    if (children) {
+        for (let i = 0; i < children.length; i++) {
+            children[i] = fillIDToBlockAndChildren({ parent_id: block.id, ...children[i] })
         }
     }
     return block
@@ -268,20 +270,123 @@ const fillIDToBlockAndChildren = ( block ) => {
 const makePageURL = (page) => {
     const { page_id, params } = page;
 
-    if( params ){
-        const names = params.map( p => removeVietnameseTones(p.field_name) )
-    
-        return `/page/${ page_id }/:${ names.join('/:') }`
+    if (params) {
+        const names = params.map(p => removeVietnameseTones(p.field_name))
 
-    }else{
-        return `/page/${ page_id }`
+        return `/page/${page_id}/:${names.join('/:')}`
+
+    } else {
+        return `/page/${page_id}`
     }
-   
+
+}
+
+function formatDateTaskMDY(input) {
+    if (input === null || input === undefined) return null
+    const dateParts = input.split('-');
+    if (dateParts.length !== 3) return null;
+    const [year, month, day] = dateParts;
+    return `${day}/${month}/${year}`;
+}
+
+//Debouncing
+const debounce = (func, delay) => {
+    let inDebounce;
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(inDebounce);
+        inDebounce = setTimeout(() => func.apply(context, args), delay);
+    };
+};
+
+
+
+const encryptData = (data) => {
+    const algorithm = CryptoJS.algo.AES;
+    const key = CryptoJS.enc.Utf8.parse("thisistheinintvethisistheinintve"); // Khóa phải giống backend
+    const iv = CryptoJS.enc.Utf8.parse("thisistheinintve"); // IV phải giống backend
+
+    const encrypted = CryptoJS.AES.encrypt(data, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return encrypted.toString();
+};
+
+
+const renderData = (field, data) => {
+    // //console.log(field)
+    if (data) {
+        switch (field.DATATYPE) {
+            case "DATE":
+            case "DATETIME":
+                return renderDateTimeByFormat(data[field.fomular_alias], field.FORMAT);
+            case "DECIMAL":
+            case "DECIMAL UNSIGNED":
+                const { DECIMAL_PLACE } = field;
+                const decimalNumber = parseFloat(data[field.fomular_alias]);
+                return decimalNumber.toFixed(DECIMAL_PLACE)
+            case "BOOL":
+                return renderBoolData(data[field.fomular_alias], field)
+            default:
+                return data[field.fomular_alias];
+        }
+    } else {
+        return "Invalid value"
+    }
+};
+
+const numberOfLength2Format = (number) => {
+    if (number < 10) {
+        return `0${number}`
+    }
+    return `${number}`
+}
+
+const renderBoolData = (data, field) => {
+    const IF_TRUE = field.DEFAULT_TRUE;
+    const IF_FALSE = field.DEFAULT_FALSE
+    if (data != undefined) {
+        if (data) {
+            return IF_TRUE ? IF_TRUE : "true"
+        }
+        return IF_FALSE ? IF_FALSE : "false"
+    } else {
+        return IF_FALSE ? IF_FALSE : "false"
+    }
+}
+
+const renderDateTimeByFormat = (dateString, format) => {
+    if (format) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate()
+        const hour = date.getHours()
+        const minute = date.getMinutes()
+        const secs = date.getSeconds()
+
+        let result = format;
+        result = result.replaceAll("dd", numberOfLength2Format(day));
+        result = result.replaceAll("MM", numberOfLength2Format(month));
+        result = result.replaceAll("yyyy", year);
+
+        result = result.replaceAll("hh", numberOfLength2Format(hour));
+        result = result.replaceAll("mm", numberOfLength2Format(minute));
+        result = result.replaceAll("ss", numberOfLength2Format(secs));
+
+        return result;
+    }
+    return dateString
 }
 
 export default {
     uid, removeDuplicate, titleCase, openTab, dateGenerator,
-    showApiResponseMessage, removeVietnameseTones, formatDateTask, formatDate, toggleFullScreen,
+    showApiResponseMessage, removeVietnameseTones,
+    formatDateTask, formatDate, toggleFullScreen,
 
     getFormatedUUID,
     minimizeFloatingBG,
@@ -289,5 +394,7 @@ export default {
     getComponentByName,
     fillIDToBlockAndChildren,
 
-    makePageURL
+    makePageURL,
+
+    formatDateTaskMDY, debounce, encryptData, renderData
 }

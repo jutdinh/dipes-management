@@ -1675,6 +1675,180 @@ const ButtonChangeIcon = (props) => {
 }
 
 
+const ChoosePreImportTable = ( props ) => {
+    const {
+        label,
+        optionslabel,
+
+        fieldPath,
+        valuePath,
+        masterTables,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { version_id } = useParams()
+    const _token = localStorage.getItem("_token");
+    const { tables, selectedCpns, proxy } = useSelector(state => state)
+
+    const parent = selectedCpns.find(cpn => cpn.id == selectedCpn.parent_id)
+    const [drop, setDrop] = useState(false)
+    const [optionDrop, setOptionDrop] = useState(false)
+
+    const [ fTable, setFTable ] = useState(undefined)
+
+    const [ options, setOptions ] = useState([]) 
+
+    useEffect(() => {
+
+        const InitFunc = async () => {
+
+            const field = getPropByPath( fieldPath.split('.'), selectedCpn )
+            const { table_id } = field;
+    
+            if( table_id ){
+                const table = tables.find( tb => tb.id == table_id )      
+                setFTable( table )
+                updateSelectedComponent(  field, fieldPath.split('.'))
+                updateSelectedComponent( {}, valuePath.split('.') )
+                
+                setDrop( false )
+    
+                const res = await fetch(`${ proxy }/db/preimport/${version_id}/${table.id}`, {
+                    headers: {
+                        "Authorization": _token
+                    }
+                })
+                const data = await res.json()
+                console.log(data)
+                setOptions( data.data )
+            }
+        }
+        InitFunc()
+        return () => {
+            
+        }
+    }, [])
+
+
+    const fieldClickTrigger = async ( field ) => {        
+
+        const { table_id } = field;
+        const table = tables.find( tb => tb.id == table_id )      
+        setFTable( table )
+        updateSelectedComponent(  field, fieldPath.split('.'))
+        updateSelectedComponent( {}, valuePath.split('.') )
+        
+        setDrop( false )
+
+        const res = await fetch(`${ proxy }/db/preimport/${version_id}/${table.id}`, {
+            headers: {
+                "Authorization": _token
+            }
+        })
+        const data = await res.json()
+        console.log(data)
+        setOptions( data.data )
+    }
+
+    if( parent ){
+        const currentField = getPropByPath( fieldPath.split('.'), selectedCpn )
+        const currentValue = getPropByPath( valuePath.split('.'), selectedCpn )
+        const fields = []
+        const parentTables = getPropByPath( masterTables.split('.'), parent )
+        parentTables.map( tb => {      
+            
+            const { foreign_keys } = tb;            
+            
+            const foreignKeyFieldsID = foreign_keys.map( key => key.field_id )
+            const thisTableFields = Object.values( tb.fields )
+            const foreignFields = thisTableFields.filter( f => foreignKeyFieldsID.indexOf( f.id ) != -1 ).map( field => {
+               const { id } = field
+               const corespondingKey = foreign_keys.find( key => key.field_id == id )
+
+               const foreignTable = tables.find( tbl => tbl.id == corespondingKey.table_id )
+
+                if( foreignTable.pre_import ){
+                    return { ...field, table_id: corespondingKey.table_id, onTable: tb.id }
+                }
+            }).filter( f => f != undefined )        
+
+            fields.push( ...foreignFields )
+        })
+
+        const valueClickTrigger = ( opt ) => {
+            updateSelectedComponent( opt, valuePath.split('.') )
+            setOptionDrop(false)
+        }
+
+        return (
+            <div>
+                <div className="property" style={{ zIndex: index + 1 }}>
+                    <div className="label-box">
+                        <span>{label}</span>
+                    </div>
+                    <div
+                        className={`drop-box`}
+                    >
+                        <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                            <div className="content">
+                                <span>{ currentField.field_name }</span>
+                            </div>
+                            <div className="caret">
+                                <FontAwesomeIcon icon={faCaretDown} />
+                            </div>
+                        </div>
+                        <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                            <div className="options" >
+                                {fields.map(opt =>
+                                    <div className="option" onClick={() => { fieldClickTrigger(opt) }}>
+                                        <span>{opt[ "field_name" ]}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                { fTable &&                
+                    <div className="property" style={{ zIndex: index }}>
+                        <div className="label-box">
+                            <span>{ optionslabel }</span>
+                        </div>
+                        <div
+                            className={`drop-box`}
+                        >
+                            <div className="content-container" onClick={() => { setOptionDrop(!optionDrop) }}>
+                                <div className="content">
+                                    <span>{ Object.values(currentValue).join(' - ') }</span>
+                                </div>
+                                <div className="caret">
+                                    <FontAwesomeIcon icon={faCaretDown} />
+                                </div>
+                            </div>
+                            <div className="options-container" style={{ display: optionDrop ? "block" : "none" }}>
+                                <div className="options" >
+                                    {options.map( opt =>
+                                        <div className="option" onClick={() => { valueClickTrigger(opt) }}>
+                                            <span>{ Object.values(opt).join(' - ') }</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        )
+    }
+    return
+}
+
+
 const Components = {
     "text": EntryBox,
     "number": NumberBox,
@@ -1698,7 +1872,9 @@ const Components = {
     "selectParams": SelectParams,
     "selectPage": SelectPage,
     "showParams": ShowParams, // onetimeuse
-    "chooseSlave": ChooseSlave,
+    "chooseSlave": ChooseSlave, 
+
+    "choosePreImportTable": ChoosePreImportTable
 
 }
 

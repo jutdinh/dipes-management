@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faBolt, faCalendarDays, faChartBar, faChartColumn, faFont, faHand, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 export default () => {
     const dispatch = useDispatch()
-    const { functions, blockTypes, floating } = useSelector( state => state )
+    const { functions, blockTypes, floating, page, selectedCpn } = useSelector( state => state )
     const FloatingBoxTrigger = (e, icon, text, type) => {
         const { pageX, pageY } = e;
         
@@ -126,6 +126,17 @@ export default () => {
     }
 
 
+    const isCurrentPageParamized = () => {
+        if( page ){
+            const { params } = page;
+            if( params && params.length > 0 ){
+                return true
+            }
+        }
+        return false
+    }
+
+
     return(
         <div className="design">
             <div className="design-blocks">
@@ -137,7 +148,17 @@ export default () => {
                             <FontAwesomeIcon icon={ faFont }/>
                         </div>
                         <span className="block-name">Văn bản</span>
-                    </div>                   
+                    </div>   
+                    { selectedCpn.name == "chart_2" &&
+                        <div className="block" onMouseDown={ (e) => { FloatingBoxTrigger(e, faLeaf, "Văn bản", blockTypes.inline_statis ) } }>
+                            <div className="block-icon">
+                                <FontAwesomeIcon icon={ faLeaf }/>
+                            </div>
+                            <span className="block-name">Số liệu thống kê </span>
+                        </div>       
+                    }
+
+
                 </div>
 
 
@@ -150,13 +171,15 @@ export default () => {
                         </div>
                         <span className="block-name">Bảng</span>
                     </div>
-
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSpoon, "Bảng 1", blockTypes.table_param ) } }>
-                        <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faSpoon }/>
-                        </div>
-                        <span className="block-name">Bảng 1</span>
-                    </div>
+                    {
+                        isCurrentPageParamized() &&
+                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSpoon, "Bảng 1", blockTypes.table_param ) } }>
+                                <div className="block-icon" >
+                                    <FontAwesomeIcon icon={ faSpoon }/>
+                                </div>
+                                <span className="block-name">Bảng 1</span>
+                            </div>
+                    }
 
                     <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faLink, "Nút chuyển", blockTypes.redirect_button ) } }>
                         <div className="block-icon" >
@@ -197,7 +220,7 @@ export default () => {
                     </div>
                 </div> */}
 
-                <span className="block-type">KHỐI BIỂU MẪU</span>
+                {/* <span className="block-type">KHỐI BIỂU MẪU</span>
                 <div className="blocks">                   
                     <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faRectangleList, "Form", blockTypes.form ) } }>
                         <div className="block-icon" >
@@ -205,9 +228,9 @@ export default () => {
                         </div>
                         <span className="block-name">Form</span>
                     </div>
-                </div>
+                </div> */}
 
-                <span className="block-type">KHỐI NHẬP DỮ LIỆU</span>
+                {/* <span className="block-type">KHỐI NHẬP DỮ LIỆU</span>
                 <div className="blocks">   
 
                     <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSquarePen, "Entry", blockTypes.entry ) } }>
@@ -230,14 +253,14 @@ export default () => {
                         <span className="block-name">Datetime</span>
                     </div>
 
-                    {/* <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Api Data Selection", blockTypes.apiCombo ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faStop, "Api Data Selection", blockTypes.apiCombo ) } }>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={ faStop }/>
                         </div>
                         <span className="block-name">Api Combo</span>
-                    </div> */}
+                    </div>
 
-                </div>
+                </div> */}
 
                 <span className="block-type">KHỐI BIỂU ĐỒ</span>
 
@@ -255,6 +278,13 @@ export default () => {
                             <FontAwesomeIcon icon={ faMagnifyingGlassChart }/>
                         </div>
                         <span className="block-name">C - Chart</span>
+                    </div>
+
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faDiagramNext, "Chart gì đó", blockTypes.chart_2 ) } }>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={ faDiagramNext }/>
+                        </div>
+                        <span className="block-name">Chart gì đó</span>
                     </div>
 
                 </div>
