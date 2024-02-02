@@ -180,17 +180,44 @@ class Mongo {
         
         const data = await new Promise( (resolve, reject) => {
             if( criteria != undefined){
-                this.dbo.collection( table ).find(query).toArray((err, result) => {                            
+                this.dbo.collection( table ).find(query, { projection:  {"_id": 0} }).toArray((err, result) => {                            
                     resolve( result )
                 })
             }else{
-                this.dbo.collection( table ).find().toArray((err, result) => {
+                this.dbo.collection( table ).find({}, { projection:  {"_id": 0} }).toArray((err, result) => {
                     resolve( result )
                 })
             }
         });        
         return data ? data : []
     }
+
+    selectAllWithProjection = async ( table, criteria = {}, projection = {}) => {
+
+        /**
+         * @desc Select là phương thức gọi dữ liệu từ một bảng thuộc cơ sở dữ liệu
+         *     
+         *     
+         * @params 
+         *      - table String - tên bảng cần gọi dữ liệu
+         *      - criteria {} - điều kiện dùng để truy vấn dữ liệu. Nếu điều kiện = undefined, nhỏ này
+         *     sẽ mặc nhiên hiểu criteria = {} và trả về kết quả là toàn bộ bảng ghi hiện có.
+         *      - projection - giới hạn trường
+         * @author DS
+         * 
+         **/
+
+
+        const query = criteria
+        
+        const data = await new Promise( (resolve, reject) => {
+            this.dbo.collection( table ).find(query, { projection } ).toArray((err, result) => {                            
+                resolve( result )
+            })            
+        });        
+        return data ? data : []
+    }
+
 
     selectFields = async ( table, criteria, fields) => {
 

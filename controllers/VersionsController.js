@@ -5,7 +5,8 @@ const Crypto = require('./Crypto')
 const { Controller } = require('../config/controllers');
 const { Projects, ProjectsRecord } = require("../models/Projects");
 
-const { formatDecNum } = require('../functions/auto_value')
+const { formatDecNum } = require('../functions/auto_value');
+const { Database } = require('../config/models/database');
 
 archiver.registerFormat('zip-encryptable', encryptedArchiver);
 
@@ -166,6 +167,8 @@ class VersionsController extends Controller {
             const tables = Object.values( version.tables )
             const fields = []
 
+            const preimports = {}
+
             for (let i = 0; i < tables.length; i++) { 
                 const table = tables[i]
                 const tableFields = Object.values( table.fields )
@@ -178,13 +181,25 @@ class VersionsController extends Controller {
                     fields.push( ...formatedFields )
                     delete table.fields
                 }               
+
+                const { pre_import, table_alias } = table;
+                if( pre_import ){
+                    const data = await Database.selectAllWithProjection(table_alias, {}, { _id: 0, id: 0 })
+                    preimports[ table_alias ] = {
+                        table_alias, 
+                        data
+                    }
+                } 
             }
             const Cipher = new Crypto()
             
-            const primalData = { database: { project: Project.getGeneralData(), tables, fields } }
+            
+
+            const primalData = { database: { project: Project.getGeneralData(), tables, fields, preimports } }
             const stringifiedData = JSON.stringify(primalData)
             context.data = { rawData:  primalData }            
-            context.data.database = { database: Cipher.encrypt(stringifiedData) }
+            context.data.database = { database: Cipher.encrypt(stringifiedData) }           
+            
         }
         delete context.objects;
         res.status(200).send(context)

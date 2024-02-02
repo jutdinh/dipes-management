@@ -3,35 +3,35 @@ const { Controller } = require('../config/controllers');
 const { Projects, ProjectsRecord } = require("../models/Projects");
 const { Database } = require('../config/models/database');
 class PreImportTable extends Controller {
-    constructor(){
+    constructor() {
         super();
     }
 
-    generalCheck = async ( req, version_id = 0 ) => {
+    generalCheck = async (req, version_id = 0) => {
         const verified = await this.verifyToken(req)
         const context = {
             success: false,
             status: "0x4501190",
             content: "Token khum hợp lệ"
         }
-        if( verified ){
-            const decodedToken = this.decodeToken( req.header("Authorization") )
+        if (verified) {
+            const decodedToken = this.decodeToken(req.header("Authorization"))
             const ProjectsModel = new Projects()
             const query = {}
-            query[`versions.${ version_id }`] = { $ne: undefined }
-            const project = await ProjectsModel.find(query, false)            
-            if( project ){
-                const Project = new ProjectsRecord( project )
+            query[`versions.${version_id}`] = { $ne: undefined }
+            const project = await ProjectsModel.find(query, false)
+            if (project) {
+                const Project = new ProjectsRecord(project)
                 context.success = true;
-                context.content = "Thành công nhe mấy má"                                
-                context.objects = {                                  
+                context.content = "Thành công nhe mấy má"
+                context.objects = {
                     Project,
                     user: decodedToken,
                     version: Project.getData().versions[`${version_id}`]
                 }
-            }else{
+            } else {
                 context.content = "Dự án khum tồn tại"
-                context.status  = "0x4501186"
+                context.status = "0x4501186"
             }
         }
         return context
@@ -258,7 +258,7 @@ class PreImportTable extends Controller {
         return result;
     }
 
-    get = async ( req, res ) => {
+    get = async (req, res) => {
 
 
         /**
@@ -277,32 +277,32 @@ class PreImportTable extends Controller {
         this.writeReq(req)
 
         const { version_id } = req.params
-        const context = await this.generalCheck( req, version_id )
+        const context = await this.generalCheck(req, version_id)
 
         const { success, objects } = context
 
-        if( success ){
+        if (success) {
 
             const { version } = objects;
             const { table_id } = req.params;
-            const table = version.tables[`${ table_id }`]
+            const table = version.tables[`${table_id}`]
 
-            if( table ){
+            if (table) {
                 const { table_alias } = table;
-                const data = await Database.selectAll(table_alias, {})
+                const data = await Database.selectAllWithProjection(table_alias, {}, { _id: 0, id: 0 })
                 context.content = "Successfully retrieve data"
                 context.data = data
-                context.fields = Object.values( table.fields )
-            }else{
+                context.fields = Object.values(table.fields)
+            } else {
                 context.content = "Table does not exist"
             }
         }
-        
+
         delete context.objects
         res.status(200).send(context)
     }
 
-    post = async ( req, res ) => {
+    post = async (req, res) => {
 
         /**
          * 
@@ -323,67 +323,67 @@ class PreImportTable extends Controller {
 
 
         const { version_id } = req.body
-        const context = await this.generalCheck( req, version_id )
+        const context = await this.generalCheck(req, version_id)
 
         const { success, objects } = context
 
-        if( success ){
+        if (success) {
             context.success = false
-            const { Project, user, version } = objects 
+            const { Project, user, version } = objects
             const project = Project.getData();
 
             const { table_id, data } = req.body;
 
-            const table = version.tables[`${ table_id }`]
+            const table = version.tables[`${table_id}`]
 
-            if( table && table.pre_import ){
-                const fields = Object.values( table.fields )
+            if (table && table.pre_import) {
+                const fields = Object.values(table.fields)
 
                 const clone = {}
                 let typeErrors = []
-                
-                for( let i = 0; i < fields.length; i++ ){
+
+                for (let i = 0; i < fields.length; i++) {
                     const { fomular_alias, props, field_name } = fields[i]
 
                     const { AUTO_INCREMENT, DATATYPE, PATTERN } = props;
 
-                    if( Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT ){
-                        clone[fomular_alias] = await this.makeAutoIncreament( table.table_alias, PATTERN )                        
-                    }else{
-                        const { valid, result, reason } = this.parseType({...fields[i], ...props }, data[fomular_alias] )
-                        if( valid){
+                    if (Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT) {
+                        clone[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
+                    } else {
+                        const { valid, result, reason } = this.parseType({ ...fields[i], ...props }, data[fomular_alias])
+                        if (valid) {
                             clone[fomular_alias] = result;
-                        }else{
-                            typeErrors.push({ field_name, value:  clone[fomular_alias], reason })
+                        } else {
+                            typeErrors.push({ field_name, value: clone[fomular_alias], reason })
                         }
                     }
                 }
-                 
-                if( typeErrors.length > 0 ){
+
+                if (typeErrors.length > 0) {
                     context.content = "Datatype error"
                     context.errors = typeErrors
-                }else{
+                } else {
 
                     const { primary_key } = table;
 
-                    const primary_field = table.fields[`${ primary_key[0] }`]
+                    const primary_field = table.fields[`${primary_key[0]}`]
 
-                    const key = { [primary_field.fomular_alias]: clone[primary_field.fomular_alias] }               
-                    const dataExisted = await Database.selectAll( table.table_alias, key )
+                    const key = { [primary_field.fomular_alias]: clone[primary_field.fomular_alias] }
+                    const dataExisted = await Database.selectAll(table.table_alias, key)
 
-                    if( dataExisted.length > 0 ){
+                    if (dataExisted.length > 0) {
                         context.content = "Primary key conflicts"
-                    }else{
-                        Database.insert( table.table_alias, clone )
+                    } else {
+                        Database.insert(table.table_alias, clone)
                         context.content = "Successfully added new record"
                         context.data = clone
                         context.success = true
                     }
-                }                
-            }else{
-                if( !table ){
+                }
+            } else {
+                if (!table) {
                     context.content = "Table does not exist!"
-                }else{
+                } else {
                     context.content = "Cannot insert data on non-pre-import table"
                 }
             }
@@ -396,7 +396,73 @@ class PreImportTable extends Controller {
 
 
     put = async () => {
+      /**
+       * HEADER: {
+       *      Authorization: <Token>
+       * }
+       * 
+       * BODY: {
+       *      version_id: <Int>,
+       *      table_id: <Int>,
+       *      data: <Dynamic JSON>
+       * }
+       * 
+       */
 
+        this.writeReq(req)
+
+
+        const { version_id } = req.body
+        const context = await this.generalCheck(req, version_id)
+
+        const { success, objects } = context
+
+        if( success ){
+            context.success = false
+            const { Project, user, version } = objects
+            const project = Project.getData();
+
+            const { table_id, data } = req.body;
+
+            const table = version.tables[`${table_id}`]
+
+            if (table && table.pre_import) {
+                const fields = Object.values(table.fields)
+
+                const clone = {}
+                let typeErrors = []
+
+                // filter trường trừ khóa rồi nhét dữ liệu vào clone xong cập nhật
+
+                
+
+                for (let i = 0; i < fields.length; i++) {
+                    const { fomular_alias, props, field_name } = fields[i]
+
+                    const { AUTO_INCREMENT, DATATYPE, PATTERN } = props;
+
+                    if (Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT) {
+                        clone[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
+                    } else {
+                        const { valid, result, reason } = this.parseType({ ...fields[i], ...props }, data[fomular_alias])
+                        if (valid) {
+                            clone[fomular_alias] = result;
+                        } else {
+                            typeErrors.push({ field_name, value: clone[fomular_alias], reason })
+                        }
+                    }
+                }
+               
+            } else {
+                if (!table) {
+                    context.content = "Table does not exist!"
+                } else {
+                    context.content = "Cannot insert data on non-pre-import table"
+                }
+            }
+        }
+        delete context.objects
+        res.status(200).send(context)
     }
 
     delete = async () => {
@@ -405,4 +471,3 @@ class PreImportTable extends Controller {
 }
 module.exports = PreImportTable
 
-    
