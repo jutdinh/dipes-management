@@ -1265,6 +1265,50 @@ class UIController extends Controller {
                         page.component = this.updateChildComponent(page.component, cpn.id, props)
                     }
 
+                    if( name == "inline_statis" ){
+                        const { tables, field, fomular, group_by, value } = props;
+                        
+                        const { table_id } = group_by
+                        const foreignTable = version.tables[`${ table_id }`];
+                        if( foreignTable ){
+                            
+                            const { primary_key } = foreignTable
+
+                            const primary_field = foreignTable.fields[`${ primary_key[0] }`]
+    
+                            const criterias = `"${ group_by.fomular_alias }" == "${ value[primary_field.fomular_alias] }"`
+    
+                            const STATIS_API = {
+                                api_name: "INLINE STATIS API for " + cpn.name,
+                                status: true,
+                                description: "Hidden API for UI only, do not modify for any reason",
+                                fields: [],
+                                field,
+                                body: [],
+                                params: [],
+                                tables: tables.map(table => table.id),
+                                fomular,
+                                group_by: [ group_by ],
+                                criterias,
+                                calculates: [],
+                                statistic: [],
+                                api_method: "post",
+                                api_scope: "private"
+                            }
+    
+                            const apiObject = { api: STATIS_API, type: "statis" }
+    
+                            const api = await Project.createUIAPI(apiObject)                            
+    
+                            version.apis[`${api.id}`] = api
+                            await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
+    
+                            props.api = api
+                            page.component = this.updateChildComponent(page.component, cpn.id, props)
+                        }
+
+                    }
+
                 }
                 flattenPages[i] = page
                 ui = this.mapApiToUIRecursive(ui, page.page_id, page)

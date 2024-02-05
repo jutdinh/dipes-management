@@ -395,19 +395,19 @@ class PreImportTable extends Controller {
     }
 
 
-    put = async () => {
-      /**
-       * HEADER: {
-       *      Authorization: <Token>
-       * }
-       * 
-       * BODY: {
-       *      version_id: <Int>,
-       *      table_id: <Int>,
-       *      data: <Dynamic JSON>
-       * }
-       * 
-       */
+    put = async (req, res) => {
+        /**
+         * HEADER: {
+         *      Authorization: <Token>
+         * }
+         * 
+         * BODY: {
+         *      version_id: <Int>,
+         *      table_id: <Int>,
+         *      data: <Dynamic JSON>
+         * }
+         * 
+         */
 
         this.writeReq(req)
 
@@ -417,7 +417,7 @@ class PreImportTable extends Controller {
 
         const { success, objects } = context
 
-        if( success ){
+        if (success) {
             context.success = false
             const { Project, user, version } = objects
             const project = Project.getData();
@@ -434,7 +434,7 @@ class PreImportTable extends Controller {
 
                 // filter trường trừ khóa rồi nhét dữ liệu vào clone xong cập nhật
 
-                
+
 
                 for (let i = 0; i < fields.length; i++) {
                     const { fomular_alias, props, field_name } = fields[i]
@@ -452,7 +452,31 @@ class PreImportTable extends Controller {
                         }
                     }
                 }
-               
+
+                if (typeErrors.length > 0) {
+                    context.content = "Datatype error"
+                    context.errors = typeErrors
+                } else {
+
+                    const { primary_key } = table;
+
+                    const primary_field = table.fields[`${primary_key[0]}`]
+
+                    const key = { [primary_field.fomular_alias]: clone[primary_field.fomular_alias] }
+                    const dataExisted = await Database.selectAll(table.table_alias, key)
+
+                    if (dataExisted.length == 0) {
+                        context.content = "Data not found"
+                    } else {
+                        await Database.update(table.table_alias, key, clone)
+
+                        context.content = "Successfully update data record"
+                        context.data = clone
+                        context.success = true
+                    }
+                }
+
+
             } else {
                 if (!table) {
                     context.content = "Table does not exist!"
@@ -465,8 +489,97 @@ class PreImportTable extends Controller {
         res.status(200).send(context)
     }
 
-    delete = async () => {
+    delete = async (req, res) => {
+        /**
+               * HEADER: {
+               *      Authorization: <Token>
+               * }
+               * 
+               * BODY: {
+               *      version_id: <Int>,
+               *      table_id: <Int>,
+               *      data: <Dynamic JSON>
+               * }
+               * 
+               */
 
+        this.writeReq(req)
+
+
+        const { version_id } = req.body
+        const context = await this.generalCheck(req, version_id)
+
+        const { success, objects } = context
+
+        if (success) {
+            context.success = false
+            const { Project, user, version } = objects
+            const project = Project.getData();
+
+            const { table_id, data } = req.body;
+
+            const table = version.tables[`${table_id}`]
+
+            if (table && table.pre_import) {
+                const fields = Object.values(table.fields)
+
+                const clone = {}
+                let typeErrors = []
+
+                // filter trường trừ khóa rồi nhét dữ liệu vào clone xong cập nhật
+
+
+
+                for (let i = 0; i < fields.length; i++) {
+                    const { fomular_alias, props, field_name } = fields[i]
+
+                    const { AUTO_INCREMENT, DATATYPE, PATTERN } = props;
+
+                    if (Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT) {
+                        clone[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
+                    } else {
+                        const { valid, result, reason } = this.parseType({ ...fields[i], ...props }, data[fomular_alias])
+                        if (valid) {
+                            clone[fomular_alias] = result;
+                        } else {
+                            typeErrors.push({ field_name, value: clone[fomular_alias], reason })
+                        }
+                    }
+                }
+
+                if (typeErrors.length > 0) {
+                    context.content = "Datatype error"
+                    context.errors = typeErrors
+                } else {
+
+                    const { primary_key } = table;
+
+                    const primary_field = table.fields[`${primary_key[0]}`]
+
+                    const key = { [primary_field.fomular_alias]: clone[primary_field.fomular_alias] }
+                    const dataExisted = await Database.selectAll(table.table_alias, key)
+
+                    if (dataExisted.length == 0) {
+                        context.content = "Data not found"
+                    } else {
+                        await Database.delete(table.table_alias, key)
+
+                        context.content = "Successfully update new record"
+                        context.data = clone
+                        context.success = true
+                    }
+                }
+
+            } else {
+                if (!table) {
+                    context.content = "Table does not exist!"
+                } else {
+                    context.content = "Cannot insert data on non-pre-import table"
+                }
+            }
+        }
+        delete context.objects
+        res.status(200).send(context)
     }
 }
 module.exports = PreImportTable
