@@ -423,7 +423,7 @@ class PreImportTable extends Controller {
             const project = Project.getData();
 
             const { table_id, data } = req.body;
-
+    
             const table = version.tables[`${table_id}`]
 
             if (table && table.pre_import) {
@@ -469,6 +469,7 @@ class PreImportTable extends Controller {
 
                     const key = { [primary_field.fomular_alias]: data[primary_field.fomular_alias] }
                     const dataExisted = await Database.selectAll(table.table_alias, key)
+
 
                     if (dataExisted.length == 0) {
                         context.content = "Data not found"
