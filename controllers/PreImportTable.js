@@ -473,10 +473,10 @@ class PreImportTable extends Controller {
                     if (dataExisted.length == 0) {
                         context.content = "Data not found"
                     } else {
-                        await Database.update(table.table_alias, key, {...data, ...clone})
+                        await Database.update(table.table_alias, key, {...data })
 
                         context.content = "Successfully update data record"                        
-                        context.data = {...data, ...clone}
+                        context.data = {...data }
 
                         context.success = true
                     }
