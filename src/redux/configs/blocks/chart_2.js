@@ -77,7 +77,7 @@ export default (props) => {
 
     if( preview ){
         return(
-            <div style={ renderStyle() }>
+            <div className="flex2-design" style={ renderStyle() }>
                 { children }
             </div>
         )
@@ -87,7 +87,7 @@ export default (props) => {
             <div className="design-zone-container" style={{ zIndex }}>
                 { renderFrontLiner(id, parent)}
                 <div
-                    className={`design-zone block-design ${isActive() ? "design-zone-active flex2-design-active" : ""}`}
+                    className={`design-zone flex2-design ${isActive() ? "design-zone-active flex2-design-active" : ""}`}
                     onClick={SwitchingState} onMouseEnter={ComponentHover}
                     style={{ zIndex }}
                     onMouseUp={FlexAppendsChild}

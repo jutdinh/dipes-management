@@ -1633,20 +1633,20 @@ const ButtonChangeIcon = (props) => {
 
     const dispatch = useDispatch()
 
-    const { icons } = useSelector( state => state )
+    const { icons } = useSelector(state => state)
 
     const splittedPath = path.split('.')
-    const currentValue = getPropByPath( splittedPath, selectedCpn )
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
 
-    const renderIcon = ( icon ) => {
+    const renderIcon = (icon) => {
         return icons[icon]?.icon
     }
 
     const changeIconTrigger = () => {
-        
+
         dispatch({
             branch: "floating-boxes",
-            type: "floatingTrigger"            
+            type: "floatingTrigger"
         })
 
         dispatch({
@@ -1666,16 +1666,16 @@ const ButtonChangeIcon = (props) => {
             <div
                 className={`drop-box`}
             >
-               <div className="icon-preview" onClick={ changeIconTrigger }>
-                    <FontAwesomeIcon icon={ renderIcon(currentValue) }/>
-               </div>
+                <div className="icon-preview" onClick={changeIconTrigger}>
+                    <FontAwesomeIcon icon={renderIcon(currentValue)} />
+                </div>
             </div>
         </div>
     )
 }
 
 
-const ChoosePreImportTable = ( props ) => {
+const ChoosePreImportTable = (props) => {
     const {
         label,
         optionslabel,
@@ -1698,89 +1698,89 @@ const ChoosePreImportTable = ( props ) => {
     const [drop, setDrop] = useState(false)
     const [optionDrop, setOptionDrop] = useState(false)
 
-    const [ fTable, setFTable ] = useState(undefined)
+    const [fTable, setFTable] = useState(undefined)
 
-    const [ options, setOptions ] = useState([]) 
+    const [options, setOptions] = useState([])
 
     useEffect(() => {
 
         const InitFunc = async () => {
 
-            const field = getPropByPath( fieldPath.split('.'), selectedCpn )
+            const field = getPropByPath(fieldPath.split('.'), selectedCpn)
             const { table_id } = field;
-    
-            if( table_id ){
-                const table = tables.find( tb => tb.id == table_id )      
-                setFTable( table )
-                updateSelectedComponent(  field, fieldPath.split('.'))
-                updateSelectedComponent( {}, valuePath.split('.') )
-                
-                setDrop( false )
-    
-                const res = await fetch(`${ proxy }/db/preimport/${version_id}/${table.id}`, {
+
+            if (table_id) {
+                const table = tables.find(tb => tb.id == table_id)
+                setFTable(table)
+                updateSelectedComponent(field, fieldPath.split('.'))
+                updateSelectedComponent({}, valuePath.split('.'))
+
+                setDrop(false)
+
+                const res = await fetch(`${proxy}/db/preimport/${version_id}/${table.id}`, {
                     headers: {
                         "Authorization": _token
                     }
                 })
                 const data = await res.json()
                 console.log(data)
-                setOptions( data.data )
+                setOptions(data.data)
             }
         }
         InitFunc()
         return () => {
-            
+
         }
     }, [])
 
 
-    const fieldClickTrigger = async ( field ) => {        
+    const fieldClickTrigger = async (field) => {
 
         const { table_id } = field;
-        const table = tables.find( tb => tb.id == table_id )      
-        setFTable( table )
-        updateSelectedComponent(  field, fieldPath.split('.'))
-        updateSelectedComponent( {}, valuePath.split('.') )
-        
-        setDrop( false )
+        const table = tables.find(tb => tb.id == table_id)
+        setFTable(table)
+        updateSelectedComponent(field, fieldPath.split('.'))
+        updateSelectedComponent({}, valuePath.split('.'))
 
-        const res = await fetch(`${ proxy }/db/preimport/${version_id}/${table.id}`, {
+        setDrop(false)
+
+        const res = await fetch(`${proxy}/db/preimport/${version_id}/${table.id}`, {
             headers: {
                 "Authorization": _token
             }
         })
         const data = await res.json()
         console.log(data)
-        setOptions( data.data )
+        setOptions(data.data)
     }
 
-    if( parent ){
-        const currentField = getPropByPath( fieldPath.split('.'), selectedCpn )
-        const currentValue = getPropByPath( valuePath.split('.'), selectedCpn )
+    if (parent) {
+        const currentField = getPropByPath(fieldPath.split('.'), selectedCpn)
+        const currentValue = getPropByPath(valuePath.split('.'), selectedCpn)
         const fields = []
-        const parentTables = getPropByPath( masterTables.split('.'), parent )
-        parentTables.map( tb => {      
-            
-            const { foreign_keys } = tb;            
-            
-            const foreignKeyFieldsID = foreign_keys.map( key => key.field_id )
-            const thisTableFields = Object.values( tb.fields )
-            const foreignFields = thisTableFields.filter( f => foreignKeyFieldsID.indexOf( f.id ) != -1 ).map( field => {
-               const { id } = field
-               const corespondingKey = foreign_keys.find( key => key.field_id == id )
+        const parentTables = getPropByPath(masterTables.split('.'), parent)
+        parentTables.map(tb => {
 
-               const foreignTable = tables.find( tbl => tbl.id == corespondingKey.table_id )
+            const { foreign_keys } = tb;
 
-                if( foreignTable.pre_import ){
+            const foreignKeyFieldsID = foreign_keys.map(key => key.field_id)
+            const thisTableFields = Object.values(tb.fields)
+            const foreignFields = thisTableFields.filter(f => foreignKeyFieldsID.indexOf(f.id) != -1).map(field => {
+                const { id } = field
+                const corespondingKey = foreign_keys.find(key => key.field_id == id)
+
+                const foreignTable = tables.find(tbl => tbl.id == corespondingKey.table_id)
+
+                if (foreignTable.pre_import) {
                     return { ...field, table_id: corespondingKey.table_id, onTable: tb.id }
                 }
-            }).filter( f => f != undefined )        
+            }).filter(f => f != undefined)
 
-            fields.push( ...foreignFields )
+            fields.push(...foreignFields)
         })
 
-        const valueClickTrigger = ( opt ) => {
-            updateSelectedComponent( opt, valuePath.split('.') )
+        const valueClickTrigger = (opt) => {
+            updateSelectedComponent(opt, valuePath.split('.'))
             setOptionDrop(false)
         }
 
@@ -1795,7 +1795,7 @@ const ChoosePreImportTable = ( props ) => {
                     >
                         <div className="content-container" onClick={() => { setDrop(!drop) }}>
                             <div className="content">
-                                <span>{ currentField.field_name }</span>
+                                <span>{currentField.field_name}</span>
                             </div>
                             <div className="caret">
                                 <FontAwesomeIcon icon={faCaretDown} />
@@ -1805,7 +1805,7 @@ const ChoosePreImportTable = ( props ) => {
                             <div className="options" >
                                 {fields.map(opt =>
                                     <div className="option" onClick={() => { fieldClickTrigger(opt) }}>
-                                        <span>{opt[ "field_name" ]}</span>
+                                        <span>{opt["field_name"]}</span>
                                     </div>
                                 )}
                             </div>
@@ -1813,17 +1813,17 @@ const ChoosePreImportTable = ( props ) => {
                     </div>
                 </div>
 
-                { fTable &&                
+                {fTable &&
                     <div className="property" style={{ zIndex: index }}>
                         <div className="label-box">
-                            <span>{ optionslabel }</span>
+                            <span>{optionslabel}</span>
                         </div>
                         <div
                             className={`drop-box`}
                         >
                             <div className="content-container" onClick={() => { setOptionDrop(!optionDrop) }}>
                                 <div className="content">
-                                    <span>{ Object.values(currentValue).join(' - ') }</span>
+                                    <span>{Object.values(currentValue).join(' - ')}</span>
                                 </div>
                                 <div className="caret">
                                     <FontAwesomeIcon icon={faCaretDown} />
@@ -1831,9 +1831,9 @@ const ChoosePreImportTable = ( props ) => {
                             </div>
                             <div className="options-container" style={{ display: optionDrop ? "block" : "none" }}>
                                 <div className="options" >
-                                    {options.map( opt =>
+                                    {options.map(opt =>
                                         <div className="option" onClick={() => { valueClickTrigger(opt) }}>
-                                            <span>{ Object.values(opt).join(' - ') }</span>
+                                            <span>{Object.values(opt).join(' - ')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -1847,6 +1847,176 @@ const ChoosePreImportTable = ( props ) => {
     }
     return
 }
+
+const ChoosePreImportTableFromSibling = (props) => {
+    const {
+        label,
+        optionslabel,
+
+        fieldPath,
+        valuePath,
+        masterTables,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { version_id } = useParams()
+    const _token = localStorage.getItem("_token");
+    const { tables, proxy } = useSelector(state => state)
+
+
+    const [drop, setDrop] = useState(false)
+    const [optionDrop, setOptionDrop] = useState(false)
+
+    const [fTable, setFTable] = useState(undefined)
+
+    const [options, setOptions] = useState([])
+
+    useEffect(() => {
+
+        const InitFunc = async () => {
+
+            const field = getPropByPath(fieldPath.split('.'), selectedCpn)
+            const { table_id } = field;
+
+            if (table_id) {
+                const table = tables.find(tb => tb.id == table_id)
+                setFTable(table)
+                updateSelectedComponent(field, fieldPath.split('.'))
+                updateSelectedComponent({}, valuePath.split('.'))
+
+                setDrop(false)
+
+                const res = await fetch(`${proxy}/db/preimport/${version_id}/${table.id}`, {
+                    headers: {
+                        "Authorization": _token
+                    }
+                })
+                const data = await res.json()                
+                setOptions(data.data)
+            }
+        }
+        InitFunc()
+        return () => {
+
+        }
+    }, [])
+
+
+    const fieldClickTrigger = async (field) => {
+
+        const { table_id } = field;
+        const table = tables.find(tb => tb.id == table_id)
+        setFTable(table)
+        updateSelectedComponent(field, fieldPath.split('.'))
+        updateSelectedComponent({}, valuePath.split('.'))
+
+        setDrop(false)
+
+        const res = await fetch(`${proxy}/db/preimport/${version_id}/${table.id}`, {
+            headers: {
+                "Authorization": _token
+            }
+        })
+        const data = await res.json()        
+        setOptions(data.data)
+    }
+
+    const currentField = getPropByPath(fieldPath.split('.'), selectedCpn)
+    const currentValue = getPropByPath(valuePath.split('.'), selectedCpn)
+    const fields = []
+    const parentTables = getPropByPath(masterTables.split('.'), selectedCpn)
+    parentTables.map(tb => {
+
+        const { foreign_keys } = tb;
+
+        const foreignKeyFieldsID = foreign_keys.map(key => key.field_id)
+        const thisTableFields = Object.values(tb.fields)
+        const foreignFields = thisTableFields.filter(f => foreignKeyFieldsID.indexOf(f.id) != -1).map(field => {
+            const { id } = field
+            const corespondingKey = foreign_keys.find(key => key.field_id == id)
+
+            const foreignTable = tables.find(tbl => tbl.id == corespondingKey.table_id)
+
+            if (foreignTable.pre_import) {
+                return { ...field, table_id: corespondingKey.table_id, onTable: tb.id }
+            }
+        }).filter(f => f != undefined)
+
+        fields.push(...foreignFields)
+    })
+
+    const valueClickTrigger = (opt) => {
+        updateSelectedComponent(opt, valuePath.split('.'))
+        setOptionDrop(false)
+    }
+
+    return (
+        <div>
+            <div className="property" style={{ zIndex: index + 1 }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentField.field_name}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {fields.map(opt =>
+                                <div className="option" onClick={() => { fieldClickTrigger(opt) }}>
+                                    <span>{opt["field_name"]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {fTable &&
+                <div className="property" style={{ zIndex: index }}>
+                    <div className="label-box">
+                        <span>{optionslabel}</span>
+                    </div>
+                    <div
+                        className={`drop-box`}
+                    >
+                        <div className="content-container" onClick={() => { setOptionDrop(!optionDrop) }}>
+                            <div className="content">
+                                <span>{Object.values(currentValue).join(' - ')}</span>
+                            </div>
+                            <div className="caret">
+                                <FontAwesomeIcon icon={faCaretDown} />
+                            </div>
+                        </div>
+                        <div className="options-container" style={{ display: optionDrop ? "block" : "none" }}>
+                            <div className="options" >
+                                {options.map(opt =>
+                                    <div className="option" onClick={() => { valueClickTrigger(opt) }}>
+                                        <span>{Object.values(opt).join(' - ')}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    )
+}
+
+
 
 
 const Components = {
@@ -1872,9 +2042,10 @@ const Components = {
     "selectParams": SelectParams,
     "selectPage": SelectPage,
     "showParams": ShowParams, // onetimeuse
-    "chooseSlave": ChooseSlave, 
+    "chooseSlave": ChooseSlave,
 
-    "choosePreImportTable": ChoosePreImportTable
+    "choosePreImportTable": ChoosePreImportTable,
+    "choosePreImportTableFromSibling": ChoosePreImportTableFromSibling
 
 }
 

@@ -6,19 +6,18 @@ import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faBold, faBox
 import $ from 'jquery';
 
 export default (props) => {
-    const { cache, gridState, preview } = useSelector(state => state)
+    const { cache, gridState, preview, icons } = useSelector(state => state)
     const { children, parent,
         content, style, id, zIndex,
         removeComponent, insertComponent,
         flex,
+        icon,
+        label,
         renderFrontLiner,
         renderBackLiner,
     } = props
 
 
-
-    const [left, setLeft] = useState("0")
-    const [right, setRight] = useState("unset")
     const ref = useRef()
     const dispatch = useDispatch()
 
@@ -95,10 +94,15 @@ export default (props) => {
     if (preview) {
         return (
             <div className="inline-statis">
-                <div className="inline-statis-icon">
-                    <FontAwesomeIcon icon={faBox} />
+                <div className="inline-statis-header">
+                    <div className="inline-statis-icon">
+                        <FontAwesomeIcon icon={icons[icon]?.icon} />
+                    </div>
+                    <div className="inline-statis-label">
+                        <span>{label}</span>
+                    </div>
                 </div>
-                <span>100.000.000.000.000</span>
+                <span>100.000</span>
             </div>
         )
     } else {
@@ -110,10 +114,15 @@ export default (props) => {
                     onClick={SwitchingState} onMouseEnter={ComponentHover}
                 >
                     <div className="inline-statis">
-                        <div className="inline-statis-icon">
-                            <FontAwesomeIcon icon={faBox} />
+                        <div className="inline-statis-header">
+                            <div className="inline-statis-icon">
+                                <FontAwesomeIcon icon={icons[icon]?.icon} />
+                            </div>
+                            <div className="inline-statis-label">
+                                <span>{label}</span>
+                            </div>
                         </div>
-                        <span>100.000.000.000.000</span>
+                        <span className="inline-statis-content">100.000</span>
                     </div>
 
                 </div>

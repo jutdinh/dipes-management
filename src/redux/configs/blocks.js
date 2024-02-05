@@ -369,13 +369,31 @@ const initialStates = {
 
     "inline_statis": {
         "name": "inline_statis",
-        "children": [
+        
+        
+        
+        "props": {     
+            label: "",
+            
+            "table": {
+                "table_id": "",
+                "table_name": ""            
+            },
+            
+            field: {
+                field_id: "",
+                fomular_alias: "",
+            },
+            value: "",
 
-        ],
-        "props": {                       
-            "style": {
-                ...defaultStylesheet         
-            }
+            group_by: {
+
+            },            
+
+            fomular: "", // ENUM [ "SUM", "COUNT", "AVERAGE" ]
+            criteria: {
+                display_value: ""
+            },            
         }
     },
 

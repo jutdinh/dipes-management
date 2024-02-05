@@ -26,3 +26,26 @@
     background-color: #1e75cb;
 
 }
+
+
+.inline-statis{
+
+    .inline-statis-header{
+        display: flex;
+        flex-wrap: nowrap;
+        color: #111;
+        font-size: 16px;
+
+        .inline-statis-icon{
+            
+        }
+        .inline-statis-label{
+            margin-left: 12px;
+        }
+    }
+
+    .inline-statis-content{
+        font-size: 24px;;
+    }
+
+}
