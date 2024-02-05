@@ -447,13 +447,13 @@ class PreImportTable extends Controller {
                     const { AUTO_INCREMENT, DATATYPE, PATTERN } = props;
 
                     if (Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT) {
-                        clone[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
+                        data[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
                     } else {
                         const { valid, result, reason } = this.parseType({ ...filtedFields[i], ...props }, data[fomular_alias])
                         if (valid) {
-                            clone[fomular_alias] = result;
+                            data[fomular_alias] = result;
                         } else {
-                            typeErrors.push({ field_name, value: clone[fomular_alias], reason })
+                            typeErrors.push({ field_name, value: data[fomular_alias], reason })
                         }
                     }
                 }
@@ -469,20 +469,15 @@ class PreImportTable extends Controller {
 
                     const key = { [primary_field.fomular_alias]: data[primary_field.fomular_alias] }
                     const dataExisted = await Database.selectAll(table.table_alias, key)
-                    
-
-                    console.log(key)
-                    console.log(clone)
-                    console.log(table.table_alias)
-                    console.log( dataExisted )
 
                     if (dataExisted.length == 0) {
                         context.content = "Data not found"
                     } else {
                         await Database.update(table.table_alias, key, {...data, ...clone})
 
-                        context.content = "Successfully update data record"
-                        context.data = clone
+                        context.content = "Successfully update data record"                        
+                        context.data = {...data, ...clone}
+
                         context.success = true
                     }
                 }
@@ -539,21 +534,26 @@ class PreImportTable extends Controller {
 
                 // filter trường trừ khóa rồi nhét dữ liệu vào clone xong cập nhật
 
+                const { primary_key } = table;
+                const key_id = primary_key[0]
+
+                const serializedFields = Object.values(table.fields)
+                const filtedFields = serializedFields.filter( f => f.id != key_id )
 
 
-                for (let i = 0; i < fields.length; i++) {
-                    const { fomular_alias, props, field_name } = fields[i]
+                for (let i = 0; i < filtedFields.length; i++) {
+                    const { fomular_alias, props, field_name } = filtedFields[i]
 
                     const { AUTO_INCREMENT, DATATYPE, PATTERN } = props;
 
                     if (Projects.intFamily.indexOf(DATATYPE) != -1 && AUTO_INCREMENT) {
-                        clone[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
+                        data[fomular_alias] = await this.makeAutoIncreament(table.table_alias, PATTERN)
                     } else {
-                        const { valid, result, reason } = this.parseType({ ...fields[i], ...props }, data[fomular_alias])
+                        const { valid, result, reason } = this.parseType({ ...filtedFields[i], ...props }, data[fomular_alias])
                         if (valid) {
-                            clone[fomular_alias] = result;
+                            data[fomular_alias] = result;
                         } else {
-                            typeErrors.push({ field_name, value: clone[fomular_alias], reason })
+                            typeErrors.push({ field_name, value: data[fomular_alias], reason })
                         }
                     }
                 }
@@ -567,19 +567,20 @@ class PreImportTable extends Controller {
 
                     const primary_field = table.fields[`${primary_key[0]}`]
 
-                    const key = { [primary_field.fomular_alias]: clone[primary_field.fomular_alias] }
+                    const key = { [primary_field.fomular_alias]: data[primary_field.fomular_alias] }
                     const dataExisted = await Database.selectAll(table.table_alias, key)
 
                     if (dataExisted.length == 0) {
                         context.content = "Data not found"
                     } else {
-                        await Database.delete(table.table_alias, key)
+                        await Database.delete(table.table_alias, key )
 
-                        context.content = "Successfully update new record"
-                        context.data = clone
+                        context.content = "Successfully update data record"
+                        context.data = {...data, ...clone}
                         context.success = true
                     }
                 }
+
 
             } else {
                 if (!table) {
