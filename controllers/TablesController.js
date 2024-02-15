@@ -195,6 +195,40 @@ class TablesController extends Controller {
     
 
     addFields = async ( req, res ) => {
+
+        /**
+         *  SAMPLE BODY
+         * 
+         * {
+            "version_id": 1286,
+            "table_id": 16879,
+            "fields": [
+                {
+                    "field_name": "Nàng xuân mới sang",
+                    "DATATYPE": "FILE",
+                    "NULL": null,
+                    "LENGTH": "",
+                    "AUTO_INCREMENT": false,
+                    "MIN": "",
+                    "MAX": "",
+                    "FORMAT": "",
+                    "PATTERN": "",
+                    "DECIMAL_PLACE": "",
+                    "DEFAULT": "",
+                    "DEFAULT_TRUE": "",
+                    "DEFAULT_FALSE": "",
+                    
+                    "FILE_MAX_SIZE": 5,
+                    "FILE_MULTIPLE": true,
+                    "FILE_ACCEPT_TYPES": ["png", "jpg"]
+                }
+            ]
+        }
+         * 
+         * 
+         * 
+         */
+
         const { version_id, table_id, fields } = req.body
         const context = await this.generalCheck(req, version_id);
 

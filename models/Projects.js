@@ -20,7 +20,8 @@ class Projects extends Model {
         "PASSWORD",
         "DATE", "DATETIME",
         "TEXT", "CHAR",
-        "EMAIL", "PHONE"
+        "EMAIL", "PHONE",
+        "FILE",
     ]
 
     static validPrimaryTypes = [
@@ -140,9 +141,10 @@ class Projects extends Model {
         this.versions.tables.fields.props.__addProperty__("DEFAULT_TRUE", Model.types.string, { default: "TRUE" })
         this.versions.tables.fields.props.__addProperty__("DEFAULT_FALSE", Model.types.string, { default: "FALSE" })
 
+        this.versions.tables.fields.props.__addProperty__("FILE_MAX_SIZE", Model.types.int, { default: 2 }) // MB
         this.versions.tables.fields.props.__addProperty__("FILE_MULTIPLE", Model.types.bool, { default: false })
-        this.versions.tables.fields.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a comma
-        this.versions.tables.fields.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a comma
+        this.versions.tables.fields.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a dot, this one is prior
+        // this.versions.tables.fields.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a dot 
 
 
 
@@ -184,9 +186,11 @@ class Projects extends Model {
         this.versions.apis.field.props.__addProperty__("DEFAULT", Model.types.string)
         this.versions.apis.field.props.__addProperty__("DEFAULT_TRUE", Model.types.string, { default: "TRUE" })
         this.versions.apis.field.props.__addProperty__("DEFAULT_FALSE", Model.types.string, { default: "FALSE" })
+
+        this.versions.apis.field.props.__addProperty__("FILE_MAX_SIZE", Model.types.int, { default: 2 }) // MB
         this.versions.apis.field.props.__addProperty__("FILE_MULTIPLE", Model.types.bool, { default: false })
-        this.versions.apis.field.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a comma
-        this.versions.apis.field.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a comma
+        this.versions.apis.field.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a dot, this one is prior        
+        // this.versions.apis.field.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a dot
 
 
         this.versions.apis.create_by.__addProperty__("username", Model.types.string)
@@ -697,20 +701,13 @@ class ProjectsRecord extends Projects {
         const field_alias = await this.makeAlias(field_name, "")
         const newField = {}
 
-        if(field.props?.DATATYPE == "FILE"){
-            const { 
-                FILE_ACCEPT_TYPES,
-                FILE_FORBID_TYPES 
-            } = field.props;
-            // field.props.FILE_ACCEPT_TYPES = FILE_ACCEPT_TYPES.map()
-        }
-
         newField[`${field_id}`] = {
             ...field,
             id: field_id,
             fomular_alias: field_alias,
             create_by: creator
         }
+        // console.log(newField)
         return newField
     }
 
@@ -722,7 +719,10 @@ class ProjectsRecord extends Projects {
             MIN, MAX,
             AUTO_INCREMENT,
             FORMAT, PATTERN, DECIMAL_PLACE,
-            DEFAULT, DEFAULT_TRUE, DEFAULT_FALSE
+            DEFAULT, DEFAULT_TRUE, DEFAULT_FALSE,
+            FILE_MAX_SIZE,
+            FILE_MULTIPLE,
+            FILE_ACCEPT_TYPES,
         } = rawField;
 
         const field = {
@@ -733,7 +733,10 @@ class ProjectsRecord extends Projects {
                 MIN, MAX,
                 AUTO_INCREMENT,
                 FORMAT, PATTERN, DECIMAL_PLACE,
-                DEFAULT, DEFAULT_TRUE, DEFAULT_FALSE
+                DEFAULT, DEFAULT_TRUE, DEFAULT_FALSE,
+                FILE_MAX_SIZE,
+                FILE_MULTIPLE,
+                FILE_ACCEPT_TYPES,
             }
         }
         return field
