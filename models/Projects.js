@@ -109,11 +109,10 @@ class Projects extends Model {
         this.versions.tables.__addProperty__("create_by", Model.types.json)
 
         this.versions.tables.create_by.__addProperty__("username", Model.types.string, { required: true })
-        this.versions.tables.create_by.__addProperty__("fullname", Model.types.string)
-
-        this.versions.tables.__addProperty__("show", Model.types.string, { default: "" } )
+        this.versions.tables.create_by.__addProperty__("fullname", Model.types.string)       
 
 
+        this.versions.tables.__addProperty__("display_fields", Model.types.array, { default: [] } ) // array of field_id
         this.versions.tables.__addProperty__("fields", Model.types.model)
         this.versions.tables.fields.__addProperty__("id", Model.types.int, { required: true })
         this.versions.tables.fields.__addProperty__("field_name", Model.types.string, { required: true })
@@ -146,8 +145,6 @@ class Projects extends Model {
         this.versions.tables.fields.props.__addProperty__("FILE_ACCEPT_TYPES", Model.types.array ) // array of strings which start with a dot, this one is prior
         // this.versions.tables.fields.props.__addProperty__("FILE_FORBID_TYPES", Model.types.array ) // array of strings which start with a dot 
 
-
-
         this.versions.__addProperty__("apis", Model.types.model)
         this.versions.apis.__addProperty__("id", Model.types.int, { auto: true })
         this.versions.apis.__addProperty__("api_id", Model.types.string)
@@ -160,10 +157,6 @@ class Projects extends Model {
         this.versions.apis.__addProperty__("api_scope", Model.types.enum, { values: ["private", "public"] })
         this.versions.apis.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
         this.versions.apis.__addProperty__("create_by", Model.types.json)
-        
-        
-
-
 
         this.versions.apis.__addProperty__("criterias", Model.types.string) 
         this.versions.apis.__addProperty__("fomular", Model.types.string) 
@@ -349,13 +342,10 @@ class Projects extends Model {
         this.tasks.tasks.create_by.__addProperty__("fullname", Model.types.string)
         this.tasks.tasks.__addProperty__("create_at", Model.types.datetime, { default: new Date() })
 
-
-
         this.__addProperty__("activation", Model.types.model)
         this.activation.__addProperty__("ACTIVATION_KEY", Model.types.string, { required: true, maxLength: 512 })
         this.activation.__addProperty__("MAC_ADDRESS", Model.types.string)
         this.activation.__addProperty__("ACTIVATE_AT", Model.types.datetime, { default: new Date() })
-
 
         this.__addPrimaryKey__(["id"])
         this.__addIndexing__("project_id")

@@ -632,17 +632,50 @@ class TablesController extends Controller {
 
     updateTable = async ( req, res ) => {
         this.writeReq(req)
-        const { version_id, table_id, table_name, pre_import } = req.body
+        const { version_id, table_id, table_name, pre_import} = req.body
+
+        const display_fields = req.body.display_fields ? req.body.display_fields : []
+
         const context = await this.generalCheck(req, version_id);        
         const { success, objects } = context 
 
         if( success ){
             const { Project, version, user } = objects;
-            version.tables[`${ table_id }`].table_name = table_name
-            if( typeof(pre_import) == "boolean" ){
-                version.tables[`${ table_id }`].pre_import = pre_import
+            const table = version.tables[`${ table_id }`]
+
+            if( table ){
+                version.tables[`${ table_id }`].table_name = table_name
+            
+                if( typeof(pre_import) == "boolean" ){
+                    version.tables[`${ table_id }`].pre_import = pre_import      
+
+                    if( Array.isArray( display_fields ) ){
+                        let valid = true;
+                        for( let i = 0 ; i < display_fields.length; i++ ){
+                            const num = display_fields[i]
+                            if( typeof(num) != "number" ){
+                                valid = false
+                            }else{                       
+                                if( table.fields[`${ num }`] == undefined ){
+                                    valid = false
+                                }
+                            }
+                        }       
+                        if( valid ){
+                            version.tables[`${ table_id }`].display_fields = display_fields
+                            Project.__modifyAndSaveChange__( `versions.${ version_id }`, version )
+                        }else{
+                            context.content = "Wrong display fields configuration"
+                        }
+                    }else{
+                        context.content = "Wrong datatype on field display_fields"
+                    }   
+                }else{
+                    context.content = "Wrong datatype on field pre-import"
+                }
+            }else{
+                context.content = "Table does not exist"
             }
-            Project.__modifyAndSaveChange__( `versions.${ version_id }`, version )
         }
 
         delete context.objects; 
