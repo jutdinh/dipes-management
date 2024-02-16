@@ -310,9 +310,19 @@
     color: #ffc107;
     font-weight: bold;
 }
-
+b, strong {
+    font-weight: bold !important;
+}
 .no-select-modal {
     pointer-events: none;
+}
+.ql-snow a {
+    color: #06c !important;
+}
+
+
+p a {
+    color: #06c !important;
 }
 
 .my-box-half {
@@ -3096,7 +3106,12 @@ th {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
-
+.graph_head_profile {
+    padding: 5px 25px 5px;
+    float: left;
+    width: 100%;
+    border-bottom: solid #f3f3f3 2px;
+}
 .icon_info ul.user_profile_dd>li {
     width: 100%;
     border-radius: 0;
@@ -3104,6 +3119,7 @@ th {
     margin: 0;
     padding: 12px 0 12px 20px;
     height: auto;
+    min-width: 160px;
 }
 
 .dropdown-menu-item {

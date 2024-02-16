@@ -69,11 +69,11 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
-    // //console.log(modalTemp)
+    // //////console.log(modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
-    console.log(table)
+    //console.log(table)
     const dispatch = useDispatch();
 
     const handleCloseModal = () => {
@@ -114,7 +114,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log("data", data)
+                //console.log("data", data)
                 if (success) {
                     if (data) {
                         setTableFields(data.fields);
@@ -138,7 +138,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log("data1", data)
+                //console.log("data1", data)
                 if (success) {
                     if (data) {
                         setDataPreImport(data)
@@ -153,7 +153,7 @@ export default () => {
 
 
 
-    console.log(getTableFields)
+    //console.log(getTableFields)
 
 
     const handleChange = (event) => {
@@ -161,7 +161,7 @@ export default () => {
 
         setDataAdd({ ...dataAdd, [name]: value });
     };
-    console.log(dataAdd)
+    //console.log(dataAdd)
 
     const addData = (e) => {
         e.preventDefault();
@@ -170,7 +170,7 @@ export default () => {
             table_id: parseInt(table_id),
             data: dataAdd
         };
-        // //console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/db/preimport/add`, {
             method: "POST",
             headers: {
@@ -183,7 +183,7 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    callData()
+
                     setDataAdd({})
                     Swal.fire({
                         title: lang["success.title"],
@@ -192,9 +192,9 @@ export default () => {
                         showConfirmButton: false,
                         timer: 1500
                     }).then({
-                       
+
                     })
-                   
+                    callData()
                     $("#closeAddData").click()
                     // functions.showApiResponseMessage(status);
                 } else {
@@ -210,53 +210,112 @@ export default () => {
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
     const currentData = dataPreImport.slice(indexOfFirstTable, indexOfLastTable);
-    // //console.log(currentTable)
+    // ////console.log(currentTable)
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(dataPreImport.length / rowsPerPageTable);
 
 
-   const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({});
     const handleUpdate = (row) => {
-        console.log(row)
+        //console.log(row)
         setFormData(row)
         setDataUpdate(row)
     };
 
-   const handleChangeUpdate = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-        ...formData,
-        [name]: value,
-    });
-};
+    const handleChangeUpdate = (event) => {
+        const { name, value } = event.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
     const updateData = (e) => {
         e.preventDefault();
-        // const requestBody = {
-        //     version_id: parseInt(version_id),
-        //     table_id: parseInt(table_id),
-        //     data: formData
-        // };
-        // // //console.log(requestBody)
-        // fetch(`${proxy}/db/preimport/add`, {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: `${_token}`,
-        //     },
-        //     body: JSON.stringify(requestBody),
-        // })
-        //     .then((res) => res.json())
-        //     .then((resp) => {
-        //         const { success, content, data, status } = resp;
-        //         if (success) {
-        //             callData()
-        //             functions.showApiResponseMessage(status);
-        //         } else {
-        //             functions.showApiResponseMessage(status);
-        //         }
-        //     })
+        const requestBody = {
+            version_id: parseInt(version_id),
+            table_id: parseInt(table_id),
+            data: formData
+        };
+        // ////console.log(requestBody)
+        fetch(`${proxy}/db/preimport`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `${_token}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then((res) => res.json())
+            .then((resp) => {
+                const { success, content, data, status } = resp;
+                if (success) {
+                    callData()
+                    Swal.fire({
+                        title: lang["success.title"],
+                        text: lang["success.title"],
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then({
+
+                    })
+                } else {
+                    functions.showApiResponseMessage(status);
+                }
+            })
     };
 
+
+    const handleDelete = (row) => {
+        const requestBody = {
+            version_id: parseInt(version_id),
+            table_id: parseInt(table_id),
+            data: row
+        };
+
+        Swal.fire({
+            title: lang["confirm"],
+            text: lang["delete.field"],
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: lang["confirm"],
+            cancelButtonText: lang["btn.cancel"],
+            customClass: {
+                confirmButton: 'swal2-confirm my-confirm-button-class',
+                // add more custom classes if needed
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${proxy}/db/preimport`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `${_token}`,
+                    },
+                    body: JSON.stringify(requestBody),
+                })
+                    .then((res) => res.json())
+                    .then((resp) => {
+                        const { success, content, data, status } = resp;
+                        if (success) {
+                            callData()
+                            // functions.showApiResponseMessage(status);
+                            Swal.fire({
+                                title: lang["success.title"],
+                                text: lang["success.title"],
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then({
+        
+                            })
+                        } else {
+                            functions.showApiResponseMessage(status);
+                        }
+                    })
+            }
+        });
+    }
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -279,10 +338,10 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
-                                    
+
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
-                                         
+
                                             <button type="button" class="btn btn-primary custom-buttonadd ml-auto" data-toggle="modal" data-target="#addData">
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -310,8 +369,8 @@ export default () => {
                                                                                 <td key={header.fomular_alias} className="cell">{functions.renderData(header, row)}</td>
                                                                             ))}
                                                                             <td class="align-center" style={{ minWidth: "130px" }}>
-                                                                                {/* <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick ={() => handleUpdate(row)}data-toggle="modal" data-target="#editData" title={lang["edit"]}></i>
-                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" title={lang["delete"]}></i> */}
+                                                                                <i class="fa fa-edit size-24 pointer icon-margin icon-edit" onClick={() => handleUpdate(row)} data-toggle="modal" data-target="#editData" title={lang["edit"]}></i>
+                                                                                <i class="fa fa-trash-o size-24 pointer icon-margin icon-delete" onClick={() => handleDelete(row)} title={lang["delete"]}></i>
                                                                             </td>
                                                                         </tr>)
                                                                 } else {
@@ -368,7 +427,7 @@ export default () => {
                     </div>
                 </div>
                 {/* add data */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addData">
+                <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addData">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -410,8 +469,8 @@ export default () => {
                         </div>
                     </div>
                 </div>
-                 {/* update data */}
-                 <div class={`modal ${showModal ? 'show' : ''}`} id="editData">
+                {/* update data */}
+                <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="editData">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">

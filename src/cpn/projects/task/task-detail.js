@@ -1,24 +1,24 @@
 import { useParams } from "react-router-dom";
-import Header from "../common/header"
+import Header from "../../common/header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMaximize, faMinimize, faDownload, faCompress, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask, StatusAprove } from '../enum/status';
+import { StatusEnum, StatusTask, StatusAprove } from '../../enum/status';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import FloatingTextBox from '../common/floatingTextBox';
-import CheckList from '../common/checkList';
-import FilterableDate from '../common/searchDate';
+import FloatingTextBox from '../../common/floatingTextBox';
+import CheckList from '../../common/checkList';
+import FilterableDate from '../../common/searchDate';
 import XLSX from 'xlsx-js-style'
-import Gantt from "./gantt"
-import { formatDate } from "../../redux/configs/format-date";
+import Gantt from "../gantt/gantt"
+import { formatDate } from "../../../redux/configs/format-date";
 import { da } from "date-fns/locale";
 import Stage from "./stage"
-import GanttTest from "./gantt-test"
+import GanttTest from "../gantt/gantt-test"
 import $ from 'jquery';
-import TableScroll from "./table-test-scroll"
-
+import TableScroll from "../table-test-scroll"
+import TableAdd from "./table-add"
 export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -40,11 +40,11 @@ export default () => {
     const [project, setProject] = useState({}); //// Update project
     const [showStartDateInput, setShowStartDateInput] = useState(false);
     const [showEndDateInput, setShowEndDateInput] = useState(false);
-    // console.log(selectedMemberTask)
-
-
-
-
+    // //console.log(projectdetail)
+    // 
+    const membersProject = Array.from(new Map(projectdetail?.members?.map(member => [member.username, member])).values());
+    membersProject.push(projectdetail?.manager)
+    // //console.log(membersProject)
     const statusProject = [
         StatusEnum.INITIALIZATION,
         StatusEnum.IMPLEMENT,
@@ -93,9 +93,9 @@ export default () => {
     const [taskDetail, setTaskDetail] = useState([]);
 
     const [stage, setStage] = useState([]);
-    // console.log(stage)
+    // //console.log(stage)
     const [stageData, setStageData] = useState([]);
-    // console.log(stageData)
+    // //console.log(stageData)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -119,6 +119,28 @@ export default () => {
             })
     }, [])
 
+    const callProgress = () => {
+        fetch(`${proxy}/projects/project/${project_id}`, {
+            headers: {
+                Authorization: _token
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                const { success, data, status, content } = resp;
+                if (success) {
+                    if (data) {
+
+                        setProcess(data)
+                    }
+                } else {
+                    window.location = "/404-not-found"
+                }
+            })
+    };
+
+
+
     useEffect(() => {
         fetch(`${proxy}/projects/project/${project_id}/tasks`, {
             headers: {
@@ -128,7 +150,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                // //console.log(resp)
                 if (success) {
                     if (data) {
                         // data.sort((a, b) => {
@@ -165,11 +187,10 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(166,resp)
+                // //console.log(166,resp)
                 if (success) {
                     if (data && data.length > 0) {
                         setStageData(data)
-
                     }
                 }
             })
@@ -179,12 +200,12 @@ export default () => {
         callDataTask();
     }, [])
 
-    //    console.log(stageData)
+    //    //console.log(stageData)
     const filteredTasks = tasks.filter(task =>
         task.members?.some(member => member.username === _users.username) ||
         ["ad", "uad"].indexOf(auth.role) !== -1
     );
-    // console.log(filteredTasks)
+    // //console.log(filteredTasks)
     const handleCloseModal = () => {
         // setShowModal(false);
         setStage(
@@ -202,7 +223,7 @@ export default () => {
     };
 
     const getCorespondingValue = (task) => {
-        // console.log(task)
+        // //console.log(task)
         const corespondingTask = fakeTasks.find(t => t.task_id == task.task_id)
         return corespondingTask["task_progress"]
     }
@@ -279,11 +300,12 @@ export default () => {
                 period_description: stage.period_description,
                 start: stage.stage_start,
                 end: stage.stage_end,
+                // timeline: stage.timeline,
                 members: stage.members,
             }
 
         }
-        // console.log(requestBody)
+        // //console.log(requestBody)
 
         fetch(`${proxy}/projects/periods`, {
             method: "POST",
@@ -318,7 +340,7 @@ export default () => {
     }
 
 
-    // console.log(selectedMemberTask)
+    // //console.log(selectedMemberTask)
     const submitAddTask = (e) => {
         e.preventDefault();
         task.members = selectedMemberTask.map(user => user.username);
@@ -353,7 +375,7 @@ export default () => {
             setErrorMessagesadd(errors);
             return;
         }
-        // console.log(errors)
+        // //console.log(errors)
 
         fetch(`${proxy}/projects/project/${project_id}/task`, {
             method: "POST",
@@ -387,7 +409,7 @@ export default () => {
     const getIdTask = (taskid) => {
         setUpdateTask(taskid);
     }
-    // console.log(updateTaskinfo)
+    // //console.log(updateTaskinfo)
 
     useEffect(() => {
         if (updateTaskinfo && updateTaskinfo.members) {
@@ -435,7 +457,7 @@ export default () => {
             task_priority: updateTaskinfo.task_priority,
             task_progress: updateTaskinfo.task_progress
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/tasks/task/info`, {
             method: "PUT",
             headers: {
@@ -477,7 +499,7 @@ export default () => {
             // console.error(`Cannot find task with id ${taskid}`);
         }
     };
-    // console.log(taskDetail)
+    // //console.log(taskDetail)
 
     const [deleteTask, setDelelteTask] = useState(false);
 
@@ -489,7 +511,7 @@ export default () => {
             task_id: taskid.task_id,
             task_approve: newTaskApproveStatus
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/tasks/task/approve`, {
             method: 'PUT',
             headers: {
@@ -557,7 +579,7 @@ export default () => {
             task_id: taskInfo.task_id,
             task_status: taskInfo.newTaskStatus
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/tasks/task/status`, {
             method: 'PUT',
             headers: {
@@ -576,8 +598,8 @@ export default () => {
                 }
             });
     }
-    // console.log(tasks)
-    // console.log(project)
+    // //console.log(tasks)
+    // //console.log(project)
 
     const statusMapping = {
         1: "Khởi tạo",
@@ -620,7 +642,7 @@ export default () => {
     //     // Xuất file Excel
     //     XLSX.writeFile(workbook, 'project-data.xlsx');
     // };
-    // console.log(stageData)
+    // //console.log(stageData)
     const exportToExcel = () => {
         const workbook = XLSX.utils.book_new();
         const projectTasks = project.tasks;
@@ -828,8 +850,17 @@ export default () => {
 
             ];
 
+            let sheetCount = {}
+            let baseSheetName = period.period_name.substring(0, 31) || `Sheet${periodIndex + 1}`;
+            let sheetName = baseSheetName;
 
-            XLSX.utils.book_append_sheet(workbook, ws, period.period_name.substring(0, 31));
+            // Đảm bảo tên sheet là duy nhất
+            while (workbook.SheetNames.includes(sheetName)) {
+                sheetCount[baseSheetName] = (sheetCount[baseSheetName] || 0) + 1;
+                sheetName = `${baseSheetName} (${sheetCount[baseSheetName]})`;
+            }
+
+            XLSX.utils.book_append_sheet(workbook, ws, sheetName);
             // Thêm nhóm vào trang tính
             if (!ws['!rows']) ws['!rows'] = [];
             taskGroupings.forEach(group => {
@@ -850,11 +881,11 @@ export default () => {
     };
 
     const exportToExcelBK = () => {
-        // console.log(project)
+        // //console.log(project)
 
-        // console.log(dataExport)
+        // //console.log(dataExport)
         const projectTasks = project.tasks;
-        // console.log(projectTasks)
+        // //console.log(projectTasks)
         // if (!projectTasks || projectTasks.length === 0) {
         //     console.error(`No tasks found for project ID: ${projectId}`);
         //     return;
@@ -1130,7 +1161,7 @@ export default () => {
         return item ? lang[item.label] || '' : '';
     }
     const [fullScreen, setFullScreen] = useState(false);
-    // console.log(tasks)
+    // //console.log(tasks)
     const tableSectionRef = useRef(null);
 
 
@@ -1212,7 +1243,7 @@ export default () => {
                 </div>
                 {/* List table */}
 
-                <div class="row" id="second-row" ref={tableSectionRef}>
+                <div class="row row_cus" id="second-row" ref={tableSectionRef}>
                     <div class="col-md-12" style={{
                         display: "flex",
                         flexDirection: "column",
@@ -1224,7 +1255,7 @@ export default () => {
                             flexDirection: "column",
                             flexGrow: 1,
                         }}>
-                            <div class="full graph_head d-flex">
+                            <div class="full graph_head graph_head_cus d-flex">
                                 <div class="heading1 margin_0 ">
                                     <h5>
                                         {lang["listtask"]}
@@ -1278,7 +1309,7 @@ export default () => {
                                 <div class="row column1" style={{ flexGrow: 1, }}>
                                     {/* Add Stage */}
                                     <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="addStage">
-                                        <div class={`modal-dialog modal-dialog-center ${ fullScreen ? "fake-model-bg": "" }`}>
+                                        <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">{lang["addstage"]}</h4>
@@ -1324,6 +1355,16 @@ export default () => {
                                                                     {errorMessagesadd.stage_end && <span class="error-message">{errorMessagesadd.stage_end}</span>}
                                                                 </div>
                                                             </div>
+                                                            {/* <div className="col-lg-6">
+                                                                <label>Timeline <span className='red_star'>*</span></label>
+                                                                <input type="date" min="2020-01-01" max="2030-12-31" className="form-control" value={stage.timeline} onChange={
+                                                                    (e) => { setStage({ ...stage, timeline: e.target.value }) }
+                                                                } />
+
+                                                                <div style={{ minHeight: '20px' }}>
+                                                                    {errorMessagesadd.stage_end && <span class="error-message">{errorMessagesadd.stage_end}</span>}
+                                                                </div>
+                                                            </div> */}
                                                             <div class="col-md-12">
                                                                 <div style={{ minHeight: '20px' }}>
                                                                     {errorMessagesadd.checkday && <span class="error-message">{errorMessagesadd.checkday}</span>}
@@ -1333,7 +1374,7 @@ export default () => {
                                                                 <label>{lang["taskmember"]} <span className='red_star'>*</span></label>
                                                                 {errorMessagesadd.members && <span class="ml-1 error-message">{errorMessagesadd.members}</span>}
                                                                 <div class="user-checkbox-container">
-                                                                    {projectdetail.members?.map((user, index) => (
+                                                                    {membersProject?.map((user, index) => (
                                                                         <div key={index} className="user-checkbox-item">
                                                                             <label className="pointer">
                                                                                 <input
@@ -1349,7 +1390,7 @@ export default () => {
                                                                                         setSelectedMemberTask(updatedSelectedMembers);
                                                                                     }}
                                                                                 />
-                                                                                {user.fullname}
+                                                                                {user?.fullname}
                                                                             </label>
                                                                         </div>
                                                                     ))}
@@ -1374,26 +1415,23 @@ export default () => {
                                         style={{
                                             display: "flex",
                                             flexDirection: "column"
-
                                         }}
                                     >
-
                                         <div class="progress skill-bar ">
                                             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow={process.progress} aria-valuemin="0" aria-valuemax="100" style={{ width: `${process.progress}%` }}>
                                             </div>
                                         </div>
                                         {/* <div className="d-flex">
-
                                             <span class="skill mt-0 mr-auto" style={{ width: `100%` }}><span class="info_valume">{process.progress}%</span></span>
                                         </div> */}
 
-
-                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} projectname={project.project_name} process={process.progress} fullScreen= {fullScreen} />
+                                        < Stage data={stageData} members={projectdetail} callDataTask={callDataTask} callProgress={callProgress} projectname={project.project_name} process={process.progress} fullScreen={fullScreen} />
+                                        {/* <TableAdd data={stageData} /> */}
                                     </div>
 
                                     {/* Add Progress */}
                                     <div class={`modal ${showModal ? 'show' : ''}`} id="addTask">
-                                        <div class={`modal-dialog modal-dialog-center ${ fullScreen ? "fake-model-bg": "" }`}>
+                                        <div class={`modal-dialog modal-dialog-center ${fullScreen ? "fake-model-bg" : ""}`}>
                                             <div class={`modal-content`}>
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">{lang["addtask"]}</h4>

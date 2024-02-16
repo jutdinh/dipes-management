@@ -16,7 +16,8 @@ const blockTypes = {
     redirect_button: "redirect_button",
     table_export_button: "table_export_button",
 
-    custom_button: "custom_button"
+    custom_button: "custom_button",
+    detail_box: "detail_box"
 }
 
 
@@ -319,6 +320,26 @@ const initialStates = {
         }
     },
 
+    "detail_box": {
+        "name": "detail_box",
+        "children": [
+
+        ],
+        "props": {
+            "content": "Sample Text",
+            "tables": [],
+            "fields": [],
+
+            "params": [],
+
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
+    // Thêm properties cho params box & box hình ảnh
+
 
     "chart_1": {
         "name": "chart_1",
@@ -415,6 +436,13 @@ const initialStates = {
                 api_id: "",
                 api_name: "",
                 url: "" 
+            },
+
+            export: {
+                state: false,
+                api: {
+                    
+                }
             },
 
             fomular: "",

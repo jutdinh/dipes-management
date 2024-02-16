@@ -1,7 +1,7 @@
-import Projects from "./projects";
-import ProjectDetail from "./projectcard-detail";
-import TaskDetail from "./task-detail";
-import EditProject from "./edit-project-info"
+import Projects from "./project/projects";
+import ProjectDetail from "./project/projectcard-detail";
+import TaskDetail from "./task/task-detail";
+import EditProject from "./project/edit-project-info"
 
 export {
     Projects,

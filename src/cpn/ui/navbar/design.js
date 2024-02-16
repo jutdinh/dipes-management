@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faBars, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faImages, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -280,14 +280,42 @@ export default () => {
                         <span className="block-name">C - Chart</span>
                     </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faDiagramNext, "Chart gì đó", blockTypes.chart_2 ) } }>
+                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faDiagramNext, "Thống kê đơn lẻ", blockTypes.chart_2 ) } }>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={ faDiagramNext }/>
                         </div>
-                        <span className="block-name">Chart gì đó</span>
+                        <span className="block-name">Thống kê đơn lẻ</span>
                     </div>
 
                 </div>
+
+                {
+                     isCurrentPageParamized() &&
+                     <div>
+
+                        <span className="block-type">KHỐI CHI TIẾT</span>
+                        <div className="blocks">   
+
+                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faBars , "Box chi tiết", blockTypes.detail_box ) } }>
+                                <div className="block-icon" >
+                                    <FontAwesomeIcon icon={  faBars }/>
+                                </div>
+                                <span className="block-name">Box chi tiết</span>
+                            </div>            
+
+                            {/* <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImages , "Box chi tiết", blockTypes.detail_images ) } }>
+                                <div className="block-icon" >
+                                    <FontAwesomeIcon icon={  faImages }/>
+                                </div>
+                                <span className="block-name">Box chi tiết</span>
+                            </div>             */}
+                        </div>
+                        
+
+                     </div>
+                }
+
+
 
             </div>
         </div>

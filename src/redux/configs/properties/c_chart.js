@@ -42,6 +42,13 @@ const c_chart =  [
 
     //     display_value: "table_name",
     // },
+
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.title"],
+        type: "text",
+        path: "props.content" 
+    },
     
     { 
         id: getFormatedUUID(), 
@@ -125,6 +132,22 @@ const c_chart =  [
         path: "props.criterias"
         
     },
+
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.table.buttons.export"],
+        type: "bool",
+        path: "props.export.state",
+        if_true: {
+            value: true,
+            label: lang["props.table.show"]
+        },
+        if_false: {
+            value: false,
+            label: lang["props.table.hide"]
+        }
+    },
+
 
     { 
         id: getFormatedUUID(), 

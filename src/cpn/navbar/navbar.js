@@ -85,8 +85,6 @@ export default () => {
                      <span>{lang["about us"]}</span>
                   </NavLink>
                </li>
-
-
                {/* <li>
                   <a href="/contacts">
                      <i class="fa fa-paper-plane red_color"></i> <span>{lang["contacts"]}</span></a>
@@ -102,13 +100,10 @@ export default () => {
                   </li>
                ) : null}
             </ul>
-
          </div>
-
          <div class="footer-custom">
             <p>&copy; 2023 - Designed by Mylan Group </p>
          </div>
-
       </nav>
    )
 }

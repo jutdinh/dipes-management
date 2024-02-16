@@ -28,7 +28,7 @@ export default () => {
     ];
     const [data, setData] = useState([]);
     const options = langs;
-
+// console.log(data)
     useEffect(() => {
         let langItem = localStorage.getItem("lang");
         langItem = langItem ? langItem : "Vi";
@@ -175,16 +175,16 @@ export default () => {
                     .then((res) => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        console.log(resp)
+                        // console.log(resp)
                         dataRespon.content = data;
-               
+
                         setData(prevData => [dataRespon, ...prevData]);
                     })
                     .catch((error) => {
-                       
+
                     });
-          
-               
+
+
             }
 
         });
@@ -204,16 +204,19 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
-                const sortedData = data.sort((a, b) => {
-                    const dateA = new Date(a.notify_at);
-                    const dateB = new Date(b.notify_at);
+                if (success && data.length > 0) {
+                    const sortedData = data.sort((a, b) => {
+                        const dateA = new Date(a.notify_at);
+                        const dateB = new Date(b.notify_at);
 
-                    return dateB - dateA;
-                });
-                if (success) {
+                        return dateB - dateA;
+                    });
                     setData(sortedData)
                 }
+                // console.log(resp)
+
+
+
             })
     }, [])
 
@@ -385,7 +388,7 @@ export default () => {
                         <div className="icon_info">
                             <ul>
                                 {/* <li><a href="#"><i className="fa fa-question-circle"></i></a></li> */}
-                                <li><a href="#"><i className="fa fa-bell-o" onClick={handleBellClick}></i><span className="badge">{unreadCount < 10 ? unreadCount : "9+"}</span></a></li>
+                                <li><a href="#"><i className="fa fa-bell-o" onClick={handleBellClick}></i>{unreadCount > 0 && <span className="badge">{unreadCount < 10 ? unreadCount : "9+"}</span> }</a></li>
                                 {/* <li><a href="#"><i className="fa fa-envelope-o"></i><span className="badge">1</span></a></li> */}
                                 <li>
                                     <a href="#" onClick={changeTheme}>
@@ -404,10 +407,10 @@ export default () => {
                                         <a className="dropdown-item" href="/profile">
                                             <>{lang["my profile"]}</>
                                         </a>
-                                        {/* <a className="dropdown-item" href="settings.html">
-                                            {lang["settings"]}
+                                         <a className="dropdown-item" href="/change-password">
+                                            {lang["changepassword"]}
                                         </a>
-                                        <a className="dropdown-item" href="help.html">
+                                      {/*  <a className="dropdown-item" href="help.html">
                                             {lang["help"]}
                                         </a> */}
                                         <a className="dropdown-item" href="#" onClick={signOut}>

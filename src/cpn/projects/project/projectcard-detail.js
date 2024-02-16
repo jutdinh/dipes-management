@@ -1,18 +1,18 @@
 
 import { useParams } from "react-router-dom";
-import Header from "../common/header"
+import Header from "../../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
+import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../../enum/status';
 import { saveAs } from 'file-saver';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import responseMessages from "../enum/response-code";
+import responseMessages from "../../enum/response-code";
+import { formatDate } from "../../../redux/configs/format-date";
 
 
-import { formatDate } from "../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
@@ -38,7 +38,7 @@ export default () => {
     const [exporter, setExporter] = useState({})
     const [activate, setActivate] = useState({})
 
-    // // console.log(selectedMemberTask)
+    // // ////console.log(selectedMemberTask)
     // Page 
 
     const sortOptions = [
@@ -157,10 +157,10 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    // // console.log("a", combinedArray)
-    // // console.log("admin", selectedUsers)
-    // // console.log("imple", selectedImple)
-    // // console.log("monitor", selectedMonitor)
+    // // ////console.log("a", combinedArray)
+    // // ////console.log("admin", selectedUsers)
+    // // ////console.log("imple", selectedImple)
+    // // ////console.log("monitor", selectedMonitor)
 
     const handleSaveUsers = () => {
         setSelectedUsers(tempSelectedUsers);
@@ -192,13 +192,18 @@ export default () => {
 
     }, [project_id]);
     const [projectdetail, setProjectDetail] = useState([]); //// Detail project
-    // console.log(projectdetail)
+    //console.log(projectdetail)
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(projectdetail.project_description, 'text/html');
+    const text = doc.body.textContent || "";
+
+
     const [project, setProject] = useState({}); //// Update project
     const [projectmember, setProjectMember] = useState([]);
     const [versions, setProjectVersion] = useState([]);
     const [users, setUsers] = useState([]);
     const [projectmanager, setProjectManager] = useState({});
-    // console.log(projectdetail)
+    // ////console.log(projectdetail)
     const [process, setProcess] = useState({});
     useEffect(() => {
 
@@ -243,10 +248,10 @@ export default () => {
                 if (success) {
                     if (data) {
                         setTables(data);
-                        // console.log(data)
+                        // ////console.log(data)
                     }
                 } else {
-                    // console.log("data")
+                    // ////console.log("data")
                     // window.location = "/404-not-found"
                 }
             })
@@ -286,11 +291,11 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // // console.log(resp)
+                // // ////console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setUsers(data);
-                        // console.log(data)
+                        // ////console.log(data)
                     }
                 } else {
                     window.location = "/404-not-found"
@@ -325,7 +330,7 @@ export default () => {
                         })
 
                         setTasks(data);
-                        // console.log("data task", data)
+                        // ////console.log("data task", data)
                     }
                 } else {
                     // window.location = "/404-not-found"
@@ -356,7 +361,7 @@ export default () => {
                 }
             })
     }, [versions])
-    // console.log(`${versions[0]?.version_id}`)
+    // ////console.log(`${versions[0]?.version_id}`)
 
     const areTwoArraysEqual = (arr1, arr2) => {
         let valid = true
@@ -443,7 +448,7 @@ export default () => {
         // call addMember after submitUpdateProject has completed
         // if change members then call the api
         if (!areTwoArraysEqual(uniqueArray, projectmember)) {
-            // console.log("UPDATED")
+            // ////console.log("UPDATED")
             addMember(e);
         }
     };
@@ -534,7 +539,7 @@ export default () => {
     }
 
     useEffect(() => {
-        // console.log(updateTaskinfo);
+        // ////console.log(updateTaskinfo);
     }, [updateTaskinfo]);
 
 
@@ -548,7 +553,7 @@ export default () => {
             task_description: updateTaskinfo.task_description,
             task_priority: updateTaskinfo.task_priority,
         };
-        // console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/tasks/task/info`, {
             method: "PUT",
             headers: {
@@ -593,7 +598,7 @@ export default () => {
         }
 
     };
-    // console.log(taskDetail)
+    // ////console.log(taskDetail)
     const [deleteTask, setDelelteTask] = useState(false);
 
     const handleConfirmTask = (taskid) => {
@@ -603,7 +608,7 @@ export default () => {
             task_id: taskid.task_id,
             task_approve: newTaskApproveStatus
         };
-        // console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/tasks/task/approve`, {
             method: 'PUT',
             headers: {
@@ -631,7 +636,7 @@ export default () => {
             task_id: taskid.task_id
 
         };
-        // console.log(requestBody)
+        // ////console.log(requestBody)
 
         Swal.fire({
             title: lang["confirm"],
@@ -662,14 +667,14 @@ export default () => {
         });
     }
     const handleDeleteUser = (member) => {
-        console.log(member)
+        ////console.log(member)
         const requestBody = {
             project_id: project.project_id,
             username: member.username,
             permission: member.permission
         };
         const dataSocket = {
-            targets: [{username: member.username}],
+            targets: [{ username: member.username }],
             actor: {
                 fullname: _users.fullname,
                 username: _users.username,
@@ -780,8 +785,8 @@ export default () => {
 
     const paginateViewDetailTask = (pageNumber) => setCurrentViewDetailTask(pageNumber);
     const totalViewDetailTask = Math.ceil(taskDetail.history?.length / rowsPerViewDetailTask);
-    // console.log("manger", projectdetail.manager)
-    // console.log("members", currentMembers)
+    // ////console.log("manger", projectdetail.manager)
+    // ////console.log("members", currentMembers)
     useEffect(() => {
         if (projectdetail.project_description?.length > 100) {
             setShowViewMore(true);
@@ -814,8 +819,8 @@ export default () => {
         const role = e.target.value
         const username = e.target.dataset.username;
 
-        // console.log(role);
-        // console.log(username)
+        // ////console.log(role);
+        // ////console.log(username)
         updateRoleMember({ username: username, role: role });
     }
 
@@ -826,13 +831,13 @@ export default () => {
         } else if (member.role === 'deployer') {
             newRole = 'deployer';
         }
-        // console.log(member)
+        // ////console.log(member)
         const requestBody = {
             project_id: project.project_id,
             username: member.username,
             permission: newRole
         };
-        // console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/projects/project/member/privilege`, {
             method: 'PUT',
             headers: {
@@ -853,7 +858,7 @@ export default () => {
     const handleSelectChange = async (e) => {
         const newTaskStatus = parseInt(e.target.value, 10);
         const taskId = e.target.options[e.target.selectedIndex].dataset.taskid;
-        // console.log(taskId);
+        // ////console.log(taskId);
         updateStatusTask({ task_id: taskId, newTaskStatus: newTaskStatus });
     }
 
@@ -863,7 +868,7 @@ export default () => {
             task_id: taskInfo.task_id,
             task_status: taskInfo.newTaskStatus
         };
-        // console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/tasks/task/status`, {
             method: 'PUT',
             headers: {
@@ -1087,6 +1092,7 @@ export default () => {
     ];
 
     const [statisTask, setStatisTask] = useState([]);
+    // ////console.log(statisTask)
     useEffect(() => {
 
         fetch(`${proxy}/tasks/${project_id}/statistic`, {
@@ -1097,7 +1103,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content, statistic } = resp;
-                // console.log(resp)
+                // ////console.log(resp)
                 if (success) {
 
                     const data = Object.entries(statistic).map(([key, { percentage, amount }]) => {
@@ -1128,7 +1134,7 @@ export default () => {
 
 
 
-    // console.log(statisTask)
+    // ////console.log(statisTask)
 
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
@@ -1173,7 +1179,17 @@ export default () => {
     //         });
     //     }
     // }, []);
-    // console.log(memberCheck)
+    // ////console.log(memberCheck)
+
+
+
+
+
+
+
+
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1230,9 +1246,11 @@ export default () => {
                                                 width: "100%",
                                                 overflow: "hidden",
                                                 textOverflow: "ellipsis",
-                                                whiteSpace: "nowrap"
+                                                whiteSpace: "nowrap",
+                                                // Giữ nguyên nội dung trên một hàng và thêm ellipsis nếu quá dài
                                             }}>
-                                                {projectdetail.project_description}
+                                                {text}
+                                                {/* <div dangerouslySetInnerHTML={{ __html: project.project_description }} /> */}
                                             </div>
                                             {showViewMore && (
                                                 <div className="view-more-link">
@@ -1242,6 +1260,8 @@ export default () => {
                                                 </div>
                                             )}
                                         </div>
+
+
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
@@ -1854,7 +1874,7 @@ export default () => {
                     </div>
 
                     {/* View Description Project */}
-                    <div class={`modal ${showModal ? 'show' : ''}`} id="viewDescription">
+                    <div class={`modal no-select-modal ${showModal ? 'show' : ''}`} id="viewDescription">
                         <div class="modal-dialog modal-dialog-center">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -1865,11 +1885,11 @@ export default () => {
                                     <form>
                                         <div class="row">
                                             <div class="form-group col-lg-12">
-
                                                 <span className="d-block" style={{ textAlign: "justify" }}>
-                                                    {projectdetail.project_description}
+                                                    {/* {projectdetail.project_description && projectdetail.project_description.split('\n').map(s => <span style={{ display: "block" }}>{s}</span>)} */}
+                                                    <div dangerouslySetInnerHTML={{ __html: projectdetail.project_description }}
+                                                    />
                                                 </span>
-
                                             </div>
                                         </div>
                                     </form>

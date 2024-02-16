@@ -1,21 +1,22 @@
 
 import { useParams } from "react-router-dom";
-import Header from "../common/header"
+import Header from "../../common/header"
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StatusEnum, StatusTask } from '../enum/status';
+import { StatusEnum, StatusTask } from '../../enum/status';
 import { useNavigate } from "react-router-dom";
 import XLSX from 'xlsx-js-style'
 import Swal from 'sweetalert2';
-import responseMessages from "../enum/response-code";
-import { Tables } from ".";
-import { formatDate } from "../../redux/configs/format-date";
+import responseMessages from "../../enum/response-code";
+import { Tables } from "..";
+import Editor from '../../editor/editor'
+import { formatDate } from "../../../redux/configs/format-date";
 export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const _token = localStorage.getItem("_token");
     const stringifiedUser = localStorage.getItem("user");
     const _users = JSON.parse(stringifiedUser) ? JSON.parse(stringifiedUser) : {}
-    // console.log(_users)
+    // ////console.log(_users)
     const { project_id, version_id } = useParams();
     let navigate = useNavigate();
     const back = () => {
@@ -40,9 +41,11 @@ export default () => {
     const [manager, setManager] = useState({})
     const [projectTemp, setProjectTemp] = useState({});
     const [memberProjectTemp, setMemberProjectTemp] = useState([]);
-    console.log("Member Temp", memberProjectTemp)
-    console.log("Member", projectmember)
-    console.log(project)
+ 
+    useEffect(() => {
+        ////console.log(466, project); // Xem dữ liệu hiện tại của project
+      }, [project]);
+      
     useEffect(() => {
 
         fetch(`${proxy}/projects/project/${project_id}`, {
@@ -53,7 +56,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                console.log("data Project",resp)
+                ////console.log("data Project", resp)
                 if (success) {
                     if (data) {
                         setMemberProjectTemp(data.members)
@@ -76,18 +79,18 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // // console.log(resp)
+                // // ////console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setUsers(data);
-                        // console.log(data)
+                        // ////console.log(data)
                     }
                 } else {
                     window.location = "/404-not-found"
                 }
             })
     }, [])
-    // console.log(project)
+    // ////console.log(project)
 
     // useEffect(() => {
     //     if(project.project_type === "database") {
@@ -96,6 +99,9 @@ export default () => {
     // }, [])
 
 
+    const handleEditorChange = (value) => {
+        setProject({ ...project, project_description: value });
+    }
 
     const handleOpenAdminPopup = () => {
         setShowAdminPopup(true);
@@ -123,7 +129,7 @@ export default () => {
     const [selectedMonitor, setSelectedMonitor] = useState([]);
     const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
     const [tempSelectedImple, setTempSelectedImple] = useState([]);
-    // console.log(selectedUsers)
+    // ////console.log(selectedUsers)
     const userAdd = [...selectedImple, ...selectedUsers]
 
     const updateProjectMembers = () => {
@@ -175,8 +181,8 @@ export default () => {
         .map(username => {
             return combinedArray.find(user => user.username === username);
         });
-    console.log(uniqueArray)
-    console.log(combinedArray)
+    ////console.log(uniqueArray)
+    ////console.log(combinedArray)
 
 
 
@@ -220,8 +226,8 @@ export default () => {
     const result = findDifferences(memberProjectTemp, userAdd);
 
     // Xuất kết quả
-      console.log(result.status); // 'users removed', 'users added', 'permissions changed', hoặc 'no change'
-    console.log(result.changedUsers); // Danh sách người dùng bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
+    ////console.log(result.status); // 'users removed', 'users added', 'permissions changed', hoặc 'no change'
+    ////console.log(result.changedUsers); // Danh sách người dùng bị xóa, được thêm vào, hoặc có sự thay đổi quyền hạn
 
 
 
@@ -237,10 +243,10 @@ export default () => {
         setShowImplementationPopup(false);
     };
 
-    // console.log(manager)
+    // ////console.log(manager)
     const dataManager = users.find(user => user.username === manager);
 
-    // console.log(dataManager)
+    // ////console.log(dataManager)
     updateProjectMembers();
     const submitUpdateProject = async (e) => {
         e.preventDefault();
@@ -344,11 +350,11 @@ export default () => {
         //     }
 
         // }
-        console.log(requestBody)
+        ////console.log(requestBody)
         let API_URL
-       
-            API_URL = "/projects/update"
-        
+
+        API_URL = "/projects/update"
+
         const response = await fetch(`${proxy}${API_URL}`, {
             method: "PUT",
             headers: {
@@ -360,7 +366,7 @@ export default () => {
 
         const resp = await response.json();
         const { success, content, data, status } = resp;
-        // console.log(resp)
+        // ////console.log(resp)
 
         if (success) {
             showApiResponseMessage(status);
@@ -375,16 +381,16 @@ export default () => {
             addMember(e, dataSocket);
         }
     };
-    console.log(selectedUsers)
-    console.log(selectedImple)
-  
+    ////console.log(selectedUsers)
+    ////console.log(selectedImple)
+
     const addMember = (e, dataSocket) => {
         e.preventDefault();
         const requestBody = {
             project_id: project_id,
             usernames: userAdd
         }
-        console.log(requestBody)
+        ////console.log(requestBody)
         fetch(`${proxy}/projects/members`, {
             method: "POST",
             headers: {
@@ -397,7 +403,7 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success)
-             
+
                     socket.emit("project/notify", dataSocket)
                 // if (success) {
                 //     showApiResponseMessage(status);
@@ -427,8 +433,12 @@ export default () => {
         }
         return valid
     }
+    const handleDescriptionChange = (content) => {
+        ////console.log(437,content)
+        setProject(prevProject => ({ ...prevProject, project_description: content }));
 
-    // console.log(users)
+    };
+    // ////console.log(users)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -520,11 +530,14 @@ export default () => {
 
                                     <div class="form-group col-lg-12 ">
                                         <label>{lang["projectdescripton"]} </label>
-                                        <textarea rows="6" type="text" class="form-control" value={project.project_description} onChange={
+                                        {/* <textarea rows="6" type="text" class="form-control" value={project.project_description} onChange={
                                             (e) => { setProject({ ...project, project_description: e.target.value }) }
-                                        } placeholder={lang["p.projectdescripton"]} />
+                                        } placeholder={lang["p.projectdescripton"]} /> */}
+                                        <Editor
+                                            value={project.project_description}
+                                            onChange={handleDescriptionChange}
+                                        />
                                     </div>
-
                                     <div className="form-group col-lg-12">
                                         <label>{lang["projectmember"]}</label>
                                         <div className="row">
@@ -539,9 +552,9 @@ export default () => {
                                                     <div class="div-to-scroll">
                                                         {selectedUsers.length > 0 ? (
                                                             selectedUsers.map((user, index) => {
-                                                                if (user.username === manager) {
-                                                                    return null;
-                                                                }
+                                                                // if (user.username === manager) {
+                                                                //     return null;
+                                                                // }
                                                                 const userData = users.find(u => u.username === user.username);
                                                                 return (
                                                                     <div key={user.username}>
@@ -573,9 +586,9 @@ export default () => {
                                                     <div class="div-to-scroll">
                                                         {selectedImple.length > 0 ? (
                                                             selectedImple.map((user, index) => {
-                                                                if (user.username === manager) {
-                                                                    return null;
-                                                                }
+                                                                // if (user.username === manager) {
+                                                                //     return null;
+                                                                // }
                                                                 const userData = users.find(u => u.username === user.username);
                                                                 return (
                                                                     <div key={user.username}>
@@ -600,7 +613,7 @@ export default () => {
                                                 <h5>{lang["supervisor"]}</h5>
                                             </div>
                                             <div class="user-popup-content">
-                                                {users && users.map(user => {
+                                                {/* {users && users.map(user => {
                                                     // if (user.username !== manager && !selectedImple.some(u => u.username === user.username)) {
                                                     if (user.username !== manager) {
                                                         return (
@@ -622,6 +635,28 @@ export default () => {
                                                         )
                                                     }
                                                     return null;
+                                                })} */}
+
+                                                {users && users.map(user => {
+
+                                                    return (
+                                                        <div key={user.username} className="user-item">
+                                                            <label className="pointer">
+                                                                <input
+                                                                    className="user-checkbox"
+                                                                    type="checkbox"
+                                                                    checked={tempSelectedUsers.some(u => u.username === user.username)}
+                                                                    onChange={() => handleAdminCheck(user, 'supervisor')}
+                                                                />
+                                                                <span className="user-name">
+                                                                    <img width={20} className="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />
+                                                                    {user.username}-{user.fullname}
+                                                                </span>
+                                                            </label>
+                                                        </div>
+
+                                                    )
+
                                                 })}
                                             </div>
                                             <div className="user-popup-actions">
@@ -636,7 +671,7 @@ export default () => {
                                                 <h5>{lang["deployers"]}</h5>
                                             </div>
                                             <div class="user-popup-content">
-                                                {users && users.map(user => {
+                                                {/* {users && users.map(user => {
                                                     // if (user.username !== manager && !selectedUsers.some(u => u.username === user.username)) {
                                                     if (user.username !== manager) {
                                                         return (
@@ -660,6 +695,31 @@ export default () => {
                                                         )
                                                     }
                                                     return null;
+                                                })} */}
+
+
+                                                {users && users.map(user => {
+
+                                                    return (
+                                                        <div key={user.username} class="user-item">
+                                                            <label class="pointer">
+                                                                <input
+                                                                    class="user-checkbox"
+                                                                    type="checkbox"
+                                                                    checked={tempSelectedImple.some(u => u.username === user.username)}
+                                                                    onChange={() => handleImpleCheck(user, 'deployer')}
+                                                                />
+                                                                <span class="user-name">
+
+
+                                                                    <img width={20} class="img-responsive circle-image-list" src={proxy + user.avatar} alt="#" />  {user.username}-{user.fullname}
+
+
+                                                                </span>
+                                                            </label>
+                                                        </div>
+                                                    )
+
                                                 })}
                                             </div>
                                             <div className="user-popup-actions">

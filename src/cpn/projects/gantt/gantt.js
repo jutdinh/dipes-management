@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Timeline from "react-timelines";
 import moment from 'moment';
 import "react-timelines/lib/css/style.css";
-import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
+import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../../enum/status';
 import { useDispatch, useSelector } from 'react-redux';
 
 

@@ -17,6 +17,8 @@ import InlineStatis from './inline_statis';
 
 import CustomButton from './custom_button';
 
+import DetailBox from './detail_box';
+
 const exporter = {
     "text": Text,
     "table": Table,
@@ -34,7 +36,8 @@ const exporter = {
     "table_export_button": TableExportButton,
     "c_chart": CChart,
     "custom_button": CustomButton,
-    "inline_statis": InlineStatis
+    "inline_statis": InlineStatis,
+    "detail_box": DetailBox
 }
 
 export default exporter

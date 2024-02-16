@@ -7,9 +7,9 @@ export default (props) => {
   const { cache, gridState, preview } = useSelector(state => state)
   const { id, zIndex, insertComponent,
     renderFrontLiner,
-    renderBackLiner,    
+    renderBackLiner,
     parent,
-
+    content,
     params,
     fields,
   } = props
@@ -73,7 +73,7 @@ export default (props) => {
         height: 350,
         type: "bar",
         fontFamily: "UTM Avo",
-        
+
         toolbar: {
           show: false
         },
@@ -90,11 +90,11 @@ export default (props) => {
           columnWidth: '12px',
           barHeight: "24px",
           distributed: true,
-          
+
         }
       },
       dataLabels: {
-        enabled: false,        
+        enabled: false,
       },
 
       title: {
@@ -106,7 +106,7 @@ export default (props) => {
       legend: {
         show: true
       },
-     
+
       xaxis: {
         categories: [
           'Tiêu chí 1',
@@ -119,7 +119,7 @@ export default (props) => {
             fontSize: '12px'
           }
         }
-      },      
+      },
     },
   };
 
@@ -148,9 +148,14 @@ export default (props) => {
         style={{ zIndex }}
       >
 
+        <span className="chart-title">{content}</span>
         <div className="chart-criterias">
           <div className="row block-statis">
-            { params?.map( field => <Criteria field={ field } /> ) }
+            {params?.map(field => <Criteria field={field} />)}
+            <div className="col-md-12 text-right">
+              <button className="btn btn-secondary mr-3"><i class="fa fa-history mr-1 icon-search" />Làm mới</button>
+              <button className="btn btn-primary mr-3"><i class="fa fa-search mr-1 icon-search" />Tìm Kiếm</button>
+            </div>
           </div>
         </div>
 
@@ -166,48 +171,48 @@ export default (props) => {
 }
 
 
-const Criteria = ( props ) => {
+const Criteria = (props) => {
   const { field } = props;
 
   const { DATATYPE } = field.props
 
   let type = "text"
 
-  if( ["DATE", "DATETIME"].indexOf( DATATYPE ) != -1 ){
-    if( DATATYPE == "DATE" ){
-      type="date"
-    }else{
+  if (["DATE", "DATETIME"].indexOf(DATATYPE) != -1) {
+    if (DATATYPE == "DATE") {
+      type = "date"
+    } else {
       type = "datetime-local"
-    } 
+    }
   }
-  if( ["INT", "INT UNSIGNED", "BIGINT", "BIGINT UNSIGNED" ].indexOf( DATATYPE ) != -1 ){
+  if (["INT", "INT UNSIGNED", "BIGINT", "BIGINT UNSIGNED"].indexOf(DATATYPE) != -1) {
     type = "number"
   }
 
-  if( DATATYPE == "BOOL" ){
+  if (DATATYPE == "BOOL") {
     type = "bool"
   }
 
-  return(
+  return (
     <div className="col-md-4 criteria">
       <div className="form-group">
         <div className="criteria-label">
-          <label>{ field.field_name }</label>
+          <label>{field.field_name}</label>
         </div>
 
         <div className="criteria-input">
-          { 
-          type == "bool" ?
-            <div>
-              <select className="form-select form-control">
-                <option>{ field.props.DEFAULT_TRUE }</option>
-                <option>{ field.props.DEFAULT_FALSE }</option>                
-              </select>
-            </div> 
-            :
-            <div>
-                <input className="form-control" type={ type }/>
-            </div> 
+          {
+            type == "bool" ?
+              <div>
+                <select className="form-select form-control">
+                  <option>{field.props.DEFAULT_TRUE}</option>
+                  <option>{field.props.DEFAULT_FALSE}</option>
+                </select>
+              </div>
+              :
+              <div>
+                <input className="form-control" type={type} />
+              </div>
           }
         </div>
       </div>

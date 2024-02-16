@@ -13,6 +13,13 @@ const button =  [
         path: "props.icon" 
     },
 
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.title"],
+        type: "text",
+        path: "props.name" 
+    },
+
 
     {
         id: getFormatedUUID(), 

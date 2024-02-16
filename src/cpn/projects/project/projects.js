@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import responseMessages from "../enum/response-code";
+import responseMessages from "../../enum/response-code";
 import Swal from 'sweetalert2';
-import { Header } from '../common';
-import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../enum/status';
+import { Header } from '../../common';
+import { StatusEnum, StatusTask, Roles, StatusStatisticalTask } from '../../enum/status';
 import $ from 'jquery';
-import { formatDate } from '../../redux/configs/format-date';
+import Editor from '../../editor/editor'
+import { formatDate } from '../../../redux/configs/format-date';
 export default () => {
     const { lang, proxy, auth, functions, socket } = useSelector(state => state);
     const storedProjects = useSelector(state => state.projects)
@@ -389,8 +390,43 @@ export default () => {
                     functions.showApiResponseMessage(status);
                     if (success) {
                         const projectId = data.project_id;
+
+                        const requestBody = {
+                            project_id: parseInt(projectId),
+                            period: {
+                                period_name: "",
+                                period_priority: "",
+                                period_description: "",
+                                start: "",
+                                end: "",
+                                timeline: "",
+                                members: []
+                            }
+                        };
+                        // console.log(requestBody)
+                        // Thực hiện yêu cầu POST
+                        fetch(`${proxy}/projects/periods`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `${_token}`,
+                            },
+                            body: JSON.stringify(requestBody),
+                        })
+                            .then(res => res && res.json())
+                            .then((resp) => {
+                                // console.log(resp)
+                                if (resp && resp.success) {
+                                    const { data } = resp;
+                                    // console.log(resp)
+
+                                }
+                            });
+
+
+
                         if (result.status === "users added") {
-                             dataSocket = {
+                            dataSocket = {
                                 targets: result.changedUsers,
                                 actor: {
                                     fullname: _users.fullname,
@@ -416,6 +452,10 @@ export default () => {
                                 usernames: uniqueArray,
                             }),
                         });
+
+
+
+
 
                     }
                     // else {
@@ -534,7 +574,7 @@ export default () => {
     const indexOfFirstProject = indexOfLastProject - rowsPerPage;
 
     const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
-// console.log(currentProjects)
+    // console.log(currentProjects)
     const paginate = (pageNumber) => {
         if (pageNumber < 1) return;
         if (pageNumber > totalPages) return;
@@ -550,8 +590,13 @@ export default () => {
         setSearchDate('')
         setSearchStatus(null)
     }
+    const handleDescriptionChange = (content) => {
+        ////console.log(437,content)
+        setProject(prevProject => ({ ...prevProject, project_description: content }));
 
+    };
 
+    
     return (
         <div className="container-fluid">
             <div class="midde_cont">
@@ -573,7 +618,7 @@ export default () => {
                     </div>
                 </div>
                 {/* Modal add project */}
-                <div class={`modal ${showModal ? 'show' : ''}`} id="addProject">
+                <div class={`modal  no-select-modal ${showModal ? 'show' : ''}`} id="addProject">
                     <div class="modal-dialog modal-dialog-center">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -652,6 +697,26 @@ export default () => {
                                             <textarea maxlength="500" rows="5" type="text" class="form-control" value={project.project_description} onChange={
                                                 (e) => { setProject({ ...project, project_description: e.target.value }) }
                                             } placeholder={lang["p.projectdescripton"]} />
+                                            <Editor
+                                                value={project.project_description}
+                                                onChange={handleDescriptionChange}
+                                            />
+
+                                            {/* <CKEditor
+                                                data={project.project_description}
+                                                onChange={(event) => {
+                                                    const data = event.editor.getData();
+                                                    setProject({ ...project, project_description: data });
+                                                }}
+                                                config={{
+                                                    toolbar: [
+                                                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+                                                        { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar'] },
+                                                        // Thêm các tuỳ chọn khác theo yêu cầu
+                                                    ],
+                                                    placeholder: lang["p.projectdescription"]
+                                                }}
+                                            /> */}
                                         </div>
 
                                         <div className="form-group col-lg-12">

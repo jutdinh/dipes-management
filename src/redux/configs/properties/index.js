@@ -18,6 +18,8 @@ import c_chart from './c_chart'
 
 import custom_button from './custom_button'
 
+import detail_box from './detail_box';
+
 const properties = { text, entry, form, button, 
     flex, block, table, 
     datetime, apiCombo, 
@@ -25,7 +27,8 @@ const properties = { text, entry, form, button,
     c_chart, inline_statis,
     table_param, 
     redirect_button, table_export_button,
-    custom_button
+    custom_button,
+    detail_box,
 }
 
 export default properties

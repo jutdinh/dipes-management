@@ -20,9 +20,9 @@ export default {
     "home": "Home",
     "project": "Projects",
     "user info": "Hi",
-    "projects manager": "Project Manager",
+    "projects manager": "Project Management",
     "project list": "Project List",
-    "accounts manager": "Accounts Manager",
+    "accounts manager": "Accounts Management",
     "profile": "Profile",
     "accounts list": "Account list",
     "report": "Reports",
@@ -79,7 +79,7 @@ export default {
     "projects.noprojectfound": "No projects can be found!",
 
     //add project
-    "addproject": "Add proejct",
+    "addproject": "Add project",
     "projectname": "Project name",
     "p.projectname": "Enter a project name",
     "projectcode": "Project code",
@@ -88,7 +88,7 @@ export default {
     "projecttype": "Project of",
     "projectproxyserver": "API server",
     "p.projectstatus": "Select status",
-    "projectrole": "Managers",
+    "projectrole": "Proejct Manager",
     "p.projectrole": "Choose a manager",
     "projectdescripton": "Project description",
     "p.projectdescripton": "Enter project description",
@@ -392,7 +392,7 @@ export default {
     "not found": "Not found",
     "success.add":"Add success data",
     "success.update":"Update success data",
-    "key manager": "Key Manager",
+    "key manager": "Key Management",
     "key manager.title": "Activated projects",
 
 
@@ -507,4 +507,3 @@ export default {
     "add data": "Add Data",
     "update data": "Update Data"
 }
-

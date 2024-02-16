@@ -146,7 +146,7 @@ export default (props) => {
                 ...editUser
             }
         };
-        // console.log(requestBody)
+        // //console.log(requestBody)
         fetch(`${proxy}/auth/self/info`, {
             method: 'PUT',
             headers: {
@@ -159,7 +159,7 @@ export default (props) => {
             .then(res => res.json())
             .then((resp) => {
                 const { success, content, status } = resp;
-                // console.log(resp)
+                // //console.log(resp)
                 if (success) {
                     const stringifiedUser = JSON.stringify(requestBody.account)
                     localStorage.setItem("user", stringifiedUser)
@@ -182,7 +182,7 @@ export default (props) => {
                 <div class="row column1">
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                            <div class="full graph_head_profile">
 
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                     <div className="heading1 margin_0">
@@ -261,7 +261,7 @@ export default (props) => {
                             <div class="full price_table padding_infor_info">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <div class="full dis_flex center_text">
+                                        <div class="full dis_flex center_text pointer">
                                             <div className="profile_img" onClick={handleClick}>
                                                 <img
                                                     width="180"

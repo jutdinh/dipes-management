@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import responseMessages from "../enum/response-code";
 import { formatDate } from '../../redux/configs/format-date';
 export default (props) => {
+
     const { lang, proxy, auth, functions } = useSelector(state => state);
 
     const [showModal, setShowModal] = useState(false);
@@ -15,29 +16,24 @@ export default (props) => {
     const [errorMessagesedit, setErrorMessagesedit] = useState({});
     const [isDataAdded, setIsDataAdded] = useState(false);
     const [loaded, setLoaded] = useState(false);
+
     const roles = [
         { id: 0, label: "administrator", value: "ad" },
         { id: 1, label: "uprojectmanager", value: "pm" },
         { id: 2, label: "normal", value: "pd" },
         // { id: 3, label: "Người theo dõi dự án ( Monitor Staff )", value: "ps" },
     ]
-
     const [showTable, setShowTable] = useState(true);
     const toggleTable = () => {
         setShowTable(!showTable);
     }
-
-    // console.log(showTable)
-
-
+    // //console.log(showTable)
     // const showApiResponseMessage = (status) => {
     //     const langItem = (localStorage.getItem("lang") || "Vi").toLowerCase(); // fallback to English if no language is set
     //     const message = responseMessages[status];
-
     //     const title = message?.[langItem]?.type || "Unknown error";
     //     const description = message?.[langItem]?.description || "Unknown error";
     //     const icon = (message?.[langItem]?.type === "Thành công" || message?.[langItem]?.type === "Success") ? "success" : "error";
-
     //     Swal.fire({
     //         title,
     //         text: description,
@@ -47,11 +43,9 @@ export default (props) => {
     //     }).then(() => {
     //         if (icon === "success") {
     //             window.location.reload();
-
     //         }
     //     });
     // };
-
     const [user, setUser] = useState({});
     const [editUser, setEditUser] = useState({});
     // Close Modal
@@ -92,11 +86,11 @@ export default (props) => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // console.log(resp)
+                // //console.log(resp)
                 if (success) {
                     if (data != undefined && data.length > 0) {
                         setProfile(data);
-                        // console.log(data)
+                        // //console.log(data)
                     }
                     setLoaded(true)
                 } else {
@@ -162,7 +156,7 @@ export default (props) => {
             setErrorMessagesadd(errors);
             return;
         }
-        // console.log(_token);
+        // //console.log(_token);
         if (user.username && user.password) {
             fetch(`${proxy}/auth/signup`, {
                 method: "POST",
@@ -222,7 +216,7 @@ export default (props) => {
                         });
                 }
             });
-        // console.log(requestBody)
+        // //console.log(requestBody)
 
     }
     // Update user
@@ -293,12 +287,12 @@ export default (props) => {
                 })
                 setProfile(newProfiles)
                 // close modal
-                // console.log(resp)
+                // //console.log(resp)
                 functions.showApiResponseMessage(status);
             });
     }
     const handleUpdateUser = (editUser) => {
-        // console.log("Thông tin người dùng:", editUser.role);
+        // //console.log("Thông tin người dùng:", editUser.role);
         setEditUser(editUser)
         // if (editUser.role === users.role) {
         //     Swal.fire({
@@ -364,11 +358,11 @@ export default (props) => {
                                 </div>
                                
                             </div> */}
-                            <div class="col-md-12 d-flex"> 
-                            <i class="fa fa-list icon-exchange ml-auto pointer size-24 mt-1 mb-1 mr-1" onClick={toggleTable} title='View'></i>
+                            <div class="col-md-12 d-flex">
+                                <i class="fa fa-list icon-exchange ml-auto pointer size-24 mt-1 mb-1 mr-1" onClick={toggleTable} title='View'></i>
 
                             </div>
-                           
+
                             {/* Modal add */}
                             <div class="modal fade" id="quoteForm" tabindex="-1" role="dialog" aria-labelledby="quoteForm" aria-hidden="true">
                                 <div class="modal-dialog modal-lg modal-dialog-center" role="document">
@@ -543,7 +537,6 @@ export default (props) => {
                                 </div>
                             </div>
                             {/* List user */}
-                         
                             {
                                 showTable ? (
                                     <div class="col-md-12">
@@ -582,8 +575,8 @@ export default (props) => {
                                                                         <td>{profile.phone}</td>
                                                                         <td class="align-center">{
                                                                             <div class="profile_contacts_list_user ">
-                                                                            <img class="img-responsive circle-image_list_user" src={proxy + profile.avatar} alt="#" />
-                                                                        </div>}</td>
+                                                                                <img class="img-responsive circle-image_list_user" src={proxy + profile.avatar} alt="#" />
+                                                                            </div>}</td>
                                                                         <td class="align-center">
                                                                             <i class="fa fa-edit icon-edit pointer size-24" onClick={() => handleUpdateUser(profile)} data-toggle="modal" data-target="#myEditmodal"></i>
                                                                             <i class="fa fa-trash-o icon-delete pointer size-24 ml-2" onClick={() => handleDeleteUser(profile)}></i>
@@ -596,7 +589,7 @@ export default (props) => {
                                                     </>
                                                 ) : (
                                                     <div class="d-flex justify-content-center align-items-center w-100 responsive-div">
-                                                          {lang["not found user"]}
+                                                        {lang["not found user"]}
                                                     </div>
                                                 )
                                             }
@@ -836,7 +829,7 @@ export default (props) => {
                             }
 
 
-                          
+
 
                         </div>
                     </div>

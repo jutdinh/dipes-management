@@ -834,7 +834,7 @@ export default () => {
             table_id: getTableFields.id,
             fields: hashedFields,
         };
-        // //console.log(requestBody)
+        //console.log(requestBody)
         fetch(`${proxy}/db/tables/table/fields`, {
             method: "PUT",
             headers: {
@@ -850,7 +850,7 @@ export default () => {
                     // //console.log(data)
                     updateKey(data);
                 } else {
-                    functions.showApiResponseMessage(status);
+                    // functions.showApiResponseMessage(status);
                 }
             })
     };
