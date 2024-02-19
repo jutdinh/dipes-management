@@ -1154,17 +1154,36 @@ class UIController extends Controller {
                             api_scope: "private"
                         }
 
-
+                        const EXPORT_API = {
+                            api_name: "EXPORT API for UI " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            body: [],
+                            fields: [],
+                            params: [],
+                            calculates: [],
+                            statistic: [],                            
+                            tables: tables.map(table => table.id),
+                            api_method: "post",
+                            api_scope: "private"
+                        }
 
                         const apiObject = { api: STATIS_API, type: "statis" }
+                        const apiExportObject = { api: EXPORT_API, type: "export" }
 
                         const api = await Project.createUIAPI(apiObject)
+                        const apiExport = await Project.createUIAPI(apiExportObject)
                         // console.log(api)
 
                         version.apis[`${api.id}`] = api
+                        version.apis[`${ apiExport.id }`] = apiExport
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
 
                         props.api = api
+                        if( !props.export ){
+                            props.export = { state: false }
+                        }
+                        props.export.api = apiExport
                         page.component = this.updateChildComponent(page.component, cpn.id, props)
                     }
 
@@ -1220,27 +1239,27 @@ class UIController extends Controller {
                         const { field, value } = props
 
                         const table_id = field.onTable;
-                        const table = version.tables[`${ table_id }`]
+                        const table = version.tables[`${table_id}`]
 
 
-                        
+
 
                         const { primary_key } = table
-                        const fields = Object.values( table.fields )
-                        const params = fields.filter( f => primary_key.indexOf(f.id) != -1 )
+                        const fields = Object.values(table.fields)
+                        const params = fields.filter(f => primary_key.indexOf(f.id) != -1)
 
-                        const updateField = fields.find( f => f.id == field.id )
+                        const updateField = fields.find(f => f.id == field.id)
 
                         const UPDATE_API = {
                             api_name: "PUT API for table " + name,
                             status: true,
                             description: "Hidden API for UI only, do not modify for any reason",
-                            fields: [ updateField ].map(field => {
+                            fields: [updateField].map(field => {
                                 return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
                             }),
-                            body: [ field.id ],
-                            params: params.map( p => p.id ),
-                            tables: [ table.id ],
+                            body: [field.id],
+                            params: params.map(p => p.id),
+                            tables: [table.id],
                             calculates: [],
                             statistic: [],
                             api_method: "put",
@@ -1248,11 +1267,11 @@ class UIController extends Controller {
                         }
 
 
-                        const foreignTable = version.tables[`${ field.table_id }`]
+                        const foreignTable = version.tables[`${field.table_id}`]
 
                         const foreignPrimaryKey = foreignTable.primary_key
 
-                        const foreignPrimaryFields = foreignPrimaryKey.map( key => foreignTable.fields[`${ key }`] )
+                        const foreignPrimaryFields = foreignPrimaryKey.map(key => foreignTable.fields[`${key}`])
 
                         const apiObject = { api: UPDATE_API, type: "ui" }
                         const api = await Project.createUIAPI(apiObject)
@@ -1265,19 +1284,19 @@ class UIController extends Controller {
                         page.component = this.updateChildComponent(page.component, cpn.id, props)
                     }
 
-                    if( name == "inline_statis" ){
+                    if (name == "inline_statis") {
                         const { tables, field, fomular, group_by, value } = props;
-                        
+
                         const { table_id } = group_by
-                        const foreignTable = version.tables[`${ table_id }`];
-                        if( foreignTable ){
-                            
+                        const foreignTable = version.tables[`${table_id}`];
+                        if (foreignTable) {
+
                             const { primary_key } = foreignTable
 
-                            const primary_field = foreignTable.fields[`${ primary_key[0] }`]
-    
-                            const criterias = `"${ group_by.fomular_alias }" == "${ value[primary_field.fomular_alias] }"`
-    
+                            const primary_field = foreignTable.fields[`${primary_key[0]}`]
+
+                            const criterias = `"${group_by.fomular_alias}" == "${value[primary_field.fomular_alias]}"`
+
                             const STATIS_API = {
                                 api_name: "INLINE STATIS API for " + cpn.name,
                                 status: true,
@@ -1288,21 +1307,21 @@ class UIController extends Controller {
                                 params: [],
                                 tables: tables.map(table => table.id),
                                 fomular,
-                                group_by: [ group_by ],
+                                group_by: [group_by],
                                 criterias,
                                 calculates: [],
                                 statistic: [],
                                 api_method: "post",
                                 api_scope: "private"
                             }
-    
+
                             const apiObject = { api: STATIS_API, type: "statis" }
-    
-                            const api = await Project.createUIAPI(apiObject)                            
-    
+
+                            const api = await Project.createUIAPI(apiObject)
+
                             version.apis[`${api.id}`] = api
                             await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
-    
+
                             props.api = api
                             page.component = this.updateChildComponent(page.component, cpn.id, props)
                         }
