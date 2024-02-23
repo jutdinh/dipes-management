@@ -1,4 +1,4 @@
-import { faCaretDown, faCaretRight, faClose, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faCaretDown, faCaretRight, faClose, faEdit, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -1723,7 +1723,7 @@ const ChoosePreImportTable = (props) => {
                     }
                 })
                 const data = await res.json()
-                console.log(data)
+                // console.log(data)
                 setOptions(data.data)
             }
         }
@@ -1895,7 +1895,7 @@ const ChoosePreImportTableFromSibling = (props) => {
                         "Authorization": _token
                     }
                 })
-                const data = await res.json()                
+                const data = await res.json()
                 setOptions(data.data)
             }
         }
@@ -1921,7 +1921,7 @@ const ChoosePreImportTableFromSibling = (props) => {
                 "Authorization": _token
             }
         })
-        const data = await res.json()        
+        const data = await res.json()
         setOptions(data.data)
     }
 
@@ -2017,7 +2017,401 @@ const ChoosePreImportTableFromSibling = (props) => {
 }
 
 
+const PickDetailSingleProperty = (props) => {
+    const {
+        label,
+        type,
+        masterpath,
+        path,
+        display_field,
 
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { tables, selectedCpns } = useSelector(state => state)
+    const allDetailBoxes = selectedCpns.filter(block => block.name == "detail_box")
+    const nearestDetailBox = allDetailBoxes.pop()
+    const [drop, setDrop] = useState(false)
+
+
+    const clickTrigger = (opt) => {
+        updateSelectedComponent(opt, path.split('.'))
+        setDrop(false)
+    }
+
+    if (nearestDetailBox) {
+        const options = getPropByPath(masterpath.split('.'), nearestDetailBox)
+
+        const currentValue = getPropByPath(path.split('.'), selectedCpn)
+
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_field]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => { clickTrigger(opt) }}>
+                                    <span>{opt[display_field]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    return
+}
+
+const PickDetailSinglePropertyButOnlyNonMultipleFileType = (props) => {
+    const {
+        label,
+        type,
+        masterpath,
+        path,
+        display_field,
+
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { tables, selectedCpns } = useSelector(state => state)
+    const allDetailBoxes = selectedCpns.filter(block => block.name == "detail_box")
+    const nearestDetailBox = allDetailBoxes.pop()
+    const [drop, setDrop] = useState(false)
+
+
+    const clickTrigger = (opt) => {
+        updateSelectedComponent(opt, path.split('.'))
+        setDrop(false)
+    }
+
+    if (nearestDetailBox) {
+        const options = getPropByPath(masterpath.split('.'), nearestDetailBox)
+        const filtedOptions = options.filter(field => {
+            const { DATATYPE, FILE_MULTIPLE } = field.props ? field.props : {}
+            if (DATATYPE == "FILE" && !FILE_MULTIPLE) {
+                return true
+            }
+            return false
+        })
+        const currentValue = getPropByPath(path.split('.'), selectedCpn)
+
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_field]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {filtedOptions.map(opt =>
+                                <div className="option" onClick={() => { clickTrigger(opt) }}>
+                                    <span>{opt[display_field]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    return
+}
+
+
+const PickDetailSinglePropertyButOnlyMultipleFileType = (props) => {
+    const {
+        label,
+        type,
+        masterpath,
+        path,
+        display_field,
+
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { tables, selectedCpns } = useSelector(state => state)
+    const allDetailBoxes = selectedCpns.filter(block => block.name == "detail_box")
+    const nearestDetailBox = allDetailBoxes.pop()
+    const [drop, setDrop] = useState(false)
+
+
+    const clickTrigger = (opt) => {
+        updateSelectedComponent(opt, path.split('.'))
+        setDrop(false)
+    }
+
+    if (nearestDetailBox) {
+        const options = getPropByPath(masterpath.split('.'), nearestDetailBox)
+        const filtedOptions = options.filter(field => {
+            const { DATATYPE, FILE_MULTIPLE } = field.props ? field.props : {}
+            if (DATATYPE == "FILE" && FILE_MULTIPLE) {
+                return true
+            }
+            return false
+        })
+        const currentValue = getPropByPath(path.split('.'), selectedCpn)
+
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_field]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {filtedOptions.map(opt =>
+                                <div className="option" onClick={() => { clickTrigger(opt) }}>
+                                    <span>{opt[display_field]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    return
+}
+
+
+const LockButtons = (props) => {
+    const {
+        label,
+        type,
+        tablesPath,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index
+    } = props
+
+    const { tables } = useSelector(state => state)
+
+    const selectedTables = getPropByPath(tablesPath.split('.'), selectedCpn)
+    const selectedTable = selectedTables[0]
+    if (selectedTable) {
+
+        const { foreign_keys } = selectedTable
+        const preImportTables = []
+        for (let i = 0; i < foreign_keys.length; i++) {
+            const { field_id, table_id } = foreign_keys[i]
+
+            const foreignTable = tables.find(tb => tb.id == table_id)
+
+            if (foreignTable && foreignTable.pre_import) {
+                const field = selectedTable.fields.find(f => f.id == field_id)
+                preImportTables.push({ field, foreignTable })
+            }
+        }
+
+        if (preImportTables.length > 0) {
+
+            return (
+                <div className="property" style={{ zIndex: index }}>
+                    <div className="label-box">
+                        <span>{label}</span>
+                    </div>
+                    <div
+                        className={`drop-box`}
+                    >
+                        {preImportTables.map(tb => <PreImportLockButtonSelection
+                            {...props}
+                            table={tb.foreignTable}
+                            field={tb.field}
+                        />)}
+                    </div>
+                </div>
+            )
+        }
+
+    }
+    return
+}
+
+const PreImportLockButtonSelection = (props) => {
+
+    /**
+     * 
+     *  Tiếp tục phân tích preimport và gọi nút từ children 
+     * 
+     */
+
+    const { proxy, icons } = useSelector(state => state)
+
+    const { version_id } = useParams()
+    const _token = localStorage.getItem("_token");
+
+    const {
+        table,
+        field,
+        lockpath,
+
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn
+    } = props
+
+    const lockbuttons = getPropByPath(lockpath.split('.'), selectedCpn)
+    const thisFieldConfig = lockbuttons[field.fomular_alias]
+
+    const { children } = selectedCpn
+
+    const [preImportData, setPreImportData] = useState([])
+    const buttons = children.filter(cpn => cpn.name == "custom_button")
+
+    const { primary_key, fields } = table
+    const primaryField = fields.find(f => f.id == primary_key[0])
+
+    useEffect(() => {
+
+        const asyncFetchingFunc = async () => {
+
+            const res = await fetch(`${proxy}/db/preimport/${version_id}/${table.id}`, {
+                headers: {
+                    "Authorization": _token
+                }
+            })
+            const data = await res.json()
+            setPreImportData(data.data)
+        }
+
+        asyncFetchingFunc()
+        return () => { }
+    }, [])
+
+    const checkTrigger = (data, btn) => {
+        const config = thisFieldConfig
+        let newConfig = thisFieldConfig
+        if( config ){
+            const thisButtonConfig = thisFieldConfig[data[primaryField.fomular_alias]]
+            if(thisButtonConfig){
+                thisFieldConfig[data[primaryField.fomular_alias]][btn.id] = !thisFieldConfig[data[primaryField.fomular_alias]][btn.id]
+            }else{
+                thisFieldConfig[data[primaryField.fomular_alias]] = {[btn.id]: true} 
+            }
+            newConfig = thisFieldConfig
+        }else{
+            newConfig = {[data[primaryField.fomular_alias]]: { [btn.id]: true }}
+        }
+        console.log(newConfig)
+        updateSelectedComponent(newConfig, ["props", "lockbuttons", field.fomular_alias])
+    }
+
+    const DefaultButtonSelection = (data, icon, name, value) => {
+        return (
+            <div className="field-picker" style={{ justifyContent: "flex-start" }}>
+                <div className="picker-checkbox">
+                    <input
+                        type="checkbox" checked={
+                            thisFieldConfig?.[data[primaryField.fomular_alias]]?.[value]
+                        }
+                        onClick={() => { checkTrigger(data, {id: value}) }}
+                    />
+                </div>
+
+                <div className="picker-label" style={{ margin: "0" }}>
+                    <FontAwesomeIcon icon={icon} />
+                </div>
+
+                <div className="picker-label" style={{ marginLeft: "1em" }}>
+                    <span>{ name }</span>
+                </div>
+
+            </div>
+        )
+    }
+
+    return (
+        <div className={'fields-picker'}>
+            {preImportData.map(data => <div className="table-fields-picker">
+                <div className="fields-picker-header">
+                    <span style={{
+                        width: "100%",
+                        display: "block",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        fontWeight: "normal"
+                    }}>{Object.values(data).join(' - ')}</span>
+                </div>
+                <div className="picker-field-list">
+                    { DefaultButtonSelection( data, faArrowUpRightFromSquare, "Chi tiết", "detail" ) }
+                    { DefaultButtonSelection( data, faEdit, "Cập nhật", "update" ) }
+                    { DefaultButtonSelection( data, faTrash, "Xóa", "delete" ) }                   
+                    
+                    {buttons.map(btn =>
+                        <div className="field-picker" style={{ justifyContent: "flex-start" }}>
+                            <div className="picker-checkbox">
+                                <input
+                                    type="checkbox" checked={
+                                        thisFieldConfig?.[data[primaryField.fomular_alias]]?.[btn.id]
+                                    }
+                                    onClick={() => { checkTrigger(data, btn) }}
+                                />
+                            </div>
+
+                            <div className="picker-label" style={{ margin: "0" }}>
+                                <FontAwesomeIcon icon={icons[btn.props.icon]?.icon} />
+                            </div>
+
+                            <div className="picker-label" style={{ marginLeft: "1em" }}>
+                                <span>{btn.props.name}</span>
+                            </div>
+
+                        </div>
+                    )}
+                </div>
+            </div>)}
+        </div>
+    )
+}
 
 const Components = {
     "text": EntryBox,
@@ -2045,7 +2439,11 @@ const Components = {
     "chooseSlave": ChooseSlave,
 
     "choosePreImportTable": ChoosePreImportTable,
-    "choosePreImportTableFromSibling": ChoosePreImportTableFromSibling
+    "choosePreImportTableFromSibling": ChoosePreImportTableFromSibling,
 
+    "pickdetailsingleproperty": PickDetailSingleProperty,
+    "pickdetailsinglepropertybutonlynonmultiplefiletype": PickDetailSinglePropertyButOnlyNonMultipleFileType, // onetimeuse
+    "pickdetailsinglepropertybutonlymultiplefiletype": PickDetailSinglePropertyButOnlyMultipleFileType, // onetimeuse
+    "lockbuttons": LockButtons // onetimeuse
 }
 

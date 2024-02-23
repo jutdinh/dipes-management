@@ -1,0 +1,61 @@
+.image-design{
+    position: relative;    
+
+    .concrete-image{
+        display: block;
+        width: 80%;
+        margin: auto;
+
+        img{
+            display: block;
+            width: 100%;
+            max-width: 512px;
+            margin: auto;
+        }
+    }
+
+    .images{
+        display: block;
+        width: 80%;
+        margin: auto;
+        position: relative;
+
+        overflow: hidden;
+        height: 390px;
+
+        .image-container{          
+            position: absolute;
+            width: 100%;            
+            top: 0;
+            transition: ease-in-out 0.25s;
+
+            img{
+                display: block;
+                width: 100%;
+                max-width: 512px;
+                margin: auto;
+            }
+        }
+
+    }
+    .btns{
+
+        display: flex;            
+        justify-content: center;
+
+        button{
+            display: block;
+            width: 2em;
+            height: 2em;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin: 0.5em;
+            border-radius: 50%;
+            cursor: pointer;
+
+            &:hover{
+                background-color: #ccc;
+            }
+        }
+    }
+}

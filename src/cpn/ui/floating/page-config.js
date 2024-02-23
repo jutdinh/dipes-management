@@ -190,11 +190,36 @@ const SectionGeneral = (props) => {
 
         dispatch({
             branch: "design-ui",
-            type: "updatePageVisibility",
+            type: "updatePageProperty",
             payload: {
-                is_hidden: state
+                property: "is_hidden",
+                value: state
             }
         })
+    }
+
+    const pagePublicSwitch = ( state ) => {
+        const { page } = cache;
+        page.is_public = state
+
+        dispatch({
+            branch: "floating-boxes",
+            type: "setCache",
+            payload: {
+                name: "page",
+                value: page
+            }
+        })
+
+        dispatch({
+            branch: "design-ui",
+            type: "updatePageProperty",
+            payload: {
+                property: "is_public",
+                value: state
+            }
+        })
+
     }
 
     return (
@@ -238,6 +263,30 @@ const SectionGeneral = (props) => {
                         </div>
                         <div className="checkbox-label">
                             <span>Ẩn</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="property checkbox-property">
+                <div className="label">
+                    <span>Trang công khai</span>
+                </div>
+                <div className="checkboxes">
+                    <div className="checkbox-contain">
+                        <div className="checkbox">
+                            <input type="checkbox" checked={ cache.page.is_public } onClick={ () => { pagePublicSwitch(true) } }/>
+                        </div>
+                        <div className="checkbox-label">
+                            <span>Công khai</span>
+                        </div>
+                    </div>
+                    <div className="checkbox-contain">
+                        <div className="checkbox">
+                            <input type="checkbox" checked={ !cache.page.is_public } onClick={ () => { pagePublicSwitch(false) } }/>
+                        </div>
+                        <div className="checkbox-label">
+                            <span>Không công khai</span>
                         </div>
                     </div>
                 </div>

@@ -19,6 +19,9 @@ import c_chart from './c_chart'
 import custom_button from './custom_button'
 
 import detail_box from './detail_box';
+import detail_text from './detail_text';
+import detail_image from './detail_image';
+import detail_images from './detail_images';
 
 const properties = { text, entry, form, button, 
     flex, block, table, 
@@ -29,6 +32,9 @@ const properties = { text, entry, form, button,
     redirect_button, table_export_button,
     custom_button,
     detail_box,
+    detail_text,
+    detail_image,
+    detail_images,
 }
 
 export default properties

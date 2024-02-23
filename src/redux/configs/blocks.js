@@ -17,7 +17,10 @@ const blockTypes = {
     table_export_button: "table_export_button",
 
     custom_button: "custom_button",
-    detail_box: "detail_box"
+    detail_box: "detail_box",
+    detail_text: "detail_text",
+    detail_image: "detail_image",
+    detail_images: "detail_images",
 }
 
 
@@ -162,6 +165,9 @@ const initialStates = {
             "visibility": {
                 "row_per_page": 12,
                 "indexing": true                
+            },
+            "lockbuttons": {
+
             }
         },
 
@@ -338,7 +344,59 @@ const initialStates = {
         }
     },
 
-    // Thêm properties cho params box & box hình ảnh
+    "detail_text": {
+        "name": "detail_text",
+        "children": [
+
+        ],        
+        "props": {
+            "field": {
+
+            },
+            "prefix": "",
+            "postfix": "",
+            "style": {
+                fontSize: 16,
+                color: "#000",
+                textAlign: "left",
+                fontStyle: "normal",
+                fontWeight: "normal",
+                textDecoration: "none",   
+                
+                ...defaultStylesheet
+            }
+        }
+    },
+
+    "detail_image": {
+        "name": "detail_image",       
+
+        "props": {
+            "content": "Sample Text",
+            "field": {
+
+            },            
+
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
+
+    "detail_images": {
+        "name": "detail_images",       
+
+        "props": {
+            "content": "Sample Text",
+            "field": {
+
+            },            
+
+            "style": {
+                ...defaultStylesheet         
+            }
+        }
+    },
 
 
     "chart_1": {
@@ -633,12 +691,13 @@ const initialStates = {
     "custom_button": {
         "name": "custom_button",
         "props": {        
-            "icon": "201",
+            "icon": "6",
             "field": {
                 id: "",
                 field_name: "",
                 fomular_alias: ""
             },
+            title: "",
             value: "",
             "style": {
                 color: "",          

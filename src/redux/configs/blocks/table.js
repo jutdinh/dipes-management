@@ -541,7 +541,7 @@ export default (props) => {
                                             &&
                                             <td className="table-icons">
                                                 <div className="icons" onMouseUp={AddButton}>
-                                                    {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /> </div>}
+                                                    {buttons.detail.state && <div className="table-icon"><FontAwesomeIcon icon={ faArrowUpRightFromSquare } /> </div>}
                                                     {buttons.update.state && <div className="table-icon"><FontAwesomeIcon icon={faEdit} /> </div>}
                                                     {buttons.delete.state && <div className="table-icon"><FontAwesomeIcon icon={faTrash} /> </div>}
                                                     {buttons.approve.state && <div className="table-icon"><FontAwesomeIcon icon={faCheckCircle} /> </div>}

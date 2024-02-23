@@ -17,6 +17,10 @@ const vi = {
     "props.option": "Giá trị",
     "props.icon": "Icon",
     "props.page": "Trang",
+
+    "props.prefix": "Tiền tố",
+    "props.postfix": "Hậu tố",
+
     "props.chooseslaves": "Bảng phụ thuộc khóa",
 
 
@@ -149,6 +153,8 @@ const vi = {
         "props.groupby": "Nhóm bởi (các) trường",
         "props.choosestatisfield": "Chọn trường thống kê",
         "props.criterias": "Điều kiện lọc",
+
+        "props.lockbuttons": "Khóa nút",
     /**
      * FUNNZIONOL SECZION 
      */

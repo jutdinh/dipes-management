@@ -18,6 +18,10 @@ import InlineStatis from './inline_statis';
 import CustomButton from './custom_button';
 
 import DetailBox from './detail_box';
+import DetailText from './detail_text';
+import DetailImage from './detail_image';
+import DetailImages from './detail_images';
+
 
 const exporter = {
     "text": Text,
@@ -37,7 +41,10 @@ const exporter = {
     "c_chart": CChart,
     "custom_button": CustomButton,
     "inline_statis": InlineStatis,
-    "detail_box": DetailBox
+    "detail_box": DetailBox,
+    "detail_text": DetailText,
+    "detail_image": DetailImage,
+    "detail_images": DetailImages,
 }
 
 export default exporter

@@ -26,7 +26,7 @@ const types = [
     ValidTypeEnum.EMAIL,
     ValidTypeEnum.PHONE,
     ValidTypeEnum.TEXT,
-    // ValidTypeEnum.FILE,
+    ValidTypeEnum.FILE,
     // ValidTypeEnum.PASSWORD
 ]
 const typenull = [
@@ -61,6 +61,9 @@ export default () => {
         AUTO_INCREMENT: true,
         MIN: '',
         MAX: '',
+        FILE_MAX_SIZE: "10",
+        FILE_ACCEPT_TYPES: ['png', 'jpg', 'jpeg'],
+        FILE_MULTIPLE: false,
         FORMAT: '',
         DECIMAL_PLACE: '',
         DEFAULT: '',
@@ -85,6 +88,9 @@ export default () => {
             AUTO_INCREMENT: true,
             MIN: '',
             MAX: '',
+            FILE_MAX_SIZE: "10",
+            FILE_ACCEPT_TYPES: ['png', 'jpg', 'jpeg'],
+            FILE_MULTIPLE: false,
             FORMAT: '',
             DECIMAL_PLACE: '',
             DEFAULT: '',
@@ -94,7 +100,7 @@ export default () => {
         setShowModal(false);
         setErrors({})
     };
-    // //console.log(tables)
+    // //////console.log(tables)
     const handleDelete = () => {
         dispatch({
             branch: "db",
@@ -130,8 +136,8 @@ export default () => {
         //     ...defaultValues,
         // }));
 
-        // //console.log(tempFields)
-        // //console.log(primaryKey)
+        // //////console.log(tempFields)
+        // //////console.log(primaryKey)
 
     };
     const [errors, setErrors] = useState({});
@@ -204,7 +210,7 @@ export default () => {
                 // const updatedForeignKeys = foreignKeys.filter(foreignKey => foreignKey.field_id === fieldTempUpdate.id);
                 const updatedForeignKeys = foreignKeys
                 updatedForeignKeys.push({ ...foreignKey, field_id: fieldTempUpdate.id });
-                // //console.log(updatedForeignKeys)
+                // //////console.log(updatedForeignKeys)
                 setForeignKeys(updatedForeignKeys);
                 setTableFields({ ...getTableFields, foreign_keys: updatedForeignKeys });
             } else {
@@ -324,7 +330,7 @@ export default () => {
     };
 
 
-    // //console.log(tempFields)
+    // //////console.log(tempFields)
 
 
 
@@ -469,9 +475,9 @@ export default () => {
 
 
 
-    // //console.log(fieldTempUpdate)
+    // //////console.log(fieldTempUpdate)
     const getIdField = (fieldId) => {
-        // //console.log(fieldId)
+        ////console.log(476,fieldId)
         const updatedField = {
             ...fieldId,
             ...fieldId.props
@@ -500,7 +506,7 @@ export default () => {
         }
     }
     const [fieldNew, setFieldNew] = useState([]);
-    // //console.log(fieldNew)
+    // //////console.log(fieldNew)
     const [fieldNewTemp, setFieldNewTemp] = useState([]);
     const getIdFieldTempNew = (fieldId) => {
 
@@ -545,7 +551,7 @@ export default () => {
             field_ids: [fieldId.id],
             version_id
         };
-        // //console.log(requestBody)
+        // //////console.log(requestBody)
         Swal.fire({
             title: lang["confirm"],
             text: lang["delete.field"],
@@ -569,7 +575,7 @@ export default () => {
                     .then(res => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        // //console.log(resp)
+                        // //////console.log(resp)
                         if (data.failFields?.length > 0) {
                             Swal.fire({
                                 title: lang["alarm.alarm"],
@@ -670,7 +676,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // //console.log("data", data)
+                // //////console.log("data", data)
                 if (success) {
                     if (data) {
                         setTableFields(data);
@@ -684,7 +690,7 @@ export default () => {
             })
     }, [])
 
-    // //console.log(getTableFields)
+    //console.log(getTableFields)
     useEffect(() => {
         fetch(`${proxy}/db/tables/v/${version_id}`, {
             headers: {
@@ -694,7 +700,7 @@ export default () => {
             .then(res => res.json())
             .then(resp => {
                 const { success, data, status, content } = resp;
-                // //console.log("data", data)
+                // //////console.log("data", data)
                 if (success) {
                     if (data) {
                         const filteredData = data.tables.filter(table => table.id !== parseInt(table_id));
@@ -724,14 +730,14 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    // //console.log(data)
+                    // //////console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
                 }
             });
     };
-    // //console.log(selectedTableId)
+    // //////console.log(selectedTableId)
     const selectDefaultTable = (tableId) => {
         setSelectedTableId(tableId);
         fetch(`${proxy}/db/tables/v/${version_id}/table/${tableId}/fields`, {
@@ -744,7 +750,7 @@ export default () => {
                 const { success, data } = resp;
                 if (success) {
                     setFields(data);
-                    // //console.log(data)
+                    // //////console.log(data)
                 } else {
                     // Xử lý lỗi ở đây
                     // window.location = "/404-not-found"
@@ -752,14 +758,9 @@ export default () => {
             });
     }
 
-
-
-
     const handleClickPrimary = () => {
         setIsOn(!isOn);
     };
-
-
 
     const handleClickForenkey = () => {
         setIsOnforenkey(!isOnforenkey);
@@ -768,41 +769,36 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // //console.log(field)
+            // //////console.log(field)
             setFieldTempupdate({
                 ...fieldTempUpdate, ...field.props
             });
         }
-
     }
-
 
     const autoTypeTemp = (field_id) => {
         const field = fields.find(f => f.id == field_id);
-
         if (field) {
-            // //console.log(field)
+            // //////console.log(field)
             setModalTemp({
                 ...modalTemp, ...field.props
             });
-            // //console.log(modalTemp)
-
+            // //////console.log(modalTemp)
         }
-
-
     }
     const [tableUpdate, setUpdateTable] = useState([]);
 
-    // //console.log(fieldTempUpdate)
+    // //////console.log(fieldTempUpdate)
     const updateTable = (e) => {
         e.preventDefault();
         const requestBody = {
             version_id,
             table_id: getTableFields.id,
             table_name: getTableFields.table_name,
-            pre_import: getTableFields.pre_import
+            pre_import: getTableFields.pre_import,
+            display_fields: getTableFields.display_fields
         };
-        // //console.log(requestBody)
+        //console.log(693, requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -834,7 +830,7 @@ export default () => {
             table_id: getTableFields.id,
             fields: hashedFields,
         };
-        //console.log(requestBody)
+        // //////console.log(requestBody)
         fetch(`${proxy}/db/tables/table/fields`, {
             method: "PUT",
             headers: {
@@ -847,10 +843,10 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    // //console.log(data)
+                    // //////console.log(data)
                     updateKey(data);
                 } else {
-                    // functions.showApiResponseMessage(status);
+                    functions.showApiResponseMessage(status);
                 }
             })
     };
@@ -872,7 +868,7 @@ export default () => {
             primary_key: primaryKey,
             foreign_keys: foreignKeys
         };
-        // //console.log("KLey", KeyRequestBody)
+        // //////console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -892,7 +888,7 @@ export default () => {
 
 
     const addField = (tableId) => {
-        // //console.log("Call AddField")
+        // //////console.log("Call AddField")
         const fieldRequestBody = {
             version_id,
             table_id: getTableFields.id,
@@ -900,7 +896,7 @@ export default () => {
                 ...tempFields
             ],
         };
-        // //console.log("field", fieldRequestBody)
+        // //////console.log("field", fieldRequestBody)
 
         fetch(`${proxy}/db/fields/fields`, {
             method: "POST",
@@ -913,7 +909,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // //console.log(data)
+                // //////console.log(data)
                 if (success) {
                     addKey({ tableId, data });
                     // handleClickPrimary(fieldId);
@@ -924,12 +920,12 @@ export default () => {
     };
 
     const addKey = ({ tableId, data }) => {
-        // //console.log("Call add Key")
+        // //////console.log("Call add Key")
         const matchingItem = data.filter(item => primaryKey.indexOf(item.index) != -1)
         const primaryKeyid = matchingItem.map(item => item.id)
         const newPrimaryKey = [...getTableFields.primary_key, ...primaryKeyid]
 
-        // //console.log( foreignKeys )
+        // //////console.log( foreignKeys )
 
         for (let i = 0; i < foreignKeys.length; i++) {
             for (let j = 0; j < data.length; j++) {
@@ -947,7 +943,7 @@ export default () => {
             primary_key: newPrimaryKey,
             foreign_keys: foreignKeys
         };
-        // //console.log("KLey", KeyRequestBody)
+        // //////console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -960,7 +956,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                // //console.log(resp)
+                // //////console.log(resp)
                 functions.showApiResponseMessage(status);
             });
     };
@@ -970,7 +966,7 @@ export default () => {
     const indexOfLastTable = currentPageTable * rowsPerPageTable;
     const indexOfFirstTable = indexOfLastTable - rowsPerPageTable;
     const currentTable = getTableFields.fields?.slice(indexOfFirstTable, indexOfLastTable);
-    // //console.log(currentTable)
+    // //////console.log(currentTable)
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(getTableFields.fields?.length / rowsPerPageTable);
     /// Add field
@@ -992,20 +988,20 @@ export default () => {
     const paginateFields = (pageNumber) => setCurrentPageFields(pageNumber);
     const totalPagesFields = Math.ceil(tempFields?.length / rowsPerPageFields);
 
-    // //console.log("p key", primaryKey)
-    // //console.log("f key", foreignKeys)
-    // //console.log(foreignKey)
-    // //console.log(tempFields)
-    // //console.log(primaryKey)
-    // //console.log(foreignKeys)
-    // //console.log("FK", getTableFields.foreign_keys)
+    // //////console.log("p key", primaryKey)
+    // //////console.log("f key", foreignKeys)
+    // //////console.log(foreignKey)
+    // //////console.log(tempFields)
+    // //////console.log(primaryKey)
+    // //////console.log(foreignKeys)
+    // //////console.log("FK", getTableFields.foreign_keys)
 
-    // //console.log(getTableFields.fields)
-    // //console.log(getTableFields.primary_key)
-    // //console.log(tempFields)
-    // //console.log(fieldNew)
-    // //console.log(getTableFields)
-    // //console.log(isOnforenkey)
+    // //////console.log(getTableFields.fields)
+    // //////console.log(getTableFields.primary_key)
+    // //////console.log(tempFields)
+    // //////console.log(fieldNew)
+    // //////console.log(getTableFields)
+    // //////console.log(isOnforenkey)
 
     const moveField = (index, direction) => {
         const newFields = [...getTableFields.fields];
@@ -1040,6 +1036,16 @@ export default () => {
     }, []);  // [] để đảm bảo rằng hiệu ứng này chỉ chạy một lần khi component được gắn kết.
 
 
+    const [selectedItem, setSelectedItem] = useState([]);
+    //console.log(selectedItem)
+    // Xử lý sự kiện khi có sự thay đổi trên select
+    const handleSelectChange = (e, value) => {
+        //console.log(value)
+        setSelectedItem([parseInt(value)]);
+    };
+
+
+
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -1063,7 +1069,7 @@ export default () => {
                             </div>
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
-                                    <div class="form-group col-lg-4">
+                                    <div class="form-group col-lg-6">
                                         <label class="font-weight-bold">{lang["table name"]}  <span className='red_star'>*</span></label>
                                         <input
                                             type="text"
@@ -1073,6 +1079,19 @@ export default () => {
                                         // readOnly
                                         />
                                     </div>
+                                    <div class="form-group col-lg-6">
+                                        <label class="font-weight-bold">{lang["field show"]}</label>
+                                        <select
+                                            onChange={(e) => setTableFields({ ...getTableFields, display_fields: [parseInt(e.target.value)]  })}
+                                            value={getTableFields?.display_fields?.[0]} className="form-control">
+
+                                            <option value="" disabled>Chọn một item</option>
+                                            {getTableFields.fields?.map(item => (
+                                                <option key={item.id} value={item.id}>{item.field_name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
                                     <div class="form-group col-lg-12">
                                         <div className="checkbox-with-label" onChange={(e) => setTableFields({ ...getTableFields, pre_import: e.target.checked })}>
                                             <input
@@ -1086,18 +1105,18 @@ export default () => {
                                             <label htmlFor="preImport" className="font-weight-bold pointer">Pre Import</label>
                                         </div>
                                     </div>
+
                                     {/* Field */}
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list fields"]}</p>
                                             {
-                                               data_pre_import &&
-                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto mr-2"onClick={importDataPre}>
+                                                data_pre_import &&
+                                                <button type="button" class="btn btn-primary custom-buttonadd ml-auto mr-2" onClick={importDataPre}>
                                                     <i class="fa fa-upload" aria-hidden="true"></i>
                                                 </button>
                                             }
-
-                                            <button type="button" class={`btn btn-primary custom-buttonadd  ${ !data_pre_import && "ml-auto"}`} data-toggle="modal" data-target="#addField">
+                                            <button type="button" class={`btn btn-primary custom-buttonadd  ${!data_pre_import && "ml-auto"}`} data-toggle="modal" data-target="#addField">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
@@ -1289,7 +1308,7 @@ export default () => {
                                                 value={foreignKey.ref_field_id}
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
-                                                    // //console.log(e.target.value);
+                                                    // //////console.log(e.target.value);
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
@@ -1387,6 +1406,57 @@ export default () => {
                                                             if (inputType === "int") {
                                                                 if (prop.name === 'MIN') value = type.limit.min;
                                                                 if (prop.name === 'MAX') value = type.limit.max;
+                                                            }
+                                                            if (prop.type === "select" && prop.name === "FILE_ACCEPT_TYPES") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label}</label>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={JSON.stringify(modalTemp[prop.name])} // Sử dụng JSON.stringify để so sánh
+                                                                            onChange={(e) => {
+                                                                                // Phân tích giá trị đã chọn và cập nhật vào trạng thái
+                                                                                const selectedOptionValue = JSON.parse(e.target.value);
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: selectedOptionValue,
+                                                                                }));
+                                                                            }}
+                                                                        >
+                                                                            <option value="">{lang["choose"]}</option>
+                                                                            {prop.options.map((option, optionIndex) => (
+                                                                                <option key={optionIndex} value={JSON.stringify(option.value)}>
+                                                                                    {option.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+
+                                                                    </div>
+                                                                );
+                                                            } else if (prop.type === "int" && prop.name === "FILE_MAX_SIZE") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label} (Max: 40MB)</label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type="number"
+                                                                            value={modalTemp[prop.name]}
+                                                                            min={type.limit.minSize}
+                                                                            max={type.limit.maxSize}
+                                                                            onChange={(e) => {
+                                                                                const value = e.target.value;
+                                                                                // Kiểm tra xem giá trị có phải là số và nằm trong khoảng giới hạn không
+                                                                                if (value === "" || (/^-?\d+$/.test(value) && value >= type.limit.minSize && value <= type.limit.maxSize)) {
+                                                                                    setModalTemp((prevModalTemp) => ({
+                                                                                        ...prevModalTemp,
+                                                                                        [prop.name]: value,
+                                                                                    }));
+                                                                                }
+                                                                            }}
+                                                                        />
+
+                                                                    </div>
+                                                                );
                                                             }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
@@ -1567,7 +1637,7 @@ export default () => {
                                         {/* <div className={`form-group col-lg-6`}>
                                             <label>Tên trường <span className='red_star'>*</span></label>
                                             <select className="form-control" disabled={!isOnforenkey} onChange={(e) => {
-                                                //console.log(e.target.value);
+                                                //////console.log(e.target.value);
                                                 setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                 autoType(e.target.value) // ? type
                                             }}
@@ -1659,7 +1729,59 @@ export default () => {
                                                                 if (prop.name === 'MIN') value = type.limit.min;
                                                                 if (prop.name === 'MAX') value = type.limit.max;
                                                             }
+                                                            if (prop.type === "select" && prop.name === "FILE_ACCEPT_TYPES") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label}</label>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={JSON.stringify(value)} // Sử dụng JSON.stringify để so sánh
+                                                                            onChange={(e) => {
+                                                                                // Phân tích giá trị đã chọn và cập nhật vào trạng thái
+                                                                                const selectedOptionValue = JSON.parse(e.target.value);
 
+                                                                                setFieldTempupdate((prevFieldTempUpdate) => ({
+                                                                                    ...prevFieldTempUpdate,
+                                                                                    [prop.name]: selectedOptionValue,
+                                                                                }));
+                                                                            }}
+                                                                        >
+
+                                                                            {prop.options.map((option, optionIndex) => (
+                                                                                <option key={optionIndex} value={JSON.stringify(option.value)}>
+                                                                                    {option.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+
+                                                                    </div>
+                                                                );
+                                                            } else if (prop.type === "int" && prop.name === "FILE_MAX_SIZE") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label} (Max: 40MB)</label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type="number"
+                                                                            value={value}
+                                                                            min={type.limit.minSize}
+                                                                            max={type.limit.maxSize}
+                                                                            onChange={(e) => {
+                                                                                const value = e.target.value;
+                                                                                // Kiểm tra xem giá trị có phải là số và nằm trong khoảng giới hạn không
+                                                                                if (value === "" || (/^-?\d+$/.test(value) && value >= type.limit.minSize && value <= type.limit.maxSize)) {
+
+                                                                                    setFieldTempupdate((prevFieldTempUpdate) => ({
+                                                                                        ...prevFieldTempUpdate,
+                                                                                        [prop.name]: value,
+                                                                                    }));
+                                                                                }
+                                                                            }}
+                                                                        />
+
+                                                                    </div>
+                                                                );
+                                                            }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
                                                                     <label>{prop.label} </label>

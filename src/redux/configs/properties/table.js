@@ -347,13 +347,24 @@ const table =  [
         type: "text",
         path: "props.style.margin" 
     },
+
     { 
         id: getFormatedUUID(), 
         label: lang["style.padding"],
         type: "text",
         path: "props.style.padding" 
     },
-    
+
+    { 
+        id: getFormatedUUID(), 
+        label: lang["props.lockbuttons"],
+        type: "lockbuttons",
+        tablesPath: "props.source.tables",
+        lockpath: "props.lockbuttons",
+        
+
+        path: "props.style.margin" 
+    },
 
     { 
         id: getFormatedUUID(), 

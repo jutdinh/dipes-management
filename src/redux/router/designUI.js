@@ -24,8 +24,8 @@ export default (state, action) => {
             return updatePageParams(state, action);
             break;
 
-        case "updatePageVisibility":
-            return updatePageVisibility( state, action )
+        case "updatePageProperty":
+            return updatePageProperty( state, action )
             break;
 
         case "createChildPage":
@@ -285,7 +285,7 @@ const updatePageParams = (state, action) => {
 }
 
 
-const updatePageVisibility = ( state, action ) => {
+const updatePageProperty = ( state, action ) => {
     /**
      * desc: Ẩn / hiện trang đang được chọn 
      */
@@ -294,7 +294,9 @@ const updatePageVisibility = ( state, action ) => {
     const path = findPage(pages, cache.page.page_id)
     const page = getDataByPath(pages, path)
 
-    page.is_hidden = action.payload.is_hidden
+    const { property, value } = action.payload
+
+    page[property] = value
     const newPages = changeDataByPath(pages, page, path)
 
     return { ...state, pages: newPages }

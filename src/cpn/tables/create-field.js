@@ -25,7 +25,7 @@ const types = [
     ValidTypeEnum.EMAIL,
     ValidTypeEnum.PHONE,
     ValidTypeEnum.TEXT,
-    // ValidTypeEnum.FILE,
+    ValidTypeEnum.FILE,
     // ValidTypeEnum.PASSWORD
 ]
 const typenull = [
@@ -57,6 +57,9 @@ export default () => {
         AUTO_INCREMENT: true,
         MIN: '',
         MAX: '',
+        FILE_MAX_SIZE: "10",
+        FILE_ACCEPT_TYPES: ['png', 'jpg', 'jpeg'],
+        FILE_MULTIPLE: false,
         FORMAT: '',
         DECIMAL_PLACE: '',
         DEFAULT: '',
@@ -66,11 +69,11 @@ export default () => {
 
     const [modalTemp, setModalTemp] = useState(defaultValues);
 
-    // //console.log(modalTemp)
+    //console.log(69, modalTemp)
     const [table, setTable] = useState({});
     const [tables, setTables] = useState({});
     const { tempFields, tempCounter } = useSelector(state => state); // const tempFields = useSelector( state => state.tempFields );
-    console.log(table)
+    //console.log(table)
     const dispatch = useDispatch();
 
     const handleCloseModal = () => {
@@ -83,6 +86,9 @@ export default () => {
             AUTO_INCREMENT: true,
             MIN: '',
             MAX: '',
+            FILE_MAX_SIZE: "10",
+            FILE_ACCEPT_TYPES: ['png', 'jpg', 'jpeg'],
+            FILE_MULTIPLE: false,
             FORMAT: '',
             DECIMAL_PLACE: '',
             DEFAULT: '',
@@ -95,7 +101,7 @@ export default () => {
     };
 
     const [errors, setErrors] = useState({});
-    // //console.log(modalTemp)
+    // ////console.log(modalTemp)
     const validate = () => {
         let temp = {};
 
@@ -236,7 +242,7 @@ export default () => {
 
     };
 
-    // //console.log(modalTemp)
+    // ////console.log(modalTemp)
 
     const [fieldTempUpdate, setFieldTempupdate] = useState([]);
     useEffect(() => {
@@ -259,7 +265,7 @@ export default () => {
             setIsOnforenkey(false);
         }
     }, [fieldTempUpdate]);
-    // //console.log(fieldTempUpdate)
+    // ////console.log(fieldTempUpdate)
     const loadModalTemp = (fieldData) => {
         setModalTemp({
             ...defaultValues,
@@ -270,7 +276,7 @@ export default () => {
     const getIdFieldTemp = (fieldId) => {
         setFieldTempupdate(fieldId);
         loadModalTemp(fieldId); // load data vào modalTemp khi mở form chỉnh sửa
-        // //console.log(fieldId)
+        // ////console.log(fieldId)
 
     }
     const deleteFieldTemp = (fieldId) => {
@@ -357,8 +363,8 @@ export default () => {
             });
     };
 
-    // //console.log(tempFields)
-    // //console.log(table)
+    // ////console.log(tempFields)
+    // ////console.log(table)
     const [isTableCreated, setTableCreated] = useState(false);
     const addTable = (e) => {
         e.preventDefault();
@@ -374,7 +380,7 @@ export default () => {
             //     return;
             // }
             if (validateTablename()) {
-                // //console.log( table )
+                // ////console.log( table )
                 const tableRequestBody = {
                     version_id: version_id,
                     table: {
@@ -382,7 +388,7 @@ export default () => {
                         pre_import: table.pre_import
                     }
                 };
-                //console.log("body",tableRequestBody)
+                ////console.log("body",tableRequestBody)
                 fetch(`${proxy}/db/tables/table`, {
                     method: "POST",
                     headers: {
@@ -394,7 +400,7 @@ export default () => {
                     .then((res) => res.json())
                     .then((resp) => {
                         const { success, content, data, status } = resp;
-                        //console.log(resp)
+                        ////console.log(resp)
                         if (success) {
                             if (tempFields && tempFields.length > 0) {
                                 const tableId = data.table.id; // Lấy id bảng vừa tạo
@@ -402,21 +408,15 @@ export default () => {
                             } else {
                                 functions.showApiResponseMessage(status);
                             }
-
-
-
                         } else {
                             functions.showApiResponseMessage(status);
                         }
                     });
             }
-
             setTableCreated(true);
         }
-
-
     };
-    // //console.log(tempFields)
+    // ////console.log(tempFields)
 
     const addField = (tableId, prevStatus = undefined) => {
         // if (primaryKey.length !== 0) {                          
@@ -440,14 +440,13 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
-                //console.log(resp)
+                ////console.log(resp)
                 if (success) {
 
                     addKey({ tableId, data }, prevStatus);
                     // handleClickPrimary(fieldId);
                 } else {
                     functions.showApiResponseMessage(status);
-
                 }
             });
         // }
@@ -465,14 +464,13 @@ export default () => {
                 }
             }
         }
-
         const KeyRequestBody = {
             version_id,
             table_id: tableId,
             primary_key: primaryKeyid,
             foreign_keys: foreignKeys
         };
-        // //console.log("KLey", KeyRequestBody)
+        // ////console.log("KLey", KeyRequestBody)
 
         fetch(`${proxy}/db/tables/table/keys`, {
             method: "PUT",
@@ -485,6 +483,7 @@ export default () => {
             .then((res) => res.json())
             .then((resp) => {
                 const { success, content, data, status } = resp;
+                // //console.log(resp)
                 functions.showApiResponseMessage(prevStatus);
 
             });
@@ -527,11 +526,11 @@ export default () => {
         const field = fields.find(f => f.id == field_id);
 
         if (field) {
-            // //console.log(field)
+            // ////console.log(field)
             setModalTemp({
                 ...modalTemp, ...field.props
             });
-            // //console.log(modalTemp)
+            // ////console.log(modalTemp)
 
         }
 
@@ -546,7 +545,7 @@ export default () => {
             table_name: tableUpdate.table_name,
 
         };
-        // //console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "POST",
             headers: {
@@ -566,7 +565,7 @@ export default () => {
     };
 
     // useEffect(() => {
-    //     // //console.log(tableUpdate);
+    //     // ////console.log(tableUpdate);
     // }, [tableUpdate]);
 
     const updateTable = (e) => {
@@ -578,7 +577,7 @@ export default () => {
             pre_import: tableUpdate.pre_import
 
         };
-        // //console.log(requestBody)
+        // ////console.log(requestBody)
         fetch(`${proxy}/db/tables/table`, {
             method: "PUT",
             headers: {
@@ -643,11 +642,10 @@ export default () => {
     const paginateTable = (pageNumber) => setCurrentPageTable(pageNumber);
     const totalPagesTable = Math.ceil(tempFields?.length / rowsPerPageTable);
 
-    // //console.log("p key", primaryKey)
-    // //console.log("f key", foreignKeys)
-    // // //console.log(modalTemp)
-
-    // //console.log(tempFields)
+    ////console.log("p key", primaryKey)
+    ////console.log("f key", foreignKeys)
+    ////console.log(modalTemp)
+    ////console.log(tempFields)
     return (
         <div class="midde_cont">
             <div class="container-fluid">
@@ -664,12 +662,10 @@ export default () => {
                         <div class="white_shd full margin_bottom_30">
                             <div class="full graph_head">
                                 <div class="heading1 margin_0 ">
-
                                     <h5><label onClick={() => back()}><i class="fa fa-chevron-circle-left mr-2"></i>{lang["create table"]}
                                     </label> </h5>
                                 </div>
                             </div>
-
                             <div class="table_section padding_infor_info">
                                 <div class="row column1">
                                     <div class="form-group col-lg-4">
@@ -684,7 +680,7 @@ export default () => {
                                         {errorTable.table_name && <p className="text-danger">{errorTable.table_name}</p>}
                                     </div>
                                     <div class="form-group col-lg-12">
-                                        <div className="checkbox-with-label"  onChange={(e) => setTable({ ...table, pre_import: e.target.checked })}>
+                                        <div className="checkbox-with-label" onChange={(e) => setTable({ ...table, pre_import: e.target.checked })}>
                                             <input
                                                 type="checkbox"
                                                 id="preImport"
@@ -694,10 +690,7 @@ export default () => {
                                             />
                                             <label htmlFor="preImport" className="font-weight-bold pointer">Pre Import</label>
                                         </div>
-
-
                                     </div>
-
                                     <div class="col-md-12 col-lg-12">
                                         <div class="d-flex align-items-center mb-1">
                                             <p class="font-weight-bold">{lang["list fields"]}</p>
@@ -725,7 +718,6 @@ export default () => {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-
                                                                 {currentTable.map((field, index) => (
                                                                     <tr key={field.id}>
                                                                         <td scope="row">{indexOfFirstTable + index + 1}</td>
@@ -759,7 +751,6 @@ export default () => {
                                                                         </td>
                                                                     </tr>
                                                                 ))}
-
                                                             </tbody>
                                                         </table>
                                                         <div className="d-flex justify-content-between align-items-center">
@@ -809,12 +800,9 @@ export default () => {
                                             <button type="button" onClick={() => navigate(-1)} data-dismiss="modal" class="btn btn-danger">{lang["btn.close"]}
                                             </button>
                                         </div> */}
-
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -921,7 +909,7 @@ export default () => {
                                                 value={foreignKey.ref_field_id}
                                                 disabled={!isOnforenkey}
                                                 onChange={(e) => {
-                                                    // //console.log(e.target.value);
+                                                    // ////console.log(e.target.value);
                                                     setForeignKey({ ...foreignKey, ref_field_id: e.target.value });
                                                     if (e.target.value !== "") {
                                                         setErrors({ ...errors, ref_field_id: "" }); // Xóa thông báo lỗi
@@ -1019,9 +1007,61 @@ export default () => {
                                                                 if (prop.name === 'MIN') value = type.limit.min;
                                                                 if (prop.name === 'MAX') value = type.limit.max;
                                                             }
+                                                            if (prop.type === "select" && prop.name === "FILE_ACCEPT_TYPES") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label}</label>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={JSON.stringify(modalTemp[prop.name])} // Sử dụng JSON.stringify để so sánh
+                                                                            onChange={(e) => {
+                                                                                // Phân tích giá trị đã chọn và cập nhật vào trạng thái
+                                                                                const selectedOptionValue = JSON.parse(e.target.value);
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: selectedOptionValue,
+                                                                                }));
+                                                                            }}
+                                                                        >
+                                                                           
+                                                                            {prop.options.map((option, optionIndex) => (
+                                                                                <option key={optionIndex} value={JSON.stringify(option.value)}>
+                                                                                    {option.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+
+                                                                    </div>
+                                                                );
+                                                            } else if (prop.type === "int" && prop.name === "FILE_MAX_SIZE") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label} (Max: 40MB)</label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type="number"
+                                                                            value={modalTemp[prop.name]}
+                                                                            min={type.limit.minSize}
+                                                                            max={type.limit.maxSize}
+                                                                            onChange={(e) => {
+                                                                                const value = e.target.value;
+                                                                                // Kiểm tra xem giá trị có phải là số và nằm trong khoảng giới hạn không
+                                                                                if (value === "" || (/^-?\d+$/.test(value) && value >= type.limit.minSize && value <= type.limit.maxSize)) {
+                                                                                    setModalTemp((prevModalTemp) => ({
+                                                                                        ...prevModalTemp,
+                                                                                        [prop.name]: value,
+                                                                                    }));
+                                                                                }
+                                                                            }}
+                                                                        />
+
+                                                                    </div>
+                                                                );
+                                                            }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">
                                                                     <label>{prop.label} </label>
+
                                                                     {isBoolType ? (
                                                                         <select
                                                                             className="form-control"
@@ -1049,12 +1089,17 @@ export default () => {
                                                                             }}
                                                                         />
                                                                     )}
+
                                                                 </div>
                                                             );
+
+
                                                         })}
                                                     </div>
                                                 );
                                             })}
+
+
                                         </div>
 
 
@@ -1291,6 +1336,57 @@ export default () => {
                                                             if (inputType === "int") {
                                                                 if (prop.name === 'MIN') value = type.limit.min;
                                                                 if (prop.name === 'MAX') value = type.limit.max;
+                                                            }
+                                                            if (prop.type === "select" && prop.name === "FILE_ACCEPT_TYPES") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label}</label>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={JSON.stringify(modalTemp[prop.name])} // Sử dụng JSON.stringify để so sánh
+                                                                            onChange={(e) => {
+                                                                                // Phân tích giá trị đã chọn và cập nhật vào trạng thái
+                                                                                const selectedOptionValue = JSON.parse(e.target.value);
+                                                                                setModalTemp((prevModalTemp) => ({
+                                                                                    ...prevModalTemp,
+                                                                                    [prop.name]: selectedOptionValue,
+                                                                                }));
+                                                                            }}
+                                                                        >
+                                                                           
+                                                                            {prop.options.map((option, optionIndex) => (
+                                                                                <option key={optionIndex} value={JSON.stringify(option.value)}>
+                                                                                    {option.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+
+                                                                    </div>
+                                                                );
+                                                            } else if (prop.type === "int" && prop.name === "FILE_MAX_SIZE") {
+                                                                return (
+                                                                    <div key={index} className="form-group col-lg-12">
+                                                                        <label>{prop.label} (Max: 40MB)</label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            type="number"
+                                                                            value={modalTemp[prop.name]}
+                                                                            min={type.limit.minSize}
+                                                                            max={type.limit.maxSize}
+                                                                            onChange={(e) => {
+                                                                                const value = e.target.value;
+                                                                                // Kiểm tra xem giá trị có phải là số và nằm trong khoảng giới hạn không
+                                                                                if (value === "" || (/^-?\d+$/.test(value) && value >= type.limit.minSize && value <= type.limit.maxSize)) {
+                                                                                    setModalTemp((prevModalTemp) => ({
+                                                                                        ...prevModalTemp,
+                                                                                        [prop.name]: value,
+                                                                                    }));
+                                                                                }
+                                                                            }}
+                                                                        />
+
+                                                                    </div>
+                                                                );
                                                             }
                                                             return (
                                                                 <div key={index} className="form-group col-lg-12">

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faBars, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faImages, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faBars, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faImage, faImages, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -303,12 +303,27 @@ export default () => {
                                 <span className="block-name">Box chi tiết</span>
                             </div>            
 
-                            {/* <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImages , "Box chi tiết", blockTypes.detail_images ) } }>
+                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faFont , "Box chi tiết", blockTypes.detail_text ) } }>
+                                <div className="block-icon" >
+                                    <FontAwesomeIcon icon={  faFont }/>
+                                </div>
+                                <span className="block-name">Text - chi tiết</span>
+                            </div>        
+
+                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImage , "Box ảnh", blockTypes.detail_image ) } }>
+                                <div className="block-icon" >
+                                    <FontAwesomeIcon icon={  faImage }/>
+                                </div>
+                                <span className="block-name">Ảnh - chi tiết</span>
+                            </div>  
+
+                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImages , "Box ảnh", blockTypes.detail_images ) } }>
                                 <div className="block-icon" >
                                     <FontAwesomeIcon icon={  faImages }/>
                                 </div>
-                                <span className="block-name">Box chi tiết</span>
-                            </div>             */}
+                                <span className="block-name">Nhiều ảnh - chi tiết</span>
+                            </div>  
+
                         </div>
                         
 
