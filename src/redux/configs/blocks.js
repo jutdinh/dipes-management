@@ -10,6 +10,7 @@ const blockTypes = {
     apiCombo: "apiCombo",
     chart_1: "chart_1",
     chart_2: "chart_2",
+    chart_3: "chart_3",
     c_chart: "c_chart",
     inline_statis: "inline_statis",
     table_param: "table_param",
@@ -21,6 +22,8 @@ const blockTypes = {
     detail_text: "detail_text",
     detail_image: "detail_image",
     detail_images: "detail_images",
+    code_generating_button: "code_generating_button",
+    barcode_activation: "barcode_activation"
 }
 
 
@@ -47,8 +50,8 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",   
-                
+                textDecoration: "none",
+
                 ...defaultStylesheet
             }
         }
@@ -71,13 +74,13 @@ const initialStates = {
 
             "source": {
                 "type": "database", // api || database
-                
+
                 "tables": [],
                 "fields": [],
                 "calculates": [],
                 "get": {
                     "api": "",
-                    "api_name": ""                    
+                    "api_name": ""
                 },
                 "search": {
                     state: true,
@@ -87,21 +90,21 @@ const initialStates = {
             },
             "buttons": {
                 "add": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
                     }
                 },
                 "import": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
                     }
                 },
                 "export": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
@@ -130,12 +133,12 @@ const initialStates = {
                 },
 
                 "approve": {
-                    "state": false,    
+                    "state": false,
                     "field": {
                         id: "",
                         fomular_alias: "",
                         display_name: ""
-                    },              
+                    },
                     "api": {
                         "api": "",
                         "api_name": ""
@@ -164,15 +167,15 @@ const initialStates = {
 
             "visibility": {
                 "row_per_page": 12,
-                "indexing": true                
+                "indexing": true
             },
             "lockbuttons": {
 
             }
         },
 
-        "children": [  // adde defaulte buttonz 
-            
+        "children": [  // adde defaulte buttonz
+
         ]
     },
 
@@ -193,13 +196,13 @@ const initialStates = {
 
             "source": {
                 "type": "database", // api || database
-                
+
                 "tables": [],
                 "fields": [],
                 "calculates": [],
                 "get": {
                     "api": "",
-                    "api_name": ""                    
+                    "api_name": ""
                 },
                 "search": {
                     state: true,
@@ -209,21 +212,21 @@ const initialStates = {
             },
             "buttons": {
                 "add": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
                     }
                 },
                 "import": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
                     }
                 },
                 "export": {
-                    "state": true,                    
+                    "state": true,
                     "api": {
                         "api": "",
                         "api_name": ""
@@ -252,12 +255,12 @@ const initialStates = {
                 },
 
                 "approve": {
-                    "state": false,    
+                    "state": false,
                     "field": {
                         id: "",
                         fomular_alias: "",
                         display_name: ""
-                    },              
+                    },
                     "api": {
                         "api": "",
                         "api_name": ""
@@ -286,12 +289,12 @@ const initialStates = {
 
             "visibility": {
                 "row_per_page": 12,
-                "indexing": true                
+                "indexing": true
             }
         },
 
-        "children": [  // adde defaulte buttonz 
-            
+        "children": [  // adde defaulte buttonz
+
         ]
     },
 
@@ -321,7 +324,7 @@ const initialStates = {
         "props": {
             "content": "Sample Text",
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
@@ -339,7 +342,7 @@ const initialStates = {
             "params": [],
 
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
@@ -348,7 +351,7 @@ const initialStates = {
         "name": "detail_text",
         "children": [
 
-        ],        
+        ],
         "props": {
             "field": {
 
@@ -361,39 +364,39 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",   
-                
+                textDecoration: "none",
+
                 ...defaultStylesheet
             }
         }
     },
 
     "detail_image": {
-        "name": "detail_image",       
+        "name": "detail_image",
 
         "props": {
             "content": "Sample Text",
             "field": {
 
-            },            
+            },
 
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
 
     "detail_images": {
-        "name": "detail_images",       
+        "name": "detail_images",
 
         "props": {
             "content": "Sample Text",
             "field": {
 
-            },            
+            },
 
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
@@ -405,30 +408,30 @@ const initialStates = {
 
         ],
         "props": {
-            
+
             tables: [],
             field: {
                 id: "",
-                fomular_alias: "",                
-            },           
+                fomular_alias: "",
+            },
 
             api: {
                 api_id: "",
                 api_name: "",
-                url: "" 
+                url: ""
             },
 
             fomular: "",
-            
+
             criterias: "",
 
             group_by: [
-                
+
             ],
 
             "content": "Sample Text",
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
@@ -438,27 +441,62 @@ const initialStates = {
         "children": [
 
         ],
-        "props": {           
-            children: [],           
+        "props": {
+            children: [],
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
+            }
+        }
+    },
+
+
+    "chart_3": {
+        "name": "chart_3",
+        "children": [
+
+        ],
+        "props": {
+
+            tables: [],
+            field: {
+                id: "",
+                fomular_alias: "",
+            },
+
+            api: {
+                api_id: "",
+                api_name: "",
+                url: ""
+            },
+
+            fomular: "",
+
+            criterias: "",
+
+            group_by: [
+
+            ],
+
+            "content": "Sample Text",
+            "style": {
+                ...defaultStylesheet
             }
         }
     },
 
     "inline_statis": {
         "name": "inline_statis",
-        
-        
-        
-        "props": {     
+
+
+
+        "props": {
             label: "",
-            
+
             "table": {
                 "table_id": "",
-                "table_name": ""            
+                "table_name": ""
             },
-            
+
             field: {
                 field_id: "",
                 fomular_alias: "",
@@ -467,12 +505,12 @@ const initialStates = {
 
             group_by: {
 
-            },            
+            },
 
             fomular: "", // ENUM [ "SUM", "COUNT", "AVERAGE" ]
             criteria: {
                 display_value: ""
-            },            
+            },
         }
     },
 
@@ -482,38 +520,38 @@ const initialStates = {
 
         ],
         "props": {
-            
+
             tables: [],
-            params: [], // fields đcm 
+            params: [], // fields đcm
             field: {
                 id: "",
-                fomular_alias: "",                
+                fomular_alias: "",
             },
 
             api: {
                 api_id: "",
                 api_name: "",
-                url: "" 
+                url: ""
             },
 
             export: {
                 state: false,
                 api: {
-                    
+
                 }
             },
 
             fomular: "",
-            
+
             criterias: "",
 
             group_by: [
-                
+
             ],
 
             "content": "Sample Text",
             "style": {
-                ...defaultStylesheet         
+                ...defaultStylesheet
             }
         }
     },
@@ -523,16 +561,16 @@ const initialStates = {
     "form": {
         "name": "form",
         "props": {
-            "title": "Sample title",        
-            "table": undefined,        
-            
+            "title": "Sample title",
+            "table": undefined,
+
             "fields": [],
 
             "api": {
                 "api": undefined,
                 "url": "",
                 "body": [
-    
+
                 ]
             },
 
@@ -541,25 +579,25 @@ const initialStates = {
                 ...defaultStylesheet
             }
         },
-        
-        "children": [  // adde defaulte buttonz 
-            
+
+        "children": [  // adde defaulte buttonz
+
         ]
     },
 
     "entry": {
         "name": "entry",
         "props": {
-            
+
             "title": {
                 content: "Title",
                 visible: true
-            },            
+            },
             "placeholder":{
                 content: "...",
                 visible: true
             },
-            "required": true,            
+            "required": true,
             "variable_name": "",
 
             "flex": {
@@ -573,7 +611,7 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "unset",
                 fontWeight: "unset",
-                textDecoration: "none", 
+                textDecoration: "none",
 
                 ...defaultStylesheet
             },
@@ -584,8 +622,8 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",   
-                
+                textDecoration: "none",
+
                 ...defaultStylesheet
             }
         }
@@ -593,12 +631,12 @@ const initialStates = {
 
     "datetime": {
         "name": "datetime",
-        "props": {            
+        "props": {
             "title": {
                 content: "Sample title",
                 visible: true
-            },            
-            "required": true,            
+            },
+            "required": true,
             "variable_name": "",
 
             "inputType": "date", // date  || datetime-local
@@ -614,12 +652,12 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "unset",
                 fontWeight: "unset",
-                textDecoration: "none", 
+                textDecoration: "none",
                 ...defaultStylesheet
             },
 
             "style": {
-                             
+
             }
         }
     },
@@ -633,7 +671,7 @@ const initialStates = {
 
                 borderWidth: 1,
                 borderColor: "#ccc",
-                borderStyle: "solid",                
+                borderStyle: "solid",
 
                 backgroundColor: "#777",
 
@@ -643,14 +681,14 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",           
-                
+                textDecoration: "none",
+
                 ...defaultStylesheet
             },
             recordTrigger: {
                 api: {
                     api_id: "",
-                    api_name: ""                    
+                    api_name: ""
                 }
             }
         }
@@ -658,7 +696,7 @@ const initialStates = {
 
     "redirect_button": {
         "name": "redirect_button",
-        "props": {    
+        "props": {
             "to": {
                 "page_id": "",
                 "page_tile": "",
@@ -666,31 +704,31 @@ const initialStates = {
             },
             "icon": {
 
-            },     
+            },
             "style": {
-                color: "",          
+                color: "",
                 backgroundColor: ""
-            },            
+            },
         }
     },
 
     "table_export_button": {
         "name": "table_export_button",
-        "props": {        
+        "props": {
             "slave": {
-                
+
             },
             "fields": [],
             "style": {
-                color: "",          
+                color: "",
                 backgroundColor: ""
-            },            
+            },
         }
     },
 
     "custom_button": {
         "name": "custom_button",
-        "props": {        
+        "props": {
             "icon": "6",
             "field": {
                 id: "",
@@ -700,9 +738,55 @@ const initialStates = {
             title: "",
             value: "",
             "style": {
-                color: "",          
+                color: "",
                 backgroundColor: ""
-            },            
+            },
+        }
+    },
+
+    "code_generating_button": {
+        "name": "code_generating_button",
+        "props": {
+            "icon": "6",
+            "field": {
+                id: "",
+                field_name: "",
+                fomular_alias: ""
+            },
+            title: "",
+            value: "",
+            "style": {
+                color: "",
+                backgroundColor: ""
+            },
+            "generator": {
+                primary_table: {
+
+                },
+
+                primary_field: {
+
+                },
+
+                table: {
+
+                },
+                indexField: {
+
+                },
+
+                onField: {
+
+                },
+                pattern: "",
+                amount: {
+
+                },
+                api: {
+
+                }
+
+            }
         }
     },
 
@@ -710,16 +794,16 @@ const initialStates = {
      "apiCombo":{
         "name": "apiCombo",
         "props": {
-            
+
             "title": {
                 content: "Title",
                 visible: true
-            },            
+            },
             "placeholder":{
                 content: "...",
                 visible: true
             },
-            "required": true,            
+            "required": true,
             "variable_name": "",
 
             "api": {
@@ -746,7 +830,7 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "unset",
                 fontWeight: "unset",
-                textDecoration: "none", 
+                textDecoration: "none",
 
                 ...defaultStylesheet
             },
@@ -757,19 +841,34 @@ const initialStates = {
                 textAlign: "left",
                 fontStyle: "normal",
                 fontWeight: "normal",
-                textDecoration: "none",   
-                
+                textDecoration: "none",
+
                 ...defaultStylesheet
             }
         }
-     }
+    },
+
+
+    "barcode_activation": {
+        "name": "barcode_activation",
+        "title": {
+            content: "Title",
+            visible: true
+        },    
+        "props": {
+
+            style: {
+                ...defaultStylesheet
+            }
+        }
+    }
 
 }
 
 
 
 // initialStates.form.children = [
-//     { ...initialStates.text, props: { ...initialStates.text.props, content: "FORM" } },        
+//     { ...initialStates.text, props: { ...initialStates.text.props, content: "FORM" } },
 //     initialStates.entry,
 //     initialStates.button
 // ]

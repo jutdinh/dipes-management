@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { Home, About } from './dashboard';
 import { Navigation, PageNotFound } from './navigations';
-import { Login, SignUp, SignOut } from './auth';
+import { Login, SignUp, SignOut, ChangePass } from './auth';
 import { Settings } from './settings';
 import { Projects, ProjectsCard, ProjectDetail, TaskDetail, EditProject } from './projects';
 import { ListUser, Profile } from './users';
@@ -105,6 +105,7 @@ function App() {
         <Route path="/workflow" element={<Navigation Child={Workflow} />} />
         <Route path="/logs" element={<Navigation Child={Logs} />} />
         <Route path="/users" element={<Navigation Child={ListUser} />} />
+        <Route path="/change-password" element={<Navigation Child={ChangePass} />} />
         <Route path="/notifications" element={<Navigation Child={View_Notication} />} />
         <Route path="/profile" element={<Navigation Child={Profile} />} />
         <Route path="/settings" element={<Navigation Child={Settings} />} />

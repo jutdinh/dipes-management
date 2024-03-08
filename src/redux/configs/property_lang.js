@@ -15,6 +15,7 @@ const vi = {
     "props.params": "Tham số",
     "props.field": "Trường",
     "props.option": "Giá trị",
+    "props.amount": "Số lượng",
     "props.icon": "Icon",
     "props.page": "Trang",
 
@@ -22,7 +23,11 @@ const vi = {
     "props.postfix": "Hậu tố",
 
     "props.chooseslaves": "Bảng phụ thuộc khóa",
+    "props.choosemaster": "Bảng chứa khóa chính",
 
+    "props.onField": "Trên trường",
+    "props.index": "Chỉ số",
+    "props.pattern": "Pattern",
 
     "props.title": "Tiêu đề",
     "props.visible": "Hiển thị",

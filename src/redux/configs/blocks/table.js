@@ -8,7 +8,7 @@ import $ from "jquery"
 
 
 export default (props) => {
-    const { cache, preview, floating, pages, page } = useSelector(state => state)
+    const { cache, preview, floating, pages, page, validButtonChildOnTable } = useSelector(state => state)
     const { id, zIndex,
         name,
         style,
@@ -93,7 +93,7 @@ export default (props) => {
 
     const AddButton = (e) => {
         const { block } = floating
-        const buttons = ["button", "redirect_button", "table_export_button", "custom_button" ]
+        const buttons = validButtonChildOnTable
 
         if (buttons.indexOf(block) != -1) {
             appendChildComponent(id)

@@ -709,6 +709,80 @@ const SelfSelection = (props) => {
 
 
 
+const MasterSelection = (props) => {
+    const {
+        label,
+        path,
+        data,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        
+        index,
+        fields,
+        display_value,
+
+        childOf,
+        areParentActive,
+    } = props
+
+    const { selectedCpns } = useSelector( state => state )
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const [drop, setDrop] = useState(false)
+
+    const parent = selectedCpns.find( p => p.id == selectedCpn.parent_id )
+
+    if( parent ){
+
+        const options = getPropByPath(data.split('.'), parent)
+    
+        const formatObjectByFields = (opt) => {
+            const clone = {}
+            for (let i = 0; i < fields.length; i++) {
+                const { from, to } = fields[i]
+                clone[to] = opt[from]
+            }
+            return clone
+        }
+        if (areParentActive(childOf)) {
+            return (
+                <div className="property" style={{ zIndex: index }}>
+                    <div className="label-box">
+                        <span>{label}</span>
+                    </div>
+                    <div
+                        className={`drop-box`}
+                    >
+                        <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                            <div className="content">
+                                <span>{currentValue?.[display_value]}</span>
+                            </div>
+                            <div className="caret">
+                                <FontAwesomeIcon icon={faCaretDown} />
+                            </div>
+                        </div>
+                        <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                            <div className="options" >
+                                {options.map(opt =>
+                                    <div className="option" onClick={() => { updateSelectedComponent(formatObjectByFields(opt), splittedPath); setDrop(false) }}>
+                                        <span>{opt[display_value]}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+}
+
+
+
+
+
 
 const SelectTables = (props) => {
     const {
@@ -850,6 +924,63 @@ const SelectTables = (props) => {
         </div>
     )
 }
+
+const SelectTable = (props) => {
+    const {
+        label,
+        path,
+        
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+
+        index,
+        display_value,
+
+        childOf,
+        areParentActive,
+    } = props
+
+    const { tables } = useSelector( state => state )
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath( splittedPath, selectedCpn )
+    const [drop, setDrop] = useState(false)
+
+    const options = tables
+    
+    if (areParentActive(childOf)) {
+        return (
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div
+                    className={`drop-box`}
+                >
+                    <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                        <div className="content">
+                            <span>{currentValue?.[display_value]}</span>
+                        </div>
+                        <div className="caret">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                        </div>
+                    </div>
+                    <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                        <div className="options" >
+                            {options.map(opt =>
+                                <div className="option" onClick={() => { updateSelectedComponent(opt, splittedPath); setDrop(false) }}>
+                                    <span>{opt[display_value]}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
 
 const TableFieldsPicker = (props) => {
     const {
@@ -1620,6 +1751,72 @@ const ChooseSlave = (props) => {
 }
 
 
+const ChooseMaster = (props) => {
+    const {
+   
+        path,
+        table_path,
+        label,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        areParentActive,
+        childOf,
+
+        index
+    } = props
+
+    const display_value = "table_name"
+
+    const { tables } = useSelector(state => state)
+
+    const splittedPath = path.split('.')
+    const currentValue = getPropByPath(splittedPath, selectedCpn)
+    const [drop, setDrop] = useState(false)
+
+    const table = getPropByPath(table_path.split('.'), selectedCpn)
+
+    if( table && table.foreign_keys ){
+        const { foreign_keys } = table;
+        const refTableIds = foreign_keys.map( key => key.table_id )
+
+        const options = tables.filter( table => refTableIds.indexOf( table.id ) != -1 )
+
+        if (areParentActive(childOf)) {
+            return (
+                <div className="property" style={{ zIndex: index }}>
+                    <div className="label-box">
+                        <span>{label}</span>
+                    </div>
+                    <div
+                        className={`drop-box`}
+                    >
+                        <div className="content-container" onClick={() => { setDrop(!drop) }}>
+                            <div className="content">
+                                <span>{currentValue?.[display_value]}</span>
+                            </div>
+                            <div className="caret">
+                                <FontAwesomeIcon icon={faCaretDown} />
+                            </div>
+                        </div>
+                        <div className="options-container" style={{ display: drop ? "block" : "none" }}>
+                            <div className="options" >
+                                {options.map(opt =>
+                                    <div className="option" onClick={() => { updateSelectedComponent(opt, splittedPath); setDrop(false) }}>
+                                        <span>{opt[display_value]}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }    
+    return
+}
+
+
 const ButtonChangeIcon = (props) => {
     const {
         label,
@@ -1713,7 +1910,7 @@ const ChoosePreImportTable = (props) => {
                 const table = tables.find(tb => tb.id == table_id)
                 setFTable(table)
                 updateSelectedComponent(field, fieldPath.split('.'))
-                updateSelectedComponent({}, valuePath.split('.'))
+                // updateSelectedComponent({}, valuePath.split('.'))
 
                 setDrop(false)
 
@@ -1729,7 +1926,7 @@ const ChoosePreImportTable = (props) => {
         }
         InitFunc()
         return () => {
-
+            
         }
     }, [])
 
@@ -1778,6 +1975,8 @@ const ChoosePreImportTable = (props) => {
 
             fields.push(...foreignFields)
         })
+
+        
 
         const valueClickTrigger = (opt) => {
             updateSelectedComponent(opt, valuePath.split('.'))
@@ -2423,11 +2622,14 @@ const Components = {
     "selection": ListSelection,
     "childSelection": ChildSelection,
     "apiSelection": ApiSelection,
+
     "selfSelection": SelfSelection,
+    "masterSelection": MasterSelection,
     "icon": ButtonChangeIcon,
 
 
     "selectTables": SelectTables, // onetimeuse
+    "selectTable": SelectTable, // onetimeuse
     "tablefieldspicker": TableFieldsPicker, // onetimeuse
     "singulartablefieldspicker": SingularTableFieldsPicker, // onetimeuse
     "tablecalculatefields": TableCalculateFields, // onetimeuse
@@ -2437,6 +2639,8 @@ const Components = {
     "selectPage": SelectPage,
     "showParams": ShowParams, // onetimeuse
     "chooseSlave": ChooseSlave,
+    "chooseMaster": ChooseMaster,
+    
 
     "choosePreImportTable": ChoosePreImportTable,
     "choosePreImportTableFromSibling": ChoosePreImportTableFromSibling,

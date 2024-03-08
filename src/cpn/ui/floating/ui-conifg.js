@@ -16,7 +16,7 @@ export default (props) => {
     
     const saveUI = () => {    
         
-        const validPages = pages.filter( p => !p.is_hidden )
+        const validPages = pages
 
         fetch( `${ proxy }/uis/saveui`, {
             method: "POST",

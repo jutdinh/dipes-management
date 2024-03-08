@@ -83,6 +83,7 @@ const initState = {
     apis: [],
     tables: [],
     propertyLang, 
+    validButtonChildOnTable: ["button", "redirect_button", "table_export_button", "custom_button", "code_generating_button" ]
         
 }
 

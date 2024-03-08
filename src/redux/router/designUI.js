@@ -991,26 +991,26 @@ const insertComponent = (state, action) => {
         // => Bước này là fulfill id vào tất cả các con cháu chíc chắt nếu có của newBlock
 
 
-        if (block == "table") {
+        // if (block == "table") {
 
-            const hidden_page_id = state.functions.getFormatedUUID()
+        //     const hidden_page_id = state.functions.getFormatedUUID()
 
-            const hiddenPage = {
-                page_id: hidden_page_id,
-                page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+        //     const hiddenPage = {
+        //         page_id: hidden_page_id,
+        //         page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
 
-                parent: page.page_id,
-                block: newBlock.id,
+        //         parent: page.page_id,
+        //         block: newBlock.id,
 
 
-                is_home: false,
-                is_hidden: true,
-                icon: DEFAULT_PAGE_ICON,
-                children: [],
-                component: []
-            }
-            state.pages.push(hiddenPage)
-        }
+        //         is_home: false,
+        //         is_hidden: true,
+        //         icon: DEFAULT_PAGE_ICON,
+        //         children: [],
+        //         component: []
+        //     }
+        //     state.pages.push(hiddenPage)
+        // }
 
 
         floating.block = undefined
@@ -1085,26 +1085,26 @@ const appendChildComponent = (state, action) => {
             return p
         })
 
-        if (block == "table") {
+        // if (block == "table") {
 
-            const hidden_page_id = state.functions.getFormatedUUID()
+        //     const hidden_page_id = state.functions.getFormatedUUID()
 
-            const hiddenPage = {
-                page_id: hidden_page_id,
-                page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+        //     const hiddenPage = {
+        //         page_id: hidden_page_id,
+        //         page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
 
-                parent: page.page_id,
-                block: newBlock.id,
+        //         parent: page.page_id,
+        //         block: newBlock.id,
 
 
-                is_home: false,
-                is_hidden: true,
-                icon: DEFAULT_PAGE_ICON,
-                children: [],
-                component: []
-            }
-            newPages.push(hiddenPage)
-        }
+        //         is_home: false,
+        //         is_hidden: true,
+        //         icon: DEFAULT_PAGE_ICON,
+        //         children: [],
+        //         component: []
+        //     }
+        //     newPages.push(hiddenPage)
+        // }
 
         floating.block = undefined
         return { ...state, pages: newPages, page, floating }

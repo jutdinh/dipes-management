@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faBars, faBolt, faCalendarDays, faChartBar, faChartColumn, faDiagramNext, faFont, faHand, faImage, faImages, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
-
+import { faArrowUpRightFromSquare, faBars, faBolt, faCalendarDays, faChartBar, faChartColumn, faCode, faDiagramNext, faFont, faHand, faImage, faImages, faLeaf, faLink, faList, faMagnifyingGlassChart, faRectangleAd, faRectangleList, faSpoon, faSquare, faSquareCheck, faSquarePen, faStop, faTable, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons"
 import { useDispatch, useSelector } from 'react-redux'
 
 import $ from 'jquery';
@@ -8,15 +7,15 @@ import { useEffect } from 'react';
 
 export default () => {
     const dispatch = useDispatch()
-    const { functions, blockTypes, floating, page, selectedCpn } = useSelector( state => state )
+    const { functions, blockTypes, floating, page, selectedCpn } = useSelector(state => state)
     const FloatingBoxTrigger = (e, icon, text, type) => {
         const { pageX, pageY } = e;
-        
+
         dispatch({
             branch: "floating-boxes",
             type: "setDesignBlockCoordinateAndIcon",
-            payload: {  
-                type,              
+            payload: {
+                type,
                 icon: {
                     icon,
                     text
@@ -28,11 +27,11 @@ export default () => {
             branch: "floating-boxes",
             type: "floatingTrigger",
             payload: {
-                offset:{
+                offset: {
                     top: pageY,
                     left: pageX
                 },
-            }        
+            }
         })
         dispatch({
             branch: "floating-boxes",
@@ -47,7 +46,7 @@ export default () => {
             type: "setGridSystemState",
             payload: {
                 status: true
-            }            
+            }
         })
 
         functions.minimizeFloatingBG()
@@ -60,20 +59,20 @@ export default () => {
                 branch: "floating-boxes",
                 type: "setOffset",
                 payload: {
-                    offset:{
+                    offset: {
                         top: pageY,
                         left: pageX
                     },
                 }
-            })                        
+            })
         })
 
-        
-        
-        $('*').on('mouseup', (e) => {                   
-            if( e.target.id == "playground" || e.target.id == "playground-bg" ){
+
+
+        $('*').on('mouseup', (e) => {
+            if (e.target.id == "playground" || e.target.id == "playground-bg") {
                 AddTrigger()
-            }else{
+            } else {
                 // UnboundBlock()
             }
 
@@ -82,7 +81,7 @@ export default () => {
 
             dispatch({
                 branch: "floating-boxes",
-                type: "floatingTrigger"                    
+                type: "floatingTrigger"
             })
 
             functions.restoreFloatingBG()
@@ -92,16 +91,16 @@ export default () => {
                 type: "setGridSystemState",
                 payload: {
                     status: false
-                }            
-            })            
+                }
+            })
         })
-        
+
     }
 
     const AddTrigger = () => {
-        const block = floating.block 
-        
-        if( block ){
+        const block = floating.block
+
+        if (block) {
             dispatch({
                 branch: "design-ui",
                 type: "addComponent",
@@ -127,9 +126,9 @@ export default () => {
 
 
     const isCurrentPageParamized = () => {
-        if( page ){
+        if (page) {
             const { params } = page;
-            if( params && params.length > 0 ){
+            if (params && params.length > 0) {
                 return true
             }
         }
@@ -137,25 +136,25 @@ export default () => {
     }
 
 
-    return(
+    return (
         <div className="design">
             <div className="design-blocks">
                 <span className="block-type">NỘI DUNG</span>
                 <div className="blocks">
 
-                    <div className="block" onMouseDown={ (e) => { FloatingBoxTrigger(e, faFont, "Văn bản", blockTypes.text) } }>
+                    <div className="block" onMouseDown={(e) => { FloatingBoxTrigger(e, faFont, "Văn bản", blockTypes.text) }}>
                         <div className="block-icon">
-                            <FontAwesomeIcon icon={ faFont }/>
+                            <FontAwesomeIcon icon={faFont} />
                         </div>
                         <span className="block-name">Văn bản</span>
-                    </div>   
-                    { selectedCpn.name == "chart_2" &&
-                        <div className="block" onMouseDown={ (e) => { FloatingBoxTrigger(e, faLeaf, "Văn bản", blockTypes.inline_statis ) } }>
+                    </div>
+                    {selectedCpn.name == "chart_2" &&
+                        <div className="block" onMouseDown={(e) => { FloatingBoxTrigger(e, faLeaf, "Văn bản", blockTypes.inline_statis) }}>
                             <div className="block-icon">
-                                <FontAwesomeIcon icon={ faLeaf }/>
+                                <FontAwesomeIcon icon={faLeaf} />
                             </div>
                             <span className="block-name">Số liệu thống kê </span>
-                        </div>       
+                        </div>
                     }
 
 
@@ -163,44 +162,52 @@ export default () => {
 
 
                 <span className="block-type">HIỂN THỊ DỮ LIỆU</span>
-                <div className="blocks">                   
+                <div className="blocks">
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faTable, "Bảng", blockTypes.table ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faTable, "Bảng", blockTypes.table) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faTable }/>
+                            <FontAwesomeIcon icon={faTable} />
                         </div>
                         <span className="block-name">Bảng</span>
                     </div>
                     {
                         isCurrentPageParamized() &&
-                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faSpoon, "Bảng 1", blockTypes.table_param ) } }>
-                                <div className="block-icon" >
-                                    <FontAwesomeIcon icon={ faSpoon }/>
-                                </div>
-                                <span className="block-name">Bảng 1</span>
+                        <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faSpoon, "Bảng 1", blockTypes.table_param) }}>
+                            <div className="block-icon" >
+                                <FontAwesomeIcon icon={faSpoon} />
                             </div>
+                            <span className="block-name">Bảng 1</span>
+                        </div>
                     }
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faLink, "Nút chuyển", blockTypes.redirect_button ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faLink, "Nút chuyển", blockTypes.redirect_button) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faLink }/>
+                            <FontAwesomeIcon icon={faLink} />
                         </div>
                         <span className="block-name">Nút chuyển</span>
                     </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faList, "Xuất khóa ngoại", blockTypes.table_export_button ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faList, "Xuất khóa ngoại", blockTypes.table_export_button) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faList }/>
+                            <FontAwesomeIcon icon={faList} />
                         </div>
                         <span className="block-name">Xuất khóa ngoại</span>
                     </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faBolt, "Thao tác tùy chọn", blockTypes.custom_button ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faBolt, "Thao tác tùy chọn", blockTypes.custom_button) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faBolt }/>
+                            <FontAwesomeIcon icon={faBolt} />
                         </div>
                         <span className="block-name">Thao tác tùy chọn</span>
                     </div>
+
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faCode, "Thao tác tùy chọn", blockTypes.code_generating_button) }}>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={faCode} />
+                        </div>
+                        <span className="block-name">Thao tác tùy chọn và tạo mã tùy chọn</span>
+                    </div>
+
 
                 </div>
 
@@ -264,73 +271,95 @@ export default () => {
 
                 <span className="block-type">KHỐI BIỂU ĐỒ</span>
 
-                <div className="blocks">   
+                <div className="blocks">
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faChartBar, "Chart bar", blockTypes.chart_1 ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faChartBar, "Chart bar", blockTypes.chart_1) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faChartBar }/>
+                            <FontAwesomeIcon icon={faChartBar} />
                         </div>
                         <span className="block-name">Chart bar</span>
-                    </div>               
+                    </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faMagnifyingGlassChart, "Chart bar", blockTypes.c_chart ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faMagnifyingGlassChart, "Chart bar", blockTypes.c_chart) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faMagnifyingGlassChart }/>
+                            <FontAwesomeIcon icon={faMagnifyingGlassChart} />
                         </div>
                         <span className="block-name">C - Chart</span>
                     </div>
 
-                    <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faDiagramNext, "Thống kê đơn lẻ", blockTypes.chart_2 ) } }>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faDiagramNext, "Thống kê đơn lẻ", blockTypes.chart_2) }}>
                         <div className="block-icon" >
-                            <FontAwesomeIcon icon={ faDiagramNext }/>
+                            <FontAwesomeIcon icon={faDiagramNext} />
                         </div>
                         <span className="block-name">Thống kê đơn lẻ</span>
+                    </div>
+
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faTableCellsLarge, "Thống kê dạng bảng 2 chiều", blockTypes.chart_3) }}>
+                        <div className="block-icon" >
+                            <FontAwesomeIcon icon={faTableCellsLarge} />
+                        </div>
+                        <span className="block-name">Thống kê dạng bảng 2 chiều</span>
                     </div>
 
                 </div>
 
                 {
-                     isCurrentPageParamized() &&
-                     <div>
+                    isCurrentPageParamized() &&
+                    <div>
 
                         <span className="block-type">KHỐI CHI TIẾT</span>
-                        <div className="blocks">   
+                        <div className="blocks">
 
-                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faBars , "Box chi tiết", blockTypes.detail_box ) } }>
+                            <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faBars, "Box chi tiết", blockTypes.detail_box) }}>
                                 <div className="block-icon" >
-                                    <FontAwesomeIcon icon={  faBars }/>
+                                    <FontAwesomeIcon icon={faBars} />
                                 </div>
                                 <span className="block-name">Box chi tiết</span>
-                            </div>            
+                            </div>
 
-                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faFont , "Box chi tiết", blockTypes.detail_text ) } }>
+                            <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faFont, "Box chi tiết", blockTypes.detail_text) }}>
                                 <div className="block-icon" >
-                                    <FontAwesomeIcon icon={  faFont }/>
+                                    <FontAwesomeIcon icon={faFont} />
                                 </div>
                                 <span className="block-name">Text - chi tiết</span>
-                            </div>        
+                            </div>
 
-                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImage , "Box ảnh", blockTypes.detail_image ) } }>
+                            <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faImage, "Box ảnh", blockTypes.detail_image) }}>
                                 <div className="block-icon" >
-                                    <FontAwesomeIcon icon={  faImage }/>
+                                    <FontAwesomeIcon icon={faImage} />
                                 </div>
                                 <span className="block-name">Ảnh - chi tiết</span>
-                            </div>  
+                            </div>
 
-                            <div className="block table" onMouseDown={ (e) => { FloatingBoxTrigger(e, faImages , "Box ảnh", blockTypes.detail_images ) } }>
+                            <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faImages, "Box ảnh", blockTypes.detail_images) }}>
                                 <div className="block-icon" >
-                                    <FontAwesomeIcon icon={  faImages }/>
+                                    <FontAwesomeIcon icon={faImages} />
                                 </div>
                                 <span className="block-name">Nhiều ảnh - chi tiết</span>
-                            </div>  
+                            </div>
 
                         </div>
-                        
 
-                     </div>
+
+                    </div>
                 }
 
+                <div>
 
+                    <span className="block-type">KHỐI THAO TÁC DỮ LIỆU</span>
+                    <div className="blocks">
+
+                        <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faSquareCheck, "KÍCH HOẠT MÃ VẠCH", blockTypes.barcode_activation ) }}>
+                            <div className="block-icon" >
+                                <FontAwesomeIcon icon={ faSquareCheck } />
+                            </div>
+                            <span className="block-name">Kích hoạt mã vạch</span>
+                        </div>
+
+                    </div>
+
+
+                </div>
 
             </div>
         </div>

@@ -331,9 +331,9 @@ export default () => {
             .then((resp) => {
                 const { success, content, data, status } = resp;
                 if (success) {
-                    // showApiResponseMessage(status, false);
+                    showApiResponseMessage(status, false);
                 } else {
-                    // showApiResponseMessage(status, false);
+                    showApiResponseMessage(status, false);
                 }
             })
     };
