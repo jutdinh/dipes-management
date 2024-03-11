@@ -27,7 +27,7 @@ const vi = {
 
     "props.onField": "Trên trường",
     "props.index": "Chỉ số",
-    "props.pattern": "Pattern",
+    "props.pattern": "Pattern (0-3)",
 
     "props.title": "Tiêu đề",
     "props.visible": "Hiển thị",

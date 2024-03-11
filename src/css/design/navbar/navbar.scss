@@ -303,6 +303,19 @@
                         
                     }
 
+                    .infor-icon{
+                        width: 2em;
+                        height: 2em;                       
+                     
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;    
+                        position: absolute;
+                        right: 0;
+                        top: 0.25em;   
+                        cursor: pointer;                 
+                    }
+
                     .color-box {
                         width: 40px;
                         height: 32px;

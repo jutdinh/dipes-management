@@ -30,6 +30,29 @@ const button =  [
         fieldPath: "props.field",
         valuePath: "props.value" 
     },
+
+    {
+        id: getFormatedUUID(),
+        label: lang["props.amount"],
+        type: "masterSelection", 
+        path: "props.generator.amount",
+        data: "props.source.fields",
+        fields: [
+            {
+                from: "id",
+                to: "id"
+            },            
+            {
+                from: "field_name",
+                to: "field_name"
+            },
+            {
+                from: "fomular_alias",
+                to: "fomular_alias"
+            }
+        ],
+        display_value: "field_name" 
+    },
     
 
     { 
@@ -117,33 +140,12 @@ const button =  [
         display_value: "field_name"
     },
 
-    {
-        id: getFormatedUUID(),
-        label: lang["props.amount"],
-        type: "masterSelection", 
-        path: "props.generator.amount",
-        data: "props.source.fields",
-        fields: [
-            {
-                from: "id",
-                to: "id"
-            },            
-            {
-                from: "field_name",
-                to: "field_name"
-            },
-            {
-                from: "fomular_alias",
-                to: "fomular_alias"
-            }
-        ],
-        display_value: "field_name" 
-    },
+    
 
     {
         id: getFormatedUUID(),
         label: lang["props.pattern"],
-        type: "text",
+        type: "pattern",
         path: "props.generator.pattern",        
     },
 

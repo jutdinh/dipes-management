@@ -54,7 +54,15 @@ const chart_1 =  [
         //     caseIf: "database"
         // }
     },
-    
+
+
+    {
+        id: getFormatedUUID(),
+        label: lang["props.groupby"],
+        type: "tablefieldspicker",
+        path: "props.group_by",
+        tablespath: "props.tables"      
+    },
     
     { 
         id: getFormatedUUID(), 
@@ -78,14 +86,7 @@ const chart_1 =  [
         ],
         display_value: "field_name"
     },
-
-    {
-        id: getFormatedUUID(),
-        label: lang["props.groupby"],
-        type: "tablefieldspicker",
-        path: "props.group_by",
-        tablespath: "props.tables"      
-    },
+    
 
     { 
         id: getFormatedUUID(), 

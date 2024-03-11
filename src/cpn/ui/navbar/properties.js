@@ -1,4 +1,4 @@
-import { faArrowUpRightFromSquare, faCaretDown, faCaretRight, faClose, faEdit, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faArrowUpRightFromSquare, faCaretDown, faCaretRight, faClose, faEdit, faInfo, faPlusCircle, faQuestion, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -131,6 +131,7 @@ export default () => {
     const getCpnById = () => {
 
     }
+    
 
     return (
         <div className="properties">
@@ -206,6 +207,76 @@ const EntryBox = (props) => {
                 <input type="text" value={getPropByPath(splittedPath, selectedCpn)}
                     onChange={(e) => { updateSelectedComponent(e.target.value, splittedPath) }}
                     disabled={read_only} />
+            </div>
+        </div>
+    )
+}
+
+
+const PattenEntry = (props) => {
+    const {
+        label,
+        path,
+        getPropByPath,
+        updateSelectedComponent,
+        selectedCpn,
+        index,
+        read_only
+    } = props
+    
+    const dispatch = useDispatch()
+    
+    const splittedPath = path.split('.')
+    const value = getPropByPath(splittedPath, selectedCpn);
+
+
+    const triggerInstruction = () => {
+        dispatch({
+            branch: "floating-boxes",
+            type: "floatingTrigger",            
+        })
+        dispatch({
+            branch: "floating-boxes",
+            type: "setBoxType",
+            payload: {
+                type: "patternGuideline"
+            }
+        })
+    }
+
+    const renderPreview = ( value ) => {
+        const months = [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" ]
+        const date = new Date()
+        const month = date.getMonth()
+        const year = date.getFullYear().toString().slice(2, 4)
+        return `${value}${year}${months[month]}00000000000`
+    }
+
+
+    return (
+        <div>
+            <div className="property" style={{ zIndex: index }}>
+                <div className="label-box">
+                    <span>{label}</span>
+                </div>
+                <div className="input-box">
+                    <input type="text" value={value}
+                        onChange={(e) => { updateSelectedComponent(e.target.value, splittedPath) }}
+                        disabled={read_only} />
+
+                </div>
+                <div className="infor-icon" onClick={triggerInstruction}>
+                    <FontAwesomeIcon icon={ faQuestion }/>
+                </div>
+                
+            </div>
+            <div className="property">
+                <div className="label-box">
+                    <span>Xem trước</span>
+                </div>
+                <div className="input-box">
+                    <span style={ (value && value.length == 4) ? { color: "green" } : { color: "red" } } >{ renderPreview(value) }</span>
+                </div>
             </div>
         </div>
     )
@@ -2614,6 +2685,7 @@ const PreImportLockButtonSelection = (props) => {
 
 const Components = {
     "text": EntryBox,
+    "pattern": PattenEntry,
     "number": NumberBox,
     "iconicSwitchingGroup": IconicSwitchingGroup,
     "iconicSwitching": IconicSwitching,

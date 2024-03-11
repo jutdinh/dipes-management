@@ -187,11 +187,11 @@ export default () => {
                         <span className="block-name">Nút chuyển</span>
                     </div>
 
-                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faList, "Xuất khóa ngoại", blockTypes.table_export_button) }}>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faList, "Xuất dữ liệu", blockTypes.table_export_button) }}>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={faList} />
                         </div>
-                        <span className="block-name">Xuất khóa ngoại</span>
+                        <span className="block-name">Xuất dữ liệu</span>
                     </div>
 
                     <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faBolt, "Thao tác tùy chọn", blockTypes.custom_button) }}>
@@ -273,18 +273,18 @@ export default () => {
 
                 <div className="blocks">
 
-                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faChartBar, "Chart bar", blockTypes.chart_1) }}>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faChartBar, "Biểu đồ cột ngang", blockTypes.chart_1) }}>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={faChartBar} />
                         </div>
-                        <span className="block-name">Chart bar</span>
+                        <span className="block-name">Biểu đồ cột ngang</span>
                     </div>
 
-                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faMagnifyingGlassChart, "Chart bar", blockTypes.c_chart) }}>
+                    <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faMagnifyingGlassChart, "Biểu đồ điều kiện", blockTypes.c_chart) }}>
                         <div className="block-icon" >
                             <FontAwesomeIcon icon={faMagnifyingGlassChart} />
                         </div>
-                        <span className="block-name">C - Chart</span>
+                        <span className="block-name">Biểu đồ điều kiện</span>
                     </div>
 
                     <div className="block table" onMouseDown={(e) => { FloatingBoxTrigger(e, faDiagramNext, "Thống kê đơn lẻ", blockTypes.chart_2) }}>

@@ -7,6 +7,8 @@ import PageChangeIcon from './page-change-icon';
 import DesignBlock from "./design-block";
 import UiConifg from "./ui-conifg";
 import PageConfig from "./page-config";
+import PatternGuideLine from './pattern-guildline';
+import FomularGuideLine from './fomular-guideline';
 
 import CustomButtonChangeIcon from './custombutton-change-icon';
 
@@ -43,7 +45,14 @@ export default () => {
                 return <PageConfig pageSettingTrigger={ pageSettingTrigger }/>
 
             case "customButtonChangeIcon": 
-                return <CustomButtonChangeIcon />                
+                return <CustomButtonChangeIcon />
+
+            case "patternGuideline":             
+                return <PatternGuideLine />  
+
+            case "fomular-guideline":             
+                return <FomularGuideLine />  
+
             default:
                 return <></>
         }
