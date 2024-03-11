@@ -922,9 +922,24 @@ class UIController extends Controller {
 
 
         if (success) {
-            const { Project, user } = objects;
+            const { Project, user, version } = objects;
 
             const flattenPages = this.flatteningComponents(ui)
+
+            const { apis } = version;
+            if( apis ){
+                const serializedApis = Object.values( apis )
+                const newApis = {}
+                for( let i = 0; i < serializedApis.length; i++ ){
+                    const api = serializedApis[i];
+                    if( api.api_scope  == "public"){
+                        newApis[`${ api.id }`] = api
+                    }
+                }
+                const project = Project.getData()
+                project.versions[`${ version_id }`].apis = newApis
+                Project.setData(project)
+            }           
 
             for (let i = 0; i < flattenPages.length; i++) {
                 const page = flattenPages[i]
@@ -944,23 +959,7 @@ class UIController extends Controller {
 
                         for (let k = 0; k < apiSet.length; k++) {
                             APIS[apiSet[k].name] = await Project.createUIAPI(apiSet[k])
-                        }
-                        delete version.apis[`${props?.source?.get?.id}`]; delete version.apis[`${props?.source?.search?.id}`]; delete version.apis[`${props?.buttons?.add?.api?.id}`]; delete version.apis[`${props?.buttons?.import?.api?.id}`]; delete version.apis[`${props?.buttons?.export?.api?.id}`]; delete version.apis[`${props?.buttons?.update?.api?.id}`]; delete version.apis[`${props?.buttons?.delete?.api?.id}`]; delete version.apis[`${props?.buttons?.detail?.api?.id}`]; delete version.apis[`${props?.buttons?.approve?.api?.id}`]; delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
-
-                        // console.log( `${props?.source?.get?.id}`,
-                        // `${props?.source?.search?.id}`,
-                        // `${props?.buttons?.add?.api?.id}`,
-                        // `${props?.buttons?.import?.api?.id}`,
-                        // `${props?.buttons?.export?.api?.id}`,
-                        // `${props?.buttons?.update?.api?.id}`,
-                        // `${props?.buttons?.delete?.api?.id}`,
-                        // `${props?.buttons?.detail?.api?.id}`,
-                        // `${props?.buttons?.approve?.api?.id}`,
-                        // `${props?.buttons?.unapprove?.api?.id}`, )
-
-                        /**
-                         * Con bug qq mãi k fix đc nên thôi dẹp mẹ luôn đi
-                         */
+                        }                     
 
                         props.source.get = APIS["GET"]
                         props.source.search = { ...props.source.search, ...APIS["SEARCH"] }
@@ -985,13 +984,9 @@ class UIController extends Controller {
                         })
 
 
-
-                        // console.log("Afetre", Object.values(version.apis).length)
-
                         const data = Project.getData()
                         data.versions[`${version_id}`] = version
-                        Project.setData(data)
-                        // console.log(Object.keys(data.versions[`${version_id}`].apis))                        
+                        Project.setData(data)                    
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
                     }
 
@@ -1003,22 +998,6 @@ class UIController extends Controller {
                         for (let k = 0; k < apiSet.length; k++) {
                             APIS[apiSet[k].name] = await Project.createUIAPI(apiSet[k])
                         }
-                        delete version.apis[`${props?.source?.get?.id}`]; delete version.apis[`${props?.source?.search?.id}`]; delete version.apis[`${props?.buttons?.add?.api?.id}`]; delete version.apis[`${props?.buttons?.import?.api?.id}`]; delete version.apis[`${props?.buttons?.export?.api?.id}`]; delete version.apis[`${props?.buttons?.update?.api?.id}`]; delete version.apis[`${props?.buttons?.delete?.api?.id}`]; delete version.apis[`${props?.buttons?.detail?.api?.id}`]; delete version.apis[`${props?.buttons?.approve?.api?.id}`]; delete version.apis[`${props?.buttons?.unapprove?.api?.id}`]
-
-                        // console.log( `${props?.source?.get?.id}`,
-                        // `${props?.source?.search?.id}`,
-                        // `${props?.buttons?.add?.api?.id}`,
-                        // `${props?.buttons?.import?.api?.id}`,
-                        // `${props?.buttons?.export?.api?.id}`,
-                        // `${props?.buttons?.update?.api?.id}`,
-                        // `${props?.buttons?.delete?.api?.id}`,
-                        // `${props?.buttons?.detail?.api?.id}`,
-                        // `${props?.buttons?.approve?.api?.id}`,
-                        // `${props?.buttons?.unapprove?.api?.id}`, )
-
-                        /**
-                         * Con bug qq mãi k fix đc nên thôi dẹp mẹ luôn đi
-                         */
 
                         props.source.get = APIS["GET"]
                         props.source.search = { ...props.source.search, ...APIS["SEARCH"] }
@@ -1162,7 +1141,7 @@ class UIController extends Controller {
                             fields: [],
                             params: [],
                             calculates: [],
-                            statistic: [],                            
+                            statistic: [],
                             tables: tables.map(table => table.id),
                             api_method: "post",
                             api_scope: "private"
@@ -1176,11 +1155,11 @@ class UIController extends Controller {
                         // console.log(api)
 
                         version.apis[`${api.id}`] = api
-                        version.apis[`${ apiExport.id }`] = apiExport
+                        version.apis[`${apiExport.id}`] = apiExport
                         await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
 
                         props.api = api
-                        if( !props.export ){
+                        if (!props.export) {
                             props.export = { state: false }
                         }
                         props.export.api = apiExport
@@ -1328,6 +1307,143 @@ class UIController extends Controller {
 
                     }
 
+                    if (name == "detail_box") {
+                        const { tables, fields, params } = props;
+
+
+                        const DETAIL_API = {
+                            api_name: "DETAIL API for " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: fields.map(field => {
+                                return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                            }), 
+                            field: {},
+                            body: [],
+                            params: params.map(p => p.id),
+                            tables: tables.map(table => table.id),
+                            fomular: "",
+                            group_by: [],
+                            criterias: [],
+                            api_method: "get",
+                            api_scope: "private"
+                        }                        
+                        const apiObject = { api: DETAIL_API, type: "detail" }
+
+                        const api = await Project.createUIAPI(apiObject)
+                        version.apis[`${api.id}`] = api
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
+
+                        props.api = api
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)
+                    }
+
+                    if( name =="chart_3" ){
+                        const { tables, field, fomular, criterias, group_by } = props
+
+                        const STATIS_API = {
+                            api_name: "STATIS API for " + cpn.name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [],
+                            field,
+                            body: [],
+                            params: [],
+                            tables: tables.map(table => table.id),
+                            fomular,
+                            group_by: group_by.slice(0, 2),
+                            criterias,
+                            calculates: [],
+                            statistic: [],
+                            api_method: "post",
+                            api_scope: "private"
+                        }
+
+
+
+                        const apiObject = { api: STATIS_API, type: "statis" }
+
+                        const api = await Project.createUIAPI(apiObject)
+                        // console.log(api)
+
+                        version.apis[`${api.id}`] = api
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)
+
+                        props.api = api
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)
+                    }
+
+                    if( name=="code_generating_button" ){
+                        const { field, value } = props
+
+                        const table_id = field.onTable;
+                        const table = version.tables[`${table_id}`]
+
+                        const { primary_key } = table
+                        const fields = Object.values(table.fields)
+                        const params = fields.filter(f => primary_key.indexOf(f.id) != -1)
+
+                        const updateField = fields.find(f => f.id == field.id)
+
+                        const UPDATE_API = {
+                            api_name: "PUT API for table " + name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [updateField].map(field => {
+                                return { id: field.id, fomular_alias: field.fomular_alias, display_name: field.field_name }
+                            }),
+                            body: [field.id],
+                            params: params.map(p => p.id),
+                            tables: [table.id],
+                            calculates: [],
+                            statistic: [],
+                            api_method: "put",
+                            api_scope: "private"
+                        }
+
+
+                        const foreignTable = version.tables[`${field.table_id}`]
+
+                        const foreignPrimaryKey = foreignTable.primary_key
+
+                        const foreignPrimaryFields = foreignPrimaryKey.map(key => foreignTable.fields[`${key}`])
+
+                        const apiObject = { api: UPDATE_API, type: "ui" }
+                        const api = await Project.createUIAPI(apiObject)
+                        version.apis[`${api.id}`] = api
+
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)                       
+                        
+
+                        props.api = api
+                        props.primary_key = foreignPrimaryFields
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)
+                    }
+
+                    if( name == "barcode_activation" ){                    
+
+                        const UPDATE_API = {
+                            api_name: "PUT API for table " + name,
+                            status: true,
+                            description: "Hidden API for UI only, do not modify for any reason",
+                            fields: [],
+                            body: [],
+                            params: [],
+                            tables: [],
+                            calculates: [],
+                            statistic: [],
+                            api_method: "put",
+                            api_scope: "private"
+                        }
+
+                        const apiObject = { api: UPDATE_API, type: "barcode_activation" }
+                        const api = await Project.createUIAPI(apiObject)
+                        version.apis[`${api.id}`] = api
+                        await Project.__modifyAndSaveChange__(`versions.${version.version_id}`, version)    
+
+                        props.api = api
+                        page.component = this.updateChildComponent(page.component, cpn.id, props)   
+                    }
                 }
                 flattenPages[i] = page
                 ui = this.mapApiToUIRecursive(ui, page.page_id, page)

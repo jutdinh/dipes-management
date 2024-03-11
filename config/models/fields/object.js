@@ -41,14 +41,14 @@ class Serialized extends Field{
         **/
 
         if( val != undefined ){            
-            if( typeof(val) =="object" ){
+            if( typeof(val) =="object"){
                 this.__value = val;
             }else{
                 throw Error ('Giá trị truyền vào không tương thích với kiểu dữ liệu OBJECT')
             }
         }
         else{
-            return this.__value
+            return this.__value ? this.__value : {}
         }
     }
 }

@@ -69,6 +69,7 @@ class Model {
     }
 
     setDefaultValue = ( data ) => {
+        
         const serializedData = this.__recursiveTreeWithData__( this, data )
         this.#__data = serializedData;    
         const paths = this.__listAllPath__( this.#__data ) 
@@ -351,7 +352,7 @@ class Model {
                     }
                 }else{
                     if(  datatype == "json" ){
-                        const childrenData = data[ Property.__fieldName ]                         
+                        const childrenData = data[ Property.__fieldName ]                                             
                         properties[ Property.__fieldName ] = this.__recursiveTreeWithData__( Property, data[Property.__fieldName] )                        
                     }else{                                                  
                         Property.value(data[Property.__fieldName]) /* Auto validation */

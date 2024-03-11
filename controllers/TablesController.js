@@ -426,8 +426,11 @@ class TablesController extends Controller {
     }
 
     fieldCompare = ( field_1, field_2 ) => {
-        const props_1 = field_1.props
-        const props_2 = field_2.props 
+        const props_1 = { ...field_1.props, FILE_MAX_SIZE: undefined, FILE_MULTIPLE: false, FILE_ACCEPT_TYPES: [] }
+        const props_2 = { ...field_2.props, FILE_MAX_SIZE: undefined, FILE_MULTIPLE: false, FILE_ACCEPT_TYPES: [] }
+
+        
+        
 
         return objectComparator( props_1, props_2 )
     }
@@ -572,7 +575,8 @@ class TablesController extends Controller {
 
                         if( field && foreignField ){                            
                             const isEquivalent = this.fieldCompare( field, foreignField )
-
+                            // console.log( field )
+                            // console.log( foreignField )
                             if( !field.props.NULL && !foreignField.props.NULL ){
 
                                 if( !isEquivalent ){                                    

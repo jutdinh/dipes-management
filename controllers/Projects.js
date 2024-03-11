@@ -124,7 +124,14 @@ class ProjectsController extends Controller {
             const projects = await ProjectsModel.findAll()
             const end = new Date()
             // console.log(45, `PROCCESSING TIME: ${end - start}`)
-            context.data = projects.map(project => {
+            context.data = projects.map( project => {      
+                
+                // if(project.id == 4159){
+                //     const apis = Object.values(project.versions['4158'].apis)
+                //     const nullFieldAPI = apis.filter( f => f.field == null )
+                //     console.log(nullFieldAPI)
+                // }
+
                 const Project = new ProjectsRecord(project)
                 return Project.getProjectAndManager()
             })

@@ -784,7 +784,7 @@ class ProjectsRecord extends Projects {
             create_by: creator,
             id,
             api_id
-        }
+        }        
         return serializedApi
     }
 
