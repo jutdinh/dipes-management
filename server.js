@@ -1,72 +1,67 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const http = require('http');
+const http = require("http");
 
-const { Server } = require('socket.io');
+const { Server } = require("socket.io");
 const server = http.createServer(app);
 
 const cors = require("cors");
-const bodyparser = require('body-parser');
+const bodyparser = require("body-parser");
 
+require("dotenv").config();
 
-
-require('dotenv').config();
-
-app.use(bodyparser.urlencoded({
+app.use(
+  bodyparser.urlencoded({
     limit: "50mb",
     extended: false,
-}));
+  })
+);
 
 app.use(bodyparser.json({ limit: "50mb" }));
-app.use( express.static('public') );
-app.use( cors() )
+app.use(express.static("public"));
+app.use(cors());
 
 const io = new Server(server, {
   cors: {
-    origin: "*"
+    origin: "*",
   },
 });
 
-
-
-
-
-const { 
-  Auth, 
-  Projects, 
-  Versions, 
-  Log, 
+const {
+  Auth,
+  Projects,
+  Versions,
+  Log,
   Tasks,
-  Database, 
-  // Tables, 
-  Fields, 
+  Database,
+  // Tables,
+  Fields,
   Api,
   UI,
   Activation,
   Notify,
   PreImport,
   socketController,
-   } = require('./routes');
+} = require("./routes");
 
 // const ConsumeApi = require('./controllers/ConsumeApi');
 
-io.on("connection", (socket) => {  
-    socketController(socket)
-})
+io.on("connection", (socket) => {
+  socketController(socket);
+});
 
-
-app.use('/auth', Auth )
-app.use('/projects', Projects )
-app.use('/tasks', Tasks );
-app.use('/versions', Versions );
-app.use('/logs', Log );
-app.use('/db/tables', Database );
-app.use('/db/fields', Fields );
-app.use('/db/preimport', PreImport)
-app.use('/apis', Api );
-app.use('/uis', UI );
-app.use('/activation', Activation )
-app.use('/notify', Notify)
+app.use("/auth", Auth);
+app.use("/projects", Projects);
+app.use("/tasks", Tasks);
+app.use("/versions", Versions);
+app.use("/logs", Log);
+app.use("/db/tables", Database);
+app.use("/db/fields", Fields);
+app.use("/db/preimport", PreImport);
+app.use("/apis", Api);
+app.use("/uis", UI);
+app.use("/activation", Activation);
+app.use("/notify", Notify);
 
 // app.get('/api/14EBA032522745649FEA16143F570413', (req, res) => {
 //   res.send({ success: true, message: "This response is from remote server" })
@@ -83,8 +78,8 @@ app.use('/notify', Notify)
 //   await Consumer.consume( req, res, api_id )
 // })
 
-server.listen(process.env.PORT,  () => {
-  console.log('Server listening on port ' + server.address().port);
+server.listen(process.env.PORT, () => {
+  console.log("Server listening on port " + server.address().port);
 });
 
 module.exports = app;
