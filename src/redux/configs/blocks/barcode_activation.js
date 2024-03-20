@@ -82,37 +82,33 @@ const BarcodeActivation = (props) => {
             ))}
           </div>
         </div>
-        <section className="preview mx-2">
-          <div className="table-name">
+        <div className="preview">
+         <div className="top-utils">
+         <div className="table-name">
             <p className="main-input">
               {props?.name
                 ? props.name
                 : `Cập nhật bảng: ${props?.table.table_name}`}
             </p>
           </div>
-          <section>
-            <p>{props?.master.table_name}</p>
-            <select class="form-select" aria-label="Default select example">
-              <option selected>001</option>
-              <option value="1">002</option>
-              <option value="2">003</option>
-              <option value="3">004</option>
-            </select>
-          </section>
-          <section>
-            <p>Điều kiện lọc: {props?.criteria.field_name}</p>
-            <section className="d-flex ">
-              <section>
-                <p>Từ:</p>
+         </div>
+          <div className="preview-table border-0">
+            <p className="fw-bold">{props?.master.table_name}</p>
+              <select class="form-select" aria-label="Default select example">
+                <option selected>001</option>
+                <option value="1">002</option>
+                <option value="2">003</option>
+                <option value="3">004</option>
+              </select>
+              <div className="condition" >
+                <p className="mt-3 mb-3">Điều kiện lọc: <span className="fw-bold">{props?.criteria.field_name}</span></p>
+                <label className="mr-2">Từ: </label>
                 <input></input>
-              </section>
-              <section>
-                <p>Đến:</p>
-                <input />
-              </section>
-            </section>
-          </section>
-        </section>
+                <label className="ml-4 mr-2">Đến: </label>
+                <input></input>
+              </div>
+          </div>
+        </div>
         {/* <div id="html-dist"></div> */}
       </div>
       {renderBackLiner(id, parent)}
