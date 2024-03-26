@@ -7,6 +7,9 @@ const Tables = require('./tables')
 const Fields = require('./fields')
 const Api = require('./api')
 const UI = require('./ui')
+const Privileges = require('./privileges')
+const Mailer = require('./mailer')
+const SocketController = require('./socket')
 
 module.exports = {
     Auth,
@@ -18,5 +21,9 @@ module.exports = {
     Tables,
     Fields,
     Api,
-    UI
+    UI,
+    Privileges,
+    Mailer,
+
+    SocketController
 }

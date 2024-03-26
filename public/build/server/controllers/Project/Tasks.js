@@ -423,7 +423,7 @@ class TasksController extends Controller {
                         if( Task ){
                             const failAccounts = [];
                             const oldMembers = Task.members.value().join(", ")
-                            console.log( oldMembers )
+                            
                             for( let i = 0 ; i < members.length; i++ ){
                                 const member = members[i];
                                 const account = await this.#__accounts.find({ username: member });

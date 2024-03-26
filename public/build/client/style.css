@@ -116,8 +116,8 @@ body.demos .container-fluid {
 
 *::-webkit-scrollbar{
     
-    width: 8px;
-    height: 3px;
+    width: 12px;
+    height: 12px;
 }
 
 *::-webkit-scrollbar-thumb{
@@ -901,12 +901,12 @@ span {
 }
 
 #sidebar ul.components li {
-    position: relative;
+    /* position: relative; */
 }
 
 #sidebar ul.components ul {
     background: #214162;
-    padding: 20px 0;
+    /* padding: 20px 0; */
 }
 
 #sidebar ul.components ul li a {
@@ -3485,4 +3485,28 @@ table.projects tr td:first-child {
     margin: 1em;
     border-radius: 16px;
     box-shadow: 2px 1px 10px 0px #ccc;
+}
+
+
+.privilege-pages{
+    padding: 1em;
+}
+
+.privilege-pages .privilege-page {    
+    margin-top: 2em;
+}
+
+.permission_ui_hover_text:hover {
+    color: rgb(0, 0, 0);
+    background-color: #EAE7D6;
+    transition: all .1s linear;
+    border-radius: 5px;
+}
+.privilege_column{
+    width: 50%;
+}
+@media (max-width: 576px) { 
+    .privilege_column{
+        width: 100%;
+    }
 }
