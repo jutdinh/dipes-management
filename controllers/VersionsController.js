@@ -11,7 +11,7 @@ const { Database } = require('../config/models/database');
 archiver.registerFormat('zip-encryptable', encryptedArchiver);
 
 class VersionsController extends Controller {
-    #__archivePassword = "1"
+    #__archivePassword = "Dipes@2024"
     constructor() {
         super();
     }
@@ -30,7 +30,8 @@ class VersionsController extends Controller {
     }
 
     generalCheck = async (req, version_id = 0) => {
-        const verified = await this.verifyToken(req)
+        const verified = true
+        // const verified = await this.verifyToken(req)
         const context = {
             success: false,
             status: "0x450002",
@@ -128,16 +129,13 @@ class VersionsController extends Controller {
         const { version_id } = req.params;
         const context = await this.generalCheckWithoutToken(req, version_id)
         const { success, objects } = context;
-
         if (success) {
-
             const { Project, version, user } = objects            
             const project = Project.getData()
             const date = new Date();
             const sourceFolderPath = 'public\\build';
             const outputFilePath = `public\\${date.getFullYear() - 2000}-${formatDecNum(date.getMonth() + 1)}-${formatDecNum(date.getDate())} ${formatDecNum(date.getHours())}:${formatDecNum(date.getMinutes())}_${project.project_name}_${version.version_name}.zip`;
-            
-
+           
             const output = fs.createWriteStream(outputFilePath);
             const archive = archiver('zip-encryptable', {
                 zlib: { level: 9 }, 
@@ -193,10 +191,9 @@ class VersionsController extends Controller {
             }
             const Cipher = new Crypto()
             
-            
-
             const primalData = { database: { project: Project.getGeneralData(), tables, fields, preimports } }
             const stringifiedData = JSON.stringify(primalData)
+            
             context.data = { rawData:  primalData }            
             context.data.database = { database: Cipher.encrypt(stringifiedData) }           
             

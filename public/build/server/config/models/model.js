@@ -51,24 +51,28 @@ class Model {
     }
 
 
-    find = async ( query = undefined ) => {
+    find = ( query = undefined ) => {
         const type = typeof( query );
 
         switch(type){
             case 'number':
             case 'undefined':
-                return await this.#model.__find__( query )            
+                return this.#model.__find__( query )            
             default:
-                return await this.#model.__findCriteria__(query)                
+                return this.#model.__findCriteria__(query)                
         }
     }
 
-    findAll = async (query = undefined) => {
-        return await this.#model.__findAll__( query )
+    findAll = (query = undefined) => {
+        return this.#model.__findAll__( query )
     }
 
-    insert = async ( data ) => {
-        return await this.#model.__insertRecord__( data );
+    findFrom = async ( query, from, to ) => {
+        return this.#model.__findFrom__(query, from, to )
+    }
+
+    insert = ( data ) => {
+        return this.#model.__insertRecord__( data );
     }
 
     save = async () => {
@@ -86,6 +90,7 @@ class Model {
                 newData[ __fieldName ] = this[ __fieldName ].value();                
             }
             const updateResult = await this.#model.__updateObject__( {...newData} );
+            
             return updateResult;
                         
         }else{            
