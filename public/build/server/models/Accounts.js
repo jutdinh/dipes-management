@@ -1,6 +1,10 @@
 const fs = require('fs');
 const { Model } = require('../config/models');
 
+const { UserPrivileges, UserPrivilegesRecord } = require('./UserPrivileges')
+const { PrivilegeGroup, PrivilegeGroupRecord } = require('./PrivilegeGroup')
+
+
 class Accounts extends Model{
 
     static __defaultAccount = {
@@ -24,6 +28,7 @@ class Accounts extends Model{
         this.__addField__( "address", Model.types.string)
         this.__addField__( "avatar", Model.types.string)
         this.__addField__( "note", Model.types.string)
+        this.__addField__( "status", Model.types.bool, { default: true })
         this.__addField__( "create_by", Model.types.string );
         this.__addField__( "create_at", Model.types.datetime, { format: "DD-MM-YYYY lúc hh:mm" } );
 
@@ -31,11 +36,31 @@ class Accounts extends Model{
     }
 
     getAllAccounts = async () => {
-        const accounts = await this.findAll();
+        const accounts = await this.findAll();        
+        const Groups = new PrivilegeGroup()
+        const Privileges = new UserPrivileges()
+
+        const groups = await Groups.findAll()
+        const privileges = await Privileges.findAll()
+
+        const serializedGroups = {}
+        groups.map( g => { serializedGroups[`${ g.privilegegroup_id }`] = g } )
+        const serializedPrivileges = {}
+        privileges.map( p => {serializedPrivileges[ p.username ] = p } )
+
         if( accounts ){
-            const result = accounts.map( account => {
-                const Account = new AccountsRecord( account );
-                return Account.get()
+            const result = accounts.map( acc => {
+                const Account = new AccountsRecord( acc );
+
+                const account = Account.get()
+                const { username } = account
+                const granttedPrivilege = serializedPrivileges[username]
+                if( granttedPrivilege ){
+                    const { privilegegroup_id } = granttedPrivilege                    
+                    const group = serializedGroups[`${ privilegegroup_id }`]
+                    account.privilege = group
+                }
+                return account
             })
             return result
         }else{
@@ -44,9 +69,9 @@ class Accounts extends Model{
     }
 }   
 class AccountsRecord extends Accounts {
-    constructor( { id, username, password, fullname, role, email, phone, avatar, address, note, create_by, create_at } ){
+    constructor( { id, username, password, fullname, role, email, phone, avatar, address, note, create_by, create_at, status } ){
         super();
-        this.setDefaultValue( { id, username, password, fullname, role, email, phone, avatar, address, note, create_by, create_at } )        
+        this.setDefaultValue( { id, username, password, fullname, role, email, phone, avatar, address, note, create_by, create_at, status } )        
     }
 
     get = () => {
@@ -59,6 +84,7 @@ class AccountsRecord extends Accounts {
             avatar:   this.avatar.value(),
             address:  this.address.value(),
             note:     this.note.value(),
+            status:   this.status.value(),
             create_by:this.create_by.value(), 
             create_at:this.create_at.getFormatedValue()
         }

@@ -13,4 +13,7 @@ router.get('/field/autoid/:field_id', async (req, res) => { await ApiController.
 router.get('/table/:table_id/data', async (req, res) => { await ApiController.getForeignData(req, res) })
 router.get('/retrieve/:api_id/*', async ( req, res ) => { await ConsumeApi.retrievePutData(req, res) })
 router.get('/all/tables/and/fields', async ( req, res ) => { await ApiController.getAllTablesAndFields(req, res) })
+
+router.get('/get/ui', (req, res) => { ApiController.getUI( req, res ) })
+
 module.exports = router;

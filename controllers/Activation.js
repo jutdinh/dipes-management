@@ -132,6 +132,23 @@ class ActivationController extends Controller {
         res.status(200).send(context)
     }
 
+    
+    getMachineID = async () => {
+        const machineId = await new Promise((resolve, reject) => {
+            exec(`echo '${process.env.LINUX_PWD}' | sudo -S dmidecode -s system-uuid`, (err, stdout, stderr) => {
+                console.log({ err, stdout, stderr })
+                if (typeof (stdout) == 'string') {
+                    const splitted = stdout.split('\n')
+                    resolve(splitted[0])
+                } else {
+                    resolve("UNKNOWN UUID")
+                }
+            });
+        })
+        return machineId;
+    }
+
+
     isUUID = ( uidStr ) => {
         const { uuid_format } = Projects.validator;
         const splitted = uidStr.split('-');
