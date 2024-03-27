@@ -2,10 +2,13 @@ const { Controller } = require("../config/controllers");
 const { Projects, ProjectsRecord } = require("../models/Projects");
 
 const { intValidate } = require("../functions/validator");
+const { Model } = require("../config/models");
+const { CONDITION_TYPE } = require("../Constants");
 
 const UPDATE_METHODS = {
   override: "override",
   calculate: "calculate",
+  increase: "increase",
 };
 
 const OPERATORS = {
@@ -266,14 +269,52 @@ class APIController extends Controller {
     return exists;
   };
 
+  getFieldsByProject = (Project) => {
+    const fields = [];
+    for (const k in Project.getData().versions) {
+      for (const i in Project.getData().versions[k]["tables"]) {
+        for (const j in Project.getData().versions[k]["tables"][i]["fields"]) {
+          const field = Project.getData().versions[k]["tables"][i]["fields"][j];
+          fields.push({
+            id: field.id,
+            fomular_alias: field.fomular_alias,
+            props: field.props,
+          });
+        }
+      }
+    }
+    return fields;
+  };
+
+  isNumberType = (value) => {
+    let isNumberType = false;
+    switch (value) {
+      case "INT":
+      case "INT UNSIGNED":
+      case "BIGINT":
+      case "BIGINT UNSIGNED":
+      case "DECIMAL":
+      case "DECIMAL UNSIGNED":
+        isNumberType = true;
+        break;
+    }
+    return isNumberType;
+  };
+
   createApi = async (req, res) => {
     this.writeReq(req);
     const { version_id, api } = req.body;
     const context = await this.generalCheck(req, version_id);
-
     const { success, objects } = context;
+
     if (success) {
       const { Project, version, user } = objects;
+      const fields = this.getFieldsByProject(Project);
+
+      const getFieldById = (id) => {
+        return fields.find((field) => field.id === id);
+      };
+
       const areAllTableValidAndConnected = this.validTableRelation(
         version,
         api.tables
@@ -319,9 +360,49 @@ class APIController extends Controller {
 
             if (not_include_fields.length > 0) {
               for (let i = 0; i < not_include_fields.length; i++) {
+                const field = getFieldById(not_include_fields[i].fieldId);
                 const update_method = {
                   field_id: not_include_fields[i].fieldId,
-                  method: UPDATE_METHODS[not_include_fields[i].method_type],
+                  conditions: [
+                    {
+                      tableId: 9328,
+                      fieldId: 9329,
+                      condition_type: CONDITION_TYPE.NOT_NULL,
+                      key: "5MVR",
+                      failed_value: "",
+                      success_valued: "",
+                      condition_column: [
+                        {
+                          condition_type: "NOT_NULL",
+                          key: "13SP",
+                          comparison_value: {
+                            field_alias: "10SP",
+                            table_alias: "3XK",
+                          },
+                        },
+                        {
+                          condition_type: "NOT_NULL",
+                          key: "13SP",
+                          comparison_value: {
+                            field_alias: "10SP",
+                            table_alias: "3XK",
+                          },
+                        },
+                        {
+                          condition_type: "NOT_NULL",
+                          key: "13SP",
+                          comparison_value: {
+                            field_alias: "10SP",
+                            table_alias: "3XK",
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  method:
+                    field && this.isNumberType(field.props.DATATYPE)
+                      ? UPDATE_METHODS[not_include_fields[i].method_type]
+                      : "override",
                 };
                 body_update_method.push(update_method);
               }
@@ -330,10 +411,75 @@ class APIController extends Controller {
             serializedApi.body_update_method = body_update_method;
           } else {
             const formated_update_methods = body.map(
-              ({ fieldId, method_type }) => {
+              ({ fieldId, method_type, conditions }) => {
+                const field = getFieldById(fieldId);
+
                 return {
                   field_id: fieldId,
-                  method: UPDATE_METHODS[method_type],
+                  conditions,
+                  // conditions: [
+                  //   {
+                  //     tableId: 9328,
+                  //     fieldId: 9329,
+                  //     condition_type: CONDITION_TYPE.NOT_NULL,
+                  //     key: "5MVR",
+                  //     failed_value: "",
+                  //     success_valued: "",
+                  //     condition_column: [
+                  //       {
+                  //         condition_type: "NOT_NULL",
+
+                  //         key: "13SP",
+                  //         comparison_value: {
+                  //           field_alias: "10SP",
+                  //           table_alias: "3XK",
+                  //         },
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     tableId: 9328,
+                  //     fieldId: 9329,
+                  //     condition_type: CONDITION_TYPE.NOT_NULL,
+                  //     key: "5MVR",
+                  //     failed_value: "",
+                  //     success_valued: "",
+                  //     condition_column: [
+                  //       {
+                  //         condition_type: "NOT_NULL",
+
+                  //         key: "13SP",
+                  //         comparison_value: {
+                  //           field_alias: "10SP",
+                  //           table_alias: "3XK",
+                  //         },
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     tableId: 9328,
+                  //     fieldId: 9329,
+                  //     condition_type: CONDITION_TYPE.NOT_NULL,
+                  //     key: "5MVR",
+                  //     failed_value: "",
+                  //     success_valued: "",
+                  //     condition_column: [
+                  //       {
+                  //         condition_type: "NOT_NULL",
+
+                  //         key: "13SP",
+                  //         comparison_value: {
+                  //           field_alias: "10SP",
+                  //           table_alias: "3XK",
+                  //         },
+                  //       },
+                  //     ],
+                  //   },
+                  // ],
+                  method:
+                    field && this.isNumberType(field.props.DATATYPE)
+                      ? UPDATE_METHODS[method_type]
+                      : "override",
                 };
               }
             );
@@ -389,6 +535,13 @@ class APIController extends Controller {
 
     if (success) {
       const { Project, version, user } = objects;
+
+      const fields = this.getFieldsByProject(Project);
+
+      const getFieldById = (id) => {
+        return fields.find((field) => field.id === id);
+      };
+
       const areAllTableValidAndConnected = this.validTableRelation(
         version,
         api.tables
@@ -433,22 +586,45 @@ class APIController extends Controller {
 
             if (not_include_fields.length > 0) {
               for (let i = 0; i < not_include_fields.length; i++) {
+                const field = getFieldById(not_include_fields[i].fieldId);
                 const update_method = {
                   field_id: not_include_fields[i].fieldId,
-                  method: not_include_fields[i].method_type,
+                  method:
+                    field && this.isNumberType(field.props.DATATYPE)
+                      ? UPDATE_METHODS[method_type]
+                      : "override",
                 };
                 body_update_method.push(update_method);
               }
             }
           } else {
             const formated_update_methods = body.map((field) => {
-              return { field_id: field, method: "override" };
+              const fieldObject = getFieldById(field);
+              return {
+                field_id: field,
+                method:
+                  fieldObject && this.isNumberType(fieldObject.props.DATATYPE)
+                    ? UPDATE_METHODS[method_type]
+                    : "override",
+              };
             });
             api.body_update_method = formated_update_methods;
           }
 
-          version.apis = apis;
+          /**
+           * Validate method type
+           */
+          for (let i = 0; i < api.body_update_method.length; i++) {
+            const { field_id, method } = api.body_update_method[i];
+            const field = getFieldById(field_id);
+            if (this.isNumberType(field.props.DATATYPE) === false) {
+              api.body_update_method[i].method = "override";
+            }
+          }
 
+          /** End Validate method type */
+
+          version.apis = apis;
           const project = Project.getData();
           project.versions[`${version.version_id}`] = version;
           Project.setData(project);
