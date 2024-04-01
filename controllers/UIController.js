@@ -1241,7 +1241,7 @@ class UIController extends Controller {
             );
           }
 
-          if (name == "c_chart") {
+          if (name == "c_chart" || name === "table_chart") {
             const { tables, field, fomular, criterias, fields, group_by } =
               props;
 
