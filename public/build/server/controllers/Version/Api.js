@@ -360,20 +360,17 @@ class Api extends Controller {
         foreign_value,
         table,
         onField,
-        onOption,
         indexField,
         amount,
         pattern,
+        onOption,
         prefix,
       } = req.body;
-      console.log("day ne", req.body)
-
       const targetTables = await this.#__tables.findAll({ id: table });
       if (targetTables.length > 0) {
         const targetTable = targetTables[0];
-
         const fields = await this.#__fields.findAll({
-          id: { $in: [onField, indexField, onOption] },
+          id: { $in: [onField, indexField, onOption] }, //onField_Option
         });
         const targetTableFields = await this.#__fields.findAll({
           table_id: targetTable.id,
@@ -382,8 +379,7 @@ class Api extends Controller {
           const index = fields.find((f) => f.id == indexField);
           const field = fields.find((f) => f.id == onField);
           const option = fields.find((f) => f.id == onOption);
-
-
+        
           if (index && field && option) {
             const currentValues = await Database.selectAll(
               "RFID_AMOUNT_CODE_MARK"
@@ -430,14 +426,13 @@ class Api extends Controller {
                 primaryTable.table_alias,
                 { [primalField.fomular_alias]: foreign_value }
               );
-                            
               if (primaryData.length > 0) {
                 const primaryRecord = primaryData[0];
                 for (let i = 0; i < amount; i++) {
                   const current = i + currentValue;
                   const value = this.translateBase10toBase36(current);
                   const barcode = this.formatEPCData(pattern, value);
-                  const getPrefix = this.prefix(prefix);
+                  const getPrefix = this.prefix(prefix, value);
 
                   const record = {
                     [index.fomular_alias]: i + 1,
