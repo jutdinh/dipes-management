@@ -262,7 +262,7 @@ class Controller {
       .slice(2, 4)}${value.slice(2, value.length)}${value[0]}${value[1]}`;
   };
 
-  prefix = (prefix) => {
+  prefix = (prefix, value) => {
 
     const showPrefix = prefix ? prefix : null;
     return `${showPrefix}`;
