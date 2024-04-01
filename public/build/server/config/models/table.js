@@ -15,7 +15,7 @@ class Table {
     #__foreignKeys = []
     #__primaryKey = [];
 
-    #dbo = new Database();
+    #dbo = Database;
 
     constructor( name ){
 
@@ -50,6 +50,10 @@ class Table {
          */
 
         await this.#dbo.init()
+    }
+
+    __createIndex__ = async ( index ) => {
+        await this.#dbo.createIndex(this.#__tableName, index)
     }
 
     __getTableName__ = () => {
@@ -402,6 +406,12 @@ class Table {
 
         await this.__dbInit__()
         const result = await this.#dbo.select( this.#__tableName, criteria );
+        return result
+    }
+
+    __findFrom__ = async ( query, from, to ) => {
+        await this.__dbInit__()
+        const result = await this.#dbo.selectFrom( this.#__tableName, query, from, to );
         return result
     }
 
