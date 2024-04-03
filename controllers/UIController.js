@@ -387,6 +387,7 @@ class UIController extends Controller {
                     .filter((f) => f != undefined);
 
                   const mainTableFields = Object.values(table.fields);
+
                   const apiPrefix = "HIDDEN GET API FOR UI ";
                   const apiDescription =
                     "This api was automatically created for UI purpose, DO NOT manipulating this for any reason!";
@@ -1250,7 +1251,7 @@ class UIController extends Controller {
               status: true,
               description:
                 "Hidden API for UI only, do not modify for any reason",
-              fields: [],
+              fields,
               field,
               body: [],
               params: [],
@@ -1283,6 +1284,7 @@ class UIController extends Controller {
             const apiExportObject = { api: EXPORT_API, type: "export" };
 
             const api = await Project.createUIAPI(apiObject);
+
             const apiExport = await Project.createUIAPI(apiExportObject);
             // console.log(api)
 
