@@ -379,7 +379,7 @@ class Api extends Controller {
           const index = fields.find((f) => f.id == indexField);
           const field = fields.find((f) => f.id == onField);
           const option = fields.find((f) => f.id == onOption);
-        
+
           if (index && field && option) {
             const currentValues = await Database.selectAll(
               "RFID_AMOUNT_CODE_MARK"

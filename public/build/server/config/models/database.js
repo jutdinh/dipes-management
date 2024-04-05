@@ -333,6 +333,7 @@ class Mongo {
           }
         );
     });
+    return newValue;
   };
 
   updateMany = async (table, newValue) => {
