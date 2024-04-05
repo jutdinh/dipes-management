@@ -180,7 +180,7 @@ class ConsumeApi extends Controller {
       this.#__tables.findAll(),
       this.#__fields.findAll(),
     ]);
-    console.log("PROJECT:::", this.projects);
+
     /*(3)*/ if (
       api &&
       api.api_method == method.toLowerCase() &&
@@ -1082,7 +1082,7 @@ class ConsumeApi extends Controller {
       object = { ...object, [path[0]]: value };
     } else {
       object[path[0]] = this.setPropByPath(
-        object[path[0]],
+        object?.[path[0]] || {},
         path.slice(1, path.length),
         value
       );
@@ -1469,6 +1469,7 @@ class ConsumeApi extends Controller {
     const datafrom = intValidate(this.req.header("start-at"))
       ? parseInt(this.req.header("start-at"))
       : 0;
+
     let dataPerBreak = intValidate(this.req.header("data-amount"))
       ? parseInt(this.req.header("data-amount"))
       : RESULT_PER_SEARCH_PAGE;
@@ -1568,6 +1569,7 @@ class ConsumeApi extends Controller {
                 mainTable.table_alias,
                 { position: partitions[i].position, ...sideQueries }
               );
+
               const data = redundantPartitionData.slice(
                 redundantPartitionData.length + tmpDataFrom,
                 redundantPartitionData.length
@@ -1604,6 +1606,7 @@ class ConsumeApi extends Controller {
         }
       } else {
         let data_counter = 0;
+
         let finale_raw_data_counter = 0;
         let found = false;
         for (let i = 0; i < partitions.length; i++) {
@@ -1612,6 +1615,7 @@ class ConsumeApi extends Controller {
           if (redundantPartition && redundantPartition.total) {
             const currentDataLength = redundantPartition.total;
             data_counter += currentDataLength;
+
             tmpDataFrom -= currentDataLength;
             // // // console.log(630, data_counter, found, finale_raw_data_counter, tmpDataFrom )
             if (tmpDataFrom < 0 && !found) {
@@ -1619,10 +1623,12 @@ class ConsumeApi extends Controller {
                 mainTable.table_alias,
                 { position: partitions[i].position }
               );
+
               const data = redundantPartitionData.slice(
                 redundantPartitionData.length + tmpDataFrom,
                 redundantPartitionData.length
               );
+
               // // // console.log(636, redundantPartitionData.length + tmpDataFrom, redundantPartitionData.length)
               redundantPartitions.push({
                 position: partitions[i].position,
@@ -2275,6 +2281,7 @@ class ConsumeApi extends Controller {
       }
     }
     let success = true;
+    let data_inserted = null;
     let msg = "";
     if (
       errorFields.length == 0 &&
@@ -2365,7 +2372,7 @@ class ConsumeApi extends Controller {
 
         if (found) {
           data.position = targetPosition;
-          await Database.insert(`${table_alias}`, data);
+          data_inserted = await Database.insert(`${table_alias}`, data);
           tartgetPositionObject.total += 1;
           periods[targetPositionIndex] = tartgetPositionObject;
         } else {
@@ -2378,7 +2385,8 @@ class ConsumeApi extends Controller {
             total: 1,
           };
           data.position = newPosition;
-          await Database.insert(`${table_alias}`, data);
+          data_inserted = await Database.insert(`${table_alias}`, data);
+
           periods.push(newPartition);
         }
 
@@ -2428,9 +2436,11 @@ class ConsumeApi extends Controller {
         }
       }
     }
+
     this.res.status(200).send({
       msg: "POST",
       success,
+      data: data_inserted,
       conflict: {
         type: errorFields,
         primary: existedPrimaryKeys,
@@ -3680,7 +3690,7 @@ class ConsumeApi extends Controller {
         /**
          * END UPDATE ACCPRDING TO CONDITIONS
          */
-
+        let update_response = [];
         if (areAllForeignKeyValid) {
           for (let i = 0; i < sortedBody.length; i++) {
             const { table_id, data } = sortedBody[sortedBody.length - i - 1];
@@ -3909,6 +3919,7 @@ class ConsumeApi extends Controller {
               }
             }
             if (Object.values(updateQuery).length) {
+              update_response.push(overwrittenData);
               await Database.update(
                 table_alias,
                 updateQuery,
@@ -3971,7 +3982,9 @@ class ConsumeApi extends Controller {
             }
           }
 
-          this.res.status(200).send({ success: true });
+        return  this.res
+            .status(200)
+            .send({ success: true, results_of_update: update_response });
         } else {
           for (let i = 0; i < tearedBody.length; i++) {
             const object = tearedBody[i];
@@ -5361,7 +5374,9 @@ class ConsumeApi extends Controller {
       const { type } = this.req.body;
       if (type == "import") {
         this.IMPORT();
-      } else {
+      } else if(type === "bulkUpdate"){
+        this.IMPORT_UPDATE();
+      }else {
         this.DATA_VALIDATION();
       }
     } else {
@@ -5371,7 +5386,6 @@ class ConsumeApi extends Controller {
 
   consumeStatis = async (req, res, api_id) => {
     this.writeReq(req);
-
     const { url, method } = req;
     this.url = decodeURI(url);
     const [api, projects, tables, fields] = await Promise.all([
@@ -5390,6 +5404,7 @@ class ConsumeApi extends Controller {
       this.req = req;
       this.res = res;
       this.fields = fields;
+
       this.tables = tables.map((table) => {
         const { id } = table;
         table.fields = fields.filter((field) => field.table_id == id);
@@ -5566,114 +5581,252 @@ class ConsumeApi extends Controller {
     const parsedCriterias = this.parseCriteriasToStrings(criterias);
 
     let partitions = [];
-
-    const stringifiedPeriods = await Cache.getData(
-      `${tables[0].table_alias}-periods`
-    );
-    const periods = stringifiedPeriods?.value;
-    if (stringifiedPeriods && periods.length > 0) {
-      partitions = periods;
-    }
-
     let statistics = {};
     let averageCache = {};
 
-    for (let i = 0; i < periods?.length; i++) {
-      const period = periods[i];
+    let newData = [];
+    // currently, just run with one group
+    let keys_to_group = {};
 
-      const { position } = period;
+    for (let table_index = 0; table_index < tables.length; table_index++) {
+      const table = tables[table_index];
 
-      const data = await Database.selectAll(table.table_alias, {
-        $and: [...formatedQuery["$and"], { position }],
+      const { foreign_keys, primary_key } = table;
+
+      group_by.map(({ id, fomular_alias, field_name }) => {
+        const pk = primary_key.includes(id);
+        const fk = foreign_keys.find((i) => i.ref_field_id === id);
+        const fomular_alias_reference = this.getField(
+          fk?.field_id
+        )?.fomular_alias;
+
+        if (pk) {
+          keys_to_group["fomular_alias"] = fomular_alias;
+          keys_to_group["field_name"] = field_name;
+        }
+        if (fk) {
+          keys_to_group["fomular_alias_reference"] = fomular_alias_reference;
+        }
       });
 
-      for (let k = 0; k < data.length; k++) {
-        const record = data[k];
-        const groupByStrings = [];
+      const stringifiedPeriods = await Cache.getData(
+        `${table.table_alias}-periods`
+      );
+      const periods = stringifiedPeriods?.value;
+      if (stringifiedPeriods && periods.length > 0) {
+        partitions = periods;
+      }
 
-        const isRecordValid = this.validRecordOfDataByCriterias(
-          record,
-          parsedCriterias
-        );
+      for (let i = 0; i < periods?.length; i++) {
+        const period = periods[i];
 
-        if (isRecordValid) {
-          for (let h = 0; h < group_by.length; h++) {
-            const { fomular_alias } = group_by[h];
-            groupByStrings.push(record[fomular_alias]);
-          }
+        const { position } = period;
 
-          if (groupByStrings.length == 0) {
-            groupByStrings.push(field.field_name);
-          }
+        const data = await Database.selectAll(table.table_alias, {
+          $and: [...formatedQuery["$and"], { position }],
+        });
 
-          const currentValue = this.getPropByPath(statistics, groupByStrings);
+        const group_by_item = group_by.find((g) => g.table_id === table.id);
+        const conditions = field?.filter((f) => f.table_id === table.id);
 
-          switch (fomular) {
-            case "SUM":
-              if (currentValue) {
-                statistics = this.setPropByPath(
-                  statistics,
-                  groupByStrings,
-                  currentValue + record[field.fomular_alias]
-                );
-              } else {
-                statistics = this.setPropByPath(
-                  statistics,
-                  groupByStrings,
-                  record[field.fomular_alias]
-                );
+        newData = [
+          ...newData,
+          ...data.reduce((prev, curr) => {
+            const existed_item = prev.findIndex(
+              (i) =>
+                i[group_by_item.fomular_alias] ===
+                curr[group_by_item.fomular_alias]
+            );
+
+            const item_mapped = {
+              [group_by_item.fomular_alias]: curr[group_by_item.fomular_alias],
+            };
+
+            conditions.map((c) => {
+              item_mapped[c.fomular_alias] = curr[c.fomular_alias];
+            });
+
+            if (existed_item > -1) {
+              for (const k in item_mapped) {
+                if (k !== group_by_item.fomular_alias) {
+                  const condition = conditions.find(
+                    (c) => c.fomular_alias === k
+                  );
+
+                  switch (condition.METHOD_TYPE) {
+                    case "SUM":
+                      prev[existed_item][k] =
+                        prev[existed_item][k] + item_mapped[k];
+                      break;
+                  }
+                }
               }
-              break;
-            case "AVERAGE":
-              // Not tested yet
-              if (currentValue) {
-                const total = this.getPropByPath(averageCache, groupByStrings);
-                let value = currentValue;
-                const newValue =
-                  (total * value + record[field.fomular_alias]) / (total + 1);
-                statistics = this.setPropByPath(
-                  statistics,
-                  groupByStrings,
-                  newValue
-                );
-                averageCache = this.setPropByPath(
-                  averageCache,
-                  groupByStrings,
-                  total + 1
-                );
-              } else {
-                statistics = this.setPropByPath(
-                  statistics,
-                  groupByStrings,
-                  record[field.fomular_alias]
-                );
-                averageCache = this.setPropByPath(
-                  averageCache,
-                  groupByStrings,
-                  1
-                );
+            } else {
+              prev.push(item_mapped);
+            }
+
+            return prev;
+          }, []),
+        ];
+
+        continue;
+
+        const table_fields = this.getTableByAlias(table.table_alias).fields;
+
+        for (let k = 0; k < data.length; k++) {
+          const record = data[k];
+          const groupByStrings = [];
+          const isRecordValid = this.validRecordOfDataByCriterias(
+            record,
+            parsedCriterias
+          );
+
+          if (isRecordValid) {
+            for (let h = 0; h < group_by.length; h++) {
+              const { fomular_alias } = group_by[h];
+
+              if (
+                record[fomular_alias] &&
+                !groupByStrings.includes(record[fomular_alias]) &&
+                table_fields.find(
+                  (field) => field.fomular_alias === fomular_alias
+                )
+              ) {
+                groupByStrings.push(record[fomular_alias]);
               }
-              break;
-            case "COUNT":
-              if (currentValue) {
+            }
+
+            const currentValue =
+              this.getPropByPath(statistics, groupByStrings) ?? 0;
+
+            switch (fomular) {
+              case "SUM":
                 statistics = this.setPropByPath(
                   statistics,
                   groupByStrings,
-                  currentValue + 1
+                  currentValue + (record[field.fomular_alias] ?? 0)
                 );
-              } else {
-                statistics = this.setPropByPath(statistics, groupByStrings, 1);
-              }
-              break;
+                break;
+              case "AVERAGE":
+                // Not tested yet
+                if (currentValue) {
+                  const total = this.getPropByPath(
+                    averageCache,
+                    groupByStrings
+                  );
+                  let value = currentValue;
+                  const newValue =
+                    (total * value + record[field.fomular_alias]) / (total + 1);
+                  statistics = this.setPropByPath(
+                    statistics,
+                    groupByStrings,
+                    newValue
+                  );
+                  averageCache = this.setPropByPath(
+                    averageCache,
+                    groupByStrings,
+                    total + 1
+                  );
+                } else {
+                  statistics = this.setPropByPath(
+                    statistics,
+                    groupByStrings,
+                    record[field.fomular_alias]
+                  );
+                  averageCache = this.setPropByPath(
+                    averageCache,
+                    groupByStrings,
+                    1
+                  );
+                }
+                break;
+              case "COUNT":
+                if (currentValue) {
+                  statistics = this.setPropByPath(
+                    statistics,
+                    groupByStrings,
+                    currentValue + 1
+                  );
+                } else {
+                  statistics = this.setPropByPath(
+                    statistics,
+                    groupByStrings,
+                    1
+                  );
+                }
+                break;
+            }
           }
         }
       }
     }
+
+    /** MAYBE COMBINE TWO FUNCTIONS (1,2) INTO ONE, zz */
+    /*
+    CONVERT THIS
+    [
+      { '14MVT': 'VT001', '13TSP': 4 },
+      { '10MVT': 'VT001', '3TVT': 10 },
+      { '10MVT': 'VT002', '3TVT': 20 },
+      { '10MVT': 'VT003', '3TVT': 5 },
+      { '10MVT': 'VT004', '3TVT': 50 }
+    ] 
+    INTO THIS
+    [
+      { '14MVT': 'VT001', '13TSP': 4, '10MVT': 'VT001', '3TVT': 10 },
+      { '10MVT': 'VT002', '3TVT': 20 },
+      { '10MVT': 'VT003', '3TVT': 5 },
+      { '10MVT': 'VT004', '3TVT': 50 }
+    ]
+     */
+    newData = newData.reduce((prev, curr) => {
+      const index = prev.findIndex((row) => {
+        return (
+          keys_to_group?.fomular_alias_reference &&
+          keys_to_group?.fomular_alias &&
+          row[keys_to_group.fomular_alias_reference] ===
+            curr[keys_to_group.fomular_alias]
+        );
+      });
+
+      if (index > -1) {
+        prev[index] = { ...prev[index], ...curr };
+      } else {
+        prev.push(curr);
+      }
+
+      return prev;
+    }, []); /** (1) */
+    /** CONVERT DATA ACCORDING TO FIELD (SELECT, SUM, ....) */
+    const data_mapped = newData.map((item) => {
+      const item_mapped = {};
+      for (const k of field) {
+        if (item[k.fomular_alias]) {
+          item_mapped[k.fomular_alias] = item[k.fomular_alias];
+          continue;
+        }
+
+        if (k.fomular_alias) {
+          switch (k.props.DATATYPE) {
+            case "INT UNSIGNED":
+            case "INT":
+              item_mapped[k.fomular_alias] = 0;
+              break;
+            default:
+              item_mapped[k.fomular_alias] = "";
+              break;
+          }
+        }
+      }
+      return item_mapped;
+    }); /** (2) */
+
     this.res.status(200).send({
       success: true,
       content: "Succeed",
-      statistics,
+      statistics: data_mapped,
       fields: group_by,
+      field,
     });
   };
 
@@ -7111,6 +7264,480 @@ class ConsumeApi extends Controller {
     }
   };
 
+  IMPORT_UPDATE = async () => {
+    const tables = this.tearTablesAndFieldsToObjects();
+    const tearedBody = [];
+    const primaryKeys = {};
+    const foreignKeys = {};
+    let typeError = false;
+    let isBulkUpdate = true;
+    // console.log("here")
+    const MeasureExecutionTime = async (cb, name) => {
+      const start = new Date().getTime();
+
+      await cb();
+
+      console.log("END TIME ", name, " ::", new Date().getTime() - start);
+      return;
+    };
+    const handleValidateDataType = (data, foreignKeys, primaryKeys) => {
+      let table_alias;
+      let primaryK;
+      let fields;
+
+      for (let i = 0; i < tables.length; i++) {
+        const {
+          primary_key,
+          foreign_keys,
+          table_alias: alias,
+          body,
+          id,
+          fields: f,
+        } = tables[i];
+
+        fields = f;
+        table_alias = alias;
+        primaryK = primary_key;
+
+        primaryKeys[table_alias] = primary_key ? primary_key : [];
+        foreignKeys[table_alias] = foreign_keys ? foreign_keys : [];
+
+        for (let j = 0; j < body.length; j++) {
+          const field = body[j];
+          const { fomular_alias } = field;
+
+          const { DATATYPE, AUTO_INCREMENT, PATTERN, id } = field;
+          if (data[fomular_alias] != undefined) {
+            const primaryKey = primaryKeys[table_alias].find(
+              (key) => key == id
+            );
+            if (primaryKey) {
+              const foreignKey = foreignKeys[table_alias].find(
+                (key) => key.field_id == id
+              );
+              if (foreignKey) {
+              } else {
+                if (Fields.isIntFamily(DATATYPE) && AUTO_INCREMENT) {
+                  // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(table_alias, PATTERN)
+                } else {
+                  const { valid, result } = this.parseType(
+                    field,
+                    data[fomular_alias]
+                  );
+
+                  if (valid) {
+                  } else {
+                    return {
+                      isValid: false,
+                      key: fomular_alias,
+                      actual_data: data[fomular_alias],
+                      expect_type: field.DATATYPE,
+                    };
+                  }
+                }
+              }
+            } else {
+              const { valid, result } = this.parseType(
+                field,
+                data[fomular_alias]
+              );
+              if (valid) {
+              } else {
+                return {
+                  isValid: false,
+                  key: fomular_alias,
+                  actual_data: data[fomular_alias],
+                  expect_type: field.DATATYPE,
+                };
+              }
+            }
+          } else {
+            if (Fields.isIntFamily(DATATYPE) && AUTO_INCREMENT) {
+              const foreignKey = foreignKeys[table_alias].find(
+                (key) => key.field_id == id
+              );
+              if (foreignKey) {
+                const foreignField = this.getField(foreignKey.ref_field_id);
+                const foreignTable = this.getTable(foreignField.table_id);
+                // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(foreignTable.table_alias, PATTERN)
+              } else {
+                // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(table_alias, PATTERN)
+                isAutoIncreTriggerd = true;
+              }
+            } else {
+              const { valid, result } = this.parseType(
+                field,
+                this.req.body[fomular_alias]
+              );
+
+              if (valid) {
+              } else {
+                return {
+                  isValid: false,
+                  key: fomular_alias,
+                  actual_data: data[fomular_alias],
+                  expect_type: field.DATATYPE,
+                };
+              }
+            }
+          }
+        }
+      }
+      return { isValid: true, table_alias, primaryK, fields };
+    };
+
+    for (let i = 0; i < tables.length; i++) {
+      const { primary_key, foreign_keys, table_alias, body, id, fields } =
+        tables[i];
+      const tearedObject = { table_id: id, table_alias, data: {} };
+
+      primaryKeys[table_alias] = primary_key ? primary_key : [];
+      foreignKeys[table_alias] = foreign_keys ? foreign_keys : [];
+
+      for (let j = 0; j < body.length; j++) {
+        const field = body[j];
+        const { fomular_alias } = field;
+
+        const { DATATYPE, AUTO_INCREMENT, PATTERN, id } = field;
+
+        if (this.req.body[fomular_alias] != undefined) {
+          const primaryKey = primaryKeys[table_alias].find((key) => key == id);
+
+          if (primaryKey) {
+            const foreignKey = foreignKeys[table_alias].find(
+              (key) => key.field_id == id
+            );
+
+            if (foreignKey) {
+              tearedObject.data[fomular_alias] = this.req.body[fomular_alias];
+            } else {
+              if (Fields.isIntFamily(DATATYPE) && AUTO_INCREMENT) {
+                // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(table_alias, PATTERN)
+              } else {
+                const { valid, result } = this.parseType(
+                  field,
+                  this.req.body[fomular_alias]
+                );
+
+                if (valid) {
+                  tearedObject.data[fomular_alias] = result;
+                } else {
+                  typeError = true;
+                }
+              }
+            }
+          } else {
+            const { valid, result } = this.parseType(
+              field,
+              this.req.body[fomular_alias]
+            );
+            if (valid) {
+              tearedObject.data[fomular_alias] = result;
+            } else {
+              typeError = true;
+            }
+          }
+        } else {
+          if (Fields.isIntFamily(DATATYPE) && AUTO_INCREMENT) {
+            const foreignKey = foreignKeys[table_alias].find(
+              (key) => key.field_id == id
+            );
+            if (foreignKey) {
+              const foreignField = this.getField(foreignKey.ref_field_id);
+              const foreignTable = this.getTable(foreignField.table_id);
+              // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(foreignTable.table_alias, PATTERN)
+            } else {
+              // tearedObject.data[fomular_alias] = await Fields.makeAutoIncreament(table_alias, PATTERN)
+              isAutoIncreTriggerd = true;
+            }
+          } else {
+            const { valid, result } = this.parseType(
+              field,
+              this.req.body[fomular_alias]
+            );
+
+            if (valid) {
+              tearedObject.data[fomular_alias] = result;
+            } else {
+              typeError = true;
+            }
+          }
+        }
+      }
+      tearedBody.push(tearedObject);
+    }
+
+
+    if (isBulkUpdate) {
+      const data = this.req.body?.data;
+      const mapping_foreign_key = {};
+      const mapping_table_alias_primary_keys = {};
+      // MEMORY RISK, DATA CAN BE TOO LARGE
+      await MeasureExecutionTime(() => {
+        for (let i = 0; i < tables.length; i++) {
+          const { foreign_keys, fields, table_alias, primary_key } = tables[i];
+
+          mapping_table_alias_primary_keys[table_alias] = fields.find((field) =>
+            primary_key.includes(field.id)
+          );
+
+          foreign_keys.map((key) => {
+            const { field_id, table_id, ref_field_id } = key;
+            const field = this.getField(field_id);
+            const ref_field = this.getField(ref_field_id);
+
+            mapping_foreign_key[field.fomular_alias] = ref_field.fomular_alias;
+          });
+        }
+      }, "MAPPING FOREIGN KEY");
+
+      let modified_data = {};
+
+      const unique_field_keys = Object.keys(this.req.body?.unique_fields || {});
+      const mapping_unique_fields = {};
+
+      const isError = {
+        DATA_TYPE: {
+          status: false,
+          data: [],
+        },
+        UNIQUE: {
+          status: false,
+          data: [],
+        },
+      };
+
+      await MeasureExecutionTime(() => {
+        for (let i = 0; i < data?.length; i++) {
+          for (let j = 0; j < unique_field_keys.length; j++) {
+            /*
+              data = [{A:1},{B:2},{A:1}]
+              unique_field_keys = [A]
+            */
+            const key = unique_field_keys[j]; // A
+            const unique_data = data[i][key]; // data[0][A]
+
+            if (mapping_unique_fields[key]?.[unique_data]) {
+              isError.UNIQUE.status = true;
+              isError.UNIQUE.data.push({ [key]: unique_data });
+
+              continue;
+            }
+
+            if (!mapping_unique_fields[key]) {
+              mapping_unique_fields[key] = {};
+            }
+
+            mapping_unique_fields[key][unique_data] = true;
+          }
+
+          if (isError.UNIQUE.status) {
+            return;
+          }
+
+          const res = handleValidateDataType(data[i], foreignKeys, primaryKeys);
+
+          const primarykey = res.fields?.find((field) =>
+            res.primaryK.includes(field.id)
+          );
+
+          if (data[i][primarykey.fomular_alias]) {
+            if (modified_data[res.primaryK]) {
+              modified_data[res.primaryK].data.push(
+                data[i][primarykey.fomular_alias]
+              );
+            } else {
+              modified_data[res.primaryK] = {
+                alias: primarykey.fomular_alias,
+                data: [data[i][primarykey.fomular_alias]],
+              };
+            }
+            //slow
+            // modified_data[res.primaryK] = {
+            //   alias: primarykey.fomular_alias,
+            //   data: [
+            //     ...(modified_data?.[res.primaryK]?.data || []),
+            //     data[i][primarykey.fomular_alias],
+            //   ],
+            // };
+          }
+
+          if (res.isValid === false) {
+            console.log("handleValidateDataType res::", res);
+            isError.DATA_TYPE.status = true;
+            isError.DATA_TYPE.data = res;
+            return;
+          }
+        }
+      }, `validate data type ${isError.DATA_TYPE.status} ${isError.UNIQUE.status}`);
+
+      if (isError.DATA_TYPE.status) {
+        return this.res.status(200).send({
+          success: false,
+          errors: {
+            type: "type error",
+            description: "Some fields have invalid data type",
+            data: {
+              key: isError.DATA_TYPE.data.key,
+              actual_data:
+                isError.DATA_TYPE.data?.actual_data || "Do not have data",
+              expect_type: isError.DATA_TYPE.data.expect_type,
+            },
+          },
+        });
+      }
+
+      if (isError.UNIQUE.status) {
+        return this.res.status(200).send({
+          success: false,
+          errors: {
+            type: "type error",
+            description: "Some fields have duplicate data",
+            data: isError.UNIQUE.data,
+          },
+        });
+      }
+
+      let foreignData = {};
+      let isForeignKeyValid = true;
+
+      await MeasureExecutionTime(async () => {
+        for (let i = 0; i < tables.length; i++) {
+          for (let j = 0; j < foreignKeys[tables[i].table_alias].length; j++) {
+            const { table_id, field_id, ref_field_id } =
+              foreignKeys[tables[i].table_alias][j];
+
+            const table = this.getTable(table_id);
+            const field = this.getField(field_id);
+            const ref_field = this.getField(ref_field_id);
+            const searching_data = [];
+
+            for (let i = 0; i < data?.length; i++) {
+              if (
+                data[i][field.fomular_alias] &&
+                !searching_data.includes(data[i][field.fomular_alias])
+              ) {
+                searching_data.push(data[i][field.fomular_alias]);
+              }
+            }
+
+            if (searching_data.length) {
+              let res = [];
+
+              await MeasureExecutionTime(async () => {
+                res = await Database.selectAll(table.table_alias, {
+                  [ref_field.fomular_alias]: { $in: searching_data },
+                });
+              }, `SELECT ALL SEARCHING DATA:: ${table.table_alias}`);
+
+              if (res.length !== searching_data.length) {
+                isForeignKeyValid = false;
+                return;
+              }
+              foreignData[ref_field.fomular_alias] = res;
+            }
+          }
+        }
+      }, `validate foreign keys ${isForeignKeyValid}`);
+
+      if (!isForeignKeyValid) {
+        return this.res.status(200).send({
+          success: false,
+          errors: {
+            type: "foreign keys",
+            description: "Some datasets have invalid foreign keys",
+          },
+        });
+      }
+
+      for (let i = 0; i < tables.length; i++) {
+        const { table_alias, ...props } = tables[i];
+
+        const slaves = this.detectAllSlave(tables[i]);
+        let response = [];
+
+        let updated_data = [];
+
+        MeasureExecutionTime(() => {
+          updated_data = data.map((item) => {
+            const key = Object.keys(this.req.body.condition_fields);
+
+            let convertedItem = {};
+
+            let condition = {};
+
+            for (let i = 0; i < key.length; i++) {
+              let k = key[i];
+              if (mapping_foreign_key[key[k]]) {
+                k = mapping_foreign_key[key[k]];
+              }
+              if (item[k]) {
+                condition[k] = item[k];
+              }
+            }
+
+            for (const k in item) {
+              let key = k;
+              let findedItem = {};
+              convertedItem = item;
+              if (mapping_foreign_key[k]) {
+                key = mapping_foreign_key[k];
+              }
+
+              findedItem = foreignData[key]?.find((i) => i[key] === item[k]);
+
+              convertedItem[key] = item[k];
+
+              convertedItem = Object.assign(convertedItem, findedItem);
+            }
+
+            return {
+              value: convertedItem,
+              condition,
+            };
+          });
+        }, "convert data for updating");
+
+        await MeasureExecutionTime(async () => {
+          response = await Database.updateMany(table_alias, updated_data);
+        }, `UPDATE ${table_alias} table`);
+
+        let res = [];
+
+        await MeasureExecutionTime(async () => {
+          if (modified_data?.[props.primary_key]?.alias) {
+            res = await Database.selectAll(table_alias, {
+              [modified_data[props.primary_key].alias]: {
+                $in: modified_data[props.primary_key].data,
+              },
+            });
+          }
+        }, `SELECT ALL ${table_alias}`);
+
+        await MeasureExecutionTime(async () => {
+          await Promise.all(
+            slaves.map((slave) => {
+              return Database.updateMany(
+                slave.table_alias,
+                res.map((item) => ({
+                  condition: {
+                    [modified_data[props.primary_key].alias]:
+                      item[modified_data[props.primary_key].alias],
+                  },
+                  value: item,
+                }))
+              );
+            })
+          );
+        }, `UPDATE SLAVE ${slaves.join()}`);
+      }
+     
+      return this.res.status(200).send({
+        success: true,
+      });
+    }
+  }
+
   consumeDetail = async (req, res, api_id) => {
     this.writeReq(req);
     const start = new Date();
@@ -7275,7 +7902,6 @@ class ConsumeApi extends Controller {
   consumeBarcodeActivation = async (req, res) => {
     this.req = req;
     this.res = res;
-
     const [tables, fields] = await Promise.all([
       this.#__tables.findAll(),
       this.#__fields.findAll(),
@@ -7285,9 +7911,7 @@ class ConsumeApi extends Controller {
     this.fields = fields;
 
     if (req.method.toLowerCase() == "put") {
-      const { table, criteria, master, from, to, value, select, buttons } = req.body;
-
-      console.log("body", req.body)
+      const { table, criteria, master, from, to, value, select } = req.body;
       const mappedSelect = select?.reduce(
         (prev, { key, value }) => ({
           ...prev,

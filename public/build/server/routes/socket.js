@@ -121,6 +121,7 @@ module.exports = (io, socket) => {
     // not tested
     socket.on("/dipe-production-new-data-added", async (payload) => {
         const { data, api_id } = payload;
+
         const apis = await Database.selectAll('apis', { api_id })
         if (data && apis && apis[0]) {
             const table_id = apis[0].tables[0]
@@ -138,13 +139,12 @@ module.exports = (io, socket) => {
                 const { fomular_alias } = field;
                 key[fomular_alias] = data[fomular_alias]
             }
-
-            const originData = await Database.selectAll( table.table_alias, key )           
-
+            const originData = await Database.selectAll( table.table_alias )
+            //Excess key           
             const record = originData[0]
 
             if (calculates && calculates.length > 0) {
-                const keys = Object.keys(record )
+                const keys = Object.keys(record)
                 keys.sort((key_1, key_2) => key_1.length > key_2.length ? 1 : -1);
 
                 for (let i = 0; i < calculates.length; i++) {
