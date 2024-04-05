@@ -326,7 +326,8 @@ class Mongo {
         .collection(table)
         .updateMany(
           query,
-          { $set: { ...newValue }, $inc: increasedData },
+          { $set: { ...newValue } },
+          //$inc: increasedData
           { upsert: upsert },
           (err, result) => {
             resolve(result);
