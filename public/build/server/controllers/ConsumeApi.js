@@ -5669,6 +5669,7 @@ class ConsumeApi extends Controller {
         }
       }
     }
+
     this.res.status(200).send({
       success: true,
       content: "Succeed",
@@ -7285,9 +7286,10 @@ class ConsumeApi extends Controller {
     this.fields = fields;
 
     if (req.method.toLowerCase() == "put") {
-      const { table, criteria, master, from, to, value, select, buttons } = req.body;
+      const { table, criteria, master, from, to, value, select, buttons } =
+        req.body;
 
-      console.log("body", req.body)
+      console.log("body", req.body);
       const mappedSelect = select?.reduce(
         (prev, { key, value }) => ({
           ...prev,
