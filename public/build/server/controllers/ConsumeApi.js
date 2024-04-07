@@ -5706,120 +5706,53 @@ class ConsumeApi extends Controller {
                   groupByStrings,
                   currentValue + (record[field.fomular_alias] ?? 0)
                 );
-                break;
-              case "AVERAGE":
-                // Not tested yet
-                if (currentValue) {
-                  const total = this.getPropByPath(
-                    averageCache,
-                    groupByStrings
-                  );
-                  let value = currentValue;
-                  const newValue =
-                    (total * value + record[field.fomular_alias]) / (total + 1);
-                  statistics = this.setPropByPath(
-                    statistics,
-                    groupByStrings,
-                    newValue
-                  );
-                  averageCache = this.setPropByPath(
-                    averageCache,
-                    groupByStrings,
-                    total + 1
-                  );
-                } else {
-                  statistics = this.setPropByPath(
-                    statistics,
-                    groupByStrings,
-                    record[field.fomular_alias]
-                  );
-                  averageCache = this.setPropByPath(
-                    averageCache,
-                    groupByStrings,
-                    1
-                  );
-                }
-                break;
-              case "COUNT":
-                if (currentValue) {
-                  statistics = this.setPropByPath(
-                    statistics,
-                    groupByStrings,
-                    currentValue + 1
-                  );
-                } else {
-                  statistics = this.setPropByPath(
-                    statistics,
-                    groupByStrings,
-                    1
-                  );
-                }
-                break;
-            }
+              }
+              break;
+            case "AVERAGE":
+              // Not tested yet
+              if (currentValue) {
+                const total = this.getPropByPath(averageCache, groupByStrings);
+                let value = currentValue;
+                const newValue =
+                  (total * value + record[field.fomular_alias]) / (total + 1);
+                statistics = this.setPropByPath(
+                  statistics,
+                  groupByStrings,
+                  newValue
+                );
+                averageCache = this.setPropByPath(
+                  averageCache,
+                  groupByStrings,
+                  total + 1
+                );
+              } else {
+                statistics = this.setPropByPath(
+                  statistics,
+                  groupByStrings,
+                  record[field.fomular_alias]
+                );
+                averageCache = this.setPropByPath(
+                  averageCache,
+                  groupByStrings,
+                  1
+                );
+              }
+              break;
+            case "COUNT":
+              if (currentValue) {
+                statistics = this.setPropByPath(
+                  statistics,
+                  groupByStrings,
+                  currentValue + 1
+                );
+              } else {
+                statistics = this.setPropByPath(statistics, groupByStrings, 1);
+              }
+              break;
           }
         }
       }
     }
-
-    /** MAYBE COMBINE TWO FUNCTIONS (1,2) INTO ONE, zz */
-    /*
-    CONVERT THIS
-    [
-      { '14MVT': 'VT001', '13TSP': 4 },
-      { '10MVT': 'VT001', '3TVT': 10 },
-      { '10MVT': 'VT002', '3TVT': 20 },
-      { '10MVT': 'VT003', '3TVT': 5 },
-      { '10MVT': 'VT004', '3TVT': 50 }
-    ] 
-    INTO THIS
-    [
-      { '14MVT': 'VT001', '13TSP': 4, '10MVT': 'VT001', '3TVT': 10 },
-      { '10MVT': 'VT002', '3TVT': 20 },
-      { '10MVT': 'VT003', '3TVT': 5 },
-      { '10MVT': 'VT004', '3TVT': 50 }
-    ]
-     */
-    newData = newData.reduce((prev, curr) => {
-      const index = prev.findIndex((row) => {
-        return (
-          keys_to_group?.fomular_alias_reference &&
-          keys_to_group?.fomular_alias &&
-          row[keys_to_group.fomular_alias_reference] ===
-            curr[keys_to_group.fomular_alias]
-        );
-      });
-
-      if (index > -1) {
-        prev[index] = { ...prev[index], ...curr };
-      } else {
-        prev.push(curr);
-      }
-
-      return prev;
-    }, []); /** (1) */
-    /** CONVERT DATA ACCORDING TO FIELD (SELECT, SUM, ....) */
-    const data_mapped = newData.map((item) => {
-      const item_mapped = {};
-      for (const k of field) {
-        if (item[k.fomular_alias]) {
-          item_mapped[k.fomular_alias] = item[k.fomular_alias];
-          continue;
-        }
-
-        if (k.fomular_alias) {
-          switch (k.props.DATATYPE) {
-            case "INT UNSIGNED":
-            case "INT":
-              item_mapped[k.fomular_alias] = 0;
-              break;
-            default:
-              item_mapped[k.fomular_alias] = "";
-              break;
-          }
-        }
-      }
-      return item_mapped;
-    }); /** (2) */
 
     this.res.status(200).send({
       success: true,
@@ -7911,7 +7844,10 @@ class ConsumeApi extends Controller {
     this.fields = fields;
 
     if (req.method.toLowerCase() == "put") {
-      const { table, criteria, master, from, to, value, select } = req.body;
+      const { table, criteria, master, from, to, value, select, buttons } =
+        req.body;
+
+      console.log("body", req.body);
       const mappedSelect = select?.reduce(
         (prev, { key, value }) => ({
           ...prev,
